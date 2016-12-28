@@ -1,0 +1,13 @@
+<html>
+<head></head>
+<body>
+Hello,<br /><br />
+
+New Hit is available for search query <b><I>"#query#"</I></b>.
+<br />Please Visit video on www.iqmediacorp.com<br /><br />
+
+Thanks,<br />
+IQMedia Corp,<br />
+www.iqmediacorp.com<br />
+</body>
+</html>

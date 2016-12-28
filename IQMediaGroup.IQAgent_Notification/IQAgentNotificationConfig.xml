@@ -1,0 +1,12 @@
+<SearchParameters>
+	<HourlyEmailTimeFromMinute>10</HourlyEmailTimeFromMinute>
+	<HourlyEmailTimeToMinute>59</HourlyEmailTimeToMinute>
+	<DailyEmailTimeHours>12</DailyEmailTimeHours>
+	<WeeklyEmailDay>Tuesday</WeeklyEmailDay>
+	<SMTPFromEMail>info@iqmediacorp.com</SMTPFromEMail>
+	<EmailTemplateFilePath>D:\vishal\Sites\NET\Main\IQMediaGroup2010\IQMediaGroup.IQAgent_Notification\EmailTemplate.txt</EmailTemplateFilePath>
+	<Subject>This is the test Notification</Subject>
+	<DebugFileFlag>false</DebugFileFlag>
+        <DebugFilePath>D:\</DebugFilePath>
+	<connectionStrings>server=10.100.1.34;user id=IQMediaWeb;password=CCSearch1;database=IQMediaGroup</connectionStrings>	
+</SearchParameters>

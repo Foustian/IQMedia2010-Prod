@@ -1,0 +1,1540 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{26942B4F-6CA7-4CCF-93D7-3E06BB10128B}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.WebApplication</RootNamespace>
+    <AssemblyName>IQMediaGroup.WebApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>%24/IQMedia2010/IQMediaGroup.WebApplication</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <SccAuxPath>http://dbvss:8080</SccAuxPath>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PackageAsSingleFile>true</PackageAsSingleFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit, Version=4.1.60919.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Flan.Controls, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Flan.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="FlashControl, Version=2.4.2276.31815, Culture=neutral, PublicKeyToken=0066be59ecd613cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\FlashControl.dll</HintPath>
+    </Reference>
+    <Reference Include="FredCK.FCKeditorV2, Version=2.6.3.22452, Culture=neutral, PublicKeyToken=4f86767c9b519a06, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\FredCK.FCKeditorV2.dll</HintPath>
+    </Reference>
+    <Reference Include="FusionCharts, Version=3.2.2.1, Culture=neutral, PublicKeyToken=58bb3098fe7f0ede, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\sagar.AMULTEKRJT\Documents\My Received Files\FusionChartsOL\FusionCharts\Code\CS\Bin\FusionCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.Usercontrol\bin\IQMedia.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Web.Common">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.Usercontrol\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.Usercontrol\bin\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.Usercontrol\bin\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="About\Default.aspx" />
+    <Content Include="bin\IQMedia.Common.dll" />
+    <Content Include="bin\IQMedia.Domain.dll" />
+    <Content Include="bin\IQMedia.Logic.dll" />
+    <Content Include="CopyrightPolicy\Default.aspx" />
+    <Content Include="Css\bootstrap-responsive.css" />
+    <Content Include="Css\bootstrap-responsive.min.css" />
+    <Content Include="Css\bootstrap.css" />
+    <Content Include="Css\bootstrap.min.css" />
+    <Content Include="Css\chromemenuInner\chrometheme\chromestyle.css" />
+    <Content Include="Css\chromemenuInner\chrometheme\Copy of mainlink.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-b.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-bg-hover.jpg" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-bg-hover.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-bg.jpg" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-bg.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink-hover.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink2-hover.png" />
+    <Content Include="Css\chromemenuInner\chrometheme\mainlink2.png" />
+    <Content Include="Css\fonts\stylesheet.css" />
+    <Content Include="Css\font\border-radius.htc" />
+    <Content Include="Css\my-style.css" />
+    <Content Include="Css\Paging.css" />
+    <Content Include="Css\superfish-sub.css" />
+    <Content Include="Css\superfish.css" />
+    <Content Include="Css\superfish_old.css" />
+    <Content Include="Css\tab.css" />
+    <Content Include="DownloadArchiveBLPM\Default.aspx" />
+    <Content Include="DownloadArchiveNM\Default.aspx" />
+    <Content Include="DownloadArchiveSM\Default.aspx" />
+    <Content Include="frameset.htm" />
+    <Content Include="FusionCharts.dll" />
+    <Content Include="FusionChart\ChartXML\New_day.xml" />
+    <Content Include="FusionChart\js\FusionCharts.HC.Charts.js" />
+    <Content Include="FusionChart\js\FusionCharts.HC.js" />
+    <Content Include="FusionChart\js\FusionCharts.js" />
+    <Content Include="FusionChart\js\FusionChartsExportComponent.js" />
+    <Content Include="FusionChart\js\jquery.min.js" />
+    <Content Include="FusionChart\Line.swf" />
+    <Content Include="FusionChart\swf\FCExporter.swf" />
+    <Content Include="FusionChart\WebForm1.aspx" />
+    <Content Include="HowAreWeDifferent\Default.aspx" />
+    <Content Include="IframeRawMediaH\Default.aspx" />
+    <Content Include="Images\about-bottom-bg.png" />
+    <Content Include="Images\about-bottom-bg2.png" />
+    <Content Include="Images\about-mid-bg.png" />
+    <Content Include="Images\about-mid-bg2.png" />
+    <Content Include="Images\about-right-bg.png" />
+    <Content Include="Images\about-take-a-tour.png" />
+    <Content Include="Images\about-top-bg.png" />
+    <Content Include="Images\about-top-bg2.png" />
+    <Content Include="Images\about\about-img01.png" />
+    <Content Include="Images\about\about-img02.png" />
+    <Content Include="Images\about\about-img03.png" />
+    <Content Include="Images\about\about-img04.png" />
+    <Content Include="Images\about\about-img05.png" />
+    <Content Include="Images\about\about-img06.png" />
+    <Content Include="Images\about\about-img07.png" />
+    <Content Include="Images\about\ProPrep.png" />
+    <Content Include="Images\arrow-Next.jpg" />
+    <Content Include="Images\arrow-previous.jpg" />
+    <Content Include="Images\arrow.png" />
+    <Content Include="Images\banner-bg.png" />
+    <Content Include="Images\banner-bottom-bg.png" />
+    <Content Include="Images\banner-image.png" />
+    <Content Include="Images\blue-content-bg.jpg" />
+    <Content Include="Images\bluebox-hd-bg.jpg" />
+    <Content Include="Images\browse-bg.jpg" />
+    <Content Include="Images\browse-ftp.png" />
+    <Content Include="Images\cliq-logo.png" />
+    <Content Include="Images\close-icon.png" />
+    <Content Include="Images\close.png" />
+    <Content Include="Images\compete.png" />
+    <Content Include="Images\Copy of banner-image.png" />
+    <Content Include="Images\down.jpg" />
+    <Content Include="Images\download.png" />
+    <Content Include="Images\email.png" />
+    <Content Include="Images\f.png" />
+    <Content Include="Images\filter-Selected.png" />
+    <Content Include="Images\filter-Selected_Old.png" />
+    <Content Include="Images\filter.png" />
+    <Content Include="Images\glyphicons-halflings-white.png" />
+    <Content Include="Images\glyphicons-halflings.png" />
+    <Content Include="Images\grid-bg.jpg" />
+    <Content Include="Images\gridicon-edit.png" />
+    <Content Include="Images\hiden.png" />
+    <Content Include="Images\home-banner01.png" />
+    <Content Include="Images\home\banner01.png" />
+    <Content Include="Images\home\banner02.png" />
+    <Content Include="Images\home\Banner\1.png" />
+    <Content Include="Images\home\Banner\2.png" />
+    <Content Include="Images\home\home-img01.png" />
+    <Content Include="Images\home\home-img02.png" />
+    <Content Include="Images\home\home-img03.png" />
+    <Content Include="Images\home\home-img04.png" />
+    <Content Include="Images\home\home-img05.png" />
+    <Content Include="Images\home\home-img06.png" />
+    <Content Include="Images\home\IQ_SuccessButton_Miami.jpg" />
+    <Content Include="Images\home\IQ_SuccessButton_Miami202.jpg" />
+    <Content Include="Images\home\IQ_SuccessButton_Temple202.jpg" />
+    <Content Include="Images\home\SubBanner\1.png" />
+    <Content Include="Images\home\SubBanner\2.png" />
+    <Content Include="Images\home\Text\1.txt" />
+    <Content Include="Images\home\Text\2.txt" />
+    <Content Include="Images\icon-delete.png" />
+    <Content Include="Images\icon-edit.png" />
+    <Content Include="Images\icon-view.png" />
+    <Content Include="Images\icon_clock2.png" />
+    <Content Include="Images\icon_print.png" />
+    <Content Include="Images\in.png" />
+    <Content Include="Images\info.png" />
+    <Content Include="Images\leadin-01.png" />
+    <Content Include="Images\leadin-02.png" />
+    <Content Include="Images\leadin-03.png" />
+    <Content Include="Images\leadin-box-bg.png" />
+    <Content Include="Images\left_arrow_cc.gif" />
+    <Content Include="Images\list-box-01.png" />
+    <Content Include="Images\list.png" />
+    <Content Include="Images\Loading.gif" />
+    <Content Include="Images\Loading3.gif" />
+    <Content Include="Images\Loading4.gif" />
+    <Content Include="Images\Loading_Trans.gif" />
+    <Content Include="Images\login-bg.png" />
+    <Content Include="Images\Logo\News Logo.png" />
+    <Content Include="Images\logo_N.png" />
+    <Content Include="Images\mainlink-b-inner.png" />
+    <Content Include="Images\mainlink-b.png" />
+    <Content Include="Images\mainlink-bg-hover-inner.png" />
+    <Content Include="Images\mainlink-bg-hover.png" />
+    <Content Include="Images\mainlink-bg-hover_Old.png" />
+    <Content Include="Images\mainlink-bg-inner.png" />
+    <Content Include="Images\mainlink-bg_InnerMenu.png" />
+    <Content Include="Images\mainlink-bg.png" />
+    <Content Include="Images\mainlink-hover-inner.png" />
+    <Content Include="Images\mainlink-hover.png" />
+    <Content Include="Images\mainlink2-hover-inner.png" />
+    <Content Include="Images\mainlink2-hover.png" />
+    <Content Include="Images\mainlink2-inner.png" />
+    <Content Include="Images\mainlink2.png" />
+    <Content Include="Images\MgmtTeam\Jeff.png" />
+    <Content Include="Images\MgmtTeam\John.png" />
+    <Content Include="Images\MgmtTeam\kye.png" />
+    <Content Include="Images\MgmtTeam\Lakshmi.png" />
+    <Content Include="Images\MgmtTeam\Steve.png" />
+    <Content Include="Images\MgmtTeam\Tom.png" />
+    <Content Include="Images\ModalPopUpbg.png" />
+    <Content Include="Images\new.png" />
+    <Content Include="Images\NewsRead.png" />
+    <Content Include="Images\new_icon.gif" />
+    <Content Include="Images\Paging\First.png" />
+    <Content Include="Images\Paging\First_old.png" />
+    <Content Include="Images\Paging\Last.png" />
+    <Content Include="Images\Paging\Next.png" />
+    <Content Include="Images\Paging\Previous.png" />
+    <Content Include="Images\print.png" />
+    <Content Include="Images\refresh.png" />
+    <Content Include="Images\result-bg.png" />
+    <Content Include="Images\right_arrow_cc.gif" />
+    <Content Include="Images\save-icon.png" />
+    <Content Include="Images\save-toolbar-icon.png" />
+    <Content Include="Images\Save.png" />
+    <Content Include="Images\setting.png" />
+    <Content Include="Images\show-hide-bg.png" />
+    <Content Include="Images\show.png" />
+    <Content Include="Images\t.png" />
+    <Content Include="Images\Toolbar - Save.png" />
+    <Content Include="Images\ui-icons_222222_256x240.png" />
+    <Content Include="Images\videoAbout.jpg" />
+    <Content Include="CollegiateAthleticPrograms\Default.aspx" />
+    <Content Include="IOSApp\index.html" />
+    <Content Include="IOSCheck.htm" />
+    <Content Include="IQAgentIframe\Default.aspx" />
+    <Content Include="IQPremium\Default.aspx" />
+    <Content Include="IQNews\Default.aspx" />
+    <Content Include="Line.swf" />
+    <Content Include="ManagementTeam\Default.aspx" />
+    <Content Include="MyClips\WebForm1.aspx" />
+    <Content Include="MyIQ\Default.aspx" />
+    <Content Include="newjs.htm" />
+    <Content Include="News\Default.aspx" />
+    <Content Include="OEMPartnerships\Default.aspx" />
+    <Content Include="player.htm" />
+    <Content Include="PoliticalParties\Default.aspx" />
+    <Content Include="ProfessionalSports\Default.aspx" />
+    <Content Include="ProPrep\Default.aspx" />
+    <Content Include="Report\Default.aspx" />
+    <Content Include="Report\IQAgent.aspx" />
+    <Content Include="Report\MyIQ.aspx" />
+    <Content Include="Resources\Default.aspx" />
+    <Content Include="Script\BootStrapjs\bootstrap-alert.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-button.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-carousel.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-collapse.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-dropdown.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-modal.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-popover.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-scrollspy.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-tab.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-tooltip.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-transition.js" />
+    <Content Include="Script\BootStrapjs\bootstrap-typeahead.js" />
+    <Content Include="Script\BootStrapjs\bootstrap.js" />
+    <Content Include="Script\BootStrapjs\bootstrap.min.js" />
+    <Content Include="Script\BootStrapjs\jquery.js" />
+    <Content Include="Script\CommonIQ.js" />
+    <Content Include="Script\hoverIntent.js" />
+    <Content Include="Script\iOSPlayer.js" />
+    <Content Include="Script\IQAgent.js" />
+    <Content Include="Script\IQPremiumScript.js" />
+    <Content Include="Script\IQPremiumTest.js" />
+    <Content Include="Script\jquery-1.2.6.min.js" />
+    <Content Include="Script\jquery-1.4.2.min.js" />
+    <Content Include="Script\jquery-1.8.1.min.js" />
+    <Content Include="Script\jquery-1.8.3.min.js" />
+    <Content Include="Script\jquery-extra-selectors.js" />
+    <Content Include="Script\jquery-ui-1.9.2.custom.min.js" />
+    <Content Include="Script\jquery-ui.min.js" />
+    <Content Include="Script\jquery.blockUI.js" />
+    <Content Include="Script\jquery.ui.tabs.js" />
+    <Content Include="Script\JScript.js" />
+    <Content Include="Script\MyClipsScript.js" />
+    <Content Include="Script\MediaContent.js" />
+    <Content Include="Script\Report.js" />
+    <Content Include="Script\superfish.js" />
+    <Content Include="Script\wkhtmltopdf.tablesplit.js" />
+    <Content Include="SubscriptionAgreement\index.html" />
+    <Content Include="Subscription\Default.aspx" />
+    <Content Include="Test.aspx" />
+    <Content Include="test.html" />
+    <Content Include="test2.html" />
+    <Content Include="University\Default.aspx" />
+    <Content Include="Products\Default.aspx" />
+    <Content Include="Script\AndroidPlayer.js" />
+    <Content Include="Script\chromejs\chrome.js" />
+    <Content Include="Css\chromemenu\chrometheme\chromestyle.css" />
+    <Content Include="Css\chromemenu\chrometheme\Copy of mainlink.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-b.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-bg-hover.jpg" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-bg-hover.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-bg.jpg" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-bg.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink-hover.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink2-hover.png" />
+    <Content Include="Css\chromemenu\chrometheme\mainlink2.png" />
+    <Content Include="Css\fileuploadcontrol_default.css" />
+    <Content Include="Css\fileuploadcontrol_uploadify.css" />
+    <Content Include="Css\style_v2.css" />
+    <Content Include="Css\uploadify.css" />
+    <Content Include="DownloadClip\Default.aspx" />
+    <Content Include="ClipPlayer\Default.aspx" />
+    <Content Include="Css\style.css" />
+    <Content Include="EmailPolicy.txt" />
+    <Content Include="flashloader.swf" />
+    <Content Include="FusionChart\Default.aspx" />
+    <Content Include="FusionChart\MSLine.swf" />
+    <Content Include="FusionChart\ZoomLine.swf" />
+    <Content Include="IFrameMicrosite\Default.aspx" />
+    <Content Include="IFrameServiceRawMedia\Default.aspx" />
+    <Content Include="Images\blue-content-bg1.jpg" />
+    <Content Include="Images\bluebox-bg.jpg" />
+    <Content Include="Images\bluebox-hd-bg1.jpg" />
+    <Content Include="Images\bluebox-hd-left.jpg" />
+    <Content Include="Images\bluebox-hd-right.jpg" />
+    <Content Include="Images\bluebox-lb.jpg" />
+    <Content Include="Images\bluebox-rb.jpg" />
+    <Content Include="Images\body-bg.jpg" />
+    <Content Include="Images\btn-bg.jpg" />
+    <Content Include="Images\btn2-bg.jpg" />
+    <Content Include="Images\bul-nav.gif" />
+    <Content Include="Images\bul-nav.jpg" />
+    <Content Include="Images\bul-nav.png" />
+    <Content Include="Images\clear-search.png" />
+    <Content Include="Images\cliq_logo.png" />
+    <Content Include="Images\contentbox-b.jpg" />
+    <Content Include="Images\contentbox-l.jpg" />
+    <Content Include="Images\contentbox-lb.jpg" />
+    <Content Include="Images\contentbox-lt.jpg" />
+    <Content Include="Images\contentbox-r.jpg" />
+    <Content Include="Images\contentbox-rb.jpg" />
+    <Content Include="Images\contentbox-rt.jpg" />
+    <Content Include="Images\contentbox-t.jpg" />
+    <Content Include="Images\CustomHeader\adagp.jpg" />
+    <Content Include="Images\CustomHeader\allengoel.jpg" />
+    <Content Include="Images\CustomHeader\Archdiocese.jpg" />
+    <Content Include="Images\CustomHeader\BankOfAmerica.jpg" />
+    <Content Include="Images\CustomHeader\Brian Communications3_9_2012 5_59_35 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Buzzmedia.png" />
+    <Content Include="Images\CustomHeader\Cision4_11_2012 5_20_26 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\DigTV.jpg" />
+    <Content Include="Images\CustomHeader\DigTV_old.jpg" />
+    <Content Include="Images\CustomHeader\Drexel3_30_2012 4_51_48 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\eagles.jpg" />
+    <Content Include="Images\CustomHeader\Edison Ventures4_13_2012 1_44_04 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\eg-logo.jpg" />
+    <Content Include="Images\CustomHeader\Estro Communications5_16_2012 9_47_06 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Grand Central Marketing6_15_2012 4_03_02 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Heritage Foundation3_16_2012 8_55_52 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\IBEW 983_21_2012 12_09_40 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\iQ Media2_20_2012 2_19_08 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\iQ Media2_21_2012 5_30_03 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\iQ Media2_21_2012 5_30_39 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\jenna-comm.jpg" />
+    <Content Include="Images\CustomHeader\keatinggroup.JPG" />
+    <Content Include="Images\CustomHeader\Lexis.jpg" />
+    <Content Include="Images\CustomHeader\Maxim Group5_21_2012 8_52_23 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\MediaMatters.jpg" />
+    <Content Include="Images\CustomHeader\National Constitution Center4_16_2012 4_50_13 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\NDS5_9_2012 11_01_50 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\NDS5_9_2012 8_07_55 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\NRCC.jpg" />
+    <Content Include="Images\CustomHeader\NRSC.jpg" />
+    <Content Include="Images\CustomHeader\NRSC1.jpg" />
+    <Content Include="Images\CustomHeader\overstock.jpg" />
+    <Content Include="Images\CustomHeader\pands.jpg" />
+    <Content Include="Images\CustomHeader\Philadelphia 76ers3_12_2012 4_38_25 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\Philadelphia 76ers3_12_2012 4_46_49 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\phillies.jpg" />
+    <Content Include="Images\CustomHeader\Poretta &amp; Orr5_16_2012 8_28_57 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\ProPre_iQMedia.jpg" />
+    <Content Include="Images\CustomHeader\PRSA Boston5_22_2012 3_08_45 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\Red Bull3_26_2012 9_46_05 AM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\rnc.jpg" />
+    <Content Include="Images\CustomHeader\Romney 20125_23_2012 2_10_50 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Romney 20125_23_2012 2_14_25 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Staples5_23_2012 12_23_48 AM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\test new client2_21_2012 10_31_20 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\thenew2_20_2012 2_39_30 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\Tilson PR6_14_2012 11_24_18 AM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\US Airways6_11_2012 11_50_39 AM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\US House of Representatives5_9_2012 4_33_49 PM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Vault Communications4_30_2012 2_09_54 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\Villanova3_30_2012 11_30_00 AM_CustomHeader.png" />
+    <Content Include="Images\CustomHeader\Washington Examiner4_9_2012 2_30_10 PM_CustomHeader.jpg" />
+    <Content Include="Images\CustomHeader\wfb.jpg" />
+    <Content Include="Images\CustomHeader\wynnvig.jpg" />
+    <Content Include="Images\down-bw.png" />
+    <Content Include="Images\down_ms.png" />
+    <Content Include="Images\down-wb.png" />
+    <Content Include="Images\down.png" />
+    <Content Include="Images\google-map.jpg" />
+    <Content Include="Images\grid-th-bg.jpg" />
+    <Content Include="Images\hdicon-login.jpg" />
+    <Content Include="Images\header.jpg" />
+    <Content Include="Images\hsep1.jpg" />
+    <Content Include="Images\interested-in-iqmedia.jpg" />
+    <Content Include="Images\iphone-ipad.png" />
+    <Content Include="Images\iq_small_logo.jpg" />
+    <Content Include="Images\logo-IQMediaGroup.jpg" />
+    <Content Include="Images\mainbox-lb.jpg" />
+    <Content Include="Images\mainbox-lb.png" />
+    <Content Include="Images\mainbox-lt.jpg" />
+    <Content Include="Images\mainbox-lt.png" />
+    <Content Include="Images\mainbox-rb.jpg" />
+    <Content Include="Images\mainbox-rb.png" />
+    <Content Include="Images\mainbox-rt.jpg" />
+    <Content Include="Images\mainbox-rt.png" />
+    <Content Include="Images\multiLogin.jpg" />
+    <Content Include="Images\nav-sep.jpg" />
+    <Content Include="Images\next.png" />
+    <Content Include="Images\pagetitle-bg.jpg" />
+    <Content Include="Images\pagetitle-left.jpg" />
+    <Content Include="Images\pagetitle-right.jpg" />
+    <Content Include="Images\PlayerLogo\AllianceTek2_23_2012 4_27_15 AM_PlayerLogo.jpg" />
+    <Content Include="Images\PlayerLogo\iQ Media2_20_2012 2_19_08 PM_PlayerLogo.jpg" />
+    <Content Include="Images\PlayerLogo\iQ Media2_21_2012 5_30_03 AM_PlayerLogo.jpg" />
+    <Content Include="Images\PlayerLogo\iQ Media2_24_2012 9_08_13 AM_PlayerLogo.png" />
+    <Content Include="Images\PlayerLogo\iQ Media2_27_2012 6_24_07 AM_PlayerLogo.png" />
+    <Content Include="Images\PlayerLogo\iQ Media2_27_2012 6_35_38 AM_PlayerLogo.JPG" />
+    <Content Include="Images\PlayerLogo\iq_logo.png" />
+    <Content Include="Images\PlayerLogo\test new client2_21_2012 10_42_47 AM_PlayerLogo.jpg" />
+    <Content Include="Images\PlayerLogo\thenew2_20_2012 2_39_30 PM_PlayerLogo.jpg" />
+    <Content Include="Images\prev.png" />
+    <Content Include="Images\proprep_logo.png" />
+    <Content Include="Images\search.png" />
+    <Content Include="Images\spacer.gif" />
+    <Content Include="Images\tab-bg.png" />
+    <Content Include="Images\tab-bg2.jpg" />
+    <Content Include="Images\topbg.jpg" />
+    <Content Include="Images\topnav-bg.jpg" />
+    <Content Include="Images\topnav-left.jpg" />
+    <Content Include="Images\topnav-right.jpg" />
+    <Content Include="Images\ugc_down.jpg" />
+    <Content Include="Images\video.jpg" />
+    <Content Include="IQCustom\browse.JPG" />
+    <Content Include="IQCustom\cancel.png" />
+    <Content Include="IQCustom\Default.aspx" />
+    <Content Include="IQCustom\uploadify.swf" />
+    <Content Include="IQCustom\uploadify_old.swf" />
+    <Content Include="iqmedia_player.swf" />
+    <Content Include="logtext.aspx" />
+    <Content Include="MyCliqMedia.aspx" />
+    <Content Include="MyCliqMedia\css\style.css" />
+    <Content Include="MyCliqMedia\images\btn-go.png" />
+    <Content Include="MyCliqMedia\images\concept-bg.jpg" />
+    <Content Include="MyCliqMedia\images\concept-bg1.jpg" />
+    <Content Include="MyCliqMedia\images\footer-bg.png" />
+    <Content Include="MyCliqMedia\images\infobubble-bg.png" />
+    <Content Include="MyCliqMedia\images\input-bg.png" />
+    <Content Include="MyCliqMedia\images\login-bg.png" />
+    <Content Include="MyCliqMedia\images\logo-cliq.png" />
+    <Content Include="MyCliqMedia\images\powered-by.png" />
+    <Content Include="MyCliqMedia\images\social-icon-facebook.png" />
+    <Content Include="MyCliqMedia\images\social-icon-linkedin.png" />
+    <Content Include="MyCliqMedia\images\social-icon-twitter.png" />
+    <Content Include="MyCliqMedia\images\topstrip-bg.png" />
+    <Content Include="MyCliqMedia\js\functions - Copy.js" />
+    <Content Include="MyCliqMedia\js\functions.js" />
+    <Content Include="MyCliqMedia\js\html5.js" />
+    <Content Include="MyCliqMedia\js\jquery.min.js" />
+    <Content Include="Default.aspx" />
+    <Content Include="Policy.txt" />
+    <Content Include="Political\Default.aspx" />
+    <Content Include="Script\html5.js" />
+    <Content Include="Script\IQMediaraw.js" />
+    <Content Include="Script\jquery.uploadify.v2.1.4.min.js" />
+    <Content Include="Script\PlayerResize.js" />
+    <Content Include="Script\swfobject.js" />
+    <Content Include="UserControl\IQMediaMaster\BasicClipPlayer\BasicClipPlayer.ascx" />
+    <Content Include="UserControl\IQMediaMaster\BroadcastTV\BroadcastTV.ascx" />
+    <Content Include="UserControl\IQMediaMaster\cliQ\cliQ.ascx" />
+    <Content Include="UserControl\IQMediaMaster\CollegiateAthleticPrograms\CollegiateAthleticPrograms.ascx" />
+    <Content Include="UserControl\IQMediaMaster\CopyrightPolicy\CopyrightPolicy.ascx" />
+    <Content Include="UserControl\IQMediaMaster\CustomPager\CustomPager.ascx" />
+    <Content Include="UserControl\IQMediaMaster\DownloadArchiveBLPM\DownloadArchiveBLPM.ascx" />
+    <Content Include="UserControl\IQMediaMaster\DownloadArchiveNM\DownloadArchiveNM.ascx" />
+    <Content Include="UserControl\IQMediaMaster\DownloadArchiveSM\DownloadArchiveSM.ascx" />
+    <Content Include="UserControl\IQMediaMaster\DownloadClip\DownloadClip.ascx" />
+    <Content Include="UserControl\IQMediaMaster\FooterStatic\FooterStatic.ascx" />
+    <Content Include="UserControl\IQMediaMaster\HowAreWeDifferent\HowAreWeDifferent.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IFrameMicrosite\IFrameMicrosite.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IframeRawMediaH\IframeRawMediaH.ascx" />
+    <Content Include="UserControl\IQMediaMaster\InlineMediaWorkspace\InlineMediaWorkspace.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQAgentIframe\IQAgentIframe.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQAgentReport\IQAgentReport.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQCustomFtpBrowse\IQCustomFtpBrowse.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQCustom\IQCustom.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQPremium\IQPremium.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQ_NewsControl\IQ_NewsControl.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IRawMedia\IRawMedia.ascx" />
+    <Content Include="UserControl\IQMediaMaster\LoginIframe\LoginIframe.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ManagementTeam\ManagementTeam.ascx" />
+    <Content Include="UserControl\IQMediaMaster\MyCliqMediaLogin\MyCliqMediaLogin.ascx" />
+    <Content Include="UserControl\IQMediaMaster\MyIQReport\MyIQReport.ascx" />
+    <Content Include="UserControl\IQMediaMaster\myiQStatic\myiQStatic.ascx" />
+    <Content Include="UserControl\IQMediaMaster\MyIQ\MyIQ.ascx" />
+    <Content Include="UserControl\IQMediaMaster\News\IQ_News.ascx" />
+    <Content Include="UserControl\IQMediaMaster\OEMPartnerships\OEMPartnerships.ascx" />
+    <Content Include="UserControl\IQMediaMaster\OnlineNews\OnlineNews.ascx" />
+    <Content Include="UserControl\IQMediaMaster\OptimizedMediaCloud\OptimizedMediaCloud.ascx" />
+    <Content Include="UserControl\IQMediaMaster\OurProduct\OurProduct.ascx" />
+    <Content Include="UserControl\IQMediaMaster\PoliticalParties\PoliticalParties.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Political\Political.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Products\Products.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ProfessionalSports\ProfessionalSports.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ProPrep\ProPrep.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Report\Report.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Resources\Resources.ascx" />
+    <Content Include="UserControl\IQMediaMaster\SocialMedia\SocialMedia.ascx" />
+    <Content Include="UserControl\IQMediaMaster\StaticMasterRightContent\StaticMasterRightContent.ascx" />
+    <Content Include="UserControl\IQMediaMaster\TopPanel\TopPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Twitter\Twitter.ascx" />
+    <Content Include="UserControl\IQMediaMaster\University\University.ascx" />
+    <Content Include="UserControl\IQMediaMaster\UserGeneratedContent\UserGeneratedContent.ascx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="ZoomLine.swf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CheckAuthentication.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClipandRawMedia\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClipandRawMedia\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CopyrightPolicy\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CopyrightPolicy\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadArchiveBLPM\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DownloadArchiveBLPM\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadArchiveNM\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DownloadArchiveNM\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadArchiveSM\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DownloadArchiveSM\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FusionChart\WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FusionChart\WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FusionChart\ZoomChartHandler.cs" />
+    <Compile Include="HowAreWeDifferent\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="HowAreWeDifferent\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IframeRawMediaH\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IframeRawMediaH\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQAgentIframe\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQAgentIframe\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaGroupInner.Master.cs">
+      <DependentUpon>IQMediaGroupInner.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaGroupInner.Master.designer.cs">
+      <DependentUpon>IQMediaGroupInner.Master</DependentUpon>
+    </Compile>
+    <Compile Include="DownloadClip\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DownloadClip\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClipPlayer\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClipPlayer\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Corporate\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Corporate\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FusionChart\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FusionChart\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IFrameMicrosite\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IFrameMicrosite\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IFrameServiceRawMedia\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IFrameServiceRawMedia\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CollegiateAthleticPrograms\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CollegiateAthleticPrograms\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaGroupResponsive.Master.cs">
+      <DependentUpon>IQMediaGroupResponsive.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaGroupResponsive.Master.designer.cs">
+      <DependentUpon>IQMediaGroupResponsive.Master</DependentUpon>
+    </Compile>
+    <Compile Include="IQPremium\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQPremium\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQNews\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQNews\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ManagementTeam\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ManagementTeam\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyClips\WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyClips\WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyIQ\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyIQ\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="News\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="News\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="OEMPartnerships\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OEMPartnerships\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PoliticalParties\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PoliticalParties\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProfessionalSports\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProfessionalSports\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Industries\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Industries\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ProPrep\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProPrep\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Report\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Report\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Report\IQAgent.aspx.cs">
+      <DependentUpon>IQAgent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Report\IQAgent.aspx.designer.cs">
+      <DependentUpon>IQAgent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Report\MyIQ.aspx.cs">
+      <DependentUpon>MyIQ.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Report\MyIQ.aspx.designer.cs">
+      <DependentUpon>MyIQ.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Resources\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Subscription\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Subscription\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test.aspx.cs">
+      <DependentUpon>Test.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Test.aspx.designer.cs">
+      <DependentUpon>Test.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="University\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="University\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQCustom\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQCustom\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaGroupStaticContent.Master.cs">
+      <DependentUpon>IQMediaGroupStaticContent.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaGroupStaticContent.Master.designer.cs">
+      <DependentUpon>IQMediaGroupStaticContent.Master</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaGroupNew.Master.cs">
+      <DependentUpon>IQMediaGroupNew.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaGroupNew.Master.designer.cs">
+      <DependentUpon>IQMediaGroupNew.Master</DependentUpon>
+    </Compile>
+    <Compile Include="IframeRawMedia\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IframeRawMedia\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="logtext.aspx.cs">
+      <DependentUpon>logtext.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="logtext.aspx.designer.cs">
+      <DependentUpon>logtext.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MyCliqMedia.aspx.cs">
+      <DependentUpon>MyCliqMedia.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyCliqMedia.aspx.designer.cs">
+      <DependentUpon>MyCliqMedia.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="NoRole\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="NoRole\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomError\CustomError.aspx.cs">
+      <DependentUpon>CustomError.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomError\CustomError.aspx.designer.cs">
+      <DependentUpon>CustomError.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomError\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomError\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQAdvance\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQAdvance\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQAgent\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQAgent\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="MyClips\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MyClips\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Political\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Political\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Products\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Products\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service2\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Service2\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Service3\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Service3\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Services\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="UserControl\IQMediaMaster\RightSideAdvertise\RightSideAdvertise.ascx" />
+    <Content Include="UserControl\IQMediaMaster\RightTopLogin\RightTopLogin.ascx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Css\flexcrollstyles.css" />
+    <Content Include="Css\tutorsty.css" />
+    <Content Include="Script\flexcroll.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Corporate\Default.aspx" />
+    <Content Include="Css\Contentmaster.css" />
+    <Content Include="Images\arrow-next1.jpg" />
+    <Content Include="Images\btn-grey-bg.jpg" />
+    <Content Include="Images\input-135-bg.gif" />
+    <Content Include="Images\input-200-bg.gif" />
+    <Content Include="Images\log4net.dll" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\New-Logo.png" />
+    <Content Include="Images\searchtab-bg.jpg" />
+    <Content Include="Images\searchtab-active-bg.jpg" />
+    <Content Include="Images\tab_bg.jpg" />
+    <Content Include="Industries\Default.aspx" />
+    <Content Include="IQMediaGroupNew.Master" />
+    <Content Include="IQMediaGroupStaticContent.Master" />
+    <Content Include="IQMediaGroupInner.Master" />
+    <None Include="Css\fonts\avenir-medium-webfont.eot" />
+    <None Include="Css\fonts\avenir-medium-webfont.svg" />
+    <None Include="Css\fonts\avenir-medium-webfont.ttf" />
+    <None Include="Css\fonts\avenir-medium-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Bold-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Bold-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Bold-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Bold-webfont.woff" />
+    <None Include="Css\fonts\quicksand_bold-webfont_regular.eot" />
+    <None Include="Css\fonts\quicksand_bold-webfont_regular.svg" />
+    <None Include="Css\fonts\quicksand_bold-webfont_regular.ttf" />
+    <None Include="Css\fonts\quicksand_bold-webfont_regular.woff" />
+    <None Include="Css\fonts\Quicksand_Bold_Oblique-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Bold_Oblique-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Bold_Oblique-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Bold_Oblique-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Book-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Book-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Book-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Book-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Book_Oblique-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Book_Oblique-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Book_Oblique-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Book_Oblique-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Dash-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Dash-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Dash-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Dash-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Light-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Light-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Light-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Light-webfont.woff" />
+    <None Include="Css\fonts\Quicksand_Light_Oblique-webfont.eot" />
+    <None Include="Css\fonts\Quicksand_Light_Oblique-webfont.svg" />
+    <None Include="Css\fonts\Quicksand_Light_Oblique-webfont.ttf" />
+    <None Include="Css\fonts\Quicksand_Light_Oblique-webfont.woff" />
+    <None Include="Css\font\avenir-medium-webfont.eot" />
+    <None Include="Css\font\avenir-medium-webfont.svg" />
+    <None Include="Css\font\avenir-medium-webfont.ttf" />
+    <None Include="Css\font\avenir-medium-webfont.woff" />
+    <None Include="Css\font\quicksand_bold-webfont.eot" />
+    <None Include="Css\font\quicksand_bold-webfont.svg" />
+    <None Include="Css\font\quicksand_bold-webfont.ttf" />
+    <None Include="Css\font\quicksand_bold-webfont.woff" />
+    <None Include="Css\font\quicksand_book-webfont.eot" />
+    <None Include="Css\font\quicksand_book-webfont.svg" />
+    <None Include="Css\font\quicksand_book-webfont.ttf" />
+    <None Include="Css\font\quicksand_book-webfont.woff" />
+    <Content Include="bin\IQMediaGroup.Model.dll" />
+    <Content Include="bin\IQMediaGroup.Model.pdb" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Common.xml" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Data.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Data.xml" />
+    <Content Include="bin\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="bin\Microsoft.Practices.Unity.dll" />
+    <Content Include="ClipandRawMedia\Default.aspx" />
+    <Content Include="Css\master-ie.css" />
+    <Content Include="Css\master.css" />
+    <Content Include="IframeRawMedia\Default.aspx" />
+    <Content Include="Images\banner-bg.jpg" />
+    <Content Include="Images\banner-bottom-glowing.png" />
+    <Content Include="Images\banner-left-glowing.png" />
+    <Content Include="Images\banner-right-glowing.png" />
+    <Content Include="Images\banner.jpg" />
+    <Content Include="Images\block-bottom-end-shadow.png" />
+    <Content Include="Images\block-bottom-shadow.png" />
+    <Content Include="Images\block-corner-shadow.png" />
+    <Content Include="Images\block-right-end-shadow.png" />
+    <Content Include="Images\block-right-shadow.png" />
+    <Content Include="Images\block\bottom-end-shadow.png" />
+    <Content Include="Images\block\bottom-shadow.png" />
+    <Content Include="Images\block\ie\bottom-end-shadow.jpg" />
+    <Content Include="Images\block\ie\bottom-shadow.jpg" />
+    <Content Include="Images\block\ie\left-end-shadow.jpg" />
+    <Content Include="Images\block\ie\left-shadow.jpg" />
+    <Content Include="Images\block\ie\lt-corner-shadow.jpg" />
+    <Content Include="Images\block\ie\rb-corner-shadow.jpg" />
+    <Content Include="Images\block\ie\right-end-shadow.jpg" />
+    <Content Include="Images\block\ie\right-shadow.jpg" />
+    <Content Include="Images\block\ie\top-end-shadow.jpg" />
+    <Content Include="Images\block\ie\top-shadow.jpg" />
+    <Content Include="Images\block\left-end-shadow.png" />
+    <Content Include="Images\block\left-shadow.png" />
+    <Content Include="Images\block\lt-corner-shadow.png" />
+    <Content Include="Images\block\rb-corner-shadow.png" />
+    <Content Include="Images\block\right-end-shadow.png" />
+    <Content Include="Images\block\right-shadow.png" />
+    <Content Include="Images\block\top-end-shadow.png" />
+    <Content Include="Images\block\top-shadow.png" />
+    <Content Include="Images\facebook.png" />
+    <Content Include="Images\gridicon-delete.png" />
+    <Content Include="Images\header-bg-2.jpg" />
+    <Content Include="Images\header-bg-2.png" />
+    <Content Include="Images\in_old.png" />
+    <Content Include="Images\link-180-bg.gif" />
+    <Content Include="Images\list-bullet.png" />
+    <Content Include="Images\nav-seperator.gif" />
+    <Content Include="Images\refreshbutton.png" />
+    <Content Include="Images\service1.jpg" />
+    <Content Include="Images\service1_rollover.jpg" />
+    <Content Include="Images\service2.jpg" />
+    <Content Include="Images\service2_rollover.jpg" />
+    <Content Include="Images\service3.jpg" />
+    <Content Include="Images\service3_rollover.jpg" />
+    <Content Include="Images\service4.jpg" />
+    <Content Include="Images\service4_rollover.jpg" />
+    <Content Include="Images\share.gif" />
+    <Content Include="Images\site-bg.jpg" />
+    <Content Include="Images\twitter.png" />
+    <Content Include="NoRole\Default.aspx" />
+    <Content Include="CustomError\CustomError.aspx" />
+    <Content Include="CustomError\CustomError1.htm" />
+    <Content Include="CustomError\Default.aspx" />
+    <Content Include="Help\Help.htm" />
+    <Content Include="Images\banner_bottom.jpg" />
+    <Content Include="Images\banner_large.jpg" />
+    <Content Include="Images\banner_large_rawMedia.jpg" />
+    <Content Include="Images\banner_middle.jpg" />
+    <Content Include="Images\banner_middle_rawMedia.jpg" />
+    <Content Include="Images\banner_powered.jpg" />
+    <Content Include="Images\btn-bgrep.jpg" />
+    <Content Include="Images\collapse_icon.png" />
+    <Content Include="Images\error.png" />
+    <Content Include="Images\expand_icon.png" />
+    <Content Include="Images\header-new.jpg" />
+    <Content Include="Images\img.jpg" />
+    <Content Include="Images\searchbox-lt.jpg" />
+    <Content Include="Images\searchbox-rt.jpg" />
+    <Content Include="Images\searchtab-active2.jpg" />
+    <Content Include="IQAdvance\Default.aspx" />
+    <Content Include="IQAgent\Default.aspx" />
+    <None Include="FusionChart\data.json" />
+    <None Include="Images\block\ie\Thumbs.db" />
+    <None Include="Images\block\Thumbs.db" />
+    <Content Include="bin\FredCK.FCKeditorV2.dll" />
+    <Content Include="EmailTemplate\PasswordReminder.htm" />
+    <Content Include="Global.asax" />
+    <Content Include="Images\27-0.gif" />
+    <Content Include="Images\27-1.gif" />
+    <Content Include="Images\30-0.gif" />
+    <Content Include="Images\arrow-down-grey.gif" />
+    <Content Include="Images\arrow-down.gif" />
+    <Content Include="Images\arrow-next.gif" />
+    <Content Include="Images\arrow-next.png" />
+    <Content Include="Images\arrow-previous1.jpg" />
+    <Content Include="Images\arrow-previous.png" />
+    <Content Include="Images\arrow-previous.gif" />
+    <Content Include="Images\arrow-up.gif" />
+    <Content Include="Images\bluebox-lt.jpg" />
+    <Content Include="Images\bluebox-rt.jpg" />
+    <Content Include="Images\btn-close.gif" />
+    <Content Include="Images\btn-play.jpg" />
+    <Content Include="Images\btn3-bg.jpg" />
+    <Content Include="Images\btn4-bg.jpg" />
+    <Content Include="Images\grey-grad.jpg" />
+    <Content Include="Images\grid-th.jpg" />
+    <Content Include="Images\gridicon-cancel.png" />
+    <Content Include="Images\gridicon-edit1.png" />
+    <Content Include="Images\gridicon-update.png" />
+    <Content Include="Images\handle_left.gif" />
+    <Content Include="Images\handle_right.gif" />
+    <Content Include="Images\hsep.jpg" />
+    <Content Include="Images\icon-media.jpg" />
+    <Content Include="Images\loaderB64.gif" />
+    <Content Include="Images\loading_Old.gif" />
+    <Content Include="Images\rail_dark.gif" />
+    <Content Include="Images\rail_light.gif" />
+    <Content Include="Images\searchtab-active.jpg" />
+    <Content Include="Images\searchtab.jpg" />
+    <Content Include="Images\tab-bg.jpg" />
+    <Content Include="Images\tab-hover-bg.jpg" />
+    <Content Include="Images\tab-hover-r.jpg" />
+    <Content Include="Images\tab-r.jpg" />
+    <Content Include="Images\testsegment.GIF" />
+    <Content Include="Images\time00.gif" />
+    <Content Include="Images\time00Old.gif" />
+    <Content Include="Images\time10.gif" />
+    <Content Include="Images\time10Old.gif" />
+    <Content Include="Images\time20.gif" />
+    <Content Include="Images\time20Old.gif" />
+    <Content Include="Images\time30.gif" />
+    <Content Include="Images\time30Old.gif" />
+    <Content Include="Images\time40.gif" />
+    <Content Include="Images\time40Old.gif" />
+    <Content Include="Images\time50.gif" />
+    <Content Include="Images\time50Old.gif" />
+    <Content Include="bin\FlashControl.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll" />
+    <Content Include="Images\arrow-down.png" />
+    <Content Include="Images\banner-ad1.jpg" />
+    <Content Include="Images\banner-ad2.jpg" />
+    <Content Include="Images\banner-ad3.jpg" />
+    <Content Include="Images\contentbox-blue-lt.jpg" />
+    <Content Include="Images\contentbox-blue-rt.jpg" />
+    <Content Include="Images\contentbox-blue-t.jpg" />
+    <Content Include="Images\hsep-blue.jpg" />
+    <Content Include="Images\icon-user.jpg" />
+    <Content Include="Images\mainbox-lb.gif" />
+    <Content Include="Images\mainbox-lt.gif" />
+    <Content Include="Images\mainbox-rb.gif" />
+    <Content Include="Images\mainbox-rt.gif" />
+    <Content Include="Images\video2.jpg" />
+    <Content Include="MyClips\Default.aspx" />
+    <Content Include="Script\jquery-1.3.2.js" />
+    <Content Include="Script\jquery-1.3.2.min.js" />
+    <Content Include="Service2\Default.aspx" />
+    <Content Include="Service3\Default.aspx" />
+    <Content Include="Services\Default.aspx" />
+    <Content Include="StationLogoImages\BBC.gif" />
+    <Content Include="StationLogoImages\BBTV.gif" />
+    <Content Include="StationLogoImages\BRAVO.gif" />
+    <Content Include="StationLogoImages\CN8.gif" />
+    <Content Include="StationLogoImages\CNBC.gif" />
+    <Content Include="StationLogoImages\CNN.gif" />
+    <Content Include="StationLogoImages\CSNCH.gif" />
+    <Content Include="StationLogoImages\CSTV.gif" />
+    <Content Include="StationLogoImages\DOBBS.gif" />
+    <Content Include="StationLogoImages\ENTTV.gif" />
+    <Content Include="StationLogoImages\ESPN.gif" />
+    <Content Include="StationLogoImages\ESPN2.gif" />
+    <Content Include="StationLogoImages\ESPNEWS.gif" />
+    <Content Include="StationLogoImages\EWTN.gif" />
+    <Content Include="StationLogoImages\FOXBN.gif" />
+    <Content Include="StationLogoImages\FOXNEWS.gif" />
+    <Content Include="StationLogoImages\FOXPT.gif" />
+    <Content Include="StationLogoImages\G4.gif" />
+    <Content Include="StationLogoImages\GBECK.gif" />
+    <Content Include="StationLogoImages\HDLN.gif" />
+    <Content Include="StationLogoImages\HOWARD101.gif" />
+    <Content Include="StationLogoImages\HUCK.gif" />
+    <Content Include="StationLogoImages\HUCKSF.gif" />
+    <Content Include="StationLogoImages\JAZEERA.gif" />
+    <Content Include="StationLogoImages\KABB.gif" />
+    <Content Include="StationLogoImages\KARE.gif" />
+    <Content Include="StationLogoImages\KCTV.gif" />
+    <Content Include="StationLogoImages\KDFW.gif" />
+    <Content Include="StationLogoImages\KDKA.gif" />
+    <Content Include="StationLogoImages\KDNL.gif" />
+    <Content Include="StationLogoImages\KDSM.gif" />
+    <Content Include="StationLogoImages\KENS.gif" />
+    <Content Include="StationLogoImages\KFXA.gif" />
+    <Content Include="StationLogoImages\KGAN.gif" />
+    <Content Include="StationLogoImages\KHOU.gif" />
+    <Content Include="StationLogoImages\KMBC.gif" />
+    <Content Include="StationLogoImages\KMEX.gif" />
+    <Content Include="StationLogoImages\KMJFM.gif" />
+    <Content Include="StationLogoImages\KMOV.gif" />
+    <Content Include="StationLogoImages\KPLR.gif" />
+    <Content Include="StationLogoImages\KPRC.gif" />
+    <Content Include="StationLogoImages\KRIV.gif" />
+    <Content Include="StationLogoImages\KSAT.gif" />
+    <Content Include="StationLogoImages\KSCAFM.gif" />
+    <Content Include="StationLogoImages\KSDK.gif" />
+    <Content Include="StationLogoImages\KSHB.gif" />
+    <Content Include="StationLogoImages\KSMO.gif" />
+    <Content Include="StationLogoImages\KSTP.gif" />
+    <Content Include="StationLogoImages\KSWBTV.gif" />
+    <Content Include="StationLogoImages\KTBC.gif" />
+    <Content Include="StationLogoImages\KTRK.gif" />
+    <Content Include="StationLogoImages\KTVI.gif" />
+    <Content Include="StationLogoImages\KTVT.gif" />
+    <Content Include="StationLogoImages\KXAS.gif" />
+    <Content Include="StationLogoImages\MEEHAN.gif" />
+    <Content Include="StationLogoImages\MSGTV.gif" />
+    <Content Include="StationLogoImages\MSNBC.gif" />
+    <Content Include="StationLogoImages\MTV.gif" />
+    <Content Include="StationLogoImages\NFL.gif" />
+    <Content Include="StationLogoImages\OLV.gif" />
+    <Content Include="StationLogoImages\QVCUS.gif" />
+    <Content Include="StationLogoImages\REDLASSO.gif" />
+    <Content Include="StationLogoImages\SAP.gif" />
+    <Content Include="StationLogoImages\TGYM.gif" />
+    <Content Include="StationLogoImages\TLC.gif" />
+    <Content Include="StationLogoImages\TYRA.gif" />
+    <Content Include="StationLogoImages\VCOPIOUS.gif" />
+    <Content Include="StationLogoImages\VH1.gif" />
+    <Content Include="StationLogoImages\VOW.gif" />
+    <Content Include="StationLogoImages\WABM.gif" />
+    <Content Include="StationLogoImages\WAGA.gif" />
+    <Content Include="StationLogoImages\WAMRFM.gif" />
+    <Content Include="StationLogoImages\WAVE.gif" />
+    <Content Include="StationLogoImages\WBAY.gif" />
+    <Content Include="StationLogoImages\WBNS.gif" />
+    <Content Include="StationLogoImages\WBRC.gif" />
+    <Content Include="StationLogoImages\WCCO.gif" />
+    <Content Include="StationLogoImages\WCMH.gif" />
+    <Content Include="StationLogoImages\WCPO.gif" />
+    <Content Include="StationLogoImages\WDAF.gif" />
+    <Content Include="StationLogoImages\WDRB.gif" />
+    <Content Include="StationLogoImages\WEATHER.gif" />
+    <Content Include="StationLogoImages\WENDY.gif" />
+    <Content Include="StationLogoImages\WESH.gif" />
+    <Content Include="StationLogoImages\WEWS.gif" />
+    <Content Include="StationLogoImages\WEYI.gif" />
+    <Content Include="StationLogoImages\WFAA.gif" />
+    <Content Include="StationLogoImages\WFED.gif" />
+    <Content Include="StationLogoImages\WFLA.gif" />
+    <Content Include="StationLogoImages\WFLX.gif" />
+    <Content Include="StationLogoImages\WFOR.gif" />
+    <Content Include="StationLogoImages\WFPA.gif" />
+    <Content Include="StationLogoImages\WFRV.gif" />
+    <Content Include="StationLogoImages\WFSB.gif" />
+    <Content Include="StationLogoImages\WFTS.gif" />
+    <Content Include="StationLogoImages\WFTV.gif" />
+    <Content Include="StationLogoImages\WFXT.gif" />
+    <Content Include="StationLogoImages\WGBA.gif" />
+    <Content Include="StationLogoImages\WGCL.gif" />
+    <Content Include="StationLogoImages\WHAS.gif" />
+    <Content Include="StationLogoImages\WHBQ.gif" />
+    <Content Include="StationLogoImages\WHNT.gif" />
+    <Content Include="StationLogoImages\WHO.gif" />
+    <Content Include="StationLogoImages\WHP.gif" />
+    <Content Include="StationLogoImages\WHTM.gif" />
+    <Content Include="StationLogoImages\WHYY.gif" />
+    <Content Include="StationLogoImages\WIAT.gif" />
+    <Content Include="StationLogoImages\WIOD.gif" />
+    <Content Include="StationLogoImages\WISH.gif" />
+    <Content Include="StationLogoImages\WJBK.gif" />
+    <Content Include="StationLogoImages\WJW.gif" />
+    <Content Include="StationLogoImages\WKEF.gif" />
+    <Content Include="StationLogoImages\WKMG.gif" />
+    <Content Include="StationLogoImages\WKRC.gif" />
+    <Content Include="StationLogoImages\WKRN.gif" />
+    <Content Include="StationLogoImages\WKYC.gif" />
+    <Content Include="StationLogoImages\WLKY.gif" />
+    <Content Include="StationLogoImages\WLTV.gif" />
+    <Content Include="StationLogoImages\WLUK.gif" />
+    <Content Include="StationLogoImages\WLWT.gif" />
+    <Content Include="StationLogoImages\WMC.gif" />
+    <Content Include="StationLogoImages\WMMR.gif" />
+    <Content Include="StationLogoImages\WMPT.gif" />
+    <Content Include="StationLogoImages\WMSN.gif" />
+    <Content Include="StationLogoImages\WNEM.gif" />
+    <Content Include="StationLogoImages\WNEP.gif" />
+    <Content Include="StationLogoImages\WOAI.gif" />
+    <Content Include="StationLogoImages\WOFL.gif" />
+    <Content Include="StationLogoImages\WPBF.gif" />
+    <Content Include="StationLogoImages\WPEC.gif" />
+    <Content Include="StationLogoImages\WPGH.gif" />
+    <Content Include="StationLogoImages\WPLG.gif" />
+    <Content Include="StationLogoImages\WPSG.gif" />
+    <Content Include="StationLogoImages\WPTV.gif" />
+    <Content Include="StationLogoImages\WPTY.gif" />
+    <Content Include="StationLogoImages\WPXI.gif" />
+    <Content Include="StationLogoImages\WQAD.gif" />
+    <Content Include="StationLogoImages\WREG.gif" />
+    <Content Include="StationLogoImages\WRGT.gif" />
+    <Content Include="StationLogoImages\WRLH.gif" />
+    <Content Include="StationLogoImages\WRTV.gif" />
+    <Content Include="StationLogoImages\WSB.gif" />
+    <Content Include="StationLogoImages\WSMH.gif" />
+    <Content Include="StationLogoImages\WSMV.gif" />
+    <Content Include="StationLogoImages\WSVN.gif" />
+    <Content Include="StationLogoImages\WSYM.gif" />
+    <Content Include="StationLogoImages\WSYT.gif" />
+    <Content Include="StationLogoImages\WSYX.gif" />
+    <Content Include="StationLogoImages\WTAE.gif" />
+    <Content Include="StationLogoImages\WTHR.gif" />
+    <Content Include="StationLogoImages\WTIC.gif" />
+    <Content Include="StationLogoImages\WTOP.gif" />
+    <Content Include="StationLogoImages\WTSP.gif" />
+    <Content Include="StationLogoImages\WTTE.gif" />
+    <Content Include="StationLogoImages\WTVF.gif" />
+    <Content Include="StationLogoImages\WTVJ.gif" />
+    <Content Include="StationLogoImages\WTVR.gif" />
+    <Content Include="StationLogoImages\WTVT.gif" />
+    <Content Include="StationLogoImages\WUVP.gif" />
+    <Content Include="StationLogoImages\WVTM.gif" />
+    <Content Include="StationLogoImages\WWOR.gif" />
+    <Content Include="StationLogoImages\WXIA.gif" />
+    <Content Include="StationLogoImages\WXIN.gif" />
+    <Content Include="StationLogoImages\WXNYFM.gif" />
+    <Content Include="StationLogoImages\WXTU.gif" />
+    <Content Include="StationLogoImages\WZFG.gif" />
+    <Content Include="StationLogoImages\WZTV.gif" />
+    <Content Include="StationLogoImages\XM116.gif" />
+    <Content Include="StationLogoImages\XM127.gif" />
+    <Content Include="StationLogoImages\XM143.gif" />
+    <Content Include="StationLogoImages\XM144.gif" />
+    <Content Include="StationLogoImages\XM146.gif" />
+    <Content Include="StationLogoImages\XM151.gif" />
+    <Content Include="StationLogoImages\XM155.gif" />
+    <Content Include="StationLogoImages\XM156.gif" />
+    <Content Include="StationLogoImages\XM164.gif" />
+    <Content Include="StationLogoImages\XM166.gif" />
+    <Content Include="StationLogoImages\XM171.gif" />
+    <Content Include="StationLogoImages\XM175.gif" />
+    <Content Include="StationLogoImages\XM202.gif" />
+    <Content Include="StationLogoImages\Z100.gif" />
+    <Content Include="UserControl\IQMediaMaster\About\About.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ClipandRawMediaControl\ClipandRawMedia.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ClipPlayer\ClipPlayer.ascx" />
+    <Content Include="UserControl\IQMediaMaster\ContactUs\ContactUS.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Contact\Contact.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Corporate\Corporate.ascx" />
+    <Content Include="UserControl\IQMediaMaster\CustomError\CustomError.ascx" />
+    <Content Include="UserControl\IQMediaMaster\FooterPanel\FooterPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\HeaderRightPanel\HeaderRightPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\HeaderTabPanel\HeaderTabPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Home\Home.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IFrameRawMedia\IFrameRawMedia.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Industries\Industries.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQAdvance\IQAdvance.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQAgent\IQAgent.ascx" />
+    <Content Include="UserControl\IQMediaMaster\IQMediaMessenger\IQMediaMessenger.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Login\Login.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Logout\Logout.ascx" />
+    <Content Include="UserControl\IQMediaMaster\MyClips\MyClips.ascx" />
+    <Content Include="UserControl\IQMediaMaster\NavigationPanel\NavigationPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\News\News.ascx" />
+    <Content Include="UserControl\IQMediaMaster\NoRoles\NoRole.ascx" />
+    <Content Include="UserControl\IQMediaMaster\RawMediaPlayer\RawMediaPlayer.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Service2\Service2.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Service3\Service3.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Services\Services.ascx" />
+    <Content Include="UserControl\IQMediaMaster\SocialNetworkingWebsitesPanel\SocialNetworkingWebsitesPanel.ascx" />
+    <Content Include="UserControl\IQMediaMaster\Welcome\Welcome.ascx" />
+    <Content Include="IQCustom\Upload.ashx" />
+    <Content Include="IQMediaGroupResponsive.Master" />
+    <None Include="IOSApp\IQMediaCorp.ipa" />
+    <None Include="IOSApp\IQMediaCorp.plist" />
+    <None Include="IOSApp\IQMediaCorp_old.ipa" />
+    <None Include="IOSApp\IQMediaCorp_old.plist" />
+    <None Include="MyCliqMedia\css\fonts\quicksand_bold-webfont.eot" />
+    <None Include="MyCliqMedia\css\fonts\quicksand_bold-webfont.svg" />
+    <None Include="MyCliqMedia\css\fonts\quicksand_bold-webfont.ttf" />
+    <None Include="MyCliqMedia\css\fonts\quicksand_bold-webfont.woff" />
+    <None Include="MyCliqMedia\images\Thumbs.db" />
+    <None Include="pdf\Success Stories_Miami Hurricanes.pdf" />
+    <None Include="pdf\Success Stories_Temple_01.pdf" />
+    <None Include="pdf\PL1-cliQ-2-pages.pdf" />
+    <None Include="pdf\PL1-cliQ-4-pages.pdf" />
+    <None Include="pdf\PL2-Inline-Workspace.pdf" />
+    <None Include="pdf\PL2-Media-Cloud.pdf" />
+    <None Include="pdf\PL2-My-iQ.pdf" />
+    <None Include="pdf\Search.pdf" />
+    <None Include="pdf\WP01-Overcoming-TMS-Limits.pdf" />
+    <None Include="User_Manual_HR.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="ClientClipExport\" />
+    <Folder Include="CustomHeader\" />
+    <Folder Include="Images\Images\" />
+    <Folder Include="IQCustom\uploads\" />
+    <Folder Include="IRawMedia\" />
+    <Folder Include="LogFiles\AdvancedSearchServices\" />
+    <Folder Include="pdf\Report\" />
+    <Folder Include="ThumbNailImages\" />
+    <Folder Include="University\UGCContent\" />
+    <Folder Include="uploads\" />
+    <Folder Include="UserControl\IQMediaMaster\SearchSite\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Controller\IQMediaGroup.Controller.csproj">
+      <Project>{16F7492F-BD20-4DD7-9E84-DA7FDD882F43}</Project>
+      <Name>IQMediaGroup.Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Reports.Controller\IQMediaGroup.Reports.Controller.csproj">
+      <Project>{99A694A0-9841-4740-A001-29C06FF5265C}</Project>
+      <Name>IQMediaGroup.Reports.Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Reports.Usercontrol\IQMediaGroup.Reports.Usercontrol.csproj">
+      <Project>{2E06C428-530D-4528-BF13-65C36FABB8DB}</Project>
+      <Name>IQMediaGroup.Reports.Usercontrol</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Usercontrol\IQMediaGroup.Usercontrol.csproj">
+      <Project>{1E07B8D7-CFE5-41CA-A668-DDD933A440C2}</Project>
+      <Name>IQMediaGroup.Usercontrol</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>2281</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://iq.redlasso.com/flashtest/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>http://local.iqmediacorp.com</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

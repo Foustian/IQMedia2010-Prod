@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2E06C428-530D-4528-BF13-65C36FABB8DB}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Reports.Usercontrol</RootNamespace>
+    <AssemblyName>IQMediaGroup.Reports.Usercontrol</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Base\BaseControl.ascx" />
+    <Content Include="Global.asax" />
+    <Content Include="IQMediaMaster\IframeRawMediaReportH\IframeRawMediaReportH.ascx" />
+    <Content Include="IQMediaMaster\IQAgentReport\IQAgentReport.ascx" />
+    <Content Include="IQMediaMaster\MyIQReport\MyIQReport.ascx" />
+    <Content Include="IQMediaMaster\Report\Report.ascx" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\BaseControl.ascx.cs">
+      <DependentUpon>BaseControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Base\GenericToDataTable.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMediaReportH\IframeRawMediaReportH.ascx.cs">
+      <DependentUpon>IframeRawMediaReportH.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMediaReportH\IframeRawMediaReportH.ascx.designer.cs">
+      <DependentUpon>IframeRawMediaReportH.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgentReport\IQAgentReport.ascx.cs">
+      <DependentUpon>IQAgentReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgentReport\IQAgentReport.ascx.designer.cs">
+      <DependentUpon>IQAgentReport.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyIQReport\MyIQReport.ascx.cs">
+      <DependentUpon>MyIQReport.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyIQReport\MyIQReport.ascx.designer.cs">
+      <DependentUpon>MyIQReport.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Report\Report.ascx.cs">
+      <DependentUpon>Report.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Report\Report.ascx.designer.cs">
+      <DependentUpon>Report.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Base\App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Reports.Controller\IQMediaGroup.Reports.Controller.csproj">
+      <Project>{99A694A0-9841-4740-A001-29C06FF5265C}</Project>
+      <Name>IQMediaGroup.Reports.Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Media\IQMedia.Service.Media.Client\IQMedia.Service.Media.Client.csproj">
+      <Project>{76B4FA02-AC1E-4FC7-8A69-C00B130CD0B4}</Project>
+      <Name>IQMedia.Service.Media.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>52443</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)IQMediaMaster\Report\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Report\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQAgentReport\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQAgentReport\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\MyIQReport\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\MyIQReport\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IframeRawMediaReportH\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IframeRawMediaReportH\"  /F /R /Y
+
+
+
+</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

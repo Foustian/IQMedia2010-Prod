@@ -1,0 +1,947 @@
+@charset "utf-8";
+@font-face {
+    font-family: 'quicksand_bookregular';
+    src: url('fonts/quicksand_book-webfont.eot');
+    src: url('fonts/quicksand_book-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/quicksand_book-webfont.woff') format('woff'),
+         url('fonts/quicksand_book-webfont.ttf') format('truetype'),
+         url('fonts/quicksand_book-webfont.svg#quicksand_bookregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'QuicksandBold';
+    src: url('fonts/Quicksand_Bold-webfont.eot');
+    src: url('fonts/Quicksand_Bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Quicksand_Bold-webfont.woff') format('woff'),
+         url('fonts/Quicksand_Bold-webfont.ttf') format('truetype'),
+         url('fonts/Quicksand_Bold-webfont.svg#QuicksandBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+
+@font-face {
+    font-family: 'QuicksandBold_regular';
+    src: url('fonts/Quicksand_Bold-webfont_regular.eot');
+    src: url('fonts/Quicksand_Bold-webfont_regular.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Quicksand_Bold-webfont_regular.woff') format('woff'),
+         url('fonts/Quicksand_Bold-webfont_regular.ttf') format('truetype'),
+         url('fonts/Quicksand_Bold-webfont_regular.svg#QuicksandBold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'avenir_65medium';
+    src: url('fonts/avenir-medium-webfont.eot');
+    src: url('fonts/avenir-medium-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/avenir-medium-webfont.woff') format('woff'),
+         url('fonts/avenir-medium-webfont.ttf') format('truetype'),
+         url('fonts/avenir-medium-webfont.svg#avenir_65medium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+body {
+	/*margin: 0px;
+	padding: 0px;*/
+	background:url(../images/body-bg.jpg) repeat;
+	font: normal 14px "avenir_65medium" !important;
+	
+}
+h1,h2,h3,h4,h5,h6,
+ul,ol,li,
+form,input,textarea,select {
+	margin: 0;
+	padding: 0;
+}
+header, nav, article, footer, address, section {  
+    display: block;  
+}
+p {
+	margin: 10px 0;
+}
+img {
+	border: 0;
+}
+a {
+	text-decoration: none;
+	outline: none;
+}
+.left {
+	text-align: left;
+}
+.right {
+	text-align: right;
+}
+.center {
+	text-align: center;
+}
+.justify {
+	text-align: justify;
+}
+.float-left {
+	float: left;
+}
+.float-right {
+	float: right;
+}
+.clear {
+	clear: both;
+	overflow: hidden;
+}
+
+
+#wrapper {
+	width: 985px;
+	margin: 0 auto;
+}
+header {
+	clear:both;
+	overflow:hidden;
+}
+.logo{
+	padding-top:22px;
+	padding-bottom:19px;
+	float:left;
+}
+.header-right{
+	background:url(../images/login-bg.png) no-repeat;
+	width:335px;
+	height:69px;
+	float:right;
+	margin-top:18px;
+	text-align:left;
+	color: #52bee8;
+	text-decoration: none;
+	/*font: bold 10px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	text-transform: uppercase;
+	
+}
+.header-right2{
+	width:335px;
+	float:right;
+	margin-top:22px;
+	text-align:left;
+	color: #52bee8;
+	text-decoration: none;
+	/*font: bold 10px Arial, Helvetica, sans-serif;*/
+	font: 11px "avenir_65medium";
+	text-transform: uppercase;
+	bottom:0px;	
+	padding-bottom:10px;
+}
+.header-right2 .logout{
+	margin-right:3px;
+	margin-top:15px;
+	margin-left:10px;
+	background-color:#52bde7;
+	/*-moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   -khtml-border-radius: 5px;*/
+    border-radius: 5px;
+	color:#FFF;
+	padding:3px 20px;
+	border:none;
+	float:right;
+	cursor:pointer;
+	text-decoration:none;
+	/*behavior: url(css/border-radius.htc);*/
+}
+.header-right2 .logout:hover{
+	background-color:#c0d653;
+}
+.header-right2 .return-iq{
+	margin-right:3px;
+	margin-top:22px;
+	margin-left:10px;
+	background-color:#52bde7;
+	/*-moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   -khtml-border-radius: 5px;*/
+    border-radius: 5px;
+	color:#FFF;
+	padding:3px 20px;
+	border:none;
+	float:right;
+	cursor:pointer;
+	/*behavior: url(css/border-radius.htc);*/
+}
+.header-right2 .return-iq:hover{
+	background-color:#c0d653;
+}
+.header-right span{
+	display:block;
+	padding-top:10px;
+	padding-left:15px;
+	padding-bottom:5px;
+}
+.header-right input{
+	margin-right:10px;
+	background-color:#e0dfdf;
+	/*-moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   -khtml-border-radius: 5px;*/
+    border-radius: 5px;
+	/*behavior: url(css/border-radius.htc);*/
+	/*font: normal 10px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	color:#000;
+	width:100px;
+	border:none;
+	z-index:1;
+	margin-left:15px;
+	float:left;
+	padding:3px 6px 3px 6px;
+	
+}
+.header-right input.second{
+	margin-left:-2px;
+	/*behavior: url(css/border-radius.htc);*/
+}
+.header-right .submit{
+	margin-right:3px;
+	margin-left:4px;
+	background-color:#52bde7;
+	/*-moz-border-radius: 5px;
+   -webkit-border-radius: 5px;
+   -khtml-border-radius: 5px;*/
+    border-radius: 5px;
+	color:#FFF;
+	padding:3px 10px;
+	border:none;
+	float:left;
+	cursor:pointer;
+	/*behavior: url(css/border-radius.htc);*/
+}
+
+.header-right .submit:hover{
+	background-color:#c0d653;
+}
+nav {
+	clear:both;
+	overflow:hidden;
+	margin-bottom:20px;
+}
+section {
+	clear:both;
+	overflow:hidden;
+}
+*+html section {
+	padding-bottom:0px;
+}
+
+.content-main{
+		width:985px;
+		float:left;
+		position:relative;
+}
+.small-text{
+	padding-left:385px;
+	font: normal 14px "avenir_65medium";
+	color: #012d53;
+	padding-right:20px;
+	text-decoration: none;
+	line-height:24px;
+	font-weight:normal;
+	margin-top:20px;
+	margin-bottom:40px;
+	letter-spacing:0px;
+}
+
+footer {
+	clear:both;
+	overflow:hidden;
+	margin-top:15px;
+	padding-bottom:20px;
+	/*font: normal 12px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	color: #515151;
+	text-decoration: none;	
+	padding-left:60px;
+	margin-top:30px;
+	padding-top:20px;
+	border-top:solid 1px #dbdbdb;
+}
+
+.social-icon-home{
+	float:right;
+	right:0px;
+	position:absolute;
+	padding:5px 6px 0px 0px;
+	text-align:right;
+}
+.social-icon-home img{
+	margin-right:5px;
+}
+.blue-title{
+	font: normal 32px "QuicksandBold";
+	color: #59c1e9;
+	display:block;
+	text-align:left;
+	margin-bottom:10px;
+	padding-bottom:6px;
+	position:relative;
+	border-bottom:solid 1px #eeeeee;
+}
+.about-left2{
+	width:985px;
+
+}
+.about-left2 .top{
+	font-size:1px;
+}
+.about-left2 .bottom{
+	font-size:1px;
+}
+.about-mid2{
+	background:url(../images/about-mid-bg2.png) repeat-y left top;
+	font: normal 14px "avenir_65medium";
+	color: #363636;
+	padding-left:15px;
+	padding-right:15px;
+	line-height:24px;
+}
+/*/////grid//////*/
+.show-bg{
+	background-color:#f8f8f8;
+	padding-bottom:2px;
+	clear:both;
+	overflow:hidden;
+	margin-bottom:3px;	
+}
+.show-hide{
+	background-color:#f5f5f5;	
+	/*padding:3px 10px 3px 10px;*/
+	padding:3px;
+	display:block;
+	color:#2f2f2f;
+	font-weight:bold;
+	border:solid 1px #dfdfdf;
+	border-radius: 5px;
+	background:#dfdfdf url(../images/show-hide-bg.png) repeat-y center top;
+	clear:both;
+	overflow:hidden;
+}
+.show-hide a{
+	display:block;
+	color:#5e5e5e;
+	text-decoration:none;
+	margin-top:4px;
+	font: normal 14px "avenir_65medium";
+	text-transform: uppercase;
+}
+.show-hide a:hover{
+	display:block;
+	color:#32b0cf;
+	text-decoration:none;
+}
+
+.searchHeader
+{
+    border-bottom:1px solid #3290B4;		
+	padding:3px;
+	display:block;	
+	font-weight:bold;	
+	clear:both;
+	color: #3290B4;
+}
+
+
+.divVideo{
+	padding:6px 15px;
+}
+.grid-bg{
+	padding-bottom:2px;
+	clear:both;
+	overflow:hidden;
+	margin-top:4px;
+	background: #f8f8f8 url(../images/grid-bg.jpg) repeat-x left top;
+}
+.result-bg{
+	background-color:#f5f5f5;
+	padding:3px 10px 3px 10px;
+	display:block;
+	color:#fff;
+	font-weight:normal;
+	background:#4fb8e6 url(../images/result-bg.png) repeat-x left bottom;
+	clear:both;
+	overflow:hidden;
+}
+.result-in-bg{
+	padding:6px 6px;
+	
+}
+.blue-button{
+	float:right;
+	background-color:#52BDE7;
+	border-radius: 5px 5px 5px 5px;
+	font: bold 12px "avenir_65medium";
+	padding:6px 8px;
+	text-decoration:none;
+	color:#fff;
+	margin-right:6px;
+}
+.blue-button:hover{
+	background-color:#aec443;
+}
+/*/////same////*/
+.btn-blue2 {
+	border: solid 1px #d9d9d9;
+	color: #3290b4;
+	background-color:#FFF;
+	font-weight:bold;
+	font-size:12px;
+	/*font: bold 12px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	padding:5px 10px;
+	overflow: visible;
+	border-radius: 5px;
+	cursor: pointer;
+}
+.btn-blue2:hover{
+	color: #fff;
+	background-color:#aec443;
+	
+}
+.gridIQA-th {
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	font-size: 10px;
+	font-weight: bold;
+	color: #909190;
+	line-height: 10px;
+	background-color: #efefef;
+	text-decoration:none;
+}
+.gridIQA-th A
+{
+    color:#909190;
+    text-decoration: none;
+}
+
+.gridIQA-th A:hover
+{ 
+    color:#909190;
+    text-decoration: underline;
+}
+table.grid 
+{
+    word-break:break-all !important;
+    word-wrap:break-word !important;;
+    overflow:hidden !important;
+    table-layout:fixed !important;
+	border: solid 1px #c6c5c5;
+}
+table.grid td {
+	border: none;
+	border-bottom: solid 1px #c6c5c5;
+}
+table.grid td td {
+	border: none;
+}
+table.grid th {
+	border: none;
+	border-bottom: solid 1px #c6c5c5;
+	text-align: left;
+}
+.grid-th {
+	/*font: bold 12px Arial, Helvetica, sans-serif;*/
+	font:  bold "avenir_65medium";
+	/*font-size:10px;*/
+	font-size:9px;
+	color: #161616;
+	background: #dedede;
+	text-align: center;
+	font-weight:bold;
+	vertical-align:middle;
+}
+
+.grid-th A
+{
+    color:#161616;
+    text-decoration: none;
+    text-align: center;
+}
+
+.grid-th A:hover
+{ 
+    color:#161616;
+    text-decoration: underline;
+}
+
+.heading-blue, .heading-blue a {
+	line-height: 12px;
+	font-weight: bold;
+	color: #335f97;
+	text-decoration: none;
+	text-align:left;
+	font-size:12px;
+	font-family:"avenir_65medium";
+	padding-left:4px;
+}
+.content-text2{
+	font-size:11px;
+	font-family:"avenir_65medium";
+	
+	line-height: 15px;
+	color: #535353;
+	text-decoration: none;
+	padding:4px 4px 4px 4px;
+}
+.btn-play {
+	background-color: #ffffff;
+	background-image: url(../images/btn-play.jpg);
+	background-repeat: no-repeat;
+	height: 22px;
+	width: 24px !important;
+	border-style: none;
+	font-weight: bold;
+	color: #FFFFFF;
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	font-size: 11px;	
+}
+.btn-edit { background-color: #fff;	
+	height: 22px;
+	width: 22px;
+	border-style: none;
+	font-weight: bold;
+	color: #fff;
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	font-size: 11px;
+	cursor: pointer;
+	background: url(../images/gridicon-edit.png) no-repeat;
+	display: inline-block;
+	text-decoration:none;
+}
+
+.searchtab-active {
+	/*font: bold 11px/27px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	color: #FFFFFF;
+	text-decoration: none;
+	background: url(./chromemenuInner/chrometheme/mainlink-b.png) repeat-x left bottom;
+	float: left;
+	height: 27px;
+	vertical-align: middle;
+	border: solid 1px #ccdded;
+	border-radius: 3px 3px 0px 0px;
+	padding: 0px 10px;
+	text-align: center;
+	margin-right: 1px;
+	cursor: pointer;
+}
+
+.searchtab 
+{
+    /*font: bold 11px/27px Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+	color:#778997;
+	text-decoration: none;
+	/*background: url(mainlink-bg-hover.png) repeat-x left bottom;*/
+	margin-right: 1px;
+	float: left;
+	height: 27px;
+	vertical-align: middle;
+	border: solid 1px #ccdded;
+	border-radius: 3px 3px 0px 0px;
+	padding: 0px 10px;
+	text-align: center;
+	cursor: pointer;
+}
+
+/* bluebox CSS */
+.bluebox-hd {
+	/*font: bold 11px Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	color: #1d5686;
+	text-decoration: none;
+	background: url(../images/bluebox-hd-bg.jpg) repeat-x;
+	height:26px;
+	padding:0px 0px 0px 5px;
+}
+
+.bluebox-content {
+	background-color: #f2f2f2;
+	/*background-image: url(../images/bluebox-bg.jpg);*/
+	background-repeat: repeat-x;
+	background-position: bottom;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.content-textRd {
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font-size: 11px;
+	line-height: 15px;
+	color: #535353;
+	text-decoration: none;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#e4e4e4;
+	font: 11px/12px "avenir_65medium";
+}
+
+.blue-content-bg {
+	background: url(../images/blue-content-bg.jpg) repeat-x center top;
+	padding: 10px 7px;
+	background-color: #FFFFFF;
+}
+
+.iq-agent-main{
+	clear:both;
+	width:955px;
+	/*overflow:hidden;*/
+}
+.iq-agent-left{
+	/*width:375px;*/
+	width:350px;
+	float:left;
+	background-color:#f9f9f9;
+	border-radius: 5px 5px 5px 5px;
+	border:solid 1px #f5f5f5;
+}
+.ag-left-title{
+	font: bold 14px/15px avenir_65medium;
+	border-bottom:solid 1px #52bde7;
+	color:#767676;
+	padding:9px;	
+}
+.ag-gray-main{
+	background-color:#fff;
+	border:solid 1px #dedede;
+	clear:both;
+	overflow:hidden;
+	border-radius: 5px 5px 5px 5px;
+	display:block;
+	margin:8px 6px 6px 6px;
+	
+}
+.ag-blue-title{
+	border-radius: 5px 5px 0px 0px;
+	background-color:#4fb8e1;
+	padding:3px 6px 3px 6px;
+	color:#fff;
+	
+}
+.ag-lin-main{
+	padding:9px;
+	clear:both;
+	overflow:hidden;
+	padding:9px 5px 9px 5px;
+}
+.ag-lin-main .left{
+	width:80px;
+	padding-top:3px;
+	float:left;
+	font: normal 12px/15px avenir_65medium;
+}
+.ag-lin-main .mid{
+	/*width:100px;*/
+	float:left;
+}
+ .ag-lin-main .mid select{
+	background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+    float: left;
+    /*font: 10px Arial,Helvetica,sans-serif;*/
+    /*margin-left: 15px;
+    margin-right: 10px;*/
+    font: 14px/24px "avenir_65medium";
+    padding:5px 6px;
+    width: 180px;
+    z-index: 1;
+}
+.ag-lin-main .mid input{
+	background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+    float: left;
+    /*font: 10px Arial,Helvetica,sans-serif;*/
+   /* margin-left: 15px;
+    margin-right: 10px;*/
+     font: 14px/24px "avenir_65medium";
+    padding: 5px 6px;
+    width: 170px;
+    z-index: 1;
+}
+.ag-lin-main .right{
+	width:50px;
+	/*width:40px;*/
+	float:right;
+}
+.ag-lin-main .right a{
+	/*font: 12px Arial,Helvetica,sans-serif;*/
+	color:#919191;
+}
+.iq-agent-right{
+	/*width:555px;*/
+	width:595px;
+	float:right;
+	background-color:#f9f9f9;
+	border-radius: 5px 5px 5px 5px;
+	border:solid 1px #f5f5f5;
+}
+.ag-top-button{
+	text-align:right;
+	padding:5px;
+	clear:both;
+	overflow:hidden;
+	border-bottom:solid 1px #52bde7;
+}
+
+
+.btn-update { background-color: #fff;	
+	height: 22px;
+	width: 22px;
+	border-style: none;
+	font-weight: bold;
+	color: #fff;
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font-size: 11px;
+	cursor: pointer;
+	background: url(../images/gridicon-update.png) no-repeat;
+	display: inline-block;
+	text-decoration:none; }
+	
+	/* cancel button in grid in pages like IQAgent, myclips, IQCustom */
+.btn-cancel { background-color: #fff;	
+	height: 22px;
+	width: 22px;
+	border-style: none;
+	font-weight: bold;
+	color: #fff;
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font-size: 11px;
+	cursor: pointer;
+	background: url(../images/gridicon-delete.png) no-repeat;
+	display: inline-block;
+	text-decoration:none; }
+	
+	
+.subgridRow 
+{
+    padding: 0px;
+}
+
+.gridRow td 
+{
+    font-size:11px;
+	font-family:"avenir_65medium";	
+	line-height: 15px;
+	color: #535353;
+	text-decoration: none;
+	padding:4px 4px 4px 4px;
+	border: none;
+	border-bottom: solid 1px #c6c5c5;
+	/*padding: 5px;
+	font-size:13px;*/
+}
+
+/*.graytextbox*/
+.grayinput
+{
+  background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+    float: left;
+    /*font: 10px Arial,Helvetica,sans-serif;*/
+   /* margin-left: 15px;
+    margin-right: 10px;*/
+    font: 14px/24px "avenir_65medium" !important;
+    padding: 5px 6px;
+    width: 170px;
+    z-index: 1;
+}
+
+.grayselect
+{
+  background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+   
+    font-size: 14px;
+    line-height:24px;
+    /*font-family: avenir_65medium;*/
+    padding:5px 6px;
+ 
+    
+}
+
+
+.MyCalendar .ajax__calendar_container {    
+    background-color: white;    
+    z-index:999999;
+}
+.MyCalendar .ajax__calendar_other .ajax__calendar_day,
+.MyCalendar .ajax__calendar_other .ajax__calendar_year {    
+}
+.MyCalendar .ajax__calendar_hover .ajax__calendar_day,
+.MyCalendar .ajax__calendar_hover .ajax__calendar_month,
+.MyCalendar .ajax__calendar_hover .ajax__calendar_year {    
+}
+.MyCalendar .ajax__calendar_active .ajax__calendar_day,
+.MyCalendar .ajax__calendar_active .ajax__calendar_month,
+.MyCalendar .ajax__calendar_active .ajax__calendar_year {    
+}
+
+.content-text1{
+font: normal 14px "avenir_65medium";
+	font-size: 11px;
+	line-height: 15px;
+	color: #535353;
+	text-decoration: none;
+	padding:0px 4px 0px 4px;
+}
+
+
+/* modal popup extender controller's style */
+.ModalBackground
+ {
+ 	background-color:gray;
+	filter:alpha(opacity=70);
+	opacity:0.7;
+	z-index:1050 !important;
+}
+
+.ModalBackgroundFtpBrowse
+ {
+ 	background-color:gray;
+	filter:alpha(opacity=70);
+	opacity:0.7;
+	z-index:10505 !important;
+}
+
+.mdlpopupFtpBrowse
+{
+    width: 620px;       
+    z-index:10510 !important;
+}
+
+.ModalPopup
+{
+	background-color:White;	
+	z-index:999;
+}
+
+.popUpInner
+{
+    background:url("../images/bluebox-hd-bg.jpg") repeat-x scroll 0 0 white;
+    border:4px solid #DEDEDE;
+    border-radius:5px;
+    border-collapse:separate;
+}
+.content-text-new 
+{
+    /*font: normal 14px "avenir_65medium";
+	line-height: 15px;
+	color: #535353;
+	text-decoration: none;
+	padding:8px 8px 8px 8px;
+	text-align:center;*/
+	color: #363636;
+    font: 14px/24px "avenir_65medium";
+}
+
+.caption {
+margin-bottom:5px;
+width:100%;
+cursor:pointer;
+font: 14px/24px "avenir_65medium";
+}
+
+.boldgray {
+color:#454545;
+font-weight:bold;
+font: 14px/24px "avenir_65medium";
+}
+
+
+.heading-blue2 {
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font: 14px/24px "avenir_65medium";
+	line-height: 19px;
+	font-weight: bold;
+	color: #4FB8E6;
+	text-decoration: none;
+}
+
+ .btn-delete
+{
+    background-color: #fff;
+    height: 22px;
+	width: 22px;
+	border-style: none;
+	font-weight: bold;
+	color: #fff;
+	/*font-family: Arial, Helvetica, sans-serif;*/
+	font-size: 11px;
+	cursor: pointer;
+    background: url(../images/gridicon-delete.png) no-repeat;
+    display: inline-block;
+    text-decoration:none;
+}
+
+
+.popUpInnerTable tr
+{
+    height:35px;
+}
+
+
+.upprog
+{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:148px;
+    background-color:#0D5995;/*#4FB8E6;*/
+	filter:alpha(opacity=40);
+	opacity:0.4;	
+	z-index:999999;
+	text-align: center;
+	vertical-align:middle;	
+	color:white;	
+    font: bold 25px "avenir_65medium";
+}
+
+.textbox03 {
+	text-decoration: none;
+	color: #333333;	
+	background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+    float: left;    
+    font: 14px "avenir_65medium";
+    padding: 5px 6px;    
+    z-index: 1;
+}
+
+
+
+.highlight
+{
+	background-color:Yellow;	
+}
+
+label
+{
+    display:inline !important;
+    margin-bottom:0px !important;
+}

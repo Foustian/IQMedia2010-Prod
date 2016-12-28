@@ -1,0 +1,431 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="Customer" EntityType="IQMediaGroupModel.Store.Customer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PMGSearchLog" EntityType="IQMediaGroupModel.Store.PMGSearchLog" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Name="CustomerKey" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="LoginID" Type="varchar" MaxLength="300" />
+          <Property Name="Email" Type="varchar" MaxLength="300" />
+          <Property Name="CustomerPassword" Type="varchar" MaxLength="30" />
+          <Property Name="ContactNo" Type="varchar" MaxLength="50" />
+          <Property Name="CustomerComment" Type="varchar" MaxLength="300" />
+          <Property Name="ClientID" Type="bigint" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CustomerGUID" Type="uniqueidentifier" />
+          <Property Name="MultiLogin" Type="bit" />
+          <Property Name="DefaultPage" Type="varchar" MaxLength="50" />
+          <Property Name="MasterCustomerID" Type="bigint" />
+          <Property Name="UDID" Type="varchar" MaxLength="40" />
+          <Property Name="HasMobileRegd" Type="bit" />
+          <Property Name="DateMobileRegd" Type="datetime" />
+        </EntityType>
+        <EntityType Name="PMGSearchLog">
+          <Key>
+            <PropertyRef Name="PMGSearchLogKey" />
+          </Key>
+          <Property Name="PMGSearchLogKey" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="int" />
+          <Property Name="SearchType" Type="varchar" MaxLength="50" />
+          <Property Name="RequestXML" Type="xml" />
+          <Property Name="ErrorResponseXML" Type="xml" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <Function Name="usp_Customer_CheckAuthentication_Service" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Email" Type="varchar" Mode="In" />
+          <Parameter Name="Password" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_CheckRoleAccessByCustomerGuidAndRoleName" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="RoleName" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_CustomCategory_SelectByClientGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQ_Station_SelectRadioStation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="usp_isvc_IQ_Station_SelectRadioStationByStationID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StationID" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQ_Station_SelectSSPDataByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQAgent_DaySummary_SelectTVSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="FromDate" Type="date" Mode="In" />
+          <Parameter Name="ToDate" Type="date" Mode="In" />
+          <Parameter Name="SearchRequestID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQAgent_HourSummary_SelectTVSummary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="SearchRequestID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQAgent_MediaResults_VerifyIDByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgentID" Type="bigint" Mode="In" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQAgent_SearchRequest_SelectTVRequests" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SRIDList" Type="xml" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQArchive_Media_SelectByParams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PageSize" Type="int" Mode="In" />
+          <Parameter Name="FromDate" Type="datetime" Mode="In" />
+          <Parameter Name="ToDate" Type="datetime" Mode="In" />
+          <Parameter Name="CategoryGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="CustomerGUID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SeqID" Type="bigint" Mode="In" />
+          <Parameter Name="SubMediaType" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_IQCore_Recordfile_SelectGUIDByStationIDAndDatetime" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Date" Type="datetime" Mode="In" />
+          <Parameter Name="StationID" Type="varchar" Mode="In" />
+          <Parameter Name="IsDayLightSaving" Type="bit" Mode="In" />
+          <Parameter Name="IsGMTDateTime" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="usp_isvc_RL_GUIDS_SelectByRadioStationsIQCCKey" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQCCKey" Type="varchar(max)" Mode="In" />
+          <Parameter Name="PageNumber" Type="int" Mode="In" />
+          <Parameter Name="PageSize" Type="int" Mode="In" />
+          <Parameter Name="SortField" Type="varchar" Mode="In" />
+          <Parameter Name="TotalRecordsCount" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="usp_v4_IQSolrEngines_SelectAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Requestor" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupExposeEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Customers" EntityType="IQMediaGroupModel.Customer" />
+          <EntitySet Name="PMGSearchLogs" EntityType="IQMediaGroupModel.PMGSearchLog" />
+          <FunctionImport Name="AuthenticateCustomer" ReturnType="Collection(Int32)">
+            <Parameter Name="Email" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetRadioStation" ReturnType="Collection(IQMediaGroupModel.RadioStation)" />
+          <FunctionImport Name="GetRadioStationWithTime" ReturnType="Collection(IQMediaGroupModel.RadioStationDB)">
+          <Parameter Name="StationID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetRadioRawMedia" ReturnType="Collection(IQMediaGroupModel.RadioRawMediaDB)">
+            <Parameter Name="IQCCKey" Mode="In" Type="String" />
+            <Parameter Name="PageNumber" Mode="In" Type="Int32" />
+            <Parameter Name="PageSize" Mode="In" Type="Int32" />
+            <Parameter Name="SortField" Mode="In" Type="String" />
+            <Parameter Name="TotalRecordsCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="GetRecordFileGUIDByStatioIDANDDatetime" ReturnType="Collection(Guid)">
+            <Parameter Name="Date" Mode="In" Type="DateTime" />
+            <Parameter Name="StationID" Mode="In" Type="String" />
+            <Parameter Name="IsDayLightSaving" Mode="In" Type="Boolean" />
+            <Parameter Name="IsGMTDateTime" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="usp_isvc_IQArchive_Media_SelectByParams">
+            <Parameter Name="PageSize" Mode="In" Type="Int32" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="CategoryGUID" Mode="In" Type="Guid" />
+            <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+            <Parameter Name="CustomerGUID" Mode="In" Type="Guid" />
+            <Parameter Name="SeqID" Mode="In" Type="Int64" />
+            <Parameter Name="SubMediaType" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetTVIQAgentDaySummary" ReturnType="Collection(IQMediaGroupModel.DaySummary)">
+            <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="SearchRequestID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetTVAgentHourSummary" ReturnType="Collection(IQMediaGroupModel.HourSummary)">
+            <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+            <Parameter Name="FromDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ToDate" Mode="In" Type="DateTime" />
+            <Parameter Name="SearchRequestID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="CheckRoleAccessByCustomerGuidAndRoleName" ReturnType="Collection(Boolean)">
+            <Parameter Name="CustomerGUID" Mode="In" Type="Guid" />
+            <Parameter Name="RoleName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCategoryByClientGuid" ReturnType="Collection(IQMediaGroupModel.Category)">
+          <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetSolrEngines" ReturnType="Collection(IQMediaGroupModel.SolrEngines)" >
+            <Parameter Name="Requestor" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="IQAgentMediaResultsVerifyIDByClientGUID" ReturnType="Collection(Int64)">
+            <Parameter Name="IQAgentID" Mode="In" Type="Int64" />
+            <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Name="CustomerKey" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="300" Unicode="false" FixedLength="false" />
+          <Property Name="CustomerPassword" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="ContactNo" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CustomerComment" Type="String" MaxLength="300" Unicode="false" FixedLength="false" />
+          <Property Name="ClientID" Type="Int64" Nullable="false" />
+          <Property Name="CustomerGUID" Type="Guid" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CreatedDate" Type="DateTime" />
+          <Property Name="ModifiedDate" Type="DateTime" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="MultiLogin" Type="Boolean" />
+          <Property Name="DefaultPage" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Type="String" Name="LoginID" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="MasterCustomerID" />
+          <Property Type="String" Name="UDID" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="HasMobileRegd" />
+          <Property Type="DateTime" Name="DateMobileRegd" />
+        </EntityType>
+        <EntityType Name="PMGSearchLog">
+          <Key>
+            <PropertyRef Name="PMGSearchLogKey" />
+          </Key>
+          <Property Name="PMGSearchLogKey" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="SearchType" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="RequestXML" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="ErrorResponseXML" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="CreatedDate" Type="DateTime" />
+          <Property Name="ModifiedDate" Type="DateTime" />
+          <Property Name="CreatedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
+        <ComplexType Name="Dma">
+          <Property Type="String" Name="Name" Nullable="false" />
+          <Property Type="String" Name="Num" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="RadioStation">
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="String" Name="DmaNum" Nullable="false" />
+          <Property Type="String" Name="DmaName" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="Affiliate">
+          <Property Type="String" Name="Name" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="RadioMedia">
+          <Property Type="Guid" Name="RadioMediaID" Nullable="false" />
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="String" Name="DmaName" Nullable="false" />
+          <Property Type="DateTime" Name="DateTime" Nullable="false" />
+          <Property Type="String" Name="URL" Nullable="true" a:GetterAccess="Public" a:SetterAccess="Public" DefaultValue="URL" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
+        </ComplexType>
+        <ComplexType Name="RadioStationDB">
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="Double" Name="gmt_adj" Nullable="false" />
+          <Property Type="Double" Name="dst_adj" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="RadioRawMediaDB">
+          <Property Type="String" Name="DateTime" Nullable="false" />
+          <Property Type="String" Name="DmaName" Nullable="false" />
+          <Property Type="Guid" Name="RawMediaID" Nullable="false" />
+          <Property Type="String" Name="StationID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="DaySummary">
+          <Property Type="DateTime" Name="GMTDate" Nullable="false" />
+          <Property Type="Int64" Name="SRID" Nullable="false" />
+          <Property Type="Int64" Name="RecordCount" Nullable="true" />
+          <Property Type="Int64" Name="HitCount" Nullable="true" />
+          <Property Type="Int64" Name="Audience" Nullable="true" />
+          <Property Type="Decimal" Name="MediaValue" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Int64" Name="PositiveSentiment" Nullable="true" />
+          <Property Type="Int64" Name="NegativeSentiment" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="HourSummary">
+          <Property Type="DateTime" Name="GMTDateTime" Nullable="false" Precision="23" />
+          <Property Type="Int64" Name="SRID" Nullable="false" />
+          <Property Type="Int64" Name="RecordCount" Nullable="true" />
+          <Property Type="Int64" Name="HitCount" Nullable="true" />
+          <Property Type="Int64" Name="Audience" Nullable="true" />
+          <Property Type="Decimal" Name="MediaValue" Nullable="true" Precision="38" Scale="2" />
+          <Property Type="Int64" Name="PositiveSentiment" Nullable="true" />
+          <Property Type="Int64" Name="NegativeSentiment" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="Category">
+          <Property Type="String" Name="CategoryName" Nullable="true" MaxLength="150" />
+          <Property Type="Guid" Name="CategoryGuid" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="SolrEngines" >
+          <Property Type="String" Name="MediaType" Nullable="false" />
+          <Property Type="String" Name="BaseUrl" Nullable="false" />
+          <Property Type="DateTime" Name="FromDate" Nullable="false" />
+          <Property Type="DateTime" Name="ToDate" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupExposeEntities">
+          <EntitySetMapping Name="Customers"><EntityTypeMapping TypeName="IQMediaGroupModel.Customer"><MappingFragment StoreEntitySet="Customer">
+            <ScalarProperty Name="DateMobileRegd" ColumnName="DateMobileRegd" />
+                <ScalarProperty Name="HasMobileRegd" ColumnName="HasMobileRegd" />
+                <ScalarProperty Name="UDID" ColumnName="UDID" />
+                <ScalarProperty Name="MasterCustomerID" ColumnName="MasterCustomerID" />
+                <ScalarProperty Name="LoginID" ColumnName="LoginID" />
+                <ScalarProperty Name="CustomerKey" ColumnName="CustomerKey" />
+            <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+            <ScalarProperty Name="LastName" ColumnName="LastName" />
+            <ScalarProperty Name="Email" ColumnName="Email" />
+            <ScalarProperty Name="CustomerPassword" ColumnName="CustomerPassword" />
+            <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
+            <ScalarProperty Name="CustomerComment" ColumnName="CustomerComment" />
+            <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+            <ScalarProperty Name="CustomerGUID" ColumnName="CustomerGUID" />
+            <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+            <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="MultiLogin" ColumnName="MultiLogin" />
+            <ScalarProperty Name="DefaultPage" ColumnName="DefaultPage" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PMGSearchLogs"><EntityTypeMapping TypeName="IQMediaGroupModel.PMGSearchLog"><MappingFragment StoreEntitySet="PMGSearchLog">
+            <ScalarProperty Name="PMGSearchLogKey" ColumnName="PMGSearchLogKey" />
+            <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+            <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+            <ScalarProperty Name="RequestXML" ColumnName="RequestXML" />
+            <ScalarProperty Name="ErrorResponseXML" ColumnName="ErrorResponseXML" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+            <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+            <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AuthenticateCustomer" FunctionName="IQMediaGroupModel.Store.usp_Customer_CheckAuthentication_Service" />
+          <FunctionImportMapping FunctionImportName="GetRecordFileGUIDByStatioIDANDDatetime" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQCore_Recordfile_SelectGUIDByStationIDAndDatetime" />
+          <FunctionImportMapping FunctionImportName="usp_isvc_IQArchive_Media_SelectByParams" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQArchive_Media_SelectByParams">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetTVAgentHourSummary" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQAgent_HourSummary_SelectTVSummary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.HourSummary">
+                <ScalarProperty Name="GMTDateTime" ColumnName="GMTDatetime" />
+                <ScalarProperty Name="SRID" ColumnName="SRID" />
+                <ScalarProperty Name="RecordCount" ColumnName="TotalRecordCount" />
+                <ScalarProperty Name="HitCount" ColumnName="HitCount" />
+                <ScalarProperty Name="Audience" ColumnName="NielsenAudience" />
+                <ScalarProperty Name="MediaValue" ColumnName="IQMediaValue" />
+                <ScalarProperty Name="PositiveSentiment" ColumnName="PositiveSentiment" />
+                <ScalarProperty Name="NegativeSentiment" ColumnName="NegativeSentiment" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetTVIQAgentDaySummary" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQAgent_DaySummary_SelectTVSummary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.DaySummary">
+                <ScalarProperty Name="GMTDate" ColumnName="GMTDate" />
+                <ScalarProperty Name="SRID" ColumnName="SRID" />
+                <ScalarProperty Name="RecordCount" ColumnName="GMTRecordCount" />
+                <ScalarProperty Name="HitCount" ColumnName="GMTHitCount" />
+                <ScalarProperty Name="Audience" ColumnName="GMTNielsenAudience" />
+                <ScalarProperty Name="MediaValue" ColumnName="GMTIQMediaValue" />
+                <ScalarProperty Name="PositiveSentiment" ColumnName="GMTPositiveSentiment" />
+                <ScalarProperty Name="NegativeSentiment" ColumnName="GMTNegativeSentiment" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CheckRoleAccessByCustomerGuidAndRoleName" FunctionName="IQMediaGroupModel.Store.usp_isvc_CheckRoleAccessByCustomerGuidAndRoleName" />
+          <FunctionImportMapping FunctionImportName="GetCategoryByClientGuid" FunctionName="IQMediaGroupModel.Store.usp_isvc_CustomCategory_SelectByClientGuid">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.Category">
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+                <ScalarProperty Name="CategoryGuid" ColumnName="CategoryGUID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetSolrEngines" FunctionName="IQMediaGroupModel.Store.usp_v4_IQSolrEngines_SelectAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.SolrEngines">
+                <ScalarProperty Name="MediaType" ColumnName="MediaType" />
+                <ScalarProperty Name="BaseUrl" ColumnName="BaseUrl" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="IQAgentMediaResultsVerifyIDByClientGUID" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQAgent_MediaResults_VerifyIDByClientGUID" />
+          <FunctionImportMapping FunctionImportName="GetRadioStation" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQ_Station_SelectRadioStation">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.RadioStation">
+                <ScalarProperty Name="StationID" ColumnName="IQ_Station_ID" />
+                <ScalarProperty Name="DmaNum" ColumnName="dma_num" />
+                <ScalarProperty Name="DmaName" ColumnName="dma_name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetRadioStationWithTime" FunctionName="IQMediaGroupModel.Store.usp_isvc_IQ_Station_SelectRadioStationByStationID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.RadioStationDB">
+                <ScalarProperty Name="StationID" ColumnName="StationID" />
+                <ScalarProperty Name="gmt_adj" ColumnName="gmt_adj" />
+                <ScalarProperty Name="dst_adj" ColumnName="dst_adj" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetRadioRawMedia" FunctionName="IQMediaGroupModel.Store.usp_isvc_RL_GUIDS_SelectByRadioStationsIQCCKey">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.RadioRawMediaDB">
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="DmaName" ColumnName="dma_name" />
+                <ScalarProperty Name="RawMediaID" ColumnName="RL_GUID" />
+                <ScalarProperty Name="StationID" ColumnName="RL_Station_ID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMediaGroup.ExposeApi" ZoomLevel="84">
+        <EntityTypeShape EntityType="IQMediaGroupModel.Customer" Width="1.5" PointX="2.75" PointY="0.75" Height="3.5644742838541656" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.PMGSearchLog" Width="1.5" PointX="4.75" PointY="0.75" Height="2.5783902994791656" IsExpanded="true" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

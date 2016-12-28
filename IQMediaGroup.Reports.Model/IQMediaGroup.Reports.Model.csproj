@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BD4C5B0F-5CD2-487E-919F-5F8FE1C68394}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Reports.Model</RootNamespace>
+    <AssemblyName>IQMediaGroup.Reports.Model</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.ObjectBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\IQMediaGroupDataLayer.cs" />
+    <Compile Include="Factory\ModelFactory.cs" />
+    <Compile Include="Implementation\ArchiveClipModel.cs" />
+    <Compile Include="Implementation\ArchiveNMModel.cs" />
+    <Compile Include="Implementation\ArchiveTweetsModel.cs" />
+    <Compile Include="Implementation\CustomCategoryModel.cs" />
+    <Compile Include="Implementation\IQAgentResultsModel.cs" />
+    <Compile Include="Implementation\IQAgent_SearchRequestModel.cs" />
+    <Compile Include="Implementation\IQMediaGroupExceptionsModel.cs" />
+    <Compile Include="Implementation\IQ_ReportModel.cs" />
+    <Compile Include="Implementation\IQ_ReportTypeModel.cs" />
+    <Compile Include="Implementation\NMModel.cs" />
+    <Compile Include="Implementation\RoleModel.cs" />
+    <Compile Include="Implementation\SMModel.cs" />
+    <Compile Include="Implementation\SocialMediaModel.cs" />
+    <Compile Include="Implementation\TwitterModel.cs" />
+    <Compile Include="Interface\IArchiveClipModel.cs" />
+    <Compile Include="Interface\IArchiveNMModel.cs" />
+    <Compile Include="Interface\IArchiveTweetsModel.cs" />
+    <Compile Include="Interface\ICustomCategoryModel.cs" />
+    <Compile Include="Interface\IIQAgentResultsModel.cs" />
+    <Compile Include="Interface\IIQAgent_SearchRequestModel.cs" />
+    <Compile Include="Interface\IIQMediaGroupExceptionsModel.cs" />
+    <Compile Include="Interface\IIQ_ReportModel.cs" />
+    <Compile Include="Interface\IIQ_ReportTypeModel.cs" />
+    <Compile Include="Interface\INMModel.cs" />
+    <Compile Include="Interface\IRoleModel.cs" />
+    <Compile Include="Interface\ISocialMediaModel.cs" />
+    <Compile Include="Interface\ISMModel.cs.cs" />
+    <Compile Include="Interface\ITwitterModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

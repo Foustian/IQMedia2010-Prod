@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="IQCore_Nm" EntityType="IQMediaGroupModel.Store.IQCore_Nm" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_RootPath" EntityType="IQMediaGroupModel.Store.IQCore_RootPath" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_RootPathType" EntityType="IQMediaGroupModel.Store.IQCore_RootPathType" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_IQCore_Nm_IQCoreNM_RootPath" Association="IQMediaGroupModel.Store.FK_IQCore_Nm_IQCoreNM_RootPath">
+            <End Role="IQCore_RootPath" EntitySet="IQCore_RootPath" />
+            <End Role="IQCore_Nm" EntitySet="IQCore_Nm" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_RootPath_IQCore_RootPathType" Association="IQMediaGroupModel.Store.FK_IQCore_RootPath_IQCore_RootPathType">
+            <End Role="IQCore_RootPathType" EntitySet="IQCore_RootPathType" />
+            <End Role="IQCore_RootPath" EntitySet="IQCore_RootPath" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="IQCore_Nm">
+          <Key>
+            <PropertyRef Name="ArticleID" />
+          </Key>
+          <Property Name="ArticleID" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="_RootPathID" Type="int" />
+          <Property Name="Location" Type="varchar" MaxLength="255" />
+          <Property Name="Url" Type="varchar(max)" />
+          <Property Name="harvest_time" Type="datetime" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="IQCore_RootPath">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="StoragePath" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="StreamSuffixPath" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="AppName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="_RootPathTypeID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_RootPathType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="varchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <Association Name="FK_IQCore_Nm_IQCoreNM_RootPath">
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.Store.IQCore_RootPath" Multiplicity="0..1" />
+          <End Role="IQCore_Nm" Type="IQMediaGroupModel.Store.IQCore_Nm" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Nm">
+              <PropertyRef Name="_RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_RootPath_IQCore_RootPathType">
+          <End Role="IQCore_RootPathType" Type="IQMediaGroupModel.Store.IQCore_RootPathType" Multiplicity="1" />
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.Store.IQCore_RootPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPathType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_RootPath">
+              <PropertyRef Name="_RootPathTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="NMs" EntityType="IQMediaGroupModel.NM" />
+          <EntitySet Name="RootPaths" EntityType="IQMediaGroupModel.RootPath" />
+          <EntitySet Name="RootPathTypes" EntityType="IQMediaGroupModel.RootPathType" />
+          <AssociationSet Name="FK_IQCore_Nm_IQCoreNM_RootPath" Association="IQMediaGroupModel.FK_IQCore_Nm_IQCoreNM_RootPath">
+            <End Role="IQCore_RootPath" EntitySet="RootPaths" />
+            <End Role="IQCore_Nm" EntitySet="NMs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_RootPath_IQCore_RootPathType" Association="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType">
+            <End Role="IQCore_RootPathType" EntitySet="RootPathTypes" />
+            <End Role="IQCore_RootPath" EntitySet="RootPaths" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="NM">
+          <Key>
+            <PropertyRef Name="ArticleID" />
+          </Key>
+          <Property Type="String" Name="ArticleID" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="RootPathID" />
+          <Property Type="String" Name="Location" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Url" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="harvest_time" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="RootPath" Relationship="IQMediaGroupModel.FK_IQCore_Nm_IQCoreNM_RootPath" FromRole="IQCore_Nm" ToRole="IQCore_RootPath" />
+        </EntityType>
+        <EntityType Name="RootPath">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Comment" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="StoragePath" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="StreamSuffixPath" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AppName" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+          <Property Type="Int32" Name="RootPathTypeID" Nullable="false" />
+          <NavigationProperty Name="NMs" Relationship="IQMediaGroupModel.FK_IQCore_Nm_IQCoreNM_RootPath" FromRole="IQCore_RootPath" ToRole="IQCore_Nm" />
+          <NavigationProperty Name="RootPathType" Relationship="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" FromRole="IQCore_RootPath" ToRole="IQCore_RootPathType" />
+        </EntityType>
+        <EntityType Name="RootPathType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="RootPaths" Relationship="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" FromRole="IQCore_RootPathType" ToRole="IQCore_RootPath" />
+        </EntityType>
+        <Association Name="FK_IQCore_Nm_IQCoreNM_RootPath">
+          <End Type="IQMediaGroupModel.RootPath" Role="IQCore_RootPath" Multiplicity="0..1" />
+          <End Type="IQMediaGroupModel.NM" Role="IQCore_Nm" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Nm">
+              <PropertyRef Name="RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_RootPath_IQCore_RootPathType">
+          <End Type="IQMediaGroupModel.RootPathType" Role="IQCore_RootPathType" Multiplicity="1" />
+          <End Type="IQMediaGroupModel.RootPath" Role="IQCore_RootPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPathType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_RootPath">
+              <PropertyRef Name="RootPathTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupEntities" >
+          <EntitySetMapping Name="NMs">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.NM">
+              <MappingFragment StoreEntitySet="IQCore_Nm">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="harvest_time" ColumnName="harvest_time" />
+                <ScalarProperty Name="Url" ColumnName="Url" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="RootPathID" ColumnName="_RootPathID" />
+                <ScalarProperty Name="ArticleID" ColumnName="ArticleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RootPaths">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RootPath">
+              <MappingFragment StoreEntitySet="IQCore_RootPath">
+                <ScalarProperty Name="RootPathTypeID" ColumnName="_RootPathTypeID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="AppName" ColumnName="AppName" />
+                <ScalarProperty Name="StreamSuffixPath" ColumnName="StreamSuffixPath" />
+                <ScalarProperty Name="StoragePath" ColumnName="StoragePath" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RootPathTypes">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RootPathType">
+              <MappingFragment StoreEntitySet="IQCore_RootPathType">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMedia.NM" >
+        <EntityTypeShape EntityType="IQMediaGroupModel.NM" Width="1.5" PointX="5.25" PointY="1.125" Height="2.0853483072916674" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RootPath" Width="1.5" PointX="3" PointY="1" Height="2.4140429687499996" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RootPathType" Width="1.5" PointX="0.75" PointY="1.375" Height="1.5923063151041665" />
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Nm_IQCoreNM_RootPath" >
+          <ConnectorPoint PointX="4.5" PointY="2.1676741536458337" />
+          <ConnectorPoint PointX="5.25" PointY="2.1676741536458337" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" >
+          <ConnectorPoint PointX="2.25" PointY="2.1711531575520833" />
+          <ConnectorPoint PointX="3" PointY="2.1711531575520833" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

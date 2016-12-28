@@ -1,0 +1,479 @@
+﻿@using IQMedia.Model;
+@using IQMedia.Shared.Utility;
+@model List<MCMediaReport_GroupTier1Model>
+@if (Model != null)
+{
+    SessionInformation sessionInformation = IQMedia.WebApplication.Utility.CommonFunctions.GetSessionInformation();
+    
+    <div style="padding-right: 20px;">
+        @foreach (var groupTier1Result in Model)
+        {
+            if (groupTier1Result.IsEnabled)
+            {
+                <div class="mediatitlediv">@groupTier1Result.GroupName</div>
+            }
+
+            foreach (var groupTier2Result in groupTier1Result.GroupTier2Results)
+            {
+                foreach (var groupTier3Result in groupTier2Result.GroupTier3Results)
+                {
+                    foreach (IQArchive_MediaModel item in groupTier3Result.MediaResults)
+                    {
+                        string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                        string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                        string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                        switch (item.SubMediaType)
+                        {
+                            case CommonFunctions.CategoryType.TV:
+
+                                IQArchive_ArchiveClipModel TVModel = item.MediaData as IQArchive_ArchiveClipModel;
+                                string TVThumbUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_TVThumbUrl"]);
+                                TVThumbUrl += TVModel.ClipID; 
+                
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div>
+                        <div class="post-date">
+                            <span class="month">@Month</span><div>
+                                <span class="today">@Day</span></div>
+                            <span class="timeWithTimeZone">@Time @TVModel.TimeZone</span></div>
+                        <div align="center" class="network">
+                            <img src="~/images/MediaIcon/network-icon.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" alt="" /></div>
+                    </div>
+                </div>
+                <div class="pull-left">
+                    <div style="float: left">
+                        <div class="minHeight32">
+                            <img alt="" src="@TVModel.StationLogo" /></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="pull-left media-body maxWidth63p">
+                        <span class="media-heading">@item.Title</span>
+                        <div class="clearfix"></div>
+                        @if (!string.IsNullOrWhiteSpace(TVModel.Market))
+                        {
+                            <span style="color: #73797F;">@TVModel.Market - </span>}
+                        @Html.Raw(item.DisplayText)
+                    </div>
+                    <div class="pull-right">
+                        <div class="pull-left video-thumb width130">
+                            <div class="positionRelative">
+                                <a class="cursorPointer" href="../../ClipPlayer/?ClipID=@TVModel.ClipID" target="_blank">
+                                    <img src="@TVThumbUrl" class="maxwidth130" alt="play video" />
+                                </a>  
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                        </div>
+                    </div>
+                    <div class="clear borderdiv"></div>
+                </div>
+            </div>
+                                         break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.TW:
+
+                                         IQArchive_ArchiveTweetsModel twitterModel = item.MediaData as IQArchive_ArchiveTweetsModel;
+                                        
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/twitter.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" alt="" />
+                    </div>
+                </div>
+                <div class="pull-left TweetBodyDivIQP borderBoxSizing">
+                    <div class="pull-left TweetActorDisplayName">
+                        <a id="aActorLink_" target="_blank" href="@twitterModel.ActorLink/status/@twitterModel.TweetID">
+                            <span id="lblDisplayName_@item.ID">@twitterModel.ActorDisplayname</span>
+                        </a>&nbsp;
+                        <span class="TweetSubdivFont">@@</span>
+                        <span id="lblPrefferedUserName_@item.ID" class="TweetSubdivFont">@twitterModel.PreferredUserName</span>
+                        <br />
+                    </div>
+                    <div class="clear PaddingTopBottom1p TweetBodyText">
+                        <div class="">
+                            <span id="lblTweetBody_@item.ID">@Html.Raw(item.DisplayText)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pull-right">
+                    <div class="pull-left">
+                        @if (IQMedia.Shared.Utility.CommonFunctions.Validate_url(twitterModel.ActorImage))
+                        {
+                            <img id="imgActor_@item.ID" src="@twitterModel.ActorImage" alt="actor image" class="borderWidth0 maxWidth48" /><br />
+                        }
+                    </div>
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+
+                        break;
+
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM:
+
+                        IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
+
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/News.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" alt="" /></div>
+                </div>
+                <div class="pull-left maxWidth85">
+                    <div>
+                        <span class="media-heading">
+                            @if (newsMediaModel.IQLicense == 3)
+                            {
+                                <img src="~/images/MediaIcon/LexisNexis_Small.png" title="LexisNexis(R)" alt="LexisNexis(R)" class="lexisNexisImg" />
+                            }
+                            <a href="@(newsMediaModel.IQLicense > 0 ? Url.Action("Index", "Article", new { au = IQMedia.Shared.Utility.CommonFunctions.EncryptLicenseStringAES(sessionInformation.CustomerKey + "¶IQAgent Report¶" + newsMediaModel.Url + "&u1=cliq40&u2=" + sessionInformation.ClientID + "¶" + newsMediaModel.IQLicense) }) : newsMediaModel.Url)"
+                                target="_blank">@Html.Raw(item.Title)</a>
+                        </span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @if (!string.IsNullOrWhiteSpace(newsMediaModel.Publication))
+                        {
+                            <span style="color: #73797F;">@newsMediaModel.Publication - </span>
+                        }@Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="pull-right">
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+                    break;
+
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.SocialMedia:
+
+                    IQArchive_ArchiveSMModel socialMediaModel = item.MediaData as IQArchive_ArchiveSMModel;
+                    
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/social-media.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia)" alt="" />
+                    </div>
+                </div>
+                <div class="pull-left maxWidth85">
+                    <div>
+                        <span class="media-heading"><a href="@socialMediaModel.Url" target="_blank">@Html.Raw(item.Title)</a></span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @if (!string.IsNullOrWhiteSpace(socialMediaModel.Publication))
+                        {
+                            <span style="color: #73797F;">@socialMediaModel.Publication - </span>
+                        }@Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="pull-right">
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+
+                    break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Forum:
+
+                    IQArchive_ArchiveSMModel forumModel = item.MediaData as IQArchive_ArchiveSMModel;
+                    
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/forum.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum)" alt="" /></div>
+                </div>
+                <div class="pull-left maxWidth85">
+                    <div>
+                        <span class="media-heading"><a href="@forumModel.Url" target="_blank">@Html.Raw(item.Title)</a></span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @if (!string.IsNullOrWhiteSpace(forumModel.Publication))
+                        {
+                            <span style="color: #73797F;">@forumModel.Publication - </span>
+                        }@Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="pull-right">
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+
+                    break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Blog:
+
+                    IQArchive_ArchiveSMModel blogModel = item.MediaData as IQArchive_ArchiveSMModel;
+                                                    
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/blog.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog)" alt="" /></div>
+                </div>
+                <div class="pull-left maxWidth85">
+                    <div>
+                        <span class="media-heading"><a href="@blogModel.Url" target="_blank">@Html.Raw(item.Title)</a></span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @if (!string.IsNullOrWhiteSpace(blogModel.Publication))
+                        {
+                            <span style="color: #73797F;">@blogModel.Publication - </span>
+                        }@Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="pull-right">
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+
+                    break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB:
+
+                    IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
+                        
+                    <div id="divMedia_@item.ID" class="media">
+                        <div class="pull-left">
+                            <div class="post-date">
+                                <span class="month">@Month</span><div>
+                                    <span class="today">@Day</span></div>
+                                <span class="timeWithTimeZone">@Time @sessionInformation.TimeZone</span></div>
+                            <div align="center" class="network">
+                                <img src="~/images/MediaIcon/facebook.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB)" alt="" /></div>
+                        </div>
+                        <div class="pull-left TweetBodyDivIQP borderBoxSizing">
+                            <div class="media-heading-fb">
+                                <span><a href="@fbModel.Url" target="_blank">@Html.Raw(item.Title)</a></span>
+                                <span class="arrow"></span>
+                                <span>@fbModel.Publication</span>
+                                @if (fbModel.ArticleStats != null && fbModel.ArticleStats.IsVerified)
+                                {
+                                    <span class="verified" title="Verified Page"></span>
+                                }
+                            </div>
+                            <div class="clear PaddingTopBottom1p TweetBodyText">
+                                @Html.Raw(item.DisplayText)
+                            </div>
+                        </div>
+                        <div class="float-right marginbottom5">
+	                        <div class="pull-left">
+		                        @if (IQMedia.Shared.Utility.CommonFunctions.Validate_url(fbModel.ThumbUrl))
+                          {
+			                        <img src="@fbModel.ThumbUrl" alt="post image" class="borderWidth0  maxWidth48" />
+                                    <br />
+                          }
+	                        </div>
+                        </div>
+                        <div class="clear borderdiv"></div>
+                    </div>
+                                break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Radio:
+
+                                IQArchive_ArchiveTVEyesModel tvEyesModel = item.MediaData as IQArchive_ArchiveTVEyesModel;
+                                Month = tvEyesModel.LocalDateTime != null ? tvEyesModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                                Day = tvEyesModel.LocalDateTime != null ? tvEyesModel.LocalDateTime.Day.ToString() : string.Empty;
+                                Time = tvEyesModel.LocalDateTime != null ? tvEyesModel.LocalDateTime.ToString("hh:mm tt") : string.Empty;   
+                                         
+                    <div id="divMedia_@item.ID" class="media">
+                        <div class="pull-left">
+                            <div class="post-date">
+                                <span class="month">@Month</span><div>
+                                    <span class="today">@Day</span></div>
+                                <span class="timeWithTimeZone">@Time @tvEyesModel.TimeZone</span></div>
+                            <div align="center" class="network">
+                                <img src="~/images/MediaIcon/radio.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" alt="" />
+                            </div>
+                        </div>
+                        <div class="pull-left tvFeedsMarket tmStationDiv">
+                            <div style="float: left; color: Red">
+                                <div class="minHeight32">
+                                    @tvEyesModel.StationID</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="pull-left media-body maxWidth63p">
+                                <span class="media-heading">@item.Title</span>
+                                <div class="clearfix"></div>
+                                @if (!string.IsNullOrWhiteSpace(tvEyesModel.Market))
+                                {
+                                    <span style="color: #73797F;">@tvEyesModel.Market - </span>
+                                }
+                                @Html.Raw(item.DisplayText)
+                            </div>
+                            <div class="pull-right">
+                                <div class="pull-left video-thumb width130">
+                                    <div class="positionRelative">
+                                        <a class="cursorPointer"  target="_blank" href="@(System.Configuration.ConfigurationManager.AppSettings["RadioClipPlayerURL"] + Url.Encode(IQMedia.Shared.Utility.CommonFunctions.GenerateRandomString() + IQMedia.Shared.Utility.CommonFunctions.EncryptStringAES(item.ID.ToString(), IQMedia.Shared.Utility.CommonFunctions.AesKeyLibRadioPlayer, IQMedia.Shared.Utility.CommonFunctions.AesIVLibRadioPlayer)))">
+                                            <img src="~/images/video.png" class="maxwidth130" alt="play video" />
+                                        </a>  
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear borderdiv">
+                        </div>
+                    </div>
+                                                                                    break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM:
+                                                                                    string PMBasePath = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]);
+                                                                                    IQArchive_ArchiveBLPMModel PMModel = item.MediaData as IQArchive_ArchiveBLPMModel;
+            <div class="media" id="divMedia_@item.ID">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span>
+                        <div>
+                            <span class="today">@Day</span>
+                        </div>
+                        <span class="timeWithTimeZone">@Time @(sessionInformation.IsLogIn ? sessionInformation.TimeZone : string.Empty)</span>
+                    </div>
+                    <div class="network" align="center">
+                        <img src="/images/MediaIcon/print-media.png" title="@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM)" alt="" /></div>
+                </div>
+                <div class="pull-left maxWidth83">
+                    <div>
+                        <span class="media-heading">
+                            <a target="_blank" href="@(PMBasePath + PMModel.FileLocation.Replace(@"\", @"/"))">@Html.Raw(item.Title)</a> 
+                        </span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @if (!string.IsNullOrWhiteSpace(PMModel.Pub_Name))
+                        {
+                            <span style="color: #73797F;">@PMModel.Pub_Name - </span>
+                        }
+                        @Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+                   break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.MS:
+
+                   IQArchive_ArchiveMiscModel miscModel = item.MediaData as IQArchive_ArchiveMiscModel;
+
+                   Month = miscModel.CreateDT.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture);
+                   Day = miscModel.CreateDT.Day.ToString();
+                   Time = miscModel.CreateDT.ToString("hh:mm tt");
+
+                   string catimg = string.Empty;
+                   string tooltip = string.Empty;
+                   switch (miscModel.FileType)
+                   {
+                       case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Doc:
+                           catimg = "word.png";
+                           tooltip = "Document";
+                           break;
+                       case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Excel:
+                           catimg = "excel.png";
+                           tooltip = "Spreadsheet";
+                           break;
+                       case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Pdf:
+                           catimg = "pdf.png";
+                           tooltip = "PDF";
+                           break;
+                       case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Image:
+                           catimg = "image.png";
+                           tooltip = "Image";
+                           break;
+                       default:
+                           catimg = string.Empty;
+                           break;
+                   }
+                                                                
+            <div class="media" id="divMedia_@item.ID">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span>
+                        <div>
+                            <span class="today">@Day</span>
+                        </div>
+                        <span class="timeWithTimeZone">@Time @miscModel.TimeZone</span>
+                    </div>
+                    <div class="network" align="center">
+                        <img src="/images/MediaIcon/@catimg" title="@tooltip" alt="@tooltip" /></div>
+                </div>
+                <div class="pull-left maxWidth83">
+                    <div>
+                        <span class="media-heading">
+                            <a target="_blank" href="@miscModel.MediaUrl">@Html.Raw(item.Title)</a> 
+                        </span>
+                    </div>
+                    <div class="newsMediadiv">
+                        @Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="clear borderdiv">
+                </div>
+            </div>
+                   break;
+
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PQ:
+
+                   IQArchive_ArchivePQModel pqModel = item.MediaData as IQArchive_ArchivePQModel;
+                   string authors = String.Empty;
+                   if (pqModel.Authors != null && pqModel.Authors.Count > 0)
+                   {
+                       if (pqModel.Authors.Count > 2)
+                       {
+                           authors = "(" + String.Join(", ", pqModel.Authors.Take(2)) + ", ...) ";
+                       }
+                       else
+                       {
+                           authors = "(" + String.Join(", ", pqModel.Authors) + ") ";
+                       }
+                   }
+                                       
+            <div id="divMedia_@item.ID" class="media">
+                <div class="pull-left">
+                    <div class="post-date">
+                        <span class="month">@Month</span><div>
+                            <span class="today">@Day</span></div>
+                        <span class="timeWithTimeZone">&nbsp;</span></div>
+                    <div align="center" class="network">
+                        <img src="~/images/MediaIcon/print-media_T.png" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" alt="" /></div>
+                </div>
+                <div class="pull-left maxWidth85">
+                    <div>
+                        <span class="media-heading"><a href="../../ProQuest/Index?source=library&id=@item.ID" target="_blank">@Html.Raw(item.Title)</a></span>
+                    </div>
+                    <div class="newsMediadiv">
+                        <span style="color: #73797F;">@pqModel.Publication @authors</span>- @Html.Raw(item.DisplayText)
+                    </div>
+                </div>
+                <div class="pull-right">
+                </div>
+                <div class="clear borderdiv"></div>
+            </div>
+                                                                                       break;
+                        }
+                    }
+                }
+            }
+
+        }
+    </div>
+    
+}

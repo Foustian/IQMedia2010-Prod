@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02D09AB6-1296-48CB-82B5-B0930489C468}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.ExposeApi.Domain</RootNamespace>
+    <AssemblyName>IQMediaGroup.ExposeApi.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EFExtensions">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\EFExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Affiliate.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AgentMedia.cs" />
+    <Compile Include="AgentResultsInput.cs" />
+    <Compile Include="AgentResultsOutput.cs" />
+    <Compile Include="ArchiveBLPM.cs" />
+    <Compile Include="ArchiveClip.cs" />
+    <Compile Include="ArchiveClipInput.cs" />
+    <Compile Include="ArchiveClipOutput.cs" />
+    <Compile Include="ArchiveInput.cs" />
+    <Compile Include="ArchiveMedia.cs" />
+    <Compile Include="ArchiveNM.cs" />
+    <Compile Include="ArchiveOutput.cs" />
+    <Compile Include="ArchiveSM.cs" />
+    <Compile Include="ArchiveTVEyes.cs" />
+    <Compile Include="ArchiveTweets.cs" />
+    <Compile Include="Category.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CategoryInput.cs" />
+    <Compile Include="CategoryOutput.cs" />
+    <Compile Include="CustomModel.cs" />
+    <Compile Include="DaySummary.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DeleteTVAgentInput.cs" />
+    <Compile Include="DeleteTVAgentOutput.cs" />
+    <Compile Include="Dma.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EqualityComparers.cs" />
+    <Compile Include="GetMediaPlayerURLOutput.cs" />
+    <Compile Include="HourSummary.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CreateTVAgentInput.cs" />
+    <Compile Include="CreateTVAgentOutput.cs" />
+    <Compile Include="LoginInput.cs" />
+    <Compile Include="Customer.generated.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomException.cs" />
+    <Compile Include="IQMediaGroup.ExposeApi.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IQMediaGroup.ExposeApi.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="MediaPlayerURLInput.cs" />
+    <Compile Include="MetaData.cs" />
+    <Compile Include="NM.cs" />
+    <Compile Include="PM.cs" />
+    <Compile Include="PMGSearchLog.generated.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PocoModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PocoModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PocoModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PQ.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RadioMedia.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RadioRawMediaDB.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RadioMediaInput.cs" />
+    <Compile Include="RadioMediaOutput.cs" />
+    <Compile Include="RadioStation.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RadioStationDataInput.cs" />
+    <Compile Include="RadioStationDB.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RadioStationDataOutput.cs" />
+    <Compile Include="RawMedia.cs" />
+    <Compile Include="RawMediaInput.cs" />
+    <Compile Include="RawMediaOutput.cs" />
+    <Compile Include="LoginOutput.cs" />
+    <Compile Include="SM.cs" />
+    <Compile Include="SolrEngines.cs">
+      <DependentUpon>PocoModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SuspendTVAgentInput.cs" />
+    <Compile Include="SuspendTVAgentOutput.cs" />
+    <Compile Include="TM.cs" />
+    <Compile Include="TV.cs" />
+    <Compile Include="TVAgent.cs" />
+    <Compile Include="TVAgentDaySummaryInput.cs" />
+    <Compile Include="TVAgentDaySummaryOutput.cs" />
+    <Compile Include="TVAgentHourSummaryInput.cs" />
+    <Compile Include="TVAgentHourSummaryOutput.cs" />
+    <Compile Include="TVAgentResultsUpdateInput.cs" />
+    <Compile Include="TVAgentResultsUpdateOutput.cs" />
+    <Compile Include="TVAgentsInput.cs" />
+    <Compile Include="TVAgentsOutput.cs" />
+    <Compile Include="TVAgentResultsInput.cs" />
+    <Compile Include="TVAgentResultsOutput.cs" />
+    <Compile Include="TVMetaDataInput.cs" />
+    <Compile Include="StatskedprogData.cs" />
+    <Compile Include="TVResult.cs" />
+    <Compile Include="TW.cs" />
+    <Compile Include="UnSuspendTVAgentInput.cs" />
+    <Compile Include="UnSuspendTVAgentOutput.cs" />
+    <Compile Include="UpdatedTVResult.cs" />
+    <Compile Include="UpdateTVAgentInput.cs" />
+    <Compile Include="UpdateTVAgentOutput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="IQMediaGroup.ExposeApi.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>IQMediaGroup.ExposeApi.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="PocoModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PocoModel.Context.cs</LastGenOutput>
+    </None>
+    <None Include="PocoModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PocoModel.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

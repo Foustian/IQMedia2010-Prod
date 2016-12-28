@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{06100E75-00D2-47B0-BD3C-BDA71BBDB577}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Services</RootNamespace>
+    <AssemblyName>IQMediaGroup.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Common">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Logic">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Logic.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Service">
+      <HintPath>..\..\..\IQMediaGroup_Bill_TFS\IQMedia.Web\IQMedia.Web.Services\bin\IQMedia.Service.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Web.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EmailPolicy.txt" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="Commands\BookMarkService.cs" />
+    <Compile Include="Commands\CategoryService.cs" />
+    <Compile Include="Commands\ClipAutoDownload.cs" />
+    <Compile Include="Commands\CommandFactory.cs" />
+    <Compile Include="Commands\GenerateVideoRawMediaThumb.cs" />
+    <Compile Include="Commands\GetCompeteDemographic.cs" />
+    <Compile Include="Commands\GetHighlightedPQ.cs" />
+    <Compile Include="Commands\GetIQAgentRadioIframeUrl.cs" />
+    <Compile Include="Commands\GetNielsenDemographic.cs" />
+    <Compile Include="Commands\GetVideoCategoryData.cs" />
+    <Compile Include="Commands\GetCompeteDataSMWithDate.cs" />
+    <Compile Include="Commands\GetCompeteDataNMWithDate.cs" />
+    <Compile Include="Commands\GetHighlightedCCWithDate.cs" />
+    <Compile Include="Commands\GetIQLicenseUrl.cs" />
+    <Compile Include="Commands\GetVideoNielSenData.cs" />
+    <Compile Include="Commands\GetPlayerDataWithDate.cs" />
+    <Compile Include="Commands\GetHighlightedTWWithDate.cs" />
+    <Compile Include="Commands\GetHighlightedSMWithDate.cs" />
+    <Compile Include="Commands\GetHighlightedNMWithDate.cs" />
+    <Compile Include="Commands\EmailService.cs" />
+    <Compile Include="Commands\ExportClipForMicrosite.cs" />
+    <Compile Include="Commands\GenerateRawMediaThumb.cs" />
+    <Compile Include="Commands\GetCompeteDataByCompeteUrlNM.cs" />
+    <Compile Include="Commands\GetCompeteDataByCompeteUrlSM.cs" />
+    <Compile Include="Commands\GetEmailSharing.cs" />
+    <Compile Include="Commands\GetHighlightedTW.cs" />
+    <Compile Include="Commands\GetStationSharing.cs" />
+    <Compile Include="Commands\GetCompeteDataNM.cs" />
+    <Compile Include="Commands\GetCompeteDataSM.cs" />
+    <Compile Include="Commands\GetHighlightedCC.cs" />
+    <Compile Include="Commands\GetHighlightedNM.cs" />
+    <Compile Include="Commands\GetHighlightedSM.cs" />
+    <Compile Include="Commands\GetIQAgentIframeURL.cs" />
+    <Compile Include="Commands\GetNielsen.cs" />
+    <Compile Include="Commands\GetNielSenData.cs" />
+    <Compile Include="Commands\GetVideoMetaData.cs" />
+    <Compile Include="Commands\GetWaterMark.cs" />
+    <Compile Include="Commands\GetPlayerData.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\InsertClipTimeSync.cs" />
+    <Compile Include="Commands\LogRawMediaPlay.cs" />
+    <Compile Include="Commands\NullCommand.cs" />
+    <Compile Include="Commands\ExportUGCRawClip.cs" />
+    <Compile Include="Commands\UpdateRawMediaPlayLog.cs" />
+    <Compile Include="Config\ConfigSettings.cs" />
+    <Compile Include="Config\Sections\Mappings\ActionClass.cs" />
+    <Compile Include="Config\Sections\Mappings\Mappings.cs" />
+    <Compile Include="Config\Sections\Mappings\Parameter.cs" />
+    <Compile Include="Config\Sections\Mappings\UrlMapping.cs" />
+    <Compile Include="Config\Sections\SolrUrlSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestProcessor.cs" />
+    <Compile Include="Serializers\ErrorSerializer.cs" />
+    <Compile Include="Serializers\Serializer.cs" />
+    <Compile Include="Util\CommonFunctions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Domain\IQMediaGroup.Domain.csproj">
+      <Project>{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}</Project>
+      <Name>IQMediaGroup.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Logic\IQMediaGroup.Logic.csproj">
+      <Project>{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}</Project>
+      <Name>IQMediaGroup.Logic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQRadioSearch\IQRadioSearch\IQRadioSearch.csproj">
+      <Project>{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}</Project>
+      <Name>IQRadioSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\2013_11_07_iqsvc_.pubxml" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>2274</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>http://testsvc.iqmediacorp.com</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

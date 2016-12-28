@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="IQIOSService_Export" EntityType="IQMediaGroupModel.Store.IQIOSService_Export" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_RawMediaPlayLog" EntityType="IQMediaGroupModel.Store.IQTrack_RawMediaPlayLog" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="IQIOSService_Export">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ClipGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="DateQueued" Type="datetime2" Nullable="false" />
+          <Property Name="LastModified" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQTrack_RawMediaPlayLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PlayDate" Type="datetime" Nullable="false" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="16" />
+          <Property Name="IPAddDecimal" Type="bigint" />
+          <Property Name="Referrer" Type="varchar" MaxLength="2048" />
+          <Property Name="_UserGuid" Type="uniqueidentifier" />
+          <Property Name="Device" Type="varchar" MaxLength="500" />
+          <Property Name="DeviceOS" Type="varchar" MaxLength="500" />
+          <Property Name="PercentPlayed" Type="smallint" />
+        </EntityType>
+        <Function Name="usp_IOSService_Customer_CheckIsRegistered" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UDID" Type="varchar" Mode="In" />
+          <Parameter Name="Application" Type="varchar(max)" Mode="In" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="InOut" />
+          <Parameter Name="AppVersion" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="int" Mode="InOut" />
+          <Parameter Name="AppPath" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="usp_IOSService_Customer_CheckMobileLogin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="LoginID" Type="varchar" Mode="In" />
+          <Parameter Name="UDID" Type="varchar" Mode="In" />
+          <Parameter Name="Application" Type="varchar(max)" Mode="In" />
+          <Parameter Name="AppVersion" Type="varchar" Mode="In" />
+          <Parameter Name="Status" Type="int" Mode="InOut" />
+          <Parameter Name="AppPath" Type="varchar" Mode="InOut" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="InOut" />
+          <Parameter Name="CustomerPassword" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="usp_IOSService_fliQ_CustomCategory_SelectByClientGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_fliQ_Exception_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UDID" Type="varchar" Mode="In" />
+          <Parameter Name="Application" Type="varchar" Mode="In" />
+          <Parameter Name="ExceptionMessage" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_fliQ_UploadTracking_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UniqueID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="FileName" Type="varchar" Mode="In" />
+          <Parameter Name="CategoryGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Tags" Type="varchar" Mode="In" />
+          <Parameter Name="DeviceDateTime" Type="datetime" Mode="In" />
+          <Parameter Name="DeviceTimeZone" Type="varchar" Mode="In" />
+          <Parameter Name="VideoTimeZone" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_fliQ_UploadTracking_UpdateStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="bigint" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="Comments" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_IQService_IOSUGCUpload_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="FileName" Type="varchar" Mode="In" />
+          <Parameter Name="Title" Type="varchar" Mode="In" />
+          <Parameter Name="Description" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Keywords" Type="varchar(max)" Mode="In" />
+          <Parameter Name="StartTime" Type="varchar" Mode="In" />
+          <Parameter Name="EndTime" Type="varchar" Mode="In" />
+          <Parameter Name="UDID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_SelectClipIOSLocation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="clipGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IOSService_SelectRecordFileLocationByIQAgentIframeID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgentIframeID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupIOSEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="GetClipIOSLocation" ReturnType="Collection(IQMediaGroupModel.IOSFileDetail)">
+          <Parameter Name="clipGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <EntitySet Name="IQIOSService_Export" EntityType="IQMediaGroupModel.IQIOSService_Export" />
+          <FunctionImport Name="GetRecordFileLocationByGuid" ReturnType="Collection(IQMediaGroupModel.IOSFileDetail)">
+          <Parameter Name="IQAgentIframeID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="CheckIsCustomerRegistered" ReturnType="Collection(IQMediaGroupModel.IOSApplicationFTPDetails)">
+            <Parameter Name="UDID" Mode="In" Type="String" />
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="ClientGuid" Mode="InOut" Type="Guid" />
+            <Parameter Name="AppVersion" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="InOut" Type="Int32" />
+            <Parameter Name="AppPath" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CheckCustomerMobileLogin" ReturnType="Collection(IQMediaGroupModel.IOSApplicationFTPDetails)">
+            <Parameter Name="LoginID" Mode="In" Type="String" />
+            <Parameter Name="UDID" Mode="In" Type="String" />
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="AppVersion" Mode="In" Type="String" />
+            <Parameter Name="Status" Mode="InOut" Type="Int32" />
+            <Parameter Name="AppPath" Mode="InOut" Type="String" />
+            <Parameter Name="ClientGuid" Mode="InOut" Type="Guid" />
+            <Parameter Name="CustomerPassword" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIOSUGCUpload" ReturnType="Collection(Decimal)">
+            <Parameter Name="FileName" Mode="In" Type="String" />
+            <Parameter Name="Title" Mode="In" Type="String" />
+            <Parameter Name="Description" Mode="In" Type="String" />
+            <Parameter Name="Keywords" Mode="In" Type="String" />
+            <Parameter Name="StartTime" Mode="In" Type="String" />
+            <Parameter Name="EndTime" Mode="In" Type="String" />
+            <Parameter Name="UDID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="usp_IOSService_Customer_CheckIsRegistered" ReturnType="Collection(IQMediaGroupModel.IOSApplicationFTPDetails)">
+            <Parameter Name="UDID" Mode="In" Type="String" />
+            <Parameter Name="Application" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomCategoryByClient" ReturnType="Collection(IQMediaGroupModel.CustomCategory)">
+          <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="InsertUploadTracking" ReturnType="Collection(Int64)">
+            <Parameter Name="UniqueID" Mode="In" Type="Guid" />
+            <Parameter Name="FileName" Mode="In" Type="String" />
+            <Parameter Name="CategoryGuid" Mode="In" Type="Guid" />
+            <Parameter Name="Tags" Mode="In" Type="String" />
+            <Parameter Name="DeviceDateTime" Mode="In" Type="DateTime" />
+            <Parameter Name="DeviceTimeZone" Mode="In" Type="String" />
+            <Parameter Name="VideoTimeZone" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateUploadTrackingStatus" ReturnType="Collection(Int32)">
+            <Parameter Name="ID" Mode="In" Type="Int64" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="Comments" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIOSException" ReturnType="Collection(Int32)">
+            <Parameter Name="UDID" Mode="In" Type="String" />
+            <Parameter Name="Application" Mode="In" Type="String" />
+            <Parameter Name="ExceptionMessage" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="RawMediaPlayLogs" EntityType="IQMediaGroupModel.RawMediaPlayLogs" />
+        </EntityContainer>
+        <EntityType Name="IQIOSService_Export">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Guid" Name="ID" Nullable="false" />
+          <Property Type="Guid" Name="ClipGuid" Nullable="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateQueued" Nullable="false" />
+          <Property Type="DateTime" Name="LastModified" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="IOSFileDetail" >
+          <Property Type="String" Name="StreamSuffixPath" Nullable="false" />
+          <Property Type="String" Name="AppName" Nullable="false" />
+          <Property Type="String" Name="IOSFileLocation" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IOSApplicationFTPDetails" >
+          <Property Type="String" Name="FTPHost" Nullable="true" />
+          <Property Type="String" Name="FTPPath" Nullable="true" />
+          <Property Type="String" Name="FTPLoginID" Nullable="true" />
+          <Property Type="String" Name="FTPPwd" Nullable="true" />
+          <Property Type="Guid" Name="DefaultCategory" Nullable="true" />
+          <Property Type="Boolean" Name="IsCategoryEnabled" Nullable="true" />
+          <Property Type="Int32" Name="MaxVideoDuration" Nullable="true" />
+          <Property Type="Boolean" Name="ForceLandscape" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="CustomCategory" >
+          <Property Type="Guid" Name="CategoryGUID" Nullable="true" />
+          <Property Type="String" Name="CategoryName" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="RawMediaPlayLogs">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int64" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="C_AssetGuid" Nullable="false" />
+          <Property Type="DateTime" Name="PlayDate" Nullable="false" />
+          <Property Type="String" Name="IPAddress" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="IPAddDecimal" />
+          <Property Type="String" Name="Referrer" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="C_UserGuid" />
+          <Property Type="String" Name="Device" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DeviceOS" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int16" Name="PercentPlayed" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupIOSEntities" >
+          <FunctionImportMapping FunctionImportName="GetClipIOSLocation" FunctionName="IQMediaGroupModel.Store.usp_IOSService_SelectClipIOSLocation" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IOSFileDetail">
+                <ScalarProperty Name="StreamSuffixPath" ColumnName="StreamSuffixPath" />
+                <ScalarProperty Name="AppName" ColumnName="AppName" />
+                <ScalarProperty Name="IOSFileLocation" ColumnName="IOSFileLocation" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="IQIOSService_Export">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.IQIOSService_Export">
+              <MappingFragment StoreEntitySet="IQIOSService_Export">
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="DateQueued" ColumnName="DateQueued" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ClipGuid" ColumnName="ClipGuid" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetRecordFileLocationByGuid" FunctionName="IQMediaGroupModel.Store.usp_IOSService_SelectRecordFileLocationByIQAgentIframeID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IOSFileDetail">
+                <ScalarProperty Name="StreamSuffixPath" ColumnName="StreamSuffixPath" />
+                <ScalarProperty Name="AppName" ColumnName="AppName" />
+                <ScalarProperty Name="IOSFileLocation" ColumnName="IOSFileLocation" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertIOSUGCUpload" FunctionName="IQMediaGroupModel.Store.usp_IOSService_IQService_IOSUGCUpload_Insert" />
+          <FunctionImportMapping FunctionImportName="GetCustomCategoryByClient" FunctionName="IQMediaGroupModel.Store.usp_IOSService_fliQ_CustomCategory_SelectByClientGuid">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.CustomCategory">
+                <ScalarProperty Name="CategoryGUID" ColumnName="CategoryGUID" />
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertUploadTracking" FunctionName="IQMediaGroupModel.Store.usp_IOSService_fliQ_UploadTracking_Insert" />
+          <FunctionImportMapping FunctionImportName="UpdateUploadTrackingStatus" FunctionName="IQMediaGroupModel.Store.usp_IOSService_fliQ_UploadTracking_UpdateStatus" />
+          <FunctionImportMapping FunctionImportName="CheckCustomerMobileLogin" FunctionName="IQMediaGroupModel.Store.usp_IOSService_Customer_CheckMobileLogin">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IOSApplicationFTPDetails">
+                <ScalarProperty Name="FTPHost" ColumnName="FTPHost" />
+                <ScalarProperty Name="FTPPath" ColumnName="FTPPath" />
+                <ScalarProperty Name="FTPLoginID" ColumnName="FTPLoginID" />
+                <ScalarProperty Name="FTPPwd" ColumnName="FTPPwd" />
+                <ScalarProperty Name="DefaultCategory" ColumnName="DefaultCategory" />
+                <ScalarProperty Name="IsCategoryEnabled" ColumnName="IsCategoryEnabled" />
+                <ScalarProperty Name="MaxVideoDuration" ColumnName="MaxVideoDuration" />
+                <ScalarProperty Name="ForceLandscape" ColumnName="ForceLandscape" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CheckIsCustomerRegistered" FunctionName="IQMediaGroupModel.Store.usp_IOSService_Customer_CheckIsRegistered">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IOSApplicationFTPDetails">
+                <ScalarProperty Name="FTPHost" ColumnName="FTPHost" />
+                <ScalarProperty Name="FTPPath" ColumnName="FTPPath" />
+                <ScalarProperty Name="FTPLoginID" ColumnName="FTPLoginID" />
+                <ScalarProperty Name="FTPPwd" ColumnName="FTPPwd" />
+                <ScalarProperty Name="DefaultCategory" ColumnName="DefaultCategory" />
+                <ScalarProperty Name="IsCategoryEnabled" ColumnName="IsCategoryEnabled" />
+                <ScalarProperty Name="MaxVideoDuration" ColumnName="MaxVideoDuration" />
+                <ScalarProperty Name="ForceLandscape" ColumnName="ForceLandscape" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertIOSException" FunctionName="IQMediaGroupModel.Store.usp_IOSService_fliQ_Exception_Insert" />
+          <EntitySetMapping Name="RawMediaPlayLogs">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RawMediaPlayLogs">
+              <MappingFragment StoreEntitySet="IQTrack_RawMediaPlayLog">
+                <ScalarProperty Name="PercentPlayed" ColumnName="PercentPlayed" />
+                <ScalarProperty Name="DeviceOS" ColumnName="DeviceOS" />
+                <ScalarProperty Name="Device" ColumnName="Device" />
+                <ScalarProperty Name="C_UserGuid" ColumnName="_UserGuid" />
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="IPAddDecimal" ColumnName="IPAddDecimal" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="PlayDate" ColumnName="PlayDate" />
+                <ScalarProperty Name="C_AssetGuid" ColumnName="_AssetGuid" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMediaGroup.IOS" >
+        <EntityTypeShape EntityType="IQMediaGroupModel.IQIOSService_Export" Width="1.5" PointX="0.75" PointY="0.75" Height="1.7566536458333335" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RawMediaPlayLogs" Width="1.5" PointX="3.375" PointY="0.75" Height="2.9417936197916665" IsExpanded="true" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

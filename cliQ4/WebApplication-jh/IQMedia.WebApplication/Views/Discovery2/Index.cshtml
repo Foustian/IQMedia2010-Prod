@@ -1,0 +1,406 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_IQMediaMasterInner.cshtml";
+}
+@{
+    
+    IQMedia.Model.SessionInformation sessionInformation = IQMedia.WebApplication.Utility.CommonFunctions.GetSessionInformation();
+}
+@*<script src="../../Scripts/Col2D1.js?v=1.0" type="text/javascript"></script>*@
+<script src="../../Scripts/highcharts.js?v=1.0" type="text/javascript"></script>
+<script src="../../Scripts/Discovery2.js?v=1.0" type="text/javascript"></script>
+<script src="../../Scripts/ArticleScript.js?v=1.0" type="text/javascript"></script>
+<script src="../../Scripts/PlayerScript.js?v=1.0" type="text/javascript"></script>
+<div class="container container_custom">
+    <div class="row-fluid" id="divRowFluid">
+        <div class="span3 minheight500 borderRight" id="divQuickFeedFinder">
+            <div class="well sidebar-nav">
+                <h5>
+                    Discover
+                </h5>
+                <ul id="ulSearchTerm" class="searchTermUL">
+                </ul>
+                <div>
+                    <div onclick="AddNewSearchTermTextBox();" class="cursorPointer maxWidth87 float-left" id="divAddItem">
+                        <img id="imgAddItem" src="../../Images/Plus.png" alt="" class="marginRight10" />Add
+                        Item</div>
+                    <div class="float-right displayNone" id="divDiscoveryClearAll">
+                        <a data-original-title="" onclick="ClearSearch();" id="aClearSearch" class="cursorPointer">
+                            <img src="../../Images/clear.png" alt="Clear" id="imgClearSearch" class="float-left marginRight9"><span>Clear
+                                All</span></a></div>
+                </div>
+            <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulNarrowResult">
+                <li role="presentation" class="cursorPointer"><a tabindex="-1" role="menuitem"></a>
+                </li>
+            </ul>
+            <br />
+            <br />
+            <div class="clear">
+            </div>
+            <h5>
+                Modify Date Range</h5>
+            <input type="text" id="dpFrom" readonly="readonly" class="date" />
+            <input type="text" id="dpTo" readonly="readonly" class="date" />
+            <br />
+            <br />
+            <h5>
+                Narrow Result</h5>
+            <div class="navbar minHeight120">
+                <ul role="navigation" class="nav floatNone sideMenuUl width100p">
+                    <li class="dropdown ndate"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
+                        href="#" id="drop1">Date<span class="spnArrow">&nbsp;</span></a>
+                        <ul id="ulCalender" aria-labelledby="drop1" role="menu" class="dropdown-menu sideMenu ulCalenderFilter">
+                            <li role="presentation">
+                                <div id="divCalender">
+                                </div>
+                        </ul>
+                    </li>
+                    <li class="dropdown nmedium"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
+                        id="A1" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
+                        <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMedium">
+                            @{                                
+                                List<IQMedia.Model.Category> listCategory = new List<IQMedia.Model.Category>();
+
+                                if (Model != null && Model["FeedFilter"] != null && Model["FeedFilter"].FilterListCategory != null)
+                                {
+
+                                    listCategory = (List<IQMedia.Model.Category>)(Model["FeedFilter"].FilterListCategory);
+                                }
+                                if (listCategory != null && listCategory.Count > 0)
+                                {
+                                    foreach (IQMedia.Model.Category item in listCategory)
+                                    {
+                                <li onclick="SetMedium('@item.Value');" role="presentation"><a href="#" tabindex="-1"
+                                    role="menuitem">@item.Key</a></li>
+                                    }
+                                }
+                                else
+                                {
+                                <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                    <li class="dropdown market"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
+                        id="A1" href="#">TV Market<span class="spnArrow">&nbsp;</span></a>
+                        <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulTVMarket">
+                            @{                                
+                                List<IQMedia.Model.Category> listTVMarket = new List<IQMedia.Model.Category>();
+
+                                if (Model != null && Model["FeedFilter"] != null && Model["FeedFilter"].FilterListCategory != null)
+                                {
+
+                                    listTVMarket = (List<IQMedia.Model.Category>)(Model["FeedFilter"].FilterListCategory);
+                                }
+                                if (listTVMarket != null && listTVMarket.Count > 0)
+                                {
+                                    foreach (IQMedia.Model.Category item in listTVMarket)
+                                    {
+                                <li onclick="SetMedium('@item.Value');" role="presentation"><a href="#" tabindex="-1"
+                                    role="menuitem">@item.Key</a></li>
+                                    }
+                                }
+                                else
+                                {
+                                <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <div id="divSavedSearch" class="text-align-center paddingBottom10">
+                <img alt="" id="imgSaveSearchLoading" class="marginRight10" src="../../Images/Loading_1.gif" />
+            </div>
+            <div class="clear" align="right">
+                <a onclick="ShowSaveSearchDiscovery();" id="aSaveSearch" class="cursorPointer">
+                    <img src="../../Images/Save_Floppy.png" alt="Save Search" id="imgSaveSearch" class="marginRight9" /><span>Save
+                        New Search</span></a></div>
+        </div>
+    </div>
+        <div class="span9 span9-custom borderWidth0imp">
+        <div class="row-fluid row-custom noBorder">
+            @*<div class="float-right">
+                    <img id="imgChartResult" width="43" height="27" src="../../Images/Result.png" onclick="ToggleChartResult();"
+                        class="cursorPointer" style="height: 27px;" />
+                </div>*@
+            <div id="divActiveFilter" class="row-fluid filter">
+            </div>
+            <div id="divChartMain">
+                <div id="divChartActionHeader" class="float-right marginLeft10 bottomBorderColor width100p DiscoveryChartHeaderMainDiv">
+                    <div id="divHeader" class="pull-left DiscoveryHeader">
+                        <b>Discover Overview</b></div>
+                    <div class="float-right dashboardHeader" id="divDashboardUtility">
+                        <div class="float-left displayNone" id="divDiscoveryUtility">
+                            <img src="../../Images/Email.png" alt="Email" title="Email" class="cursorPointer"
+                                onclick="ShowDashboardEmailPopup();" />
+                            <img src="../../Images/pdf.png" alt="Save as PDF" class="cursorPointer" onclick="GenerateDashboardPDF();" /><span
+                                style="color: #3C3C3E;">|</span>
+                        </div>
+                        <img src="../../Images/Result.png" alt="" onclick="ToggleChartResult();" class="cursorPointer float-right"
+                            id="imgResult" />
+                    </div>
+                </div>
+                @*<div class="pull-left paddingLeft20p dashboardHeader displayNone" id="divDiscoveryUtility">
+                        <a href="#" onclick="ShowDashboardEmailPopup();">Email</a>|<a href="javascript:void();"
+                            onclick="GenerateDashboardPDF();">Save as PDF</a></div>*@
+                <div class="float-right" id="divChartTotal">
+                </div>
+                <div id="divNoDataChart" class="clear">
+                </div>
+                <div id="divColumnChart" class="float-left NoDataDiv">
+                </div>
+                <div id="divLineChart" class="float-left">
+                </div>
+                <div id="divPieChart" class="paddingTop30 float-left">
+                    <div id="divPieChartHeader" class="discoveryTabParent displayNone">
+                    </div>
+                    <div id="divPieChartData" class="clear paddingTop20" style="display: none;">
+                    </div>
+                </div>
+            </div>
+            <div id="divResultMain" class="heightWidth0">
+                @*<div id="divResultActionHeader" class="clear bottomBorderColor">*@
+                <div class="pull-right action">
+                    <div class="btn-group fleft">
+                        <a class="btn dropdown-toggle no-background" data-toggle="dropdown" href="#">Action&nbsp;&nbsp;<span
+                            class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a class="cursorPointer" onclick="ShowSaveReportPopup();">Create Report</a></li>
+                            <li><a class="cursorPointer" onclick="ShowAddToReportPopup();">Add to Report</a></li>
+                            <li><a class="cursorPointer" onclick="ShowAddToLibraryPopup();">Add to Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="float-left">
+                        <img src="../../Images/Chart.png" alt="" onclick="ToggleChartResult();" class="cursorPointer"
+                            id="imgChart" /></div>
+                    <div class="select">
+                        <label>
+                            Select all</label><input type="checkbox" id="chkInputAll" onclick="checkUncheckAll('divResult','chkInputAll');" /></div>
+                </div>
+                @*</div>*@ @*<div id="divNoDataResult" class="clear">
+                    </div>*@
+                <div class="clear">
+                </div>
+                <div id="divResultHeader" class="margintop5 discoveryTabParent">
+                </div>
+                <div id="divMainContent" class="clear">
+                    <div id="divResult" class="clear">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="divEmailPopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img id="imgCloseEmalilPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
+            onclick="CancelEmailpopup();" /></div>
+    <div style="padding: 20px 20px 0px 20px;">
+        <input type="hidden" id="hdnLoggedInUserEmail" value="@sessionInformation.Email" />
+        <div class="modalpopheadertitle" style="margin-bottom: 20px;">
+            Share with friends
+        </div>
+        <div id="divEmailPopupScrollContent" style="padding-right: 15px;">
+            <form class="form-horizontal">
+            <input type="hidden" id="hdnEmailFunctionalityType" value="result" />
+            <div class="control-group">
+                <label class="control-label" for="txtFromEmail">
+                    Your email</label>
+                <div class="controls">
+                    <input type="text" id="txtFromEmail" placeholder="From Email" class="txtwidth90per" />
+                    <span class="help-inline" id="spanFromEmail" style="color: #FF0000; display: none;">
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="txtToEmail">
+                    Friend's email</label>
+                <div class="controls">
+                    <input type="text" id="txtToEmail" placeholder="To Email (separate multiple address with semicolon)"
+                        class="txtwidth90per" />
+                    <span class="help-inline" id="spanToEmail" style="color: #FF0000; display: none;">
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="txtSubject">
+                    Subject</label>
+                <div class="controls">
+                    <input type="text" id="txtSubject" placeholder="Subject" class="txtwidth90per" />
+                    <span class="help-inline" id="spanSubject" style="color: #FF0000; display: none;">
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="txtToEmail">
+                    Message</label>
+                <div class="controls">
+                    <textarea id="txtMessage" rows="5" cols="50" placeholder="Message" class="txtwidth90per"></textarea>
+                    <span class="help-inline" id="spanMessage" style="color: #FF0000; display: none;
+                        vertical-align: top"></span>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" id="btnCancel" onclick="CancelEmailpopup();" class="cancelButton">
+                        Cancel</button>
+                    <button type="button" id="btnSendEmail" onclick="SendEmail();" class="button">
+                        OK</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="divReportPopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img id="imgReportPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
+            onclick="ClosePopUp('divReportPopup');" /></div>
+    <div style="padding-top: 20px;">
+        <form class="form-horizontal">
+        <div style="padding-bottom: 5px; border-bottom: 1px solid #dadada; margin: 1px 15px 1px 15px;
+            font-weight: bold;">
+            Report
+        </div>
+        <br />
+        <div class="control-group">
+            <label class="control-label" for="spnCreateReportNote">
+            </label>
+            <div class="controls">
+                <span id="spnCreateReportNote" class="RedFont"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="txtReportTitle">
+                Title</label>
+            <div class="controls">
+                <input type="text" id="txtReportTitle" placeholder="Report Title" style="width: 85%;" />
+                <span class="help-inline" id="spanReportTitle" style="color: #FF0000; display: none;">
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="txtReportKeywords">
+                Keywords</label>
+            <div class="controls">
+                <input type="text" id="txtReportKeywords" placeholder="Report Keywords" style="width: 85%;" />
+                <span class="help-inline" id="spanKeywords" style="color: #FF0000; display: none;">
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="txtReportDescription">
+                Description</label>
+            <div class="controls">
+                <input type="text" id="txtReportDescription" placeholder="Report Description" style="width: 85%;" />
+                <span class="help-inline" id="spanDescription" style="color: #FF0000; display: none;">
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ddlReportCategory">
+                Category</label>
+            <div class="controls">
+                <select id="ddlReportCategory">
+                </select>
+                <span class="help-inline" id="spanPCategory" style="color: #FF0000; display: none;">
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="button" id="btnReportCancel" onclick="ClosePopUp('divReportPopup');"
+                    class="cancelButton">
+                    Cancel</button>
+                <button type="button" id="btnCreateReport" onclick="InsertDiscoveryReport();" class="button">
+                    OK</button>
+                <img alt="" id="imgCreateReportLoading" class="marginLeft10 displayNone" src="../../Images/Loading_1.gif" />
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<div id="divAddToReportPopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img id="imgAddToReportPopupPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
+            onclick="ClosePopUp('divAddToReportPopup');" /></div>
+    <div style="padding-top: 20px;">
+        <form class="form-horizontal">
+        <div style="padding-bottom: 5px; border-bottom: 1px solid #dadada; margin: 1px 15px 1px 15px;
+            font-weight: bold;">
+            Add To Report
+        </div>
+        <br />
+        <div class="control-group">
+            <label class="control-label" for="spnAddToReportNote">
+            </label>
+            <div class="controls">
+                <span id="spnAddToReportPopupNote" class="RedFont"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ddlReportTitle">
+                Report</label>
+            <div class="controls">
+                <select id="ddlReportTitle">
+                </select>
+                <span class="help-inline" id="spanReportValidationMessage" style="color: #FF0000;
+                    display: none;"></span><a class="cursorPointer" onclick="GetDiscoveryReport();">Refresh
+                    </a>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="button" id="btnCancel" onclick="ClosePopUp('divAddToReportPopup');"
+                    class="cancelButton">
+                    Cancel</button>
+                <button type="button" id="btnAddToReport" onclick="AddToDiscoveryReport();" class="button">
+                    OK</button>
+                <img alt="" id="imgAddToReportLoading" class="marginLeft10 displayNone" src="../../Images/Loading_1.gif" />
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+<div id="divAddToLibraryPopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img id="imgAddToLibraryPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
+            onclick="ClosePopUp('divAddToLibraryPopup');" /></div>
+    <div style="padding-top: 20px;">
+        <form class="form-horizontal">
+        <div style="padding-bottom: 5px; border-bottom: 1px solid #dadada; margin: 1px 15px 1px 15px;
+            font-weight: bold;">
+            Add To Library
+        </div>
+        <br />
+        <div class="control-group">
+            <label class="control-label" for="spnAddToLibraryNote">
+            </label>
+            <div class="controls">
+                <span id="spnAddToLibraryPopupNote" class="RedFont"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="ddlReportTitle">
+                Category</label>
+            <div class="controls">
+                <select id="ddlLibraryCategory">
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="button" id="btnLibraryCancel" onclick="ClosePopUp('divAddToLibraryPopup');"
+                    class="cancelButton">
+                    Cancel</button>
+                <button type="button" id="btnAddToLibrary" onclick="AddToDiscoveryLibrary();" class="button">
+                    OK</button>
+                <img alt="" id="imgAddToLibraryLoading" class="marginLeft10 displayNone" src="../../Images/Loading_1.gif" />
+            </div>
+        </div>
+        </form>
+    </div>
+</div>

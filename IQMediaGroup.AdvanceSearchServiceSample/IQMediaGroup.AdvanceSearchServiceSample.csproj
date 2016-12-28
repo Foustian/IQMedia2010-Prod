@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{099E8F51-0091-4D59-B6A2-8A3EFD114F0C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.AdvanceSearchServiceSample</RootNamespace>
+    <AssemblyName>IQMediaGroup.AdvanceSearchServiceSample</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit, Version=4.1.51116.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Flan.Controls, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Flan.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Account\ChangePassword.aspx" />
+    <Content Include="Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Account\Login.aspx" />
+    <Content Include="Account\Register.aspx" />
+    <Content Include="AdvanceSearchService.aspx" />
+    <Content Include="bin\AjaxControlToolkit.dll" />
+    <Content Include="bin\Flan.Controls.dll" />
+    <Content Include="bin\IQMediaGroup.AdvanceSearchServiceSample.dll" />
+    <Content Include="bin\IQMediaGroup.AdvanceSearchServiceSample.pdb" />
+    <Content Include="bin\Microsoft.Practices.Unity.dll" />
+    <Content Include="Css\Adminstyle.css" />
+    <Content Include="Css\flexcrollstyles.css" />
+    <Content Include="Css\style.css" />
+    <Content Include="Css\tutorsty.css" />
+    <Content Include="Images\27-0.gif" />
+    <Content Include="Images\27-1.gif" />
+    <Content Include="Images\30-0.gif" />
+    <Content Include="Images\arrow-down-grey.gif" />
+    <Content Include="Images\arrow-down.gif" />
+    <Content Include="Images\arrow-down.png" />
+    <Content Include="Images\arrow-next.gif" />
+    <Content Include="Images\arrow-Next.jpg" />
+    <Content Include="Images\arrow-next.png" />
+    <Content Include="Images\arrow-previous.gif" />
+    <Content Include="Images\arrow-previous.jpg" />
+    <Content Include="Images\arrow-previous.png" />
+    <Content Include="Images\arrow-up.gif" />
+    <Content Include="Images\banner-ad1.jpg" />
+    <Content Include="Images\banner-ad2.jpg" />
+    <Content Include="Images\banner-ad3.jpg" />
+    <Content Include="Images\banner_bottom.jpg" />
+    <Content Include="Images\banner_large.jpg" />
+    <Content Include="Images\banner_large_rawMedia.jpg" />
+    <Content Include="Images\banner_middle.jpg" />
+    <Content Include="Images\banner_middle_rawMedia.jpg" />
+    <Content Include="Images\banner_powered.jpg" />
+    <Content Include="Images\bluebox-bg.jpg" />
+    <Content Include="Images\bluebox-hd-bg.jpg" />
+    <Content Include="Images\bluebox-hd-left.jpg" />
+    <Content Include="Images\bluebox-hd-right.jpg" />
+    <Content Include="Images\bluebox-lb.jpg" />
+    <Content Include="Images\bluebox-lt.jpg" />
+    <Content Include="Images\bluebox-rb.jpg" />
+    <Content Include="Images\bluebox-rt.jpg" />
+    <Content Include="Images\body-bg.jpg" />
+    <Content Include="Images\btn-bg.jpg" />
+    <Content Include="Images\btn-bgrep.jpg" />
+    <Content Include="Images\btn-close.gif" />
+    <Content Include="Images\btn-play.jpg" />
+    <Content Include="Images\btn01-bg.jpg" />
+    <Content Include="Images\btn02-bg.jpg" />
+    <Content Include="Images\btn2-bg.jpg" />
+    <Content Include="Images\btn2-bgrep.jpg" />
+    <Content Include="Images\btn3-bg.jpg" />
+    <Content Include="Images\btn4-bg.jpg" />
+    <Content Include="Images\bul-nav.gif" />
+    <Content Include="Images\bul-nav.jpg" />
+    <Content Include="Images\bul-nav.png" />
+    <Content Include="Images\collapse_icon.png" />
+    <Content Include="Images\content-bg.jpg" />
+    <Content Include="Images\contentbox-b.jpg" />
+    <Content Include="Images\contentbox-blue-lt.jpg" />
+    <Content Include="Images\contentbox-blue-rt.jpg" />
+    <Content Include="Images\contentbox-blue-t.jpg" />
+    <Content Include="Images\contentbox-l.jpg" />
+    <Content Include="Images\contentbox-lb.jpg" />
+    <Content Include="Images\contentbox-lt.jpg" />
+    <Content Include="Images\contentbox-r.jpg" />
+    <Content Include="Images\contentbox-rb.jpg" />
+    <Content Include="Images\contentbox-rt.jpg" />
+    <Content Include="Images\contentbox-t.jpg" />
+    <Content Include="Images\error.png" />
+    <Content Include="Images\error_icon.jpg" />
+    <Content Include="Images\error_sign.jpg" />
+    <Content Include="Images\expand_icon.png" />
+    <Content Include="Images\google-map.jpg" />
+    <Content Include="Images\grey-grad.jpg" />
+    <Content Include="Images\grid-th.jpg" />
+    <Content Include="Images\gridicon-cancel.png" />
+    <Content Include="Images\gridicon-edit.png" />
+    <Content Include="Images\gridicon-update.png" />
+    <Content Include="Images\handle_left.gif" />
+    <Content Include="Images\handle_right.gif" />
+    <Content Include="Images\hbar-bg.jpg" />
+    <Content Include="Images\hdicon-login.jpg" />
+    <Content Include="Images\hsep-blue.jpg" />
+    <Content Include="Images\hsep.jpg" />
+    <Content Include="Images\hsep1.jpg" />
+    <Content Include="Images\icon-calendar.jpg" />
+    <Content Include="Images\icon-media.jpg" />
+    <Content Include="Images\icon-user.jpg" />
+    <Content Include="Images\img.jpg" />
+    <Content Include="Images\interested-in-iqmedia.jpg" />
+    <Content Include="Images\loaderB64.gif" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\login-bg-btm.jpg" />
+    <Content Include="Images\login-bg-rep.jpg" />
+    <Content Include="Images\login-bg-top.jpg" />
+    <Content Include="Images\login-bg.jpg" />
+    <Content Include="Images\login-bg1.jpg" />
+    <Content Include="Images\logo-IQMediaGroup.jpg" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\mainbox-lb.gif" />
+    <Content Include="Images\mainbox-lb.jpg" />
+    <Content Include="Images\mainbox-lt.gif" />
+    <Content Include="Images\mainbox-lt.jpg" />
+    <Content Include="Images\mainbox-rb.gif" />
+    <Content Include="Images\mainbox-rb.jpg" />
+    <Content Include="Images\mainbox-rt.gif" />
+    <Content Include="Images\mainbox-rt.jpg" />
+    <Content Include="Images\nav-sep.jpg" />
+    <Content Include="Images\pagetitle-bg.jpg" />
+    <Content Include="Images\pagetitle-left.jpg" />
+    <Content Include="Images\pagetitle-right.jpg" />
+    <Content Include="Images\rail_dark.gif" />
+    <Content Include="Images\rail_light.gif" />
+    <Content Include="Images\searchbox-lt.jpg" />
+    <Content Include="Images\searchbox-rt.jpg" />
+    <Content Include="Images\searchtab-active.jpg" />
+    <Content Include="Images\searchtab-active2.jpg" />
+    <Content Include="Images\searchtab.jpg" />
+    <Content Include="Images\sidebar-bg.jpg" />
+    <Content Include="Images\sidelink-sep.jpg" />
+    <Content Include="Images\sidelink-top.jpg" />
+    <Content Include="Images\spacer.gif" />
+    <Content Include="Images\tab-bg.jpg" />
+    <Content Include="Images\tab-hover-bg.jpg" />
+    <Content Include="Images\tab-hover-r.jpg" />
+    <Content Include="Images\tab-r.jpg" />
+    <Content Include="Images\temp-editor.jpg" />
+    <Content Include="Images\testsegment.GIF" />
+    <Content Include="Images\time00.gif" />
+    <Content Include="Images\time00Old.gif" />
+    <Content Include="Images\time10.gif" />
+    <Content Include="Images\time10Old.gif" />
+    <Content Include="Images\time20.gif" />
+    <Content Include="Images\time20Old.gif" />
+    <Content Include="Images\time30.gif" />
+    <Content Include="Images\time30Old.gif" />
+    <Content Include="Images\time40.gif" />
+    <Content Include="Images\time40Old.gif" />
+    <Content Include="Images\time50.gif" />
+    <Content Include="Images\time50Old.gif" />
+    <Content Include="Images\topbg.jpg" />
+    <Content Include="Images\topnav-bg.jpg" />
+    <Content Include="Images\topnav-left.jpg" />
+    <Content Include="Images\topnav-right.jpg" />
+    <Content Include="Images\userinfo-bg.jpg" />
+    <Content Include="Images\video.jpg" />
+    <Content Include="Images\video2.jpg" />
+    <Content Include="Search.aspx" />
+    <Content Include="ServiceDescription\GetRadioRawMedia.txt" />
+    <Content Include="ServiceDescription\GetRadioStation.txt" />
+    <Content Include="ServiceDescription\GetRawMedia_Case1.txt" />
+    <Content Include="ServiceDescription\GetRawMedia_Case2.txt" />
+    <Content Include="ServiceDescription\GetSSPData.txt" />
+    <Content Include="ServiceDescription\GetRawMedia_Case3.txt" />
+    <Content Include="ServiceRequest\GetRadioRawMedia.txt" />
+    <Content Include="ServiceRequest\GetRadioStation.txt" />
+    <Content Include="ServiceRequest\GetRawMedia_Case1.txt" />
+    <Content Include="ServiceRequest\GetRawMedia_Case2.txt" />
+    <Content Include="ServiceRequest\GetRawMedia_Case3.txt" />
+    <Content Include="ServiceRequest\GetSSPData.txt" />
+    <Content Include="ServiceScreenShot\Case1.JPG" />
+    <Content Include="ServiceScreenShot\Case2.JPG" />
+    <Content Include="ServiceScreenShot\Case3.JPG" />
+    <Content Include="Styles\Site.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Account\ChangePassword.aspx.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ChangePassword.aspx.designer.cs">
+      <DependentUpon>ChangePassword.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\ChangePasswordSuccess.aspx.cs">
+      <DependentUpon>ChangePasswordSuccess.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ChangePasswordSuccess.aspx.designer.cs">
+      <DependentUpon>ChangePasswordSuccess.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Register.aspx.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Register.aspx.designer.cs">
+      <DependentUpon>Register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdvanceSearchService.aspx.cs">
+      <DependentUpon>AdvanceSearchService.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdvanceSearchService.aspx.designer.cs">
+      <DependentUpon>AdvanceSearchService.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Class\Class1.cs" />
+    <Compile Include="Class\CurrentSearch.cs" />
+    <Compile Include="Class\IQ_Cat_Set.cs" />
+    <Compile Include="Class\IQ_Class_Set.cs" />
+    <Compile Include="Class\IQ_Dma_Set.cs" />
+    <Compile Include="Class\RadioRawMediaInput.cs" />
+    <Compile Include="Class\RadioRawMediaOutput.cs" />
+    <Compile Include="Class\RadioStationOut.cs" />
+    <Compile Include="Class\RawMedia.cs" />
+    <Compile Include="Class\RawMediaInput.cs" />
+    <Compile Include="Class\RawMediaOutput.cs" />
+    <Compile Include="Class\Station_Affil_Set.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search.aspx.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Search.aspx.designer.cs">
+      <DependentUpon>Search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Serializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Account\Web.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>3638</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

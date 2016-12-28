@@ -1,0 +1,1 @@
+Returns the data in JSON format as per the request.

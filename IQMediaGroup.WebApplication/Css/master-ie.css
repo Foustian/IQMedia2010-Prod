@@ -1,0 +1,128 @@
+* html body {
+    height:100%;
+    width: expression( document.body.clientWidth < 901 ? "900px" : "auto" ); /* set min-width for IE */
+}
+
+* html .header .banner {
+    position:static;
+}
+
+* html .header .banner img {
+    padding-top:15px;
+}
+
+* html .header .banner .left-glowing,
+* html .header .banner .right-glowing,
+* html .header .banner .bottom-glowing {
+    background:none;
+    position:static;
+    display:none;
+}
+
+.contact dl dt,
+.contact dl dd {
+    height:18px;
+}
+
+* html .content .columns-wrapper {
+    padding-top:20px;
+}
+
+* html .content .columns-wrapper .right-column {
+    float:left;
+    margin-left:30px;
+}
+
+* html .content .columns-wrapper .right-column .block-content,
+* html .content .columns-wrapper .left-column .block-content {
+    height:350px;
+}
+
+* html .content .columns-wrapper .right-column .block-content {
+}
+
+* html .content .columns-wrapper .right-column .services-wrapper {
+    width:400px;
+}
+
+* html .content .main-content,
+* html .content .one-column,
+* html .content .contact,
+* html .content .services {
+    overflow:hidden;
+    padding-top:20px;
+    width:100%;
+}
+
+* html .content .main-content .block,
+* html .content .one-column .block,
+* html .content .contact .block,
+* html .content .services .block
+{
+    float:left;
+    width:100%;
+}
+
+* html .content .main-content .block-content,
+* html .content .one-column .block-content,
+* html .content .contact .block-content,
+* html .content .services .block-content {
+    width:800px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+* html .right-bottom {
+    background-image:url(../../images/block/ie/right-shadow.jpg);
+}
+
+* html .left-top {
+    background-image:url(../../images/block/ie/left-shadow.jpg);
+}
+
+* html .block .block-bottom {
+    background-image:url(../../images/block/ie/bottom-shadow.jpg);
+}
+
+* html .block .block-top {
+    width:830px;
+    background-image:url(../../images/block/ie/top-shadow.jpg);
+}
+
+* html body .right-column .block-rb-corner {
+    right:1px;
+}
+
+* html .block .block-rb-corner {
+    right:-1px;
+    background-image:url(../../images/block/ie/rb-corner-shadow.jpg);
+}
+
+* html .block .block-lt-corner {
+    background-image:url(../../images/block/ie/lt-corner-shadow.jpg);
+}
+
+* html body .right-column  .block-right-end {
+    right:0px;
+}
+
+* html .block .block-right-end {
+    right:-1px;
+    background-image:url(../../images/block/ie/right-end-shadow.jpg);
+}
+
+* html .block .block-left-end {
+    background-image:url(../../images/block/ie/left-end-shadow.jpg);
+}
+
+* html .block .block-bottom-end {
+    background-image:url(../../images/block/ie/bottom-end-shadow.jpg);
+}
+
+* html .block .block-top-end {
+    background-image:url(../../images/block/ie/top-end-shadow.jpg);
+}
+
+* html .contact dl dt {
+    height:19px;
+}

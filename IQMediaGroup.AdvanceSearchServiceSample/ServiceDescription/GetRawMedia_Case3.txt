@@ -1,0 +1,5 @@
+Search Term = Not Empty
+DMA Rank Selection = Not All.
+Affiliate Network Selection = Not All.
+Category Selection = Not All.
+Class Selection = Not All.

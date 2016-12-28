@@ -1,0 +1,844 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1E07B8D7-CFE5-41CA-A668-DDD933A440C2}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Usercontrol</RootNamespace>
+    <AssemblyName>IQMediaGroup.Usercontrol</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit, Version=4.1.60919.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Flan.Controls">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Flan.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="FlashControl, Version=2.4.2276.31815, Culture=neutral, PublicKeyToken=0066be59ecd613cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\FlashControl.dll</HintPath>
+    </Reference>
+    <Reference Include="ftplib">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\ftplib.dll</HintPath>
+    </Reference>
+    <Reference Include="FusionCharts">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\FusionCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Domain.dll</HintPath>
+    </Reference>
+    <Reference Include="IQMedia.Web.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\IQMedia.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Documents and Settings\bhavik\My Documents\Visual Studio 2008\Projects\WebAppForEnterPriseLib\WebAppEnterPriseLib.Web\bin\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Documents and Settings\bhavik\My Documents\Visual Studio 2008\Projects\WebAppForEnterPriseLib\WebAppEnterPriseLib.Web\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Documents and Settings\bhavik\My Documents\Visual Studio 2008\Projects\WebAppForEnterPriseLib\WebAppEnterPriseLib.Web\bin\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Dlls\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Base\BaseControl.ascx" />
+    <Content Include="bin\Flan.Controls.dll" />
+    <Content Include="bin\FlashControl.dll" />
+    <Content Include="bin\IQMedia.Common.dll" />
+    <Content Include="bin\IQMedia.Domain.dll" />
+    <Content Include="bin\IQMedia.Logic.dll" />
+    <Content Include="bin\IQMedia.Web.Common.dll" />
+    <Content Include="bin\IQMediaGroup.Core.dll" />
+    <Content Include="bin\IQMediaGroup.Core.pdb" />
+    <Content Include="bin\IQMediaGroup.Model.dll" />
+    <Content Include="bin\IQMediaGroup.Model.pdb" />
+    <Content Include="bin\log4net.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Common.xml" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Data.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Data.xml" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll" />
+    <Content Include="bin\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="bin\Microsoft.Practices.Unity.dll" />
+    <Content Include="CodeAnalysis\CodeAnalysisConfiguration.xml" />
+    <Content Include="IQMediaMaster\About\About.ascx" />
+    <Content Include="IQMediaMaster\BasicClipPlayer\BasicClipPlayer.ascx" />
+    <Content Include="IQMediaMaster\ClipandRawMediaControl\ClipandRawMedia.ascx" />
+    <Content Include="IQMediaMaster\CopyrightPolicy\CopyrightPolicy.ascx" />
+    <Content Include="IQMediaMaster\CustomPager\CustomPager.ascx" />
+    <Content Include="IQMediaMaster\DownloadArchiveBLPM\DownloadArchiveBLPM.ascx" />
+    <Content Include="IQMediaMaster\DownloadArchiveNM\DownloadArchiveNM.ascx" />
+    <Content Include="IQMediaMaster\DownloadArchiveSM\DownloadArchiveSM.ascx" />
+    <Content Include="IQMediaMaster\DownloadClip\DownloadClip.ascx" />
+    <Content Include="IQMediaMaster\ClipPlayer\ClipPlayer.ascx" />
+    <Content Include="IQMediaMaster\Corporate\Corporate.ascx" />
+    <Content Include="IQMediaMaster\CustomError\CustomError.ascx" />
+    <Content Include="IQMediaMaster\FooterPanel\FooterPanel.ascx" />
+    <Content Include="IQMediaMaster\HeaderRightPanel\HeaderRightPanel.ascx" />
+    <Content Include="IQMediaMaster\HeaderTabPanel\HeaderTabPanel.ascx" />
+    <Content Include="IQMediaMaster\Home\Home.ascx" />
+    <Content Include="IQMediaMaster\HowAreWeDifferent\HowAreWeDifferent.ascx" />
+    <Content Include="IQMediaMaster\IFrameMicrosite\IFrameMicrosite.ascx" />
+    <Content Include="IQMediaMaster\IframeRawMediaH\IframeRawMediaH.ascx" />
+    <Content Include="IQMediaMaster\IframeRawMedia\IFrameRawMedia.ascx" />
+    <Content Include="IQMediaMaster\CollegiateAthleticPrograms\CollegiateAthleticPrograms.ascx" />
+    <Content Include="IQMediaMaster\IQAgentIframe\IQAgentIframe.ascx" />
+    <Content Include="IQMediaMaster\IQPremium\IQPremium.ascx" />
+    <Content Include="IQMediaMaster\IQ_NewsControl\IQ_NewsControl.ascx" />
+    <Content Include="IQMediaMaster\ManagementTeam\ManagementTeam.ascx" />
+    <Content Include="IQMediaMaster\MyIQ\MyIQ.ascx" />
+    <Content Include="IQMediaMaster\News\News.ascx" />
+    <Content Include="IQMediaMaster\OEMPartnerships\OEMPartnerships.ascx" />
+    <Content Include="IQMediaMaster\OnlineNews\OnlineNews.ascx" />
+    <Content Include="IQMediaMaster\PoliticalParties\PoliticalParties.ascx" />
+    <Content Include="IQMediaMaster\ProfessionalSports\ProfessionalSports.ascx" />
+    <Content Include="IQMediaMaster\Industries\Industries.ascx" />
+    <Content Include="IQMediaMaster\ProPrep\ProPrep.ascx" />
+    <Content Include="IQMediaMaster\Resources\Resources.ascx" />
+    <Content Include="IQMediaMaster\StaticMasterRightContent\StaticMasterRightContent.ascx" />
+    <Content Include="IQMediaMaster\University\University.ascx" />
+    <Content Include="IQMediaMaster\IQAdvance\IQAdvance.ascx" />
+    <Content Include="IQMediaMaster\IQAgent\IQAgent.ascx" />
+    <Content Include="IQMediaMaster\IQCustom\IQCustom.ascx" />
+    <Content Include="IQMediaMaster\IRawMedia\IRawMedia.ascx" />
+    <Content Include="IQMediaMaster\LoginIframe\LoginIframe.ascx" />
+    <Content Include="IQMediaMaster\Login\Login.ascx" />
+    <Content Include="IQMediaMaster\Logout\Logout.ascx" />
+    <Content Include="IQMediaMaster\MyClips\MyClips.ascx" />
+    <Content Include="IQMediaMaster\MyCliqMediaLogin\MyCliqMediaLogin.ascx" />
+    <Content Include="IQMediaMaster\NavigationPanel\NavigationPanel.ascx" />
+    <Content Include="IQMediaMaster\NoRoles\NoRole.ascx" />
+    <Content Include="IQMediaMaster\Political\Political.ascx" />
+    <Content Include="IQMediaMaster\Products\Products.ascx" />
+    <Content Include="IQMediaMaster\RightTopLogin\RightTopLogin.ascx" />
+    <Content Include="IQMediaMaster\Service2\Service2.ascx" />
+    <Content Include="IQMediaMaster\Service3\Service3.ascx" />
+    <Content Include="IQMediaMaster\Services\Services.ascx" />
+    <Content Include="IQMediaMaster\SocialNetworkingWebsitesPanel\SocialNetworkingWebsitesPanel.ascx" />
+    <Content Include="IQMediaMaster\TopPanel\TopPanel.ascx" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\BaseControl.ascx.cs">
+      <DependentUpon>BaseControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Base\BaseControl.ascx.designer.cs">
+      <DependentUpon>BaseControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Base\GenericToDataTable.cs" />
+    <Compile Include="IQMediaMaster\About\About.ascx.cs">
+      <DependentUpon>About.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\About\About.ascx.designer.cs">
+      <DependentUpon>About.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\BasicClipPlayer\BasicClipPlayer.ascx.cs">
+      <DependentUpon>BasicClipPlayer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\BasicClipPlayer\BasicClipPlayer.ascx.designer.cs">
+      <DependentUpon>BasicClipPlayer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\ClipandRawMediaControl\ClipandRawMedia.ascx.cs">
+      <DependentUpon>ClipandRawMedia.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\ClipandRawMediaControl\ClipandRawMedia.ascx.designer.cs">
+      <DependentUpon>ClipandRawMedia.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\CopyrightPolicy\CopyrightPolicy.ascx.cs">
+      <DependentUpon>CopyrightPolicy.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\CopyrightPolicy\CopyrightPolicy.ascx.designer.cs">
+      <DependentUpon>CopyrightPolicy.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\CustomPager\CustomPager.ascx.cs">
+      <DependentUpon>CustomPager.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\CustomPager\CustomPager.ascx.designer.cs">
+      <DependentUpon>CustomPager.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveBLPM\DownloadArchiveBLPM.ascx.cs">
+      <DependentUpon>DownloadArchiveBLPM.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveBLPM\DownloadArchiveBLPM.ascx.designer.cs">
+      <DependentUpon>DownloadArchiveBLPM.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveNM\DownloadArchiveNM.ascx.cs">
+      <DependentUpon>DownloadArchiveNM.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveNM\DownloadArchiveNM.ascx.designer.cs">
+      <DependentUpon>DownloadArchiveNM.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveSM\DownloadArchiveSM.ascx.cs">
+      <DependentUpon>DownloadArchiveSM.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadArchiveSM\DownloadArchiveSM.ascx.designer.cs">
+      <DependentUpon>DownloadArchiveSM.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadClip\DownloadClip.ascx.cs">
+      <DependentUpon>DownloadClip.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\DownloadClip\DownloadClip.ascx.designer.cs">
+      <DependentUpon>DownloadClip.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\ClipPlayer\ClipPlayer.ascx.cs">
+      <DependentUpon>ClipPlayer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\ClipPlayer\ClipPlayer.ascx.designer.cs">
+      <DependentUpon>ClipPlayer.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Corporate\Corporate.ascx.cs">
+      <DependentUpon>Corporate.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Corporate\Corporate.ascx.designer.cs">
+      <DependentUpon>Corporate.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\CustomError\CustomError.ascx.cs">
+      <DependentUpon>CustomError.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\CustomError\CustomError.ascx.designer.cs">
+      <DependentUpon>CustomError.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\FooterPanel\FooterPanel.ascx.cs">
+      <DependentUpon>FooterPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\FooterPanel\FooterPanel.ascx.designer.cs">
+      <DependentUpon>FooterPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\HeaderRightPanel\HeaderRightPanel.ascx.cs">
+      <DependentUpon>HeaderRightPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\HeaderRightPanel\HeaderRightPanel.ascx.designer.cs">
+      <DependentUpon>HeaderRightPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\HeaderTabPanel\HeaderTabPanel.ascx.cs">
+      <DependentUpon>HeaderTabPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\HeaderTabPanel\HeaderTabPanel.ascx.designer.cs">
+      <DependentUpon>HeaderTabPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Home\Home.ascx.cs">
+      <DependentUpon>Home.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Home\Home.ascx.designer.cs">
+      <DependentUpon>Home.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\HowAreWeDifferent\HowAreWeDifferent.ascx.cs">
+      <DependentUpon>HowAreWeDifferent.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\HowAreWeDifferent\HowAreWeDifferent.ascx.designer.cs">
+      <DependentUpon>HowAreWeDifferent.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IFrameMicrosite\IFrameMicrosite.ascx.cs">
+      <DependentUpon>IFrameMicrosite.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IFrameMicrosite\IFrameMicrosite.ascx.designer.cs">
+      <DependentUpon>IFrameMicrosite.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMediaH\IframeRawMediaH.ascx.cs">
+      <DependentUpon>IframeRawMediaH.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMediaH\IframeRawMediaH.ascx.designer.cs">
+      <DependentUpon>IframeRawMediaH.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMedia\IFrameRawMedia.ascx.cs">
+      <DependentUpon>IFrameRawMedia.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IframeRawMedia\IFrameRawMedia.ascx.designer.cs">
+      <DependentUpon>IFrameRawMedia.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\CollegiateAthleticPrograms\CollegiateAthleticPrograms.ascx.cs">
+      <DependentUpon>CollegiateAthleticPrograms.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\CollegiateAthleticPrograms\CollegiateAthleticPrograms.ascx.designer.cs">
+      <DependentUpon>CollegiateAthleticPrograms.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgentIframe\IQAgentIframe.ascx.cs">
+      <DependentUpon>IQAgentIframe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgentIframe\IQAgentIframe.ascx.designer.cs">
+      <DependentUpon>IQAgentIframe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQPremium\IQPremium.ascx.cs">
+      <DependentUpon>IQPremium.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQPremium\IQPremium.ascx.designer.cs">
+      <DependentUpon>IQPremium.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQ_NewsControl\IQ_NewsControl.ascx.cs">
+      <DependentUpon>IQ_NewsControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQ_NewsControl\IQ_NewsControl.ascx.designer.cs">
+      <DependentUpon>IQ_NewsControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\ManagementTeam\ManagementTeam.ascx.cs">
+      <DependentUpon>ManagementTeam.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\ManagementTeam\ManagementTeam.ascx.designer.cs">
+      <DependentUpon>ManagementTeam.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyIQ\MyIQ.ascx.cs">
+      <DependentUpon>MyIQ.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyIQ\MyIQ.ascx.designer.cs">
+      <DependentUpon>MyIQ.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\News\News.ascx.cs">
+      <DependentUpon>News.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\News\News.ascx.designer.cs">
+      <DependentUpon>News.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\OEMPartnerships\OEMPartnerships.ascx.cs">
+      <DependentUpon>OEMPartnerships.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\OEMPartnerships\OEMPartnerships.ascx.designer.cs">
+      <DependentUpon>OEMPartnerships.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\OnlineNews\OnlineNews.ascx.cs">
+      <DependentUpon>OnlineNews.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\OnlineNews\OnlineNews.ascx.designer.cs">
+      <DependentUpon>OnlineNews.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\PoliticalParties\PoliticalParties.ascx.cs">
+      <DependentUpon>PoliticalParties.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\PoliticalParties\PoliticalParties.ascx.designer.cs">
+      <DependentUpon>PoliticalParties.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\ProfessionalSports\ProfessionalSports.ascx.cs">
+      <DependentUpon>ProfessionalSports.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\ProfessionalSports\ProfessionalSports.ascx.designer.cs">
+      <DependentUpon>ProfessionalSports.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Industries\Industries.ascx.cs">
+      <DependentUpon>Industries.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Industries\Industries.ascx.designer.cs">
+      <DependentUpon>Industries.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\ProPrep\ProPrep.ascx.cs">
+      <DependentUpon>ProPrep.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\ProPrep\ProPrep.ascx.designer.cs">
+      <DependentUpon>ProPrep.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Resources\Resources.ascx.cs">
+      <DependentUpon>Resources.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Resources\Resources.ascx.designer.cs">
+      <DependentUpon>Resources.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\StaticMasterRightContent\StaticMasterRightContent.ascx.cs">
+      <DependentUpon>StaticMasterRightContent.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\StaticMasterRightContent\StaticMasterRightContent.ascx.designer.cs">
+      <DependentUpon>StaticMasterRightContent.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\University\University.ascx.cs">
+      <DependentUpon>University.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\University\University.ascx.designer.cs">
+      <DependentUpon>University.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAdvance\IQAdvance.ascx.cs">
+      <DependentUpon>IQAdvance.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAdvance\IQAdvance.ascx.designer.cs">
+      <DependentUpon>IQAdvance.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgent\IQAgent.ascx.cs">
+      <DependentUpon>IQAgent.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQAgent\IQAgent.ascx.designer.cs">
+      <DependentUpon>IQAgent.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQCustom\IQCustom.ascx.cs">
+      <DependentUpon>IQCustom.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IQCustom\IQCustom.ascx.designer.cs">
+      <DependentUpon>IQCustom.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\IRawMedia\IRawMedia.ascx.cs">
+      <DependentUpon>IRawMedia.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\IRawMedia\IRawMedia.ascx.designer.cs">
+      <DependentUpon>IRawMedia.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\LoginIframe\LoginIframe.ascx.cs">
+      <DependentUpon>LoginIframe.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\LoginIframe\LoginIframe.ascx.designer.cs">
+      <DependentUpon>LoginIframe.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Login\Login.ascx.cs">
+      <DependentUpon>Login.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Login\Login.ascx.designer.cs">
+      <DependentUpon>Login.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Logout\Logout.ascx.cs">
+      <DependentUpon>Logout.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Logout\Logout.ascx.designer.cs">
+      <DependentUpon>Logout.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyClips\MyClips.ascx.cs">
+      <DependentUpon>MyClips.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyClips\MyClips.ascx.designer.cs">
+      <DependentUpon>MyClips.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyCliqMediaLogin\MyCliqMediaLogin.ascx.cs">
+      <DependentUpon>MyCliqMediaLogin.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\MyCliqMediaLogin\MyCliqMediaLogin.ascx.designer.cs">
+      <DependentUpon>MyCliqMediaLogin.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\NavigationPanel\NavigationPanel.ascx.cs">
+      <DependentUpon>NavigationPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\NavigationPanel\NavigationPanel.ascx.designer.cs">
+      <DependentUpon>NavigationPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\NoRoles\NoRole.ascx.cs">
+      <DependentUpon>NoRole.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\NoRoles\NoRole.ascx.designer.cs">
+      <DependentUpon>NoRole.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Political\Political.ascx.cs">
+      <DependentUpon>Political.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Political\Political.ascx.designer.cs">
+      <DependentUpon>Political.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Products\Products.ascx.cs">
+      <DependentUpon>Products.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Products\Products.ascx.designer.cs">
+      <DependentUpon>Products.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\RightTopLogin\RightTopLogin.ascx.cs">
+      <DependentUpon>RightTopLogin.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\RightTopLogin\RightTopLogin.ascx.designer.cs">
+      <DependentUpon>RightTopLogin.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Service2\Service2.ascx.cs">
+      <DependentUpon>Service2.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Service2\Service2.ascx.designer.cs">
+      <DependentUpon>Service2.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Service3\Service3.ascx.cs">
+      <DependentUpon>Service3.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Service3\Service3.ascx.designer.cs">
+      <DependentUpon>Service3.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\Services\Services.ascx.cs">
+      <DependentUpon>Services.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\Services\Services.ascx.designer.cs">
+      <DependentUpon>Services.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\SocialNetworkingWebsitesPanel\SocialNetworkingWebsitesPanel.ascx.cs">
+      <DependentUpon>SocialNetworkingWebsitesPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\SocialNetworkingWebsitesPanel\SocialNetworkingWebsitesPanel.ascx.designer.cs">
+      <DependentUpon>SocialNetworkingWebsitesPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="IQMediaMaster\TopPanel\TopPanel.ascx.cs">
+      <DependentUpon>TopPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaMaster\TopPanel\TopPanel.ascx.designer.cs">
+      <DependentUpon>TopPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\IQMediaGroup.Core.HelperClasses.CaptionInformation.datasource" />
+    <None Include="Properties\DataSources\IQMediaGroup.Core.HelperClasses.Clip.datasource" />
+    <None Include="Properties\DataSources\IQMediaGroup.Core.HelperClasses.RawMedia.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Controller\IQMediaGroup.Controller.csproj">
+      <Project>{16F7492F-BD20-4DD7-9E84-DA7FDD882F43}</Project>
+      <Name>IQMediaGroup.Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Media\IQMedia.Service.Media.Client\IQMedia.Service.Media.Client.csproj">
+      <Project>{76B4FA02-AC1E-4FC7-8A69-C00B130CD0B4}</Project>
+      <Name>IQMedia.Service.Media.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sentiment\Sentiment.csproj">
+      <Project>{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}</Project>
+      <Name>Sentiment</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Base\App_Data\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50132</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)IQMediaMaster\RightTopLogin\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\RightTopLogin\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\LeftNavigatePanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\LeftNavigatePanel\"  /F /R /Y
+
+
+xcopy "$(ProjectDir)IQMediaMaster\BottomAdvertise\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\BottomAdvertise\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\RightSideAdvertise\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\RightSideAdvertise\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Product\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Product\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\About\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\About\"  /F /R /Y
+
+
+xcopy "$(ProjectDir)IQMediaMaster\Careers\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Careers\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Home\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Home\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\Careers\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Careers\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\ContactUs\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ContactUs\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Contact\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Contact\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\Welcome\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Welcome\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\HeaderTabPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\HeaderTabPanel\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\ClipandRawMediaControl\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ClipandRawMediaControl\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\MyClips\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\MyClips\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\Services\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Services\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\Service2\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Service2\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\Service3\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Service3\"  /F /R /Y
+
+
+
+
+xcopy "$(ProjectDir)IQMediaMaster\ClipPlayer\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ClipPlayer\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQAgent\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQAgent\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\RawMediaPlayer\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\RawMediaPlayer\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\IQAdvance\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQAdvance\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\CustomError\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\CustomError\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\NoRoles\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\NoRoles\"  /F /R /Y
+
+
+ xcopy "$(ProjectDir)IQMediaMaster\IFrameRawMedia\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IFrameRawMedia\"  /F /R /Y
+
+
+ xcopy "$(ProjectDir)IQMediaMaster\BasicClipPlayer\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\BasicClipPlayer\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\HeaderRightPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\HeaderRightPanel\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Login\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Login\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\NavigationPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\NavigationPanel\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\SocialNetworkingWebsitesPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\SocialNetworkingWebsitesPanel\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\SearchSite\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\SearchSite\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\FooterPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\FooterPanel\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\HomeNew\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\HomeNew\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Logout\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Logout\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\News\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\News\"  /F /R /Y
+xcopy "$(ProjectDir)IQMediaMaster\IQMediaMessenger\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQMediaMessenger\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Corporate\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Corporate\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Industries\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Industries\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Political\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Political\"  /F /R /Y
+
+
+xcopy "$(ProjectDir)IQMediaMaster\DownloadClip\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\DownloadClip\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IRawMedia\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IRawMedia\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\LoginIframe\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\LoginIframe\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQCustom\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQCustom\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IFrameMicrosite\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IFrameMicrosite\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\MyCliqMediaLogin\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\MyCliqMediaLogin\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\OurProduct\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\OurProduct\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\TopPanel\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\TopPanel\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Products\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Products\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\PoliticalParties\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\PoliticalParties\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\ProfessionalSports\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ProfessionalSports\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\University\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\University\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\CollegiateAthleticPrograms\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\CollegiateAthleticPrograms\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\OptimizedMediaCloud\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\OptimizedMediaCloud\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\InlineMediaWorkspace\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\InlineMediaWorkspace\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\myiQStatic\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\myiQStatic\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\StaticMasterRightContent\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\StaticMasterRightContent\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Resources\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Resources\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\CustomPager\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\CustomPager\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\ProPrep\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ProPrep\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQPremium\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQPremium\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IframeRawMediaH\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IframeRawMediaH\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\MyIQ\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\MyIQ\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\SocialMedia\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\SocialMedia\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\BroadcastTV\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\BroadcastTV\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\OnlineNews\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\OnlineNews\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\Twitter\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\Twitter\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\UserGeneratedContent\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\UserGeneratedContent\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\ManagementTeam\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\ManagementTeam\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\HowAreWeDifferent\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\HowAreWeDifferent\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\OEMPartnerships\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\OEMPartnerships\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\cliQ\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\cliQ\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\DownloadArchiveNM\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\DownloadArchiveNM\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\DownloadArchiveSM\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\DownloadArchiveSM\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQAgentIframe\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQAgentIframe\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\CopyrightPolicy\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\CopyrightPolicy\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\DownloadArchiveBLPM\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\DownloadArchiveBLPM\"  /F /R /Y
+
+xcopy "$(ProjectDir)IQMediaMaster\IQ_NewsControl\*.ascx" "$(SolutionDir)IQMediaGroup.WebApplication\UserControl\IQMediaMaster\IQ_NewsControl\"  /F /R /Y
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

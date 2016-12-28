@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A4B846D1-64EC-425B-BC34-5955E28CA331}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Admin.Core</RootNamespace>
+    <AssemblyName>IQMediaGroup.Admin.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Code\DataTableToGeneric.cs" />
+    <Compile Include="App_Code\GenericToDataTable.cs" />
+    <Compile Include="Enumeration\Constants.cs" />
+    <Compile Include="Enumeration\Enums.cs" />
+    <Compile Include="HelperClasses\BillFrequency.cs" />
+    <Compile Include="HelperClasses\BillType.cs" />
+    <Compile Include="HelperClasses\Client.cs" />
+    <Compile Include="HelperClasses\ClientRoles.cs" />
+    <Compile Include="HelperClasses\CommonFunctions.cs" />
+    <Compile Include="HelperClasses\CurrentUsers.cs" />
+    <Compile Include="HelperClasses\Customer.cs" />
+    <Compile Include="HelperClasses\CustomerClientRoleAccess.cs" />
+    <Compile Include="HelperClasses\CustomerRoles.cs" />
+    <Compile Include="HelperClasses\DataType.cs" />
+    <Compile Include="HelperClasses\Industry.cs" />
+    <Compile Include="HelperClasses\IQAgentResults.cs" />
+    <Compile Include="HelperClasses\IQAgentSearchRequest.cs" />
+    <Compile Include="HelperClasses\IQMediaGroupExceptions.cs" />
+    <Compile Include="HelperClasses\IQ_Agent_FetchLog.cs" />
+    <Compile Include="HelperClasses\Iq_Service_log.cs" />
+    <Compile Include="HelperClasses\MasterStatSkedProg.cs" />
+    <Compile Include="HelperClasses\MyException.cs" />
+    <Compile Include="HelperClasses\ObjectFactory.cs" />
+    <Compile Include="HelperClasses\PricingCode.cs" />
+    <Compile Include="HelperClasses\Role.cs" />
+    <Compile Include="HelperClasses\SearchLog.cs" />
+    <Compile Include="HelperClasses\SearchParametersIQAgent.cs" />
+    <Compile Include="HelperClasses\SessionInformation.cs" />
+    <Compile Include="HelperClasses\SSP_IQ_Class.cs" />
+    <Compile Include="HelperClasses\SSP_IQ_Dma_Name.cs" />
+    <Compile Include="HelperClasses\SSP_Station_Affil.cs" />
+    <Compile Include="HelperClasses\State.cs" />
+    <Compile Include="HelperClasses\StatSkedProg.cs" />
+    <Compile Include="HelperClasses\ViewstateInformation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

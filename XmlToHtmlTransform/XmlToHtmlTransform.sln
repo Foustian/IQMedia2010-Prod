@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlToHtmlTransformOLD", "..\XmlToHtmlTransformOLD\XmlToHtmlTransformOLD.csproj", "{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlToHtmlTransform", "XmlToHtmlTransform.csproj", "{8751C769-E77A-4BE1-A831-1EB086E4B5D6}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://iqmdevtfs01:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\XmlToHtmlTransformOLD\\XmlToHtmlTransformOLD.csproj
+		SccProjectName1 = ../XmlToHtmlTransformOLD
+		SccLocalPath1 = ..\\XmlToHtmlTransformOLD
+		SccProjectUniqueName2 = XmlToHtmlTransform.csproj
+		SccLocalPath2 = .
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{21DCBEFE-1687-4C18-AD85-76D0C30E73CD}.Release|x86.ActiveCfg = Release|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8751C769-E77A-4BE1-A831-1EB086E4B5D6}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

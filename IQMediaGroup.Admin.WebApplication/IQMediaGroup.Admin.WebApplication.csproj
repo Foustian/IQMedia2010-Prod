@@ -1,0 +1,640 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3EB08009-F6BA-43B7-8859-4A966D07FBD5}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Admin.WebApplication</RootNamespace>
+    <AssemblyName>IQMediaGroup.Admin.WebApplication</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxControlToolkit, Version=4.1.60919.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\AjaxControlToolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Flan.Controls, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.Usercontrol\bin\Flan.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="FredCK.FCKeditorV2, Version=2.6.3.22452, Culture=neutral, PublicKeyToken=4f86767c9b519a06, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.WebApplication\bin\FredCK.FCKeditorV2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Practices.ObjectBuilder, Version=1.0.51206.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.ObjectBuilder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\FredCK.FCKeditorV2.dll" />
+    <Content Include="bin\IQMediaGroup.Admin.Controller.dll" />
+    <Content Include="bin\IQMediaGroup.Admin.Controller.pdb" />
+    <Content Include="bin\IQMediaGroup.Admin.Model.dll" />
+    <Content Include="bin\IQMediaGroup.Admin.Model.pdb" />
+    <Content Include="bin\IQMediaGroup.Admin.Usercontrol.dll" />
+    <Content Include="bin\IQMediaGroup.Admin.Usercontrol.pdb" />
+    <Content Include="bin\IQMediaGroup.Controller.dll" />
+    <Content Include="bin\IQMediaGroup.Controller.pdb" />
+    <Content Include="bin\IQMediaGroup.Model.dll" />
+    <Content Include="bin\IQMediaGroup.Model.pdb" />
+    <Content Include="bin\IQMediaGroup.WebService.dll" />
+    <Content Include="bin\IQMediaGroup.WebService.pdb" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.xml" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Data.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll" />
+    <Content Include="bin\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll" />
+    <Content Include="bin\Microsoft.Practices.ObjectBuilder.dll" />
+    <Content Include="bin\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="bin\Microsoft.Practices.Unity.dll" />
+    <Content Include="bin\PMGSearch.dll" />
+    <Content Include="CDNUploadClient\Default.aspx" />
+    <Content Include="ClientRegistration\ClientImages\100_1778.JPG" />
+    <Content Include="ClientRegistration\ClientImages\17112010%28002%29.jpg" />
+    <Content Include="ClientRegistration\ClientImages\17112010%28003%29.jpg" />
+    <Content Include="ClientRegistration\ClientImages\2010-11-23 16.23.41.jpg" />
+    <Content Include="ClientRegistration\ClientImages\2011-05-22 21.40.41.jpg" />
+    <Content Include="ClientRegistration\ClientImages\407834_271996972873199_100001886952095_698634_47733504_n.jpg" />
+    <Content Include="ClientRegistration\ClientImages\block-corner-shadow.png" />
+    <Content Include="ClientRegistration\ClientImages\Copy of Copy of Sagar Photo_old.JPG" />
+    <Content Include="ClientRegistration\ClientImages\Copy of gridicon-delete.png" />
+    <Content Include="ClientRegistration\ClientImages\Copy of Sagar Photo_old.JPG" />
+    <Content Include="ClientRegistration\ClientImages\dd_______sagar_CustomHeader.png" />
+    <Content Include="ClientRegistration\ClientImages\dd_______sagar_CustomHeader1.png" />
+    <Content Include="ClientRegistration\ClientImages\dd_______sagar_PlayerLogo.png" />
+    <Content Include="ClientRegistration\ClientImages\dd_______sagar_PlayerLogo1.png" />
+    <Content Include="ClientRegistration\ClientImages\gridicon-delete.png" />
+    <Content Include="ClientRegistration\ClientImages\images.jpg" />
+    <Content Include="ClientRegistration\ClientImages\tephenHawking.png" />
+    <Content Include="ClientRegistration\ClientImages\test180111_PlayerLogo.png" />
+    <Content Include="ClientRegistration\ClientImages\________jnbj_CustomHeader.png" />
+    <Content Include="ClientSearchSettings\Default.aspx" />
+    <Content Include="Css\ui.combobox.css" />
+    <Content Include="CustomerDetails\Default.aspx" />
+    <Content Include="Default.aspx" />
+    <Content Include="Images\AdvancedSearch.jpg" />
+    <Content Include="Images\AdvancedSearchAccess.jpg" />
+    <Content Include="Images\DownloadClips.jpg" />
+    <Content Include="Images\dropbtn.jpg" />
+    <Content Include="Images\drop_down.png" />
+    <Content Include="Images\GlobalAdminAccess.jpg" />
+    <Content Include="Images\IframeMicrosite.jpg" />
+    <Content Include="Images\IQAgentAdminAccess.jpg" />
+    <Content Include="Images\IQAgentUser.jpg" />
+    <Content Include="Images\IQAgentWebsiteAccess.jpg" />
+    <Content Include="Images\IQBasic.jpg" />
+    <Content Include="Images\IQCustomAccess.jpg" />
+    <Content Include="Images\IsActive.jpg" />
+    <Content Include="Images\MicrositeDownload.jpg" />
+    <Content Include="Images\multiLogin.jpg" />
+    <Content Include="Images\myIQAccess.jpg" />
+    <Content Include="Images\UGCDownload.jpg" />
+    <Content Include="Images\UGCUploadEdit.jpg" />
+    <Content Include="Images\v4Dashboard.jpg" />
+    <Content Include="Images\v4Discovery.jpg" />
+    <Content Include="Images\v4Feeds.jpg" />
+    <Content Include="Images\v4Library.jpg" />
+    <Content Include="Images\v4Radio.jpg" />
+    <Content Include="Images\v4Setup.jpg" />
+    <Content Include="Images\v4Timeshift.jpg" />
+    <Content Include="Images\v4UGC.jpg" />
+    <Content Include="Script\jquery-1.8.1.min.js" />
+    <Content Include="Script\jquery.tabify-1.51\index.html" />
+    <Content Include="Script\jquery.tabify-1.51\jquery.js" />
+    <Content Include="Script\jquery.tabify-1.51\jquery.tabify.js" />
+    <Content Include="Script\jquery.tabify-1.51\jquery.tabify.source.js" />
+    <Content Include="Script\lightbox\jquery.js" />
+    <Content Include="Script\lightbox\jquery.lightbox-0.5.js" />
+    <Content Include="Script\lightbox\jquery.lightbox-0.5.min.js" />
+    <Content Include="Script\lightbox\jquery.lightbox-0.5.pack.js" />
+    <Content Include="Script\jquery-1.2.6.js" />
+    <Content Include="Script\ui.combobox.js" />
+    <Content Include="Script\ui.core.js" />
+    <Content Include="SearchTerm.asmx" />
+    <Content Include="UserControl\CustomerDetails\CustomerDetails.ascx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CDNUploadClient\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CDNUploadClient\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ClientRegistration\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientSearchSettings\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ClientSearchSettings\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerDetails\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomerRegistration\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CustomError\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="IQAgentConsole\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaAdminContent.Master.cs">
+      <DependentUpon>IQMediaAdminContent.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="IQMediaAdminContent.Master.designer.cs">
+      <DependentUpon>IQMediaAdminContent.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Login\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Login\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchTerm.asmx.cs">
+      <DependentUpon>SearchTerm.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Css\flexcrollstyles.css" />
+    <Content Include="Css\style.css" />
+    <Content Include="Css\tutorsty.css" />
+    <Content Include="Images\27-0.gif" />
+    <Content Include="Images\27-1.gif" />
+    <Content Include="Images\30-0.gif" />
+    <Content Include="Images\arrow-down-grey.gif" />
+    <Content Include="Images\arrow-down.gif" />
+    <Content Include="Images\arrow-down.png" />
+    <Content Include="Images\arrow-next.gif" />
+    <Content Include="Images\arrow-Next.jpg" />
+    <Content Include="Images\arrow-next.png" />
+    <Content Include="Images\arrow-previous.gif" />
+    <Content Include="Images\arrow-previous.jpg" />
+    <Content Include="Images\arrow-previous.png" />
+    <Content Include="Images\arrow-up.gif" />
+    <Content Include="Images\banner-ad1.jpg" />
+    <Content Include="Images\banner-ad2.jpg" />
+    <Content Include="Images\banner-ad3.jpg" />
+    <Content Include="Images\banner_bottom.jpg" />
+    <Content Include="Images\banner_large.jpg" />
+    <Content Include="Images\banner_large_rawMedia.jpg" />
+    <Content Include="Images\banner_middle.jpg" />
+    <Content Include="Images\banner_middle_rawMedia.jpg" />
+    <Content Include="Images\banner_powered.jpg" />
+    <Content Include="Images\bluebox-bg.jpg" />
+    <Content Include="Images\bluebox-hd-bg.jpg" />
+    <Content Include="Images\bluebox-hd-left.jpg" />
+    <Content Include="Images\bluebox-hd-right.jpg" />
+    <Content Include="Images\bluebox-lb.jpg" />
+    <Content Include="Images\bluebox-lt.jpg" />
+    <Content Include="Images\bluebox-rb.jpg" />
+    <Content Include="Images\bluebox-rt.jpg" />
+    <Content Include="Images\body-bg.jpg" />
+    <Content Include="Images\btn-bg.jpg" />
+    <Content Include="Images\btn-bgrep.jpg" />
+    <Content Include="Images\btn-close.gif" />
+    <Content Include="Images\btn-play.jpg" />
+    <Content Include="Images\btn2-bg.jpg" />
+    <Content Include="Images\btn3-bg.jpg" />
+    <Content Include="Images\btn4-bg.jpg" />
+    <Content Include="Images\bul-nav.gif" />
+    <Content Include="Images\bul-nav.jpg" />
+    <Content Include="Images\bul-nav.png" />
+    <Content Include="Images\collapse_icon.png" />
+    <Content Include="Images\contentbox-b.jpg" />
+    <Content Include="Images\contentbox-blue-lt.jpg" />
+    <Content Include="Images\contentbox-blue-rt.jpg" />
+    <Content Include="Images\contentbox-blue-t.jpg" />
+    <Content Include="Images\contentbox-l.jpg" />
+    <Content Include="Images\contentbox-lb.jpg" />
+    <Content Include="Images\contentbox-lt.jpg" />
+    <Content Include="Images\contentbox-r.jpg" />
+    <Content Include="Images\contentbox-rb.jpg" />
+    <Content Include="Images\contentbox-rt.jpg" />
+    <Content Include="Images\contentbox-t.jpg" />
+    <Content Include="Images\expand_icon.png" />
+    <Content Include="Images\google-map.jpg" />
+    <Content Include="Images\grey-grad.jpg" />
+    <Content Include="Images\grid-th.jpg" />
+    <Content Include="Images\gridicon-cancel.png" />
+    <Content Include="Images\gridicon-edit.png" />
+    <Content Include="Images\gridicon-update.png" />
+    <Content Include="Images\handle_left.gif" />
+    <Content Include="Images\handle_right.gif" />
+    <Content Include="Images\hdicon-login.jpg" />
+    <Content Include="Images\hsep-blue.jpg" />
+    <Content Include="Images\hsep.jpg" />
+    <Content Include="Images\hsep1.jpg" />
+    <Content Include="Images\icon-media.jpg" />
+    <Content Include="Images\icon-user.jpg" />
+    <Content Include="Images\img.jpg" />
+    <Content Include="Images\interested-in-iqmedia.jpg" />
+    <Content Include="Images\loaderB64.gif" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\logo-IQMediaGroup.jpg" />
+    <Content Include="Images\mainbox-lb.gif" />
+    <Content Include="Images\mainbox-lb.jpg" />
+    <Content Include="Images\mainbox-lt.gif" />
+    <Content Include="Images\mainbox-lt.jpg" />
+    <Content Include="Images\mainbox-rb.gif" />
+    <Content Include="Images\mainbox-rb.jpg" />
+    <Content Include="Images\mainbox-rt.gif" />
+    <Content Include="Images\mainbox-rt.jpg" />
+    <Content Include="Images\nav-sep.jpg" />
+    <Content Include="Images\pagetitle-bg.jpg" />
+    <Content Include="Images\pagetitle-left.jpg" />
+    <Content Include="Images\pagetitle-right.jpg" />
+    <Content Include="Images\rail_dark.gif" />
+    <Content Include="Images\rail_light.gif" />
+    <Content Include="Images\searchbox-lt.jpg" />
+    <Content Include="Images\searchbox-rt.jpg" />
+    <Content Include="Images\searchtab-active.jpg" />
+    <Content Include="Images\searchtab-active2.jpg" />
+    <Content Include="Images\searchtab.jpg" />
+    <Content Include="Images\spacer.gif" />
+    <Content Include="Images\tab-bg.jpg" />
+    <Content Include="Images\tab-hover-bg.jpg" />
+    <Content Include="Images\tab-hover-r.jpg" />
+    <Content Include="Images\tab-r.jpg" />
+    <Content Include="Images\testsegment.GIF" />
+    <Content Include="Images\time00.gif" />
+    <Content Include="Images\time00Old.gif" />
+    <Content Include="Images\time10.gif" />
+    <Content Include="Images\time10Old.gif" />
+    <Content Include="Images\time20.gif" />
+    <Content Include="Images\time20Old.gif" />
+    <Content Include="Images\time30.gif" />
+    <Content Include="Images\time30Old.gif" />
+    <Content Include="Images\time40.gif" />
+    <Content Include="Images\time40Old.gif" />
+    <Content Include="Images\time50.gif" />
+    <Content Include="Images\time50Old.gif" />
+    <Content Include="Images\topbg.jpg" />
+    <Content Include="Images\topnav-bg.jpg" />
+    <Content Include="Images\topnav-left.jpg" />
+    <Content Include="Images\topnav-right.jpg" />
+    <Content Include="Images\video.jpg" />
+    <Content Include="Images\video2.jpg" />
+    <Content Include="IQMediaAdminContent.Master" />
+    <Content Include="UserControl\ClientRegistration\ClientRegistration.ascx" />
+    <Content Include="UserControl\CustomerRegistration\CustomerRegistration.ascx" />
+    <Content Include="UserControl\IQAdminNavigationPanel\IQAdminNavigationPanel.ascx" />
+    <Content Include="UserControl\IQAgentConsole\IQAgentConsole.ascx" />
+    <Content Include="UserControl\IQAgentQueryEditor\IQAgentQueryEditor.ascx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClientRegistration\ClientImages\Thumbs.db" />
+    <Content Include="ClientRegistration\Default.aspx" />
+    <Content Include="Css\Adminstyle.css" />
+    <Content Include="CustomerRegistration\Default.aspx" />
+    <Content Include="CustomError\Default.aspx" />
+    <Content Include="Images\btn01-bg.jpg" />
+    <Content Include="Images\btn02-bg.jpg" />
+    <Content Include="Images\btn2-bgrep.jpg" />
+    <Content Include="Images\content-bg.jpg" />
+    <Content Include="Images\error.png" />
+    <Content Include="Images\error_icon.jpg" />
+    <Content Include="Images\error_sign.jpg" />
+    <Content Include="Images\hbar-bg.jpg" />
+    <Content Include="Images\icon-calendar.jpg" />
+    <Content Include="Images\login-bg-btm.jpg" />
+    <Content Include="Images\login-bg-rep.jpg" />
+    <Content Include="Images\login-bg-top.jpg" />
+    <Content Include="Images\login-bg.jpg" />
+    <Content Include="Images\login-bg1.jpg" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\sidebar-bg.jpg" />
+    <Content Include="Images\sidelink-sep.jpg" />
+    <Content Include="Images\sidelink-top.jpg" />
+    <Content Include="Images\temp-editor.jpg" />
+    <Content Include="Images\userinfo-bg.jpg" />
+    <Content Include="IQAgentConsole\Default.aspx" />
+    <Content Include="Login\Default.aspx" />
+    <Content Include="Script\AC_RunActiveContent.js" />
+    <Content Include="Script\flexcroll-uncompressed.js" />
+    <Content Include="Script\flexcroll.js" />
+    <Content Include="Script\general.js" />
+    <Content Include="Script\jquery-1.3.2.js" />
+    <Content Include="Script\jquery-1.3.2.min.js" />
+    <Content Include="Script\jquery-ui-1.7.2.custom.min.js" />
+    <Content Include="StationLogoImages\BBC.gif" />
+    <Content Include="StationLogoImages\BBTV.gif" />
+    <Content Include="StationLogoImages\BRAVO.gif" />
+    <Content Include="StationLogoImages\CN8.gif" />
+    <Content Include="StationLogoImages\CNBC.gif" />
+    <Content Include="StationLogoImages\CNN.gif" />
+    <Content Include="StationLogoImages\CSNCH.gif" />
+    <Content Include="StationLogoImages\CSTV.gif" />
+    <Content Include="StationLogoImages\DOBBS.gif" />
+    <Content Include="StationLogoImages\ENTTV.gif" />
+    <Content Include="StationLogoImages\ESPN.gif" />
+    <Content Include="StationLogoImages\ESPN2.gif" />
+    <Content Include="StationLogoImages\ESPNEWS.gif" />
+    <Content Include="StationLogoImages\EWTN.gif" />
+    <Content Include="StationLogoImages\FOXBN.gif" />
+    <Content Include="StationLogoImages\FOXNEWS.gif" />
+    <Content Include="StationLogoImages\FOXPT.gif" />
+    <Content Include="StationLogoImages\G4.gif" />
+    <Content Include="StationLogoImages\GBECK.gif" />
+    <Content Include="StationLogoImages\HDLN.gif" />
+    <Content Include="StationLogoImages\HOWARD101.gif" />
+    <Content Include="StationLogoImages\HUCK.gif" />
+    <Content Include="StationLogoImages\HUCKSF.gif" />
+    <Content Include="StationLogoImages\JAZEERA.gif" />
+    <Content Include="StationLogoImages\KABB.gif" />
+    <Content Include="StationLogoImages\KARE.gif" />
+    <Content Include="StationLogoImages\KCTV.gif" />
+    <Content Include="StationLogoImages\KDFW.gif" />
+    <Content Include="StationLogoImages\KDKA.gif" />
+    <Content Include="StationLogoImages\KDNL.gif" />
+    <Content Include="StationLogoImages\KDSM.gif" />
+    <Content Include="StationLogoImages\KENS.gif" />
+    <Content Include="StationLogoImages\KFXA.gif" />
+    <Content Include="StationLogoImages\KGAN.gif" />
+    <Content Include="StationLogoImages\KHOU.gif" />
+    <Content Include="StationLogoImages\KMBC.gif" />
+    <Content Include="StationLogoImages\KMEX.gif" />
+    <Content Include="StationLogoImages\KMJFM.gif" />
+    <Content Include="StationLogoImages\KMOV.gif" />
+    <Content Include="StationLogoImages\KPLR.gif" />
+    <Content Include="StationLogoImages\KPRC.gif" />
+    <Content Include="StationLogoImages\KRIV.gif" />
+    <Content Include="StationLogoImages\KSAT.gif" />
+    <Content Include="StationLogoImages\KSCAFM.gif" />
+    <Content Include="StationLogoImages\KSDK.gif" />
+    <Content Include="StationLogoImages\KSHB.gif" />
+    <Content Include="StationLogoImages\KSMO.gif" />
+    <Content Include="StationLogoImages\KSTP.gif" />
+    <Content Include="StationLogoImages\KSWBTV.gif" />
+    <Content Include="StationLogoImages\KTBC.gif" />
+    <Content Include="StationLogoImages\KTRK.gif" />
+    <Content Include="StationLogoImages\KTVI.gif" />
+    <Content Include="StationLogoImages\KTVT.gif" />
+    <Content Include="StationLogoImages\KXAS.gif" />
+    <Content Include="StationLogoImages\MEEHAN.gif" />
+    <Content Include="StationLogoImages\MSGTV.gif" />
+    <Content Include="StationLogoImages\MSNBC.gif" />
+    <Content Include="StationLogoImages\MTV.gif" />
+    <Content Include="StationLogoImages\NFL.gif" />
+    <Content Include="StationLogoImages\OLV.gif" />
+    <Content Include="StationLogoImages\QVCUS.gif" />
+    <Content Include="StationLogoImages\REDLASSO.gif" />
+    <Content Include="StationLogoImages\SAP.gif" />
+    <Content Include="StationLogoImages\TGYM.gif" />
+    <Content Include="StationLogoImages\TLC.gif" />
+    <Content Include="StationLogoImages\TYRA.gif" />
+    <Content Include="StationLogoImages\VCOPIOUS.gif" />
+    <Content Include="StationLogoImages\VH1.gif" />
+    <Content Include="StationLogoImages\VOW.gif" />
+    <Content Include="StationLogoImages\WABM.gif" />
+    <Content Include="StationLogoImages\WAGA.gif" />
+    <Content Include="StationLogoImages\WAMRFM.gif" />
+    <Content Include="StationLogoImages\WAVE.gif" />
+    <Content Include="StationLogoImages\WBAY.gif" />
+    <Content Include="StationLogoImages\WBNS.gif" />
+    <Content Include="StationLogoImages\WBRC.gif" />
+    <Content Include="StationLogoImages\WCCO.gif" />
+    <Content Include="StationLogoImages\WCMH.gif" />
+    <Content Include="StationLogoImages\WCPO.gif" />
+    <Content Include="StationLogoImages\WDAF.gif" />
+    <Content Include="StationLogoImages\WDRB.gif" />
+    <Content Include="StationLogoImages\WEATHER.gif" />
+    <Content Include="StationLogoImages\WENDY.gif" />
+    <Content Include="StationLogoImages\WESH.gif" />
+    <Content Include="StationLogoImages\WEWS.gif" />
+    <Content Include="StationLogoImages\WEYI.gif" />
+    <Content Include="StationLogoImages\WFAA.gif" />
+    <Content Include="StationLogoImages\WFED.gif" />
+    <Content Include="StationLogoImages\WFLA.gif" />
+    <Content Include="StationLogoImages\WFLX.gif" />
+    <Content Include="StationLogoImages\WFOR.gif" />
+    <Content Include="StationLogoImages\WFPA.gif" />
+    <Content Include="StationLogoImages\WFRV.gif" />
+    <Content Include="StationLogoImages\WFSB.gif" />
+    <Content Include="StationLogoImages\WFTS.gif" />
+    <Content Include="StationLogoImages\WFTV.gif" />
+    <Content Include="StationLogoImages\WFXT.gif" />
+    <Content Include="StationLogoImages\WGBA.gif" />
+    <Content Include="StationLogoImages\WGCL.gif" />
+    <Content Include="StationLogoImages\WHAS.gif" />
+    <Content Include="StationLogoImages\WHBQ.gif" />
+    <Content Include="StationLogoImages\WHNT.gif" />
+    <Content Include="StationLogoImages\WHO.gif" />
+    <Content Include="StationLogoImages\WHP.gif" />
+    <Content Include="StationLogoImages\WHTM.gif" />
+    <Content Include="StationLogoImages\WHYY.gif" />
+    <Content Include="StationLogoImages\WIAT.gif" />
+    <Content Include="StationLogoImages\WIOD.gif" />
+    <Content Include="StationLogoImages\WISH.gif" />
+    <Content Include="StationLogoImages\WJBK.gif" />
+    <Content Include="StationLogoImages\WJW.gif" />
+    <Content Include="StationLogoImages\WKEF.gif" />
+    <Content Include="StationLogoImages\WKMG.gif" />
+    <Content Include="StationLogoImages\WKRC.gif" />
+    <Content Include="StationLogoImages\WKRN.gif" />
+    <Content Include="StationLogoImages\WKYC.gif" />
+    <Content Include="StationLogoImages\WLKY.gif" />
+    <Content Include="StationLogoImages\WLTV.gif" />
+    <Content Include="StationLogoImages\WLUK.gif" />
+    <Content Include="StationLogoImages\WLWT.gif" />
+    <Content Include="StationLogoImages\WMC.gif" />
+    <Content Include="StationLogoImages\WMMR.gif" />
+    <Content Include="StationLogoImages\WMPT.gif" />
+    <Content Include="StationLogoImages\WMSN.gif" />
+    <Content Include="StationLogoImages\WNEM.gif" />
+    <Content Include="StationLogoImages\WNEP.gif" />
+    <Content Include="StationLogoImages\WOAI.gif" />
+    <Content Include="StationLogoImages\WOFL.gif" />
+    <Content Include="StationLogoImages\WPBF.gif" />
+    <Content Include="StationLogoImages\WPEC.gif" />
+    <Content Include="StationLogoImages\WPGH.gif" />
+    <Content Include="StationLogoImages\WPLG.gif" />
+    <Content Include="StationLogoImages\WPSG.gif" />
+    <Content Include="StationLogoImages\WPTV.gif" />
+    <Content Include="StationLogoImages\WPTY.gif" />
+    <Content Include="StationLogoImages\WPXI.gif" />
+    <Content Include="StationLogoImages\WQAD.gif" />
+    <Content Include="StationLogoImages\WREG.gif" />
+    <Content Include="StationLogoImages\WRGT.gif" />
+    <Content Include="StationLogoImages\WRLH.gif" />
+    <Content Include="StationLogoImages\WRTV.gif" />
+    <Content Include="StationLogoImages\WSB.gif" />
+    <Content Include="StationLogoImages\WSMH.gif" />
+    <Content Include="StationLogoImages\WSMV.gif" />
+    <Content Include="StationLogoImages\WSVN.gif" />
+    <Content Include="StationLogoImages\WSYM.gif" />
+    <Content Include="StationLogoImages\WSYT.gif" />
+    <Content Include="StationLogoImages\WSYX.gif" />
+    <Content Include="StationLogoImages\WTAE.gif" />
+    <Content Include="StationLogoImages\WTHR.gif" />
+    <Content Include="StationLogoImages\WTIC.gif" />
+    <Content Include="StationLogoImages\WTOP.gif" />
+    <Content Include="StationLogoImages\WTSP.gif" />
+    <Content Include="StationLogoImages\WTTE.gif" />
+    <Content Include="StationLogoImages\WTVF.gif" />
+    <Content Include="StationLogoImages\WTVJ.gif" />
+    <Content Include="StationLogoImages\WTVR.gif" />
+    <Content Include="StationLogoImages\WTVT.gif" />
+    <Content Include="StationLogoImages\WUVP.gif" />
+    <Content Include="StationLogoImages\WVTM.gif" />
+    <Content Include="StationLogoImages\WWOR.gif" />
+    <Content Include="StationLogoImages\WXIA.gif" />
+    <Content Include="StationLogoImages\WXIN.gif" />
+    <Content Include="StationLogoImages\WXNYFM.gif" />
+    <Content Include="StationLogoImages\WXTU.gif" />
+    <Content Include="StationLogoImages\WZFG.gif" />
+    <Content Include="StationLogoImages\WZTV.gif" />
+    <Content Include="StationLogoImages\XM116.gif" />
+    <Content Include="StationLogoImages\XM127.gif" />
+    <Content Include="StationLogoImages\XM143.gif" />
+    <Content Include="StationLogoImages\XM144.gif" />
+    <Content Include="StationLogoImages\XM146.gif" />
+    <Content Include="StationLogoImages\XM151.gif" />
+    <Content Include="StationLogoImages\XM155.gif" />
+    <Content Include="StationLogoImages\XM156.gif" />
+    <Content Include="StationLogoImages\XM164.gif" />
+    <Content Include="StationLogoImages\XM166.gif" />
+    <Content Include="StationLogoImages\XM171.gif" />
+    <Content Include="StationLogoImages\XM175.gif" />
+    <Content Include="StationLogoImages\XM202.gif" />
+    <Content Include="StationLogoImages\Z100.gif" />
+    <Content Include="UserControl\CustomError\CustomError.ascx" />
+    <Content Include="UserControl\Login\Login.ascx" />
+    <Content Include="UserControl\RightTopLogin\RightTopLogin.ascx" />
+    <Content Include="Web.sitemap" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Admin.Controller\IQMediaGroup.Admin.Controller.csproj">
+      <Project>{3C1EAB6A-7DD1-4113-8125-EC687644EC79}</Project>
+      <Name>IQMediaGroup.Admin.Controller</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Admin.Core\IQMediaGroup.Admin.Core.csproj">
+      <Project>{A4B846D1-64EC-425B-BC34-5955E28CA331}</Project>
+      <Name>IQMediaGroup.Admin.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Admin.Usercontrol\IQMediaGroup.Admin.Usercontrol.csproj">
+      <Project>{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}</Project>
+      <Name>IQMediaGroup.Admin.Usercontrol</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="CustomerRegistration\ClientImages\" />
+    <Folder Include="js\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>3646</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

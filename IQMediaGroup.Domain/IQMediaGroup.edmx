@@ -1,0 +1,1029 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="ArchiveClip" EntityType="IQMediaGroupModel.Store.ArchiveClip" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ClipDownload" EntityType="IQMediaGroupModel.Store.ClipDownload" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ClipDownloadSettings" EntityType="IQMediaGroupModel.Store.ClipDownloadSettings" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Customer" EntityType="IQMediaGroupModel.Store.Customer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQService_UGCRawClipExport" EntityType="IQMediaGroupModel.Store.IQService_UGCRawClipExport" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_RawMediaImpressionSummary" EntityType="IQMediaGroupModel.Store.IQTrack_RawMediaImpressionSummary" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_RawMediaPlayLog" EntityType="IQMediaGroupModel.Store.IQTrack_RawMediaPlayLog" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_RawMediaPlaySummary" EntityType="IQMediaGroupModel.Store.IQTrack_RawMediaPlaySummary" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="ArchiveClip">
+          <Key>
+            <PropertyRef Name="ArchiveClipKey" />
+          </Key>
+          <Property Name="ArchiveClipKey" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ClipID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ClipLogo" Type="varchar" MaxLength="150" />
+          <Property Name="ClipTitle" Type="varchar" MaxLength="500" />
+          <Property Name="ClipDate" Type="datetime" />
+          <Property Name="GMTDateTime" Type="datetime" />
+          <Property Name="FirstName" Type="varchar" MaxLength="150" />
+          <Property Name="LastName" Type="varchar" MaxLength="150" />
+          <Property Name="CustomerID" Type="bigint" />
+          <Property Name="Category" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Keywords" Type="varchar(max)" />
+          <Property Name="ClosedCaption" Type="xml" />
+          <Property Name="ClipCreationDate" Type="datetime" />
+          <Property Name="Rating" Type="tinyint" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CustomerGUID" Type="uniqueidentifier" />
+          <Property Name="CategoryGUID" Type="uniqueidentifier" />
+          <Property Name="ClientGUID" Type="uniqueidentifier" />
+          <Property Name="SubCategory1GUID" Type="uniqueidentifier" />
+          <Property Name="SubCategory2GUID" Type="uniqueidentifier" />
+          <Property Name="SubCategory3GUID" Type="uniqueidentifier" />
+          <Property Name="ThumbnailImagePath" Type="varchar" MaxLength="600" />
+          <Property Name="IQ_CC_Key" Type="varchar" MaxLength="28" />
+          <Property Name="StartOffset" Type="int" />
+          <Property Name="Nielsen_Audience" Type="int" />
+          <Property Name="IQAdShareValue" Type="decimal" Scale="2" />
+          <Property Name="Nielsen_Result" Type="varchar" MaxLength="1" />
+          <Property Name="PositiveSentiment" Type="tinyint" />
+          <Property Name="NegativeSentiment" Type="tinyint" />
+          <Property Name="Title120" Type="varchar" MaxLength="100" />
+          <Property Name="HighlightingText" Type="nvarchar(max)" />
+          <Property Name="Number_Hits" Type="tinyint" />
+          <Property Name="v5SubMediaType" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ClipDownload">
+          <Key>
+            <PropertyRef Name="IQ_ClipDownload_Key" />
+          </Key>
+          <Property Name="IQ_ClipDownload_Key" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ClipID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CustomerGUID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ClipDownloadStatus" Type="tinyint" Nullable="false" />
+          <Property Name="ClipDLRequestDateTime" Type="datetime" />
+          <Property Name="ClipDLFormat" Type="varchar" MaxLength="50" />
+          <Property Name="ClipFileLocation" Type="varchar" MaxLength="150" />
+          <Property Name="ClipDownLoadedDateTime" Type="datetime" />
+          <Property Name="CCDownloadStatus" Type="bit" />
+          <Property Name="CCDownloadedDateTime" Type="datetime2" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ClipDownloadSettings">
+          <Key>
+            <PropertyRef Name="IQ_ClipDownloadSettings_Key" />
+          </Key>
+          <Property Name="IQ_ClipDownloadSettings_Key" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ClientGUID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="AudioFormat" Type="varchar" Nullable="false" MaxLength="5" />
+          <Property Name="VideoFormat" Type="varchar" Nullable="false" MaxLength="5" />
+          <Property Name="ClipDownloadFileLocation" Type="varchar" MaxLength="150" />
+          <Property Name="ClipFinalDestination" Type="varchar" MaxLength="50" />
+          <Property Name="ClipTransportMode" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Name="CustomerKey" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="LoginID" Type="varchar" MaxLength="300" />
+          <Property Name="Email" Type="varchar" MaxLength="300" />
+          <Property Name="CustomerPassword" Type="varchar" MaxLength="60" />
+          <Property Name="ContactNo" Type="varchar" MaxLength="50" />
+          <Property Name="CustomerComment" Type="varchar" MaxLength="300" />
+          <Property Name="ClientID" Type="bigint" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CustomerGUID" Type="uniqueidentifier" />
+          <Property Name="MultiLogin" Type="bit" />
+          <Property Name="DefaultPage" Type="varchar" MaxLength="50" />
+          <Property Name="MasterCustomerID" Type="bigint" />
+          <Property Name="UDID" Type="varchar" MaxLength="40" />
+          <Property Name="HasMobileRegd" Type="bit" />
+          <Property Name="DateMobileRegd" Type="datetime" />
+          <Property Name="PasswordAttempts" Type="tinyint" />
+          <Property Name="LastPwdChangedDate" Type="datetime2" />
+          <Property Name="RsetPwdEmailCount" Type="tinyint" />
+          <Property Name="LastPwdRsetDate" Type="datetime2" />
+          <Property Name="AnewstipUserID" Type="varchar" MaxLength="300" />
+        </EntityType>
+        <EntityType Name="IQService_UGCRawClipExport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ClipGUID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="DateQueued" Type="datetime" Nullable="false" />
+          <Property Name="LastModified" Type="datetime" Nullable="false" />
+          <Property Name="OutputPath" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="IQTrack_RawMediaImpressionSummary">
+          <Key>
+            <PropertyRef Name="_AssetGuid" />
+          </Key>
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQTrack_RawMediaPlayLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PlayDate" Type="datetime" Nullable="false" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="16" />
+          <Property Name="IPAddDecimal" Type="bigint" />
+          <Property Name="Referrer" Type="varchar" MaxLength="2048" />
+          <Property Name="_UserGuid" Type="uniqueidentifier" />
+          <Property Name="Device" Type="varchar" MaxLength="500" />
+          <Property Name="DeviceOS" Type="varchar" MaxLength="500" />
+          <Property Name="SecondsPlayed" Type="smallint" />
+        </EntityType>
+        <EntityType Name="IQTrack_RawMediaPlaySummary">
+          <Key>
+            <PropertyRef Name="_AssetGuid" />
+          </Key>
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Function Name="usp_Client_CheckForMicrositeAccessByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_Client_SelectPlayerLogoByClipID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_ClipDownload_SelectFormat" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IQ_CompeteAll_SelectArtileAdShareByClientGuidAndXml" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="PublicationXml" Type="xml" Mode="In" />
+          <Parameter Name="MediaType" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_NMResultsID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgent_NMResultID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_PQResultsID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgent_PQResultID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_SMResultsID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgent_SMResultID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_TVResultsID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgentTVResultID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_TwitterResultsID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQAgent_TwitterResultID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgent_TVResults_SelectByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQAgentiFrame_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RawMediaGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Expiry_Date" Type="datetime" Mode="In" />
+          <Parameter Name="IQAgentResultID" Type="bigint" Mode="In" />
+          <Parameter Name="DataModelType" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_IQCore_RecordFile_SelectFileLocation_ByGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RLVideoGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IQCore_RecordFileMeta_SelectPathByClipGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IQCore_RootPath_SelectPathByID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_IQRootpath_Location_SelectRemote_SvcUrlByRootPathID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RootPathID" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_ArchiveClip_SelectByClipID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_Client_CheckForCompeteDataAccessByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_Client_CheckForNielSenDataAccessByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_CustomCategory_SelectByClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_GetStationSharingByClipIDNClientGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="CustomerGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQ_NIELSEN_SQAD_SelectNielSenDataByRecordFileGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Guid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="IsRawMedia" Type="bit" Mode="In" />
+          <Parameter Name="IQ_Start_Point" Type="int" Mode="In" />
+          <Parameter Name="IQ_Dma_Num" Type="varchar" Mode="In" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQ_NIELSEN_SQAD_SelectNielSenDataByRecordFileGuidList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="GuidList" Type="xml" Mode="In" />
+          <Parameter Name="ClientGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQClient_CustomSettings_CheckIQLicenseByCustomerID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClientGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQCore_Clip_SelectRecordfileGUIDByClipGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="GUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQCore_Recordfile_SelectByGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Guid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQTimeSync_ClipData_InsertList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="XmlData" Type="xml" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQTimeSync_Data_SelectByClipGuid" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ClipGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_iqsvc_IQTrack_RawMediaPlayLog_UpdateSecondsPlayed" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="bigint" Mode="In" />
+          <Parameter Name="SecondsPlayed" Type="smallint" Mode="In" />
+        </Function>
+        <Function Name="usp_OutboundReporting_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Query_Name" Type="varchar" Mode="In" />
+          <Parameter Name="FromEmailAddress" Type="varchar" Mode="In" />
+          <Parameter Name="ToEmailAddress" Type="varchar" Mode="In" />
+          <Parameter Name="MailContent" Type="xml" Mode="In" />
+          <Parameter Name="ServiceType" Type="varchar" Mode="In" />
+          <Parameter Name="OutboundReportingKey" Type="bigint" Mode="InOut" />
+        </Function>
+        <Function Name="usp_Services_GetVideoGuid_ByiQAgentiFrameID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="iQAgentiFrameID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_Statskedprog_SelectPlayerDataForIQUGCArchive" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UGCGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_v4_IQSolrEngines_SelectAll" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Requestor" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupISVCEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ArchiveClips" EntityType="IQMediaGroupModel.ArchiveClip" />
+          <EntitySet Name="ClipDownloads" EntityType="IQMediaGroupModel.ClipDownload" />
+          <EntitySet Name="ClipDownloadSettings" EntityType="IQMediaGroupModel.ClipDownloadSetting" />
+          <FunctionImport Name="GetArchiveClipDataByClipID" ReturnType="Collection(IQMediaGroupModel.ArchiveClipDB)">
+          <Parameter Name="ClipID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetClipFormat" ReturnType="Collection(String)">
+          <Parameter Name="ClipID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <EntitySet Name="Customers" EntityType="IQMediaGroupModel.Customer" />
+          <FunctionImport Name="GetPlayerDataForIQUGCArchive" ReturnType="Collection(IQMediaGroupModel.PlayerUGCRawMediaData)">
+          <Parameter Name="UGCGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="CheckForMicrositeAccessByClientGUID" ReturnType="Collection(Boolean)">
+          <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <EntitySet Name="IQService_UGCRawClipExport" EntityType="IQMediaGroupModel.IQService_UGCRawClipExport" />
+          <FunctionImport Name="GetIQCoreRecordfileMetaPathByClipGUID" ReturnType="Collection(String)">
+          <Parameter Name="ClipGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="InsertOutBoundReporting" ReturnType="Collection(Int64)">
+            <Parameter Name="Query_Name" Mode="In" Type="String" />
+            <Parameter Name="FromEmailAddress" Mode="In" Type="String" />
+            <Parameter Name="ToEmailAddress" Mode="In" Type="String" />
+            <Parameter Name="MailContent" Mode="In" Type="String" />
+            <Parameter Name="ServiceType" Mode="In" Type="String" />
+            <Parameter Name="OutboundReportingKey" Mode="InOut" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetCustomCategoryByClientGUID" ReturnType="Collection(IQMediaGroupModel.CustomCategoryData)">
+          <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetRecordfileGUIDbyClipGUID" ReturnType="Collection(Guid)">
+          <Parameter Name="GUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetArchiveClipDataAndImageContentByClipID" ReturnType="Collection(IQMediaGroupModel.ArchiveClipService)">
+          <Parameter Name="ClipID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetClientPlayerLogoByClipGUID" ReturnType="Collection(String)">
+          <Parameter Name="ClipID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="CheckForNielSenDataAccessByClientGUID" ReturnType="Collection(Boolean)">
+          <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetNielSenDataByGuid" ReturnType="Collection(IQMediaGroupModel.NielSenDataDB)">
+            <Parameter Name="Guid" Mode="In" Type="Guid" />
+            <Parameter Name="IsRawMedia" Mode="In" Type="Boolean" />
+            <Parameter Name="IQ_Start_Point" Mode="In" Type="Int32" />
+            <Parameter Name="IQ_Dma_Num" Mode="In" Type="String" />
+            <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetVideoGuidByiQAgentiFrameID" ReturnType="Collection(Guid)">
+          <Parameter Name="iQAgentiFrameID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIQAgentIframe" ReturnType="Collection(IQMediaGroupModel.IQAgentIframe)">
+            <Parameter Name="RawMediaGuid" Mode="In" Type="Guid" />
+            <Parameter Name="Expiry_Date" Mode="In" Type="DateTime" />
+            <Parameter Name="IQAgentResultID" Mode="In" Type="Int64" />
+            <Parameter Name="DataModelType" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetSearchTermByIQAgent_TVResultsID" ReturnType="Collection(IQMediaGroupModel.IQAgentRawMedia)">
+          <Parameter Name="IQAgentTVResultID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetIQagent_TVResults_ByID" ReturnType="Collection(IQMediaGroupModel.IQAgentTVResults)">
+          <Parameter Name="ID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetIQCoreRecordFileLocationByGUID" ReturnType="Collection(IQMediaGroupModel.IQCoreRecordFile)">
+          <Parameter Name="RLVideoGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="getIQCoreRootPathByID" ReturnType="Collection(IQMediaGroupModel.IQCoreRootPath)">
+          <Parameter Name="ID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetRemoteSvcUrlByRootPathID" ReturnType="Collection(String)">
+          <Parameter Name="RootPathID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetSearchTermBy_IQAgent_NMResultsID" ReturnType="Collection(IQMediaGroupModel.IQAgentSearchTerm)">
+          <Parameter Name="IQAgent_NMResultID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetSearchTermBy_IQAgent_SMResultsID" ReturnType="Collection(IQMediaGroupModel.IQAgentSearchTerm)">
+          <Parameter Name="IQAgent_SMResultID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="GetNielSenDataByRecordFileGuidList" ReturnType="Collection(IQMediaGroupModel.NielsenData)">
+            <Parameter Name="GuidList" Mode="In" Type="String" />
+            <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetCompeteDataByClientGuidAndXml" ReturnType="Collection(IQMediaGroupModel.CompeteDataDB)">
+            <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+            <Parameter Name="PublicationXml" Mode="In" Type="String" />
+            <Parameter Name="MediaType" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CheckForCompeteDataAccessByClientGUID" ReturnType="Collection(Boolean)">
+          <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetStationSharingByClipIDNClientGUID" ReturnType="Collection(Boolean)">
+            <Parameter Name="ClipID" Mode="In" Type="Guid" />
+            <Parameter Name="ClientGuid" Mode="In" Type="Guid" />
+            <Parameter Name="CustomerGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetSearchTermBy_IQAgent_TwitterResultsID" ReturnType="Collection(IQMediaGroupModel.IQAgentSearchTerm)">
+          <Parameter Name="IQAgent_TwitterResultID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <EntitySet Name="RawMediaPlayLogs" EntityType="IQMediaGroupModel.RawMediaPlayLog" />
+          <EntitySet Name="RawMediaPlaySummaries" EntityType="IQMediaGroupModel.RawMediaPlaySummary" />
+          <EntitySet Name="RawMediaImpressionSummaries" EntityType="IQMediaGroupModel.RawMediaImpressionSummary" />
+          <FunctionImport Name="GetRecordfileByGuid" ReturnType="Collection(Guid)">
+          <Parameter Name="Guid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="CheckIQLicenseByCustomerID" ReturnType="Collection(String)">
+          <Parameter Name="ClientGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetIQTimeSyncDataByClipGuid" ReturnType="Collection(IQMediaGroupModel.TimeSyncData)">
+          <Parameter Name="ClipGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIQClipTimeSyncData" ReturnType="Collection(Int32)">
+            <Parameter Name="ClipGuid" Mode="In" Type="Guid" />
+            <Parameter Name="XmlData" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetSolrEngines" ReturnType="Collection(IQMediaGroupModel.SolrEngines)" >
+          <Parameter Name="Requestor" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetSearchTermBy_IQAgent_PQResultsID" ReturnType="Collection(IQMediaGroupModel.IQAgentSearchTerm)">
+          <Parameter Name="IQAgent_PQResultID" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateRawMediaSecondsPlayed" ReturnType="Collection(Int32)">
+            <Parameter Name="ID" Mode="In" Type="Int64" />
+            <Parameter Name="SecondsPlayed" Mode="In" Type="Int16" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="ArchiveClip">
+          <Key>
+            <PropertyRef Name="ArchiveClipKey" />
+          </Key>
+          <Property Type="Int32" Name="ArchiveClipKey" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="ClipID" Nullable="false" />
+          <Property Type="String" Name="ClipLogo" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClipTitle" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ClipDate" />
+          <Property Type="String" Name="FirstName" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Category" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClosedCaption" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="ClipCreationDate" />
+          <Property Type="String" Name="CreatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ModifiedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="ModifiedDate" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Guid" Name="ClientGUID" />
+          <Property Type="Guid" Name="CategoryGUID" />
+          <Property Type="Guid" Name="CustomerGUID" />
+          <Property Type="Int64" Name="CustomerID" />
+          <Property Type="Guid" Name="SubCategory1GUID" />
+          <Property Type="Guid" Name="SubCategory2GUID" />
+          <Property Type="Guid" Name="SubCategory3GUID" />
+          <Property Type="String" Name="Keywords" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ThumbnailImagePath" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="Byte" Name="Rating" />
+          <Property Type="String" Name="IQ_CC_Key" MaxLength="28" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="StartOffset" />
+          <Property Type="Int32" Name="Nielsen_Audience" />
+          <Property Type="Decimal" Name="IQAdShareValue" Precision="18" Scale="2" />
+          <Property Type="String" Name="Nielsen_Result" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Type="Byte" Name="PositiveSentiment" />
+          <Property Type="Byte" Name="NegativeSentiment" />
+          <Property Type="DateTime" Name="GMTDateTime" />
+          <Property Type="String" Name="Title120" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="HighlightingText" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="Byte" Name="Number_Hits" />
+          <Property Type="String" Name="v5SubMediaType" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ClipDownload">
+          <Key>
+            <PropertyRef Name="IQ_ClipDownload_Key" />
+          </Key>
+          <Property Type="Int64" Name="IQ_ClipDownload_Key" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="ClipID" Nullable="false" />
+          <Property Type="Guid" Name="CustomerGUID" Nullable="false" />
+          <Property Type="Byte" Name="ClipDownloadStatus" Nullable="false" />
+          <Property Type="DateTime" Name="ClipDLRequestDateTime" />
+          <Property Type="String" Name="ClipDLFormat" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClipFileLocation" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="ClipDownLoadedDateTime" />
+          <Property Type="String" Name="CreatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ModifiedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+          <Property Type="Boolean" Name="CCDownloadStatus" />
+          <Property Type="DateTime" Name="CCDownloadedDateTime" />
+        </EntityType>
+        <EntityType Name="ClipDownloadSetting">
+          <Key>
+            <PropertyRef Name="IQ_ClipDownloadSettings_Key" />
+          </Key>
+          <Property Type="Int64" Name="IQ_ClipDownloadSettings_Key" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="ClientGUID" Nullable="false" />
+          <Property Type="String" Name="AudioFormat" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Type="String" Name="VideoFormat" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Type="String" Name="ClipDownloadFileLocation" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClipFinalDestination" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClipTransportMode" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CreatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ModifiedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="ModifiedDate" />
+          <Property Type="Boolean" Name="IsActive" />
+        </EntityType>
+        <ComplexType Name="ArchiveClipDB" >
+          <Property Type="Guid" Name="ClipID" Nullable="false" />
+          <Property Type="DateTime" Name="ClipCreationDate" Nullable="false" />
+          <Property Type="String" Name="Category" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+          <Property Type="String" Name="ClipTitle" Nullable="false" />
+          <Property Type="String" Name="ClipLogo" Nullable="false" />
+          <Property Type="DateTime" Name="ClipDate" Nullable="false" />
+          <Property Type="String" Name="ClipThumbnailImagePath" Nullable="false" />
+          <Property Type="Double" Name="gmt_adj" Nullable="false" />
+          <Property Type="Double" Name="dst_adj" Nullable="false" />
+          <Property Type="Int32" Name="StartOffset" Nullable="false" />
+          <Property Type="String" Name="Keywords" Nullable="false" />
+          <Property Type="String" Name="ClipMeta" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Type="Int64" Name="CustomerKey" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CustomerPassword" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CustomerComment" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="ClientID" Nullable="false" />
+          <Property Type="Guid" Name="CustomerGUID" Nullable="false" />
+          <Property Type="String" Name="CreatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ModifiedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="ModifiedDate" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Boolean" Name="MultiLogin" />
+          <Property Type="String" Name="DefaultPage" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LoginID" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="MasterCustomerID" />
+          <Property Type="String" Name="UDID" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="HasMobileRegd" />
+          <Property Type="DateTime" Name="DateMobileRegd" />
+          <Property Type="Byte" Name="PasswordAttempts" />
+          <Property Type="DateTime" Name="LastPwdChangedDate" />
+          <Property Type="Byte" Name="RsetPwdEmailCount" />
+          <Property Type="DateTime" Name="LastPwdRsetDate" />
+          <Property Type="String" Name="AnewstipUserID" MaxLength="300" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <ComplexType Name="DSRawMediaDB" >
+          <Property Type="String" Name="RawMediaID" Nullable="false" />
+          <Property Type="DateTime" Name="DateTime" Nullable="false" />
+          <Property Type="String" Name="StationLogo" Nullable="false" />
+          <Property Type="String" Name="Title120" Nullable="false" />
+          <Property Type="String" Name="IQ_Dma_Name" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="PlayerClipData" >
+          <Property Type="String" Name="IQ_Dma_Name" Nullable="false" />
+          <Property Type="String" Name="Title120" Nullable="false" />
+          <Property Type="DateTime" Name="IQ_Local_Air_Date" Nullable="true" />
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="String" Name="IQ_Dma_Num" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="PlayerUGCRawMediaData" >
+          <Property Type="DateTime" Name="AirDate" Nullable="true" />
+          <Property Type="String" Name="Title" Nullable="false" />
+          <Property Type="String" Name="Keywords" Nullable="false" />
+          <Property Type="String" Name="Description" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="IQService_UGCRawClipExport">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int64" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="ClipGUID" Nullable="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="DateQueued" Nullable="false" />
+          <Property Type="DateTime" Name="LastModified" Nullable="false" />
+          <Property Type="String" Name="OutputPath" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="ArchiveClipService">
+          <Property Type="String" Name="ClipTitle" Nullable="false" />
+          <Property Type="Int32" Name="ArchiveClipKey" Nullable="false" />
+          <Property Type="String" Name="ThumbnailImagePath" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="CustomCategoryData">
+          <Property Type="String" Name="CategoryName" Nullable="false" />
+          <Property Type="Guid" Name="CategoryGUID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="NielSenDataDB" >
+          <Property Type="Double" Name="IQ_Start_Point" Nullable="false" />
+          <Property Type="String" Name="SQAD_SHAREVALUE" Nullable="true" />
+          <Property Type="String" Name="AUDIENCE" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="IQAgentIframe" >
+          <Property Type="Boolean" Name="Status" Nullable="false" />
+          <Property Type="Guid" Name="IQAgentIframeID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IQAgentTVResults" >
+          <Property Type="DateTime" Name="RL_Date" Nullable="false" />
+          <Property Type="Guid" Name="RL_VideoGUID" Nullable="false" />
+          <Property Type="String" Name="CC_Highlight" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="IQCoreRootPath" >
+          <Property Type="String" Name="StoragePath" Nullable="false" />
+          <Property Type="String" Name="StreamSuffixPath" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IQAgentRawMedia" >
+          <Property Type="Guid" Name="RL_VideoGUID" Nullable="false" />
+          <Property Type="String" Name="SearchTerm" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IQCoreRecordFile" >
+          <Property Type="String" Name="FileLocation" Nullable="false" />
+          <Property Type="Int32" Name="RootPathID" Nullable="false" />
+          <Property Type="DateTime" Name="RecordingDate" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="IQAgentSearchTerm" >
+          <Property Type="String" Name="SearchTerm" Nullable="false" />
+          <Property Type="String" Name="ArticleID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="NielsenData" >
+          <Property Type="String" Name="IQ_CC_Key" Nullable="false" />
+          <Property Type="Guid" Name="Guid" Nullable="false" />
+          <Property Type="String" Name="SQAD_SHAREVALUE" Nullable="true" />
+          <Property Type="Int32" Name="AUDIENCE" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="CompeteDataDB" >
+          <Property Type="String" Name="CompeteURL" Nullable="false" />
+          <Property Type="Boolean" Name="IsCompeteAll" Nullable="false" />
+          <Property Type="Decimal" Name="IQ_AdShare_Value" Nullable="true" />
+          <Property Type="Int64" Name="c_uniq_visitor" Nullable="true" />
+          <Property Type="Boolean" Name="IsUrlFound" Nullable="false" />
+        </ComplexType>
+        <EntityType Name="RawMediaPlayLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int64" Name="ID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="C_AssetGuid" Nullable="false" />
+          <Property Type="DateTime" Name="PlayDate" Nullable="false" />
+          <Property Type="String" Name="IPAddress" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Referrer" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="C_UserGuid" />
+          <Property Type="String" Name="Device" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DeviceOS" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="IPAddDecimal" />
+          <Property Type="Int16" Name="SecondsPlayed" />
+        </EntityType>
+        <EntityType Name="RawMediaPlaySummary">
+          <Key>
+            <PropertyRef Name="C_AssetGuid" />
+          </Key>
+          <Property Type="Guid" Name="C_AssetGuid" Nullable="false" />
+          <Property Type="Int32" Name="Count" Nullable="false" />
+          <Property Type="DateTime" Name="LastUpdated" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RawMediaImpressionSummary">
+          <Key>
+            <PropertyRef Name="C_AssetGuid" />
+          </Key>
+          <Property Type="Guid" Name="C_AssetGuid" Nullable="false" />
+          <Property Type="Int32" Name="Count" Nullable="false" />
+          <Property Type="DateTime" Name="LastUpdated" Nullable="false" />
+        </EntityType>
+        <ComplexType Name="TimeSyncData">
+          <Property Type="String" Name="Data" Nullable="true" />
+          <Property Type="Int32" Name="C_TypeID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="SolrEngines">
+          <Property Type="String" Name="MediaType" Nullable="false" MaxLength="2" />
+          <Property Type="DateTime" Name="FromDate" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="ToDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="BaseUrl" Nullable="true" MaxLength="255" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupISVCEntities">
+          <EntitySetMapping Name="ArchiveClips">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.ArchiveClip">
+              <MappingFragment StoreEntitySet="ArchiveClip">
+                <ScalarProperty Name="v5SubMediaType" ColumnName="v5SubMediaType" />
+                <ScalarProperty Name="Number_Hits" ColumnName="Number_Hits" />
+                <ScalarProperty Name="HighlightingText" ColumnName="HighlightingText" />
+                <ScalarProperty Name="Title120" ColumnName="Title120" />
+                <ScalarProperty Name="GMTDateTime" ColumnName="GMTDateTime" />
+                <ScalarProperty Name="NegativeSentiment" ColumnName="NegativeSentiment" />
+                <ScalarProperty Name="PositiveSentiment" ColumnName="PositiveSentiment" />
+                <ScalarProperty Name="Nielsen_Result" ColumnName="Nielsen_Result" />
+                <ScalarProperty Name="IQAdShareValue" ColumnName="IQAdShareValue" />
+                <ScalarProperty Name="Nielsen_Audience" ColumnName="Nielsen_Audience" />
+                <ScalarProperty Name="StartOffset" ColumnName="StartOffset" />
+                <ScalarProperty Name="IQ_CC_Key" ColumnName="IQ_CC_Key" />
+                <ScalarProperty Name="Rating" ColumnName="Rating" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="ThumbnailImagePath" ColumnName="ThumbnailImagePath" />
+                <ScalarProperty Name="Keywords" ColumnName="Keywords" />
+                <ScalarProperty Name="SubCategory3GUID" ColumnName="SubCategory3GUID" />
+                <ScalarProperty Name="SubCategory2GUID" ColumnName="SubCategory2GUID" />
+                <ScalarProperty Name="SubCategory1GUID" ColumnName="SubCategory1GUID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerGUID" ColumnName="CustomerGUID" />
+                <ScalarProperty Name="CategoryGUID" ColumnName="CategoryGUID" />
+                <ScalarProperty Name="ClientGUID" ColumnName="ClientGUID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ClipCreationDate" ColumnName="ClipCreationDate" />
+                <ScalarProperty Name="ClosedCaption" ColumnName="ClosedCaption" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ClipDate" ColumnName="ClipDate" />
+                <ScalarProperty Name="ClipTitle" ColumnName="ClipTitle" />
+                <ScalarProperty Name="ClipLogo" ColumnName="ClipLogo" />
+                <ScalarProperty Name="ClipID" ColumnName="ClipID" />
+                <ScalarProperty Name="ArchiveClipKey" ColumnName="ArchiveClipKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClipDownloads">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.ClipDownload">
+              <MappingFragment StoreEntitySet="ClipDownload">
+                <ScalarProperty Name="CCDownloadedDateTime" ColumnName="CCDownloadedDateTime" />
+                <ScalarProperty Name="CCDownloadStatus" ColumnName="CCDownloadStatus" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ClipDownLoadedDateTime" ColumnName="ClipDownLoadedDateTime" />
+                <ScalarProperty Name="ClipFileLocation" ColumnName="ClipFileLocation" />
+                <ScalarProperty Name="ClipDLFormat" ColumnName="ClipDLFormat" />
+                <ScalarProperty Name="ClipDLRequestDateTime" ColumnName="ClipDLRequestDateTime" />
+                <ScalarProperty Name="ClipDownloadStatus" ColumnName="ClipDownloadStatus" />
+                <ScalarProperty Name="CustomerGUID" ColumnName="CustomerGUID" />
+                <ScalarProperty Name="ClipID" ColumnName="ClipID" />
+                <ScalarProperty Name="IQ_ClipDownload_Key" ColumnName="IQ_ClipDownload_Key" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClipDownloadSettings">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.ClipDownloadSetting">
+              <MappingFragment StoreEntitySet="ClipDownloadSettings">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ClipTransportMode" ColumnName="ClipTransportMode" />
+                <ScalarProperty Name="ClipFinalDestination" ColumnName="ClipFinalDestination" />
+                <ScalarProperty Name="ClipDownloadFileLocation" ColumnName="ClipDownloadFileLocation" />
+                <ScalarProperty Name="VideoFormat" ColumnName="VideoFormat" />
+                <ScalarProperty Name="AudioFormat" ColumnName="AudioFormat" />
+                <ScalarProperty Name="ClientGUID" ColumnName="ClientGUID" />
+                <ScalarProperty Name="IQ_ClipDownloadSettings_Key" ColumnName="IQ_ClipDownloadSettings_Key" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetClipFormat" FunctionName="IQMediaGroupModel.Store.usp_ClipDownload_SelectFormat" />
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.Customer">
+              <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="AnewstipUserID" ColumnName="AnewstipUserID" />
+                <ScalarProperty Name="LastPwdRsetDate" ColumnName="LastPwdRsetDate" />
+                <ScalarProperty Name="RsetPwdEmailCount" ColumnName="RsetPwdEmailCount" />
+                <ScalarProperty Name="LastPwdChangedDate" ColumnName="LastPwdChangedDate" />
+                <ScalarProperty Name="PasswordAttempts" ColumnName="PasswordAttempts" />
+                <ScalarProperty Name="DateMobileRegd" ColumnName="DateMobileRegd" />
+                <ScalarProperty Name="HasMobileRegd" ColumnName="HasMobileRegd" />
+                <ScalarProperty Name="UDID" ColumnName="UDID" />
+                <ScalarProperty Name="MasterCustomerID" ColumnName="MasterCustomerID" />
+                <ScalarProperty Name="LoginID" ColumnName="LoginID" />
+                <ScalarProperty Name="DefaultPage" ColumnName="DefaultPage" />
+                <ScalarProperty Name="MultiLogin" ColumnName="MultiLogin" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CustomerGUID" ColumnName="CustomerGUID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="CustomerComment" ColumnName="CustomerComment" />
+                <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
+                <ScalarProperty Name="CustomerPassword" ColumnName="CustomerPassword" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="CustomerKey" ColumnName="CustomerKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetPlayerDataForIQUGCArchive" FunctionName="IQMediaGroupModel.Store.usp_Statskedprog_SelectPlayerDataForIQUGCArchive" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.PlayerUGCRawMediaData">
+                <ScalarProperty Name="AirDate" ColumnName="AirDate" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="IQService_UGCRawClipExport">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.IQService_UGCRawClipExport">
+              <MappingFragment StoreEntitySet="IQService_UGCRawClipExport">
+                <ScalarProperty Name="OutputPath" ColumnName="OutputPath" />
+                <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+                <ScalarProperty Name="DateQueued" ColumnName="DateQueued" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ClipGUID" ColumnName="ClipGUID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetIQCoreRecordfileMetaPathByClipGUID" FunctionName="IQMediaGroupModel.Store.usp_IQCore_RecordFileMeta_SelectPathByClipGuid" />
+          <FunctionImportMapping FunctionImportName="CheckForMicrositeAccessByClientGUID" FunctionName="IQMediaGroupModel.Store.usp_Client_CheckForMicrositeAccessByClientGUID" />
+          <FunctionImportMapping FunctionImportName="InsertOutBoundReporting" FunctionName="IQMediaGroupModel.Store.usp_OutboundReporting_Insert" />
+          <FunctionImportMapping FunctionImportName="GetRecordfileGUIDbyClipGUID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQCore_Clip_SelectRecordfileGUIDByClipGUID" />
+          <FunctionImportMapping FunctionImportName="GetCustomCategoryByClientGUID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_CustomCategory_SelectByClientGUID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.CustomCategoryData">
+                <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+                <ScalarProperty Name="CategoryGUID" ColumnName="CategoryGUID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetArchiveClipDataAndImageContentByClipID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_ArchiveClip_SelectByClipID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.ArchiveClipService">
+                <ScalarProperty Name="ClipTitle" ColumnName="ClipTitle" />
+                <ScalarProperty Name="ArchiveClipKey" ColumnName="ArchiveClipKey" />
+                <ScalarProperty Name="ThumbnailImagePath" ColumnName="ThumbnailImagePath" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetClientPlayerLogoByClipGUID" FunctionName="IQMediaGroupModel.Store.usp_Client_SelectPlayerLogoByClipID" />
+          <FunctionImportMapping FunctionImportName="CheckForNielSenDataAccessByClientGUID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_Client_CheckForNielSenDataAccessByClientGUID" />
+          <FunctionImportMapping FunctionImportName="GetNielSenDataByGuid" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQ_NIELSEN_SQAD_SelectNielSenDataByRecordFileGuid">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.NielSenDataDB">
+                <ScalarProperty Name="IQ_Start_Point" ColumnName="IQ_Start_Point" />
+                <ScalarProperty Name="SQAD_SHAREVALUE" ColumnName="SQAD_SHAREVALUE" />
+                <ScalarProperty Name="AUDIENCE" ColumnName="AUDIENCE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetVideoGuidByiQAgentiFrameID" FunctionName="IQMediaGroupModel.Store.usp_Services_GetVideoGuid_ByiQAgentiFrameID" />
+          <FunctionImportMapping FunctionImportName="GetSearchTermByIQAgent_TVResultsID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_TVResultsID" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentRawMedia">
+                <ScalarProperty Name="RL_VideoGUID" ColumnName="RL_VideoGUID" />
+                <ScalarProperty Name="SearchTerm" ColumnName="SearchTerm" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIQCoreRecordFileLocationByGUID" FunctionName="IQMediaGroupModel.Store.usp_IQCore_RecordFile_SelectFileLocation_ByGUID" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQCoreRecordFile">
+                <ScalarProperty Name="FileLocation" ColumnName="FileLocation" />
+                <ScalarProperty Name="RootPathID" ColumnName="RootPathID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="getIQCoreRootPathByID" FunctionName="IQMediaGroupModel.Store.usp_IQCore_RootPath_SelectPathByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQCoreRootPath">
+                <ScalarProperty Name="StoragePath" ColumnName="StoragePath" />
+                <ScalarProperty Name="StreamSuffixPath" ColumnName="StreamSuffixPath" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetRemoteSvcUrlByRootPathID" FunctionName="IQMediaGroupModel.Store.usp_IQRootpath_Location_SelectRemote_SvcUrlByRootPathID" />
+          <FunctionImportMapping FunctionImportName="GetSearchTermBy_IQAgent_NMResultsID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_NMResultsID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentSearchTerm">
+                <ScalarProperty Name="SearchTerm" ColumnName="SearchTerm" />
+                <ScalarProperty Name="ArticleID" ColumnName="ArticleID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetSearchTermBy_IQAgent_SMResultsID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_SMResultsID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentSearchTerm">
+                <ScalarProperty Name="SearchTerm" ColumnName="SearchTerm" />
+                <ScalarProperty Name="ArticleID" ColumnName="ArticleID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetNielSenDataByRecordFileGuidList" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQ_NIELSEN_SQAD_SelectNielSenDataByRecordFileGuidList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.NielsenData">
+                <ScalarProperty Name="IQ_CC_Key" ColumnName="IQ_CC_Key" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+                <ScalarProperty Name="SQAD_SHAREVALUE" ColumnName="SQAD_SHAREVALUE" />
+                <ScalarProperty Name="AUDIENCE" ColumnName="AUDIENCE" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetCompeteDataByClientGuidAndXml" FunctionName="IQMediaGroupModel.Store.usp_IQ_CompeteAll_SelectArtileAdShareByClientGuidAndXml">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.CompeteDataDB">
+                <ScalarProperty Name="CompeteURL" ColumnName="CompeteURL" />
+                <ScalarProperty Name="IsCompeteAll" ColumnName="IsCompeteAll" />
+                <ScalarProperty Name="IQ_AdShare_Value" ColumnName="IQ_AdShare_Value" />
+                <ScalarProperty Name="c_uniq_visitor" ColumnName="c_uniq_visitor" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="CheckForCompeteDataAccessByClientGUID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_Client_CheckForCompeteDataAccessByClientGUID" />
+          <FunctionImportMapping FunctionImportName="GetSearchTermBy_IQAgent_TwitterResultsID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_TwitterResultsID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentSearchTerm">
+                <ScalarProperty Name="SearchTerm" ColumnName="SearchTerm" />
+                <ScalarProperty Name="ArticleID" ColumnName="ArticleID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertIQAgentIframe" FunctionName="IQMediaGroupModel.Store.usp_IQAgentiFrame_Insert">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentIframe">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="IQAgentIframeID" ColumnName="IQAgentIframeID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="RawMediaPlayLogs">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RawMediaPlayLog">
+              <MappingFragment StoreEntitySet="IQTrack_RawMediaPlayLog">
+                <ScalarProperty Name="SecondsPlayed" ColumnName="SecondsPlayed" />
+                <ScalarProperty Name="IPAddDecimal" ColumnName="IPAddDecimal" />
+                <ScalarProperty Name="DeviceOS" ColumnName="DeviceOS" />
+                <ScalarProperty Name="Device" ColumnName="Device" />
+                <ScalarProperty Name="C_UserGuid" ColumnName="_UserGuid" />
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="PlayDate" ColumnName="PlayDate" />
+                <ScalarProperty Name="C_AssetGuid" ColumnName="_AssetGuid" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RawMediaPlaySummaries">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RawMediaPlaySummary">
+              <MappingFragment StoreEntitySet="IQTrack_RawMediaPlaySummary">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="C_AssetGuid" ColumnName="_AssetGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RawMediaImpressionSummaries">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.RawMediaImpressionSummary">
+              <MappingFragment StoreEntitySet="IQTrack_RawMediaImpressionSummary">
+                <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="C_AssetGuid" ColumnName="_AssetGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetRecordfileByGuid" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQCore_Recordfile_SelectByGuid" />
+          <FunctionImportMapping FunctionImportName="GetStationSharingByClipIDNClientGUID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_GetStationSharingByClipIDNClientGUID" />
+          <FunctionImportMapping FunctionImportName="CheckIQLicenseByCustomerID" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQClient_CustomSettings_CheckIQLicenseByCustomerID">
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIQagent_TVResults_ByID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_TVResults_SelectByID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentTVResults">
+                <ScalarProperty Name="RL_Date" ColumnName="RL_Date" />
+                <ScalarProperty Name="RL_VideoGUID" ColumnName="RL_VideoGUID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetIQTimeSyncDataByClipGuid" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQTimeSync_Data_SelectByClipGuid">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.TimeSyncData">
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="C_TypeID" ColumnName="_TypeID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetSolrEngines" FunctionName="IQMediaGroupModel.Store.usp_v4_IQSolrEngines_SelectAll">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.SolrEngines">
+                <ScalarProperty Name="MediaType" ColumnName="MediaType" />
+                <ScalarProperty Name="FromDate" ColumnName="FromDate" />
+                <ScalarProperty Name="ToDate" ColumnName="ToDate" />
+                <ScalarProperty Name="BaseUrl" ColumnName="BaseUrl" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertIQClipTimeSyncData" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQTimeSync_ClipData_InsertList" />
+          <FunctionImportMapping FunctionImportName="GetSearchTermBy_IQAgent_PQResultsID" FunctionName="IQMediaGroupModel.Store.usp_IQAgent_SearchRequest_SelectSearchTermBy_IQAgent_PQResultsID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.IQAgentSearchTerm">
+                <ScalarProperty Name="SearchTerm" ColumnName="SearchTerm" />
+                <ScalarProperty Name="ArticleID" ColumnName="ProQuestID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="UpdateRawMediaSecondsPlayed" FunctionName="IQMediaGroupModel.Store.usp_iqsvc_IQTrack_RawMediaPlayLog_UpdateSecondsPlayed" />
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMediaGroup" ZoomLevel="100">
+        <EntityTypeShape EntityType="IQMediaGroupModel.ArchiveClip" Width="2" PointX="7.875" PointY="0.5" Height="4.8792529296875" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.ClipDownload" Width="2" PointX="0.5" PointY="2.5" Height="3.0714322916666674" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.ClipDownloadSetting" Width="2" PointX="4" PointY="0.5" Height="2.9070849609374996" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Customer" Width="1.5" PointX="6.125" PointY="0.5" Height="3.5644742838541656" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.IQService_UGCRawClipExport" Width="3.375" PointX="10.125" PointY="0.875" Height="2.172587890625" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RawMediaPlayLog" Width="2" PointX="11.5" PointY="4.125" Height="2.9417936197916656" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RawMediaPlaySummary" Width="1.5" PointX="0.75" PointY="7.75" Height="1.5956835937499996" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RawMediaImpressionSummary" Width="1.5" PointX="3.375" PointY="7.75" Height="1.5956835937499996" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

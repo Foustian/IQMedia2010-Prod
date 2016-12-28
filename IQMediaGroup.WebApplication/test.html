@@ -1,0 +1,430 @@
+<!-- test checkout 1 -->
+<!--<html>
+<head>
+</head>
+<body>
+    <form id="artform" method="get" >
+    <input type="submit" />
+    <script type="text/javascript">
+        submitFrom();
+        function submitFrom() {
+            alert('method called');
+            var formele = document.getElementById("artform");
+            formele.action = encodeURI("http://www.facebook.com/montblanc/posts/180212255436566");
+            formele.method = "get";
+            formele.submit();
+        }
+    </script>
+    </form>
+</body>
+</html>
+-->
+<html>
+<head>
+    <style type="text/css">
+        .ModalBackgroundLightBox
+        {
+            background-color: #000000;
+            filter: alpha(opacity=40);
+            opacity: 0.4;
+        }
+    </style>
+    <script type="text/javascript">
+
+        setInterval(checkFocus, 10);
+        var mywindow;
+        function openModal() {
+            var a = new Array;
+            a[0] = 1;
+            a[1] = 4;
+            document.getElementById('backgroundElement').style.display = 'block';
+            mywindow = window.showModalDialog('http://www.facebook.com/montblanc/posts/180212255436566', 
+                       a, "dialogwidth: 1000; dialogheight: 700; resizable: yes;center : yes;");
+            document.getElementById('backgroundElement').style.display = 'none';
+        }
+
+        function checkFocus() {
+            if (mywindow != null && mywindow != undefined) {
+                alert(mywindow);
+                alert(window.focus);
+                if (window.focus) {
+                    alert('hi');
+                    mywindow.focus();
+                }
+            }
+        }
+
+        function CheckForIOS()
+        { 
+            var child = window.open('iqmedia://clipid=10205aea-d008-4a9f-988f-f271dafaf6d9&baseurl=1','IQMedia IOS Player');
+            setTimeout(function() {
+                try 
+                {
+                    var foo = child.location;
+                }catch (err) 
+                {
+                    return;
+                }
+                // Still loading. Code here. 
+                window.open('http://l3cdn.iqmediacorp.com.c.footprint.net/scontent/IOSApp/index.html');
+            }, 10000);
+        } 
+        
+        CheckForIOS();
+    </script>
+</head>
+<body>
+    <input type="button" value="Open modal dialog" onclick="openModal();">
+    <div>
+        <div id="mainSection">
+            <div class="clsServerSDKContent">
+            </div>
+            <p>
+                Creates a modal dialog box that displays the specified HTML document.</p>
+            <h3>
+                Syntax</h3>
+            var retval = window.showModalDialog(dialog, varArgIn, varOptions);
+            <h3>
+                Parameters</h3>
+            <dl>
+                <dt><em>dialog</em> [in]</dt>
+                <dd>
+                    <p>
+                        Type: <strong>String</strong> <strong></strong>
+                    </p>
+                    <p>
+                        <strong>String</strong>&nbsp;that specifies the URL of the document to load and
+                        display.</p>
+                </dd>
+                <dt><em>varArgIn</em> [in, optional]</dt>
+                <dd>
+                    <p>
+                        Type: <strong>Variant</strong> <strong></strong>
+                    </p>
+                    <p>
+                        <strong>Variant</strong> that specifies the arguments to use when displaying the
+                        document. Use this parameter to pass a value of any type, including an array of
+                        values. The dialog box can extract the values passed by the caller from the <a href="http://msdn.microsoft.com/en-us/library/ie/ms533723(v=vs.85).aspx">
+                            <strong xmlns="http://www.w3.org/1999/xhtml">dialogArguments</strong></a> property
+                        of the <a href="http://msdn.microsoft.com/en-us/library/ie/ms535873(v=vs.85).aspx"><strong
+                            xmlns="http://www.w3.org/1999/xhtml">window</strong></a> object.</p>
+                </dd>
+                <dt><em>varOptions</em> [in, optional]</dt>
+                <dd>
+                    <p>
+                        Type: <strong>Variant</strong> <strong></strong>
+                    </p>
+                    <p>
+                        <strong>String</strong>&nbsp;that specifies the window ornaments for the dialog
+                        box, using one or more of the following semicolon-delimited values:
+                    </p>
+                    <dl class="indent">
+                        <dt><a id="dialogHeight_sHeight"></a><a id="dialogheight_sheight"></a><a id="DIALOGHEIGHT_SHEIGHT">
+                        </a>
+                            <p>
+                                <strong>dialogHeight:sHeight</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Sets the height of the dialog window (see Remarks for default unit of measure).</p>
+                        </dd>
+                        <dt><a id="dialogLeft_sXPos"></a><a id="dialogleft_sxpos"></a><a id="DIALOGLEFT_SXPOS">
+                        </a>
+                            <p>
+                                <strong>dialogLeft:sXPos</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Sets the left position of the dialog window relative to the upper-left corner of
+                                the desktop.</p>
+                        </dd>
+                        <dt><a id="dialogTop_sYPos"></a><a id="dialogtop_sypos"></a><a id="DIALOGTOP_SYPOS">
+                        </a>
+                            <p>
+                                <strong>dialogTop:sYPos</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Sets the top position of the dialog window relative to the upper-left corner of
+                                the desktop.</p>
+                        </dd>
+                        <dt><a id="dialogWidth_sWidth"></a><a id="dialogwidth_swidth"></a><a id="DIALOGWIDTH_SWIDTH">
+                        </a>
+                            <p>
+                                <strong>dialogWidth:sWidth</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Sets the width of the dialog window (see Remarks for default unit of measure).</p>
+                        </dd>
+                        <dt><a id="center___yes___no___1___0___on___off__"></a><a id="CENTER___YES___NO___1___0___ON___OFF__">
+                        </a>
+                            <p>
+                                <strong>center:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether to center the dialog window within the desktop. The default is
+                                <strong>yes</strong>.</p>
+                        </dd>
+                        <dt><a id="dialogHide___yes___no___1___0___on___off__"></a><a id="dialoghide___yes___no___1___0___on___off__">
+                        </a><a id="DIALOGHIDE___YES___NO___1___0___ON___OFF__"></a>
+                            <p>
+                                <strong>dialogHide:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether the dialog window is hidden when printing or using print preview.
+                                This feature is only available when a dialog box is opened from a trusted application.
+                                The default is <strong>no</strong>.</p>
+                        </dd>
+                        <dt><a id="edge___sunken___raised__"></a><a id="EDGE___SUNKEN___RAISED__"></a>
+                            <p>
+                                <strong>edge:{ sunken | raised }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies the edge style of the dialog window. The default is <strong>raised</strong>.</p>
+                        </dd>
+                        <dt><a id="resizable___yes___no___1___0___on___off__"></a><a id="RESIZABLE___YES___NO___1___0___ON___OFF__">
+                        </a>
+                            <p>
+                                <strong>resizable:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether the dialog window has fixed dimensions. The default is <strong>no</strong>.</p>
+                        </dd>
+                        <dt><a id="scroll___yes___no___1___0___on___off__"></a><a id="SCROLL___YES___NO___1___0___ON___OFF__">
+                        </a>
+                            <p>
+                                <strong>scroll:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether the dialog window displays scrollbars. The default is <strong>yes</strong>.</p>
+                        </dd>
+                        <dt><a id="status___yes___no___1___0___on___off__"></a><a id="STATUS___YES___NO___1___0___ON___OFF__">
+                        </a>
+                            <p>
+                                <strong>status:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether the dialog window displays a status bar. The default is <strong>yes</strong>
+                                for untrusted dialog windows and <strong>no</strong> for trusted dialog windows.</p>
+                        </dd>
+                        <dt><a id="unadorned___yes___no___1___0___on___off__"></a><a id="UNADORNED___YES___NO___1___0___ON___OFF__">
+                        </a>
+                            <p>
+                                <strong>unadorned:{ yes | no | 1 | 0 | on | off }</strong></p>
+                        </dt>
+                        <dd>
+                            <p>
+                                Specifies whether the dialog window displays the border window chrome. This feature
+                                is only available when a dialog box is opened from a trusted application. The default
+                                is <strong>no</strong>.</p>
+                        </dd>
+                    </dl>
+                </dd>
+            </dl>
+            <h3>
+                Return value</h3>
+            <p>
+                Type: <strong><strong>Variant</strong></strong></p>
+            <p>
+                <strong>Variant</strong>. Returns the value of the <a href="http://msdn.microsoft.com/en-us/library/ie/ms534371(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">returnValue</strong></a> property
+                as set by the window of the document specified in <em>dialog</em>.</p>
+            <h3>
+                Standards information</h3>
+            <p>
+                There are no standards that apply here.</p>
+            <h3>
+                Remarks</h3>
+            <p>
+                A modal dialog box retains the input focus while open. The user cannot switch windows
+                until the dialog box is closed.</p>
+            <p>
+                Because a modal dialog box can include a URL to a resource in a different domain,
+                do not pass information through the <em>varArgIn</em> parameter that the user might
+                consider private. The <em>varArgIn</em> parameter can be referenced within the modal
+                dialog box using the <a href="http://msdn.microsoft.com/en-us/library/ie/ms533723(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">dialogArguments</strong></a> property
+                of the <a href="http://msdn.microsoft.com/en-us/library/ie/ms535873(v=vs.85).aspx"><strong
+                    xmlns="http://www.w3.org/1999/xhtml">window</strong></a> object. If the <em>varArgIn</em>
+                parameter is defined as a string, the maximum string length that can be passed to
+                the modal dialog box is 4096 characters; longer strings are truncated.</p>
+            <p>
+                You can set the default font settings the same way you set Cascading Style Sheets
+                (CSS) attributes (for example, <code>"font:3;font-size:4"</code>). To define multiple
+                font values, use multiple font attributes.</p>
+            <p>
+                To override <code>center</code>, even though the default for <code>center</code>
+                is <code>yes</code>, you can specify either <code>dialogLeft</code> and/or <code>dialogTop</code>.</p>
+            <p>
+                When Windows Internet Explorer opens a window from a modal or modeless HTML dialog
+                box by using the <strong>showModalDialog</strong> method or by using the <a href="http://msdn.microsoft.com/en-us/library/ie/ms536761(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">showModelessDialog</strong></a>
+                method, Internet Explorer uses Component Object Model (COM) to create a new instance
+                of the window. Typically, the window is opened by using the first instance of an
+                existing Internet Explorer process. When Internet Explorer opens the window in a
+                new process, all the memory cookies are no longer available, including the session
+                ID. This process is different from the process that Windows Internet Explorer uses
+                to open a new window by using the <a href="http://msdn.microsoft.com/en-us/library/ie/ms536651(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">open</strong></a> method.</p>
+            <p>
+                For Windows Internet Explorer&nbsp;7, <code>dialogHeight</code> and <code>dialogWidth</code>
+                return the height and width of the content area and no longer includes the height
+                and width of the frame.</p>
+            <p>
+                Internet Explorer&nbsp;7. Although a user can manually adjust the height of a dialog
+                box to a smaller value &mdash;provided the dialog box is resizable&mdash; the minimum
+                <code>dialogHeight</code> you can specify is 100 pixels, and the minimum <code>dialogWidth</code>
+                you can define is 250 pixels. In versions earlier than Internet Explorer&nbsp;7
+                the minimum value of the <code>dialogWidth</code> that can be specified is 100 pixels.</p>
+            <p>
+            </p>
+            <p class="note">
+                <strong>Note</strong>&nbsp;&nbsp;For Internet Explorer&nbsp;7, <code>help</code>
+                is not a valid value for <code>sFeatures</code>. In previous versions, <code>help:{
+                    yes | no | 1 | 0 | on | off }</code> specified whether the dialog window displays
+                the context-sensitive Help icon.</p>
+            <p>
+                This method must use a user-initiated action, such as clicking on a link or tabbing
+                to a link and pressing enter, to open a pop-up window. The Pop-up Blocker feature
+                in Microsoft Internet Explorer&nbsp;6 blocks windows that are opened without being
+                initiated by the user.</p>
+            <p>
+                Microsoft Internet Explorer&nbsp;5 and later allows further control over modal dialog
+                boxes through the <code>status</code> and <code>resizable</code> values in the <em>varOptions</em>
+                parameter of the <strong>showModalDialog</strong> method. Turn off the status bar
+                by calling the dialog box from a trusted application, such as Microsoft Visual Basic
+                or an HTML Application (HTA), or from a trusted window, such as a trusted modal
+                dialog box. These applications are considered to be trusted because they use Internet
+                Explorer interfaces instead of the browser. Any dialog box generated from a trusted
+                source has the status bar turned off by default. Resizing is turned off by default,
+                but you can turn it on by specifying <code>resizable=yes</code> in the <em>varOptions</em>
+                string of the <strong>showModalDialog</strong> method.</p>
+            <p>
+                The default unit of measure for <code>dialogHeight</code> and <code>dialogWidth</code>
+                in Internet Explorer&nbsp;5 and later is the pixel. The value can be an integer
+                or floating-point number, followed by an absolute units designator (<code>cm</code>,
+                <code>mm</code>, <code>in</code>, <code>pt</code>, or <code>pc</code>) or a relative
+                units designator (<code>em</code>, <code>ex</code>, or <code>px</code>). For consistent
+                results, specify the <code>dialogHeight</code> and <code>dialogWidth</code> in pixels
+                when designing modal dialog boxes.</p>
+            <p>
+                As of Microsoft Internet Explorer&nbsp;4.0, you can eliminate scroll bars on dialog
+                boxes. To turn off the scroll bar, set the <a href="http://msdn.microsoft.com/en-us/library/ie/ms534393(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">SCROLL</strong></a> attribute to
+                <code>false</code> in the <a href="http://msdn.microsoft.com/en-us/library/ie/ms535205(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">body</strong></a> element for the
+                dialog window, or call the modal dialog box from a trusted application.</p>
+            <h3>
+                Examples</h3>
+            <p>
+                This example uses the <strong>showModalDialog</strong> method to open a customized
+                dialog box.
+            </p>
+            <p>
+                <strong>Code example: </strong><a href="http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialog2.htm">
+                    http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialog2.htm</a></p>
+            <div xmlns="" class="codeSnippetContainer" id="code-snippet-1">
+                <div class="codeSnippetContainerTabs">
+                </div>
+                <div class="codeSnippetContainerCodeContainer">
+                    <div class="codeSnippetToolBar">
+                        <div class="codeSnippetToolBarText">
+                            <a href="javascript:if (window.epx.codeSnippet)window.epx.codeSnippet.copyCode('CodeSnippetContainerCode_6fc86feb-8804-48fb-a16a-4e5f13700cfa');"
+                                title="Copy to clipboard." style="display: none;" name="CodeSnippetCopyLink">Copy</a>
+                        </div>
+                    </div>
+                    <div dir="ltr" class="codeSnippetContainerCode" id="CodeSnippetContainerCode_6fc86feb-8804-48fb-a16a-4e5f13700cfa">
+                        <div style="color: Black;">
+                            <pre>
+&lt;script type="text/javascript"&gt;
+function fnRandom(iModifier){
+   return parseInt(Math.random()*iModifier);
+}
+function fnSetValues(){
+   var iHeight=oForm.oHeight.options[
+      oForm.oHeight.selectedIndex].text;
+   if(iHeight.indexOf("Random")&gt;-1){
+      iHeight=fnRandom(document.body.clientHeight);
+   }
+   var sFeatures="dialogHeight: " + iHeight + "px;";
+   return sFeatures;
+}
+function fnOpen(){
+   var sFeatures=fnSetValues();
+   window.showModalDialog("showModalDialog_target.htm", "", 
+      sFeatures)
+}
+&lt;/script&gt;
+&lt;form name="oForm"&gt;
+	Dialog Height 
+  &lt;select name="oHeight"&gt;
+    &lt;option&gt;-- Random --&lt;/option&gt;
+    &lt;option&gt;150&lt;/option&gt;
+    &lt;option&gt;200&lt;/option&gt;
+    &lt;option&gt;250&lt;/option&gt;
+    &lt;option&gt;300&lt;/option&gt;
+  &lt;/select&gt; 
+	Create Modal Dialog Box
+  &lt;input type="button" value="Push To Create" onclick="fnOpen()"&gt;
+&lt;/form&gt;
+
+</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>
+                Linked from the following button is an extended version of the above script, which
+                demonstrates many of the features available for creating a custom dialog box.
+            </p>
+            <p>
+                <strong>Code example: </strong><a href="http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialog.htm">
+                    http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialog.htm</a></p>
+            <p>
+                Neither modal nor modeless HTML dialog boxes support text selection or the standard
+                shortcut menu for copy operations; however, you can imitate this functionality by
+                using script with <a href="http://msdn.microsoft.com/en-us/library/ie/ms535872(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">TextRange</strong></a> objects
+                and event handlers for <a href="http://msdn.microsoft.com/en-us/library/ie/ms536944(v=vs.85).aspx">
+                    <strong xmlns="http://www.w3.org/1999/xhtml">onmousedown</strong></a> and <a href="http://msdn.microsoft.com/en-us/library/ie/ms536947(v=vs.85).aspx">
+                        <strong xmlns="http://www.w3.org/1999/xhtml">onmousemove</strong></a>, as
+                in the following example.
+            </p>
+            <p>
+                <strong>Code example: </strong><a href="http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialogLaunch.htm">
+                    http://samples.msdn.microsoft.com/workshop/samples/author/dhtml/refs/showModalDialogLaunch.htm</a></p>
+            <h3>
+                <a id="see_also"></a>See also</h3>
+            <dl>
+                <dt><a href="http://msdn.microsoft.com/en-us/library/ie/ms535873(v=vs.85).aspx"><strong
+                    xmlns="http://www.w3.org/1999/xhtml">window</strong></a> </dt>
+                <dt><strong>Reference</strong></dt>
+                <dt><a href="http://msdn.microsoft.com/en-us/library/ie/ms536761(v=vs.85).aspx"><strong
+                    xmlns="http://www.w3.org/1999/xhtml">showModelessDialog</strong></a> </dt>
+                <dt><strong>Conceptual</strong></dt>
+                <dt><a href="http://msdn.microsoft.com/en-us/library/ie/ms537632(v=vs.85).aspx">About
+                    the Pop-up Blocker</a> </dt>
+            </dl>
+            <p>
+                &nbsp;</p>
+            <p>
+                &nbsp;</p>
+            <p>
+                <a title="Send comments about this topic to Microsoft" href="mailto:wsddocfb@microsoft.com?subject=Documentation%20feedback [ie_htmlref\ie]:%20showModalDialog method%20 RELEASE:%20(11/28/2012)&amp;body=%0A%0APRIVACY STATEMENT%0A%0AThe doc team uses your feedback to improve the documentation. We don't use your email address for any other purpose. We'll remove your email address from our system after the issue that you are reporting is resolved. While we are working to resolve this issue, we may send you an email message to request more info about your feedback. After the issue is addressed, we may send you an email message to let you know that your feedback has been addressed.%0A%0AFor more info about Microsoft's privacy policy, see http://privacy.microsoft.com/en-us/default.aspx.">
+                    Send comments about this topic to Microsoft</a></p>
+            <p>
+                Build date: 11/28/2012</p>
+        </div>
+    </div>
+    <div id="backgroundElement" style="position: absolute; left: 0px; top: 0px; z-index: 10000;
+        width: 100%; height: 100%; display: none;" class="ModalBackgroundLightBox">&nbsp;
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Service.SM.GeneratePDF", "IQMedia.Service.SM.GeneratePDF\IQMedia.Service.SM.GeneratePDF.csproj", "{CF5C538E-153C-4855-92FB-9E017E2691B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Domain.SM", "IQMedia.Domain.SM\IQMedia.Domain.SM.csproj", "{F7945892-4B6B-4B65-B21C-03455B7FF59D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Logic.SM", "IQMedia.Logic.SM\IQMedia.Logic.SM.csproj", "{9380572D-69FA-4E60-990D-F053CD2352E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Common", "..\..\..\IQMediaGroup_Bill_TFS\IQMedia.Common\IQMedia.Common.csproj", "{44CCB81E-DD46-428D-88F6-A16DFFF8A458}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IQMedia.Service.SM.GeneratePDFSetup", "IQMedia.Service.SM.GeneratePDFSetup\IQMedia.Service.SM.GeneratePDFSetup.vdproj", "{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://dbvss:8080/
+		SccProjectUniqueName0 = ..\\..\\..\\IQMediaGroup_Bill_TFS\\IQMedia.Common\\IQMedia.Common.csproj
+		SccProjectName0 = ../../IQMediaServices/IQMedia.Web/IQMedia.Common
+		SccLocalPath0 = ..\\..\\..\\IQMediaGroup_Bill_TFS\\IQMedia.Common
+		SccLocalPath1 = .
+		SccProjectUniqueName2 = IQMedia.Domain.SM\\IQMedia.Domain.SM.csproj
+		SccProjectName2 = IQMedia.Domain.SM
+		SccLocalPath2 = IQMedia.Domain.SM
+		SccProjectUniqueName3 = IQMedia.Logic.SM\\IQMedia.Logic.SM.csproj
+		SccProjectName3 = IQMedia.Logic.SM
+		SccLocalPath3 = IQMedia.Logic.SM
+		SccProjectUniqueName4 = IQMedia.Service.SM.GeneratePDF\\IQMedia.Service.SM.GeneratePDF.csproj
+		SccProjectName4 = IQMedia.Service.SM.GeneratePDF
+		SccLocalPath4 = IQMedia.Service.SM.GeneratePDF
+		SccProjectUniqueName5 = IQMedia.Service.SM.GeneratePDFSetup\\IQMedia.Service.SM.GeneratePDFSetup.vdproj
+		SccProjectName5 = IQMedia.Service.SM.GeneratePDFSetup
+		SccLocalPath5 = IQMedia.Service.SM.GeneratePDFSetup
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Debug|x86.ActiveCfg = Debug|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Debug|x86.Build.0 = Debug|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Release|Any CPU.ActiveCfg = Release|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Release|Mixed Platforms.Build.0 = Release|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Release|x86.ActiveCfg = Release|x86
+		{CF5C538E-153C-4855-92FB-9E017E2691B9}.Release|x86.Build.0 = Release|x86
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F7945892-4B6B-4B65-B21C-03455B7FF59D}.Release|x86.ActiveCfg = Release|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9380572D-69FA-4E60-990D-F053CD2352E6}.Release|x86.ActiveCfg = Release|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{44CCB81E-DD46-428D-88F6-A16DFFF8A458}.Release|x86.ActiveCfg = Release|Any CPU
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Debug|Any CPU.ActiveCfg = Debug
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Debug|x86.ActiveCfg = Debug
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Release|Any CPU.ActiveCfg = Release
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Release|Mixed Platforms.ActiveCfg = Release
+		{8B1D1D4E-F75B-42D6-9E4E-C7D7FDCBC62E}.Release|x86.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

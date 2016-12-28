@@ -1,0 +1,24 @@
+<IQMConfiguration>
+	<status_file_location>d:/tst.xml</status_file_location>
+	<log_file_location>d:/</log_file_location>
+	<FullImportWithCleanCore1>http://192.168.1.59:8080/solr/core1/dataimport?command=full-import</FullImportWithCleanCore1>
+	<URLStatusOfCore1>http://192.168.1.59:8080/solr/core1/dataimport</URLStatusOfCore1>
+	<URLGetAllIQ_CC_Keys>http://192.168.1.59:8080/solr/core1/select?q=*:*&amp;facet=on&amp;facet.field=iq_cc_key&amp;facet.limit=-1&amp;fl=null</URLGetAllIQ_CC_Keys>	
+	<URLDeleteCore1>http://192.168.1.59:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E</URLDeleteCore1>
+	<URLDeleteCommitCore1>http://192.168.1.59:8080/solr/core1/update?stream.body=%3Ccommit/%3E</URLDeleteCommitCore1>
+	<URLCommitCore0>http://192.168.1.59:8080/solr/core0/update?commit=true</URLCommitCore0>
+	<URLCommitCore1>http://192.168.1.59:8080/solr/core1/update?commit=true</URLCommitCore1>
+	<URLStatusCore0>http://192.168.1.59:8080/solr/admin/cores?action=status&amp;core=core0</URLStatusCore0>
+	<URLStatusCore1>http://192.168.1.59:8080/solr/admin/cores?action=status&amp;core=core1</URLStatusCore1>
+	<URLMergeIndex>http://192.168.1.59:8080/solr/admin/cores?action=mergeindexes&amp;core=core2&amp;indexDir=[[core0]]&amp;indexDir=[[core1]]</URLMergeIndex>
+	<URLCommitCore2>http://192.168.1.59:8080/solr/core2/update?commit=true</URLCommitCore2>
+	<URLOptimizeCore2>http://192.168.1.59:8080/solr/core2/update?optimize=true</URLOptimizeCore2>
+	<URLSwapCore>http://192.168.1.59:8080/solr/admin/cores?action=SWAP&amp;core=core2&amp;other=core0</URLSwapCore>
+	<URLDeleteCore2>http://192.168.1.59:8080/solr/core2/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E</URLDeleteCore2>
+	<URLDeleteCommitCore2>http://192.168.1.59:8080/solr/core2/update?stream.body=%3Ccommit/%3E</URLDeleteCommitCore2>
+	<URLSearchRecords>http://192.168.1.59:8080/solr/core0/select/</URLSearchRecords>
+	<ConnectionString>jdbc:sqlserver://SQL2008STD;databaseName=IQMediaGroup;selectMethod=cursor;user=IQMediaGroup;password=IMG@123</ConnectionString>
+	<StatusDelay>1000</StatusDelay>
+	<Core1RequestMaxTime>120</Core1RequestMaxTime>
+	<Core1RequestDelay>1000</Core1RequestDelay>
+</IQMConfiguration>

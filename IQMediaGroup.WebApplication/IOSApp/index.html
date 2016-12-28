@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>IQMedia</title>
+  <script type="text/javascript">
+	function PromptMsg()
+	{
+		alert('If your device does not have the IQMedia app installed, then click on link to install. If it is installed please launch the iQMedia app and try again.');
+	}
+	
+  </script>  
+  <style>
+	.btn
+	{
+	font-size:40px;
+	font-family:Arial,Helvetica,sans-serif;
+	}
+  </style>
+</head>
+<body onload="PromptMsg();">
+
+<input type="button" value="Click here to install latest IQMedia Application" class="btn" onclick="javscript:window.location='itms-services://?action=download-manifest&amp;url=http://qa.iqmediacorp.com/IOSApp/IQMediaCorp.plist'">  
+
+</body>
+</html>

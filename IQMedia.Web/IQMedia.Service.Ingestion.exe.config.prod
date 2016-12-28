@@ -1,0 +1,201 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <configSections>
+    <section name="IngestionSettings" type="IQMedia.Common.Config.Handlers.XmlConfigurationSectionHandler, IQMedia.Common"/>
+    <section name="IngestionPaths" type="IQMedia.Common.Config.Handlers.XmlConfigurationSectionHandler, IQMedia.Common"/>
+    <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net"/>
+  </configSections>
+
+  <connectionStrings>
+    <add name="IQMediaGroupEntities" connectionString="metadata=res://*/IQMedia.csdl|res://*/IQMedia.ssdl|res://*/IQMedia.msl;provider=System.Data.SqlClient;provider connection string=&quot;Data Source=10.100.1.50;User Id=sa;Password=Password01;Initial Catalog=IQMediaGroup;MultipleActiveResultSets=True&quot;" providerName="System.Data.EntityClient"/>
+  </connectionStrings>
+
+  <IngestionSettings type="IQMedia.Service.Ingestion.Config.Sections.IngestionSettings, IQMedia.Service.Ingestion">
+    <!-- Time in seconds between checking for new media -->
+    <PollInterval>900</PollInterval>
+    <!-- The number of worker threads to ingest the directories -->
+    <!-- If you change this value, you must restart the service to take effect -->
+    <WorkerThreads>8</WorkerThreads>
+    <!-- The Max number of files (per directory) to ingest. To ingest all files, use -1 -->
+    <NumberOfFiles>-1</NumberOfFiles>
+    <!-- The status to set the respective files to after they've been ingested. -->
+    <RecordingStatus_CC>NEW</RecordingStatus_CC>
+    <RecordingStatus_Audio>READY</RecordingStatus_Audio>
+    <RecordingStatus_Video>READY</RecordingStatus_Video>
+    
+    <!-- Source Pattern Matches: SRCID_YYYYMMDD_HH.ext or SRCID_YYYYMMDD_HHMM.ext -->
+    <SourcePattern>.*\\(.*)_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})?\.([A-Za-z0-9]{3})$</SourcePattern>
+    <!-- Destination Pattern outputs: \SRCID\YYYY\MM\DD\SRCID_YYYYMMDD_HH.ext -->
+    <DestinationPattern>\$2\$3\$4\$5\$1_$2$3$4_$5.$7</DestinationPattern>
+  </IngestionSettings>
+
+  <IngestionPaths type="IQMedia.Service.Ingestion.Config.Sections.IngestionPaths, IQMedia.Service.Ingestion">
+    <Directories>
+      <Directory SourcePath="C:\ingest\cap008" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap009" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap010" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap011" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap012" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap013" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap014" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap015" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap016" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap017" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap018" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap019" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap020" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap021" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap022" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap023" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap024" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap025" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap026" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap027" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap028" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap029" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap030" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap031" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap032" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap033" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap034" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap035" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap036" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap037" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap038" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap039" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cap040" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\aus001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\aus002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\aus003" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\aus004" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\aus005" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh003" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh004" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh005" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh006" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh007" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh008" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\cmh009" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\den001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\den002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv003" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv004" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv005" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\hsv006" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco003" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco004" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco005" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mco006" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo003" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo004" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo005" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\mxo006" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\nyc001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\phx001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\kmjam" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\ksca" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\la_aerio" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\phl" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\sirius" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\str001" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\str002" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wamr" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wcaa_logger" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wfed_logger" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wip" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wls" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\wtop" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+      <Directory SourcePath="C:\ingest\xm" IncludeSubDirectories="false" TypeFilters="flv|mp4|mp3|txt"/>
+    </Directories>
+  </IngestionPaths>
+
+  <log4net>
+    <appender name="Console" type="log4net.Appender.ConsoleAppender">
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="%date [%thread] %-5level - %message%newline" />
+      </layout>
+    </appender>
+    
+    <appender name="RollingFile" type="log4net.Appender.RollingFileAppender">
+      <file value="C:\Logs\ingestion_service.log"/>
+      <appendToFile value="true"/>
+      <maximumFileSize value="1024KB"/>
+      <maxSizeRollBackups value="5"/>
+      <staticLogFileName value="true"/>
+      <layout type="log4net.Layout.PatternLayout">
+        <conversionPattern value="[%date] %-5level (%logger) - %message%newline"/>
+      </layout>
+    </appender>
+
+    <appender name="AdoNetAppender" type="log4net.Appender.AdoNetAppender">
+      <bufferSize value="1" />
+      <connectionType value="System.Data.SqlClient.SqlConnection, System.Data, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+      <connectionString value="Data Source=10.100.1.50;User Id=sa;Password=Password01;Initial Catalog=IQMediaGroup;MultipleActiveResultSets=True" />
+      <commandText value="INSERT INTO IQLog_IngestionService ([Date],[Thread],[Level],[Logger],[Message],[Exception]) VALUES (@log_date, @thread, @log_level, @logger, @message, @exception)" />
+      <parameter>
+        <parameterName value="@log_date" />
+        <dbType value="DateTime" />
+        <layout type="log4net.Layout.RawTimeStampLayout" />
+      </parameter>
+      <parameter>
+        <parameterName value="@thread" />
+        <dbType value="String" />
+        <size value="255" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%thread" />
+        </layout>
+      </parameter>
+      <parameter>
+        <parameterName value="@log_level" />
+        <dbType value="String" />
+        <size value="50" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%level" />
+        </layout>
+      </parameter>
+      <parameter>
+        <parameterName value="@logger" />
+        <dbType value="String" />
+        <size value="255" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%property{system}" />
+        </layout>
+      </parameter>
+      <parameter>
+        <parameterName value="@message" />
+        <dbType value="String" />
+        <size value="4000" />
+        <layout type="log4net.Layout.PatternLayout">
+          <conversionPattern value="%message" />
+        </layout>
+      </parameter>
+      <parameter>
+        <parameterName value="@exception" />
+        <dbType value="String" />
+        <size value="2000" />
+        <layout type="log4net.Layout.ExceptionLayout" />
+      </parameter>
+    </appender>
+
+    <root>
+      <level value="ALL"/>
+      <appender-ref ref="Console"/>
+    </root>
+    <logger name="IQMedia.Common.Util.Logger" additivity="true">
+      <level value="ALL" />
+      <appender-ref ref="AdoNetAppender"/>
+    </logger>
+  </log4net>
+  
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0"/>
+  </startup>
+</configuration>

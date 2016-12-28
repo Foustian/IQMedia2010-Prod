@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="6fd7e72c-b864-4132-9b5d-7fce4571dcd5" solutionId="6fd7e72c-b864-4132-9b5d-7fce4571dcd5" resetWebServer="false" name="AmexCash" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="4028ac5f-fb4a-47b7-9df5-8f465978a1f3" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="44b29638-0fdc-4f37-8b3c-6f4e1cbaa8cc" />
+  </projectItems>
+</package>

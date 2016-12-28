@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Services.CaptureLog", "IQMediaGroup.Services.CaptureLog\IQMediaGroup.Services.CaptureLog.csproj", "{583D3EF8-A2C5-4A20-A6E5-F01E61528D80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Logic.CaptureLog", "IQMediaGroup.Logic.CaptureLog\IQMediaGroup.Logic.CaptureLog.csproj", "{816F5C36-BDC4-48CB-BE04-4EFE6C6F1C40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Domain.CaptureLog", "IQMediaGroup.Domain.CaptureLog\IQMediaGroup.Domain.CaptureLog.csproj", "{560E784B-A3C0-4AE8-BF02-E4F16084052F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common", "IQMediaGroup.Common\IQMediaGroup.Common.csproj", "{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://dbvss:8080/
+		SccProjectUniqueName0 = IQMediaGroup.Services.CaptureLog\\IQMediaGroup.Services.CaptureLog.csproj
+		SccProjectName0 = IQMediaGroup.Services.CaptureLog
+		SccLocalPath0 = IQMediaGroup.Services.CaptureLog
+		SccProjectUniqueName1 = IQMediaGroup.Logic.CaptureLog\\IQMediaGroup.Logic.CaptureLog.csproj
+		SccProjectName1 = IQMediaGroup.Logic.CaptureLog
+		SccLocalPath1 = IQMediaGroup.Logic.CaptureLog
+		SccProjectUniqueName2 = IQMediaGroup.Domain.CaptureLog\\IQMediaGroup.Domain.CaptureLog.csproj
+		SccProjectName2 = IQMediaGroup.Domain.CaptureLog
+		SccLocalPath2 = IQMediaGroup.Domain.CaptureLog
+		SccProjectUniqueName3 = IQMediaGroup.Common\\IQMediaGroup.Common.csproj
+		SccProjectName3 = IQMediaGroup.Common
+		SccLocalPath3 = IQMediaGroup.Common
+		SccLocalPath4 = .
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{583D3EF8-A2C5-4A20-A6E5-F01E61528D80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{583D3EF8-A2C5-4A20-A6E5-F01E61528D80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{583D3EF8-A2C5-4A20-A6E5-F01E61528D80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{583D3EF8-A2C5-4A20-A6E5-F01E61528D80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{816F5C36-BDC4-48CB-BE04-4EFE6C6F1C40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{816F5C36-BDC4-48CB-BE04-4EFE6C6F1C40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{816F5C36-BDC4-48CB-BE04-4EFE6C6F1C40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{816F5C36-BDC4-48CB-BE04-4EFE6C6F1C40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{560E784B-A3C0-4AE8-BF02-E4F16084052F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{560E784B-A3C0-4AE8-BF02-E4F16084052F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{560E784B-A3C0-4AE8-BF02-E4F16084052F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{560E784B-A3C0-4AE8-BF02-E4F16084052F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

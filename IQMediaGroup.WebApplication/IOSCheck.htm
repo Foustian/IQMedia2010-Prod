@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <script src="Script/jquery-1.8.1.min.js" type="text/javascript"></script>
+    <script language="javascript" type="text/javascript">
+        var isRedirected = false;
+        $(window).ready(function () {
+
+            //            $(window).load(function () {
+            //                $('body').append('hi' + '<br>');
+            //            });
+            var window_focus;
+             CheckForIOS();
+
+
+            //            $(window).focus(function () {
+            //                window_focus = true;
+            //            })
+            //                        .blur(function () {
+            //                            window_focus = false;
+            //                        });        
+
+
+            //            function onBlur() {
+            //                window_focus = false;
+            //            };
+            //            function onFocus() {
+            //                window_focus = true;
+            //            };
+
+            //            if (/*@cc_on!@*/false) { // check for Internet Explorer
+            //                document.onfocusin = onFocus;
+            //                document.onfocusout = onBlur;
+            //            } else {
+            //                window.onfocus = onFocus;
+            //                window.onblur = onBlur;
+            //            }
+
+
+
+
+
+            //                                $(document).one('click',function() {
+            //  setInterval(function () { $('body').append('has focus? ' + window_focus + '<br>'); }, 1000);
+            //});​
+
+
+
+            //            $(window).unload(function () {
+            //                alert('on unload');
+            //                isRedirected = true;
+
+            //            });
+
+        });
+
+
+        //        var timestamp = new Date().getTime();
+        //        function checkResume() {
+        //            var current = new Date().getTime();
+        //            if (current - timestamp > 5000) {
+        //                var event = document.createEvent("Events");
+        //                event.initEvent("focus", true, true);
+        //                document.dispatchEvent(event);
+        //            }
+        //            timestamp = current;
+        //        }
+        //        window.setInterval(checkResume, 3000);
+
+
+        //        document.addEventListener("focus", function () {
+        //            $('body').append('hi' + '<br>');
+        //        }, false);
+
+        function CheckForIOS() {
+            document.location = 'iqmedia://clipid=454545&baseurl=1';
+
+            var time = (new Date()).getTime();
+            document.write( (new Date()).getTime() + 'time:: ' + time);
+            setTimeout(function () {
+                var now = (new Date()).getTime();
+                document.write((new Date()).getTime() + 'now::' + now);
+                if ((now - time) < 1500) {
+                    document.location = 'http://www.google.com'
+                }
+            }, 1000);
+
+        }
+
+       
+        //        function CheckForIOS() {
+        //            document.location = 'iqmedia://clipid=123&baseurl=1';
+        //            setTimeout(function () {
+        //                if (isRedirected == false) {
+        //                    document.location = 'http://qa.iqmediacorp.com/iosapp'
+        //                }
+        //            }, 500);
+        //        }
+
+        
+    </script>
+</head>
+<body>
+    <!--<input id="btntest" type="button" value="redirect" onclick="CheckForIOS();" />-->
+</body>
+</html>

@@ -1,0 +1,208 @@
+2011-06-02 18:44:14,419 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:44:14,428 INFO Check method 
+ 
+2011-06-02 18:44:14,428 INFO Status called 
+ 
+2011-06-02 18:44:14,428 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:44:53,996 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:44:54,008 INFO Check method 
+ 
+2011-06-02 18:44:54,008 INFO Index called 
+ 
+2011-06-02 18:44:54,008 INFO Indexing started 
+ 
+2011-06-02 18:44:54,041 INFO Core1Ingest started 
+ 
+2011-06-02 18:44:54,046 INFO Core1Ingest request:http://192.168.1.85:8080/solr/core1/dataimport?command=full-import 
+ 
+2011-06-02 18:44:54,104 INFO Core1Ingest response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">3</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="command">full-import</str><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"/><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:44:54,107 INFO Core1Ingest finished 
+ 
+2011-06-02 18:44:54,107 INFO CheckCore1Status started 
+ 
+2011-06-02 18:44:54,107 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-02 18:44:54,109 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">0</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">busy</str><str name="importResponse">A command is still running...</str><lst name="statusMessages"/><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:44:55,111 INFO CheckCore1Status finished 
+ 
+2011-06-02 18:44:55,111 INFO CheckCore1Status started 
+ 
+2011-06-02 18:44:55,111 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-02 18:44:55,115 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">0</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-02 18:44:54</str><str name="">Indexing completed. Added/Updated: 0 documents. Deleted 0 documents.</str><str name="Committed">2011-06-02 18:44:54</str><str name="Optimized">2011-06-02 18:44:54</str><str name="Total Documents Processed">0</str><str name="Time taken ">0:0:0.843</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:44:55,117 INFO DeleteIndexOfCore1 started 
+ 
+2011-06-02 18:44:55,122 INFO DeleteIndexOfCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E 
+ 
+2011-06-02 18:44:55,131 INFO DeleteIndexOfCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">7</int></lst></response> 
+ 
+2011-06-02 18:44:55,140 INFO DeleteCommitCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Ccommit/%3E 
+ 
+2011-06-02 18:44:55,168 INFO DeleteCommitCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">23</int></lst></response> 
+ 
+2011-06-02 18:44:55,172 INFO DeleteIndexOfCore1 finished 
+ 
+2011-06-02 18:44:55,172 INFO <IQMStatus>  <Indexing_Started>true</Indexing_Started>  <Index_Start_time>Thu Jun 02 18:44:54 EDT 2011</Index_Start_time>  <Core1Ingest>    <Core1_Ingest>Finished</Core1_Ingest>    <Core1_Ingest_time>Thu Jun 02 18:44:54 EDT 2011</Core1_Ingest_time>    <Core1_Ingest_Response>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;3&lt;/int&gt;&lt;/lst&gt;&lt;lst name=&quot;initArgs&quot;&gt;&lt;lst name=&quot;defaults&quot;&gt;&lt;str name=&quot;config&quot;&gt;clip.xml&lt;/str&gt;&lt;/lst&gt;&lt;/lst&gt;&lt;str name=&quot;command&quot;&gt;full-import&lt;/str&gt;&lt;str name=&quot;status&quot;&gt;idle&lt;/str&gt;&lt;str name=&quot;importResponse&quot;/&gt;&lt;lst name=&quot;statusMessages&quot;/&gt;&lt;str name=&quot;WARNING&quot;&gt;This response format is experimental.  It is likely to change in the future.&lt;/str&gt;&lt;/response&gt;</Core1_Ingest_Response>    <SQLDB_Update></SQLDB_Update>    <SQLDB_Status_Time></SQLDB_Status_Time>    <SQLDB_Response></SQLDB_Response>  </Core1Ingest>  <Core0Commit>    <Core0_Commit></Core0_Commit>    <Core0_Commit_time></Core0_Commit_time>    <Core0_Commit_status></Core0_Commit_status>  </Core0Commit>  <Core1Commit>    <Core1_Commit></Core1_Commit>    <Core1_Commit_time></Core1_Commit_time>    <Core1_Commit_status></Core1_Commit_status>  </Core1Commit>  <CoreMerge>    <Core_merge></Core_merge>    <Core_merge_time></Core_merge_time>    <Core_merge_status></Core_merge_status>  </CoreMerge>  <Core2Commit>    <Core2_Commit></Core2_Commit>    <Core2_Commit_time></Core2_Commit_time>    <Core2_Commit_status></Core2_Commit_status>  </Core2Commit>  <Core2Optimize>    <Core2_optimize></Core2_optimize>    <Core2_optimize_time></Core2_optimize_time>    <Core2_optimize_status></Core2_optimize_status>  </Core2Optimize>  <CoreSwap>    <Core_swap></Core_swap>    <Core_swap_time></Core_swap_time>    <Core_swap_status></Core_swap_status>  </CoreSwap>  <CoreDelete>    <Core1_Delete>Finished</Core1_Delete>    <Core1_Delete_time>Thu Jun 02 18:44:55 EDT 2011</Core1_Delete_time>    <Core1_Delete_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;7&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core1_Delete_status>    <Core1_Commit>Finished</Core1_Commit>    <Core1_Commit_time>Thu Jun 02 18:44:55 EDT 2011</Core1_Commit_time>    <Core1_Commit_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;23&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core1_Commit_status>    <Core2_Delete></Core2_Delete>    <Core2_Delete_time></Core2_Delete_time>    <Core2_Delete_status></Core2_Delete_status>    <Core2_Commit></Core2_Commit>    <Core2_Commit_time></Core2_Commit_time>    <Core2_Commit_status></Core2_Commit_status>  </CoreDelete>  <SQLDB_Index_Update>    <SQLDB_I_Time></SQLDB_I_Time>    <SQLDB_I_Update></SQLDB_I_Update>  </SQLDB_Index_Update></IQMStatus> 
+ 
+2011-06-02 18:44:55,189 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:45:12,787 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:45:12,810 INFO Check method 
+ 
+2011-06-02 18:45:12,810 INFO Status called 
+ 
+2011-06-02 18:45:12,810 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:45:14,418 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:45:14,429 INFO Check method 
+ 
+2011-06-02 18:45:14,429 INFO Status called 
+ 
+2011-06-02 18:45:14,429 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:48:33,383 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:48:33,392 INFO Check method 
+ 
+2011-06-02 18:48:33,392 INFO Index called 
+ 
+2011-06-02 18:48:33,392 INFO Indexing started 
+ 
+2011-06-02 18:48:33,403 INFO Core1Ingest started 
+ 
+2011-06-02 18:48:33,408 INFO Core1Ingest request:http://192.168.1.85:8080/solr/core1/dataimport?command=full-import 
+ 
+2011-06-02 18:48:33,412 INFO Core1Ingest response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="command">full-import</str><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">0</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-02 18:44:54</str><str name="">Indexing completed. Added/Updated: 0 documents. Deleted 0 documents.</str><str name="Committed">2011-06-02 18:44:54</str><str name="Optimized">2011-06-02 18:44:54</str><str name="Total Documents Processed">0</str><str name="Time taken ">0:0:0.843</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:48:33,418 INFO Core1Ingest finished 
+ 
+2011-06-02 18:48:33,418 INFO CheckCore1Status started 
+ 
+2011-06-02 18:48:33,418 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-02 18:48:33,424 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">0</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">busy</str><str name="importResponse">A command is still running...</str><lst name="statusMessages"><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">0</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-02 18:44:54</str><str name="">Indexing completed. Added/Updated: 0 documents. Deleted 0 documents.</str><str name="Committed">2011-06-02 18:44:54</str><str name="Optimized">2011-06-02 18:44:54</str><str name="Total Documents Processed">0</str><str name="Time taken ">0:0:0.843</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:48:34,426 INFO CheckCore1Status finished 
+ 
+2011-06-02 18:48:34,426 INFO CheckCore1Status started 
+ 
+2011-06-02 18:48:34,426 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-02 18:48:34,436 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">0</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">48</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-02 18:48:33</str><str name="">Indexing completed. Added/Updated: 48 documents. Deleted 0 documents.</str><str name="Committed">2011-06-02 18:48:34</str><str name="Optimized">2011-06-02 18:48:34</str><str name="Total Documents Processed">48</str><str name="Time taken ">0:0:0.586</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-02 18:48:34,439 INFO UpdateDBStatus started 
+ 
+2011-06-02 18:48:34,454 INFO UpdateDBStatus request:http://192.168.1.85:8080/solr/core1/select?q=*:*&facet=on&facet.field=iq_cc_key&facet.limit=-1&fl=null 
+ 
+2011-06-02 18:48:34,467 INFO UpdateDBStatus response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">9</int><lst name="params"><str name="facet">on</str><str name="fl">null</str><str name="q">*:*</str><str name="facet.limit">-1</str><str name="facet.field">iq_cc_key</str></lst></lst><result name="response" numFound="48" start="0"><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc></result><lst name="facet_counts"><lst name="facet_queries"/><lst name="facet_fields"><lst name="iq_cc_key"><int name="ALTSE_20110301_0000">1</int><int name="ALTSE_20110301_0100">1</int><int name="ALTSE_20110301_0200">1</int><int name="ALTSE_20110301_0300">1</int><int name="ALTSE_20110301_0400">1</int><int name="ALTSE_20110301_0500">1</int><int name="ALTSE_20110301_0600">1</int><int name="ALTSE_20110301_0700">1</int><int name="ALTSE_20110301_0800">1</int><int name="ALTSE_20110301_0900">1</int><int name="ALTSE_20110301_1000">1</int><int name="ALTSE_20110301_1100">1</int><int name="ALTSE_20110301_1200">1</int><int name="ALTSE_20110301_1300">1</int><int name="ALTSE_20110301_1400">1</int><int name="ALTSE_20110301_1500">1</int><int name="ALTSE_20110301_1600">1</int><int name="ALTSE_20110301_1700">1</int><int name="ALTSE_20110301_1800">1</int><int name="ALTSE_20110301_1900">1</int><int name="ALTSE_20110301_2000">1</int><int name="ALTSE_20110301_2100">1</int><int name="ALTSE_20110301_2200">1</int><int name="ALTSE_20110301_2300">1</int><int name="CSTV_20110301_0000">1</int><int name="CSTV_20110301_0100">1</int><int name="CSTV_20110301_0200">1</int><int name="CSTV_20110301_0300">1</int><int name="CSTV_20110301_0400">1</int><int name="CSTV_20110301_0500">1</int><int name="CSTV_20110301_0600">1</int><int name="CSTV_20110301_0700">1</int><int name="CSTV_20110301_0800">1</int><int name="CSTV_20110301_0900">1</int><int name="CSTV_20110301_1000">1</int><int name="CSTV_20110301_1100">1</int><int name="CSTV_20110301_1200">1</int><int name="CSTV_20110301_1300">1</int><int name="CSTV_20110301_1400">1</int><int name="CSTV_20110301_1500">1</int><int name="CSTV_20110301_1600">1</int><int name="CSTV_20110301_1700">1</int><int name="CSTV_20110301_1800">1</int><int name="CSTV_20110301_1900">1</int><int name="CSTV_20110301_2000">1</int><int name="CSTV_20110301_2100">1</int><int name="CSTV_20110301_2200">1</int><int name="CSTV_20110301_2300">1</int></lst></lst><lst name="facet_dates"/></lst></response> 
+ 
+2011-06-02 18:48:34,549 INFO UpdateDBStatus finished 
+ 
+2011-06-02 18:48:34,549 INFO CommitCore0 started 
+ 
+2011-06-02 18:48:34,552 INFO CommitCore0 request:http://192.168.1.85:8080/solr/core0/update?commit=true 
+ 
+2011-06-02 18:48:34,565 INFO CommitCore0 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">7</int></lst></response> 
+ 
+2011-06-02 18:48:34,568 INFO CommitCore0 finished 
+ 
+2011-06-02 18:48:34,568 INFO CommitCore1 started 
+ 
+2011-06-02 18:48:34,585 INFO CommitCore1 request:http://192.168.1.85:8080/solr/core1/update?commit=true 
+ 
+2011-06-02 18:48:34,614 INFO CommitCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">19</int></lst></response> 
+ 
+2011-06-02 18:48:34,617 INFO CommitCore1 finished 
+ 
+2011-06-02 18:48:34,617 INFO MergeCore started 
+ 
+2011-06-02 18:48:34,655 INFO MergeCore request:http://192.168.1.85:8080/solr/admin/cores?action=mergeindexes&core=core2&indexDir=/opt/solr/core0/data/index&indexDir=/opt/solr/core1/data/index 
+ 
+2011-06-02 18:48:34,751 INFO MergeCore response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">62</int></lst><str name="saved">/opt/solr/solr.xml</str></response> 
+ 
+2011-06-02 18:48:34,756 INFO MergeCore finished 
+ 
+2011-06-02 18:48:34,756 INFO CommitCore2 started 
+ 
+2011-06-02 18:48:34,767 INFO CommitCore2 request:http://192.168.1.85:8080/solr/core2/update?commit=true 
+ 
+2011-06-02 18:48:34,807 INFO CommitCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">34</int></lst></response> 
+ 
+2011-06-02 18:48:34,810 INFO CommitCore2 finished 
+ 
+2011-06-02 18:48:34,810 INFO OptimizeCore2 started 
+ 
+2011-06-02 18:48:34,812 INFO OptimizeCore2 request:http://192.168.1.85:8080/solr/core2/update?optimize=true 
+ 
+2011-06-02 18:48:34,833 INFO OptimizeCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">9</int></lst></response> 
+ 
+2011-06-02 18:48:34,836 INFO OptimizeCore2 finished 
+ 
+2011-06-02 18:48:34,836 INFO SwapCore started 
+ 
+2011-06-02 18:48:34,838 INFO SwapCore request:http://192.168.1.85:8080/solr/admin/cores?action=SWAP&core=core2&other=core0 
+ 
+2011-06-02 18:48:34,842 INFO SwapCore response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int></lst><str name="saved">/opt/solr/solr.xml</str></response> 
+ 
+2011-06-02 18:48:34,847 INFO SwapCore finished 
+ 
+2011-06-02 18:48:34,847 INFO DeleteIndexOfCore1 started 
+ 
+2011-06-02 18:48:34,859 INFO DeleteIndexOfCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E 
+ 
+2011-06-02 18:48:34,879 INFO DeleteIndexOfCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">3</int></lst></response> 
+ 
+2011-06-02 18:48:34,884 INFO DeleteCommitCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Ccommit/%3E 
+ 
+2011-06-02 18:48:34,911 INFO DeleteCommitCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">24</int></lst></response> 
+ 
+2011-06-02 18:48:34,913 INFO DeleteIndexOfCore1 finished 
+ 
+2011-06-02 18:48:34,913 INFO DeleteIndexOfCore2 started 
+ 
+2011-06-02 18:48:34,916 INFO DeleteIndexOfCore2 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E 
+ 
+2011-06-02 18:48:34,934 INFO DeleteIndexOfCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">3</int></lst></response> 
+ 
+2011-06-02 18:48:34,939 INFO DeleteCommitCore2 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Ccommit/%3E 
+ 
+2011-06-02 18:48:34,964 INFO DeleteCommitCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">13</int></lst></response> 
+ 
+2011-06-02 18:48:34,967 INFO DeleteIndexOfCore2 finished 
+ 
+2011-06-02 18:48:34,967 INFO CheckRecords started 
+ 
+2011-06-02 18:48:34,970 INFO CheckRecords request: URL-http://192.168.1.85:8080/solr/core0/select/?q=?rows=48&fl=iq_cc_key Post Data-q=iq_cc_key:ALTSE_20110301_0000 OR iq_cc_key:ALTSE_20110301_0100 OR iq_cc_key:ALTSE_20110301_0200 OR iq_cc_key:ALTSE_20110301_0300 OR iq_cc_key:ALTSE_20110301_0400 OR iq_cc_key:ALTSE_20110301_0500 OR iq_cc_key:ALTSE_20110301_0600 OR iq_cc_key:ALTSE_20110301_0700 OR iq_cc_key:ALTSE_20110301_0800 OR iq_cc_key:ALTSE_20110301_0900 OR iq_cc_key:ALTSE_20110301_1000 OR iq_cc_key:ALTSE_20110301_1100 OR iq_cc_key:ALTSE_20110301_1200 OR iq_cc_key:ALTSE_20110301_1300 OR iq_cc_key:ALTSE_20110301_1400 OR iq_cc_key:ALTSE_20110301_1500 OR iq_cc_key:ALTSE_20110301_1600 OR iq_cc_key:ALTSE_20110301_1700 OR iq_cc_key:ALTSE_20110301_1800 OR iq_cc_key:ALTSE_20110301_1900 OR iq_cc_key:ALTSE_20110301_2000 OR iq_cc_key:ALTSE_20110301_2100 OR iq_cc_key:ALTSE_20110301_2200 OR iq_cc_key:ALTSE_20110301_2300 OR iq_cc_key:CSTV_20110301_0000 OR iq_cc_key:CSTV_20110301_0100 OR iq_cc_key:CSTV_20110301_0200 OR iq_cc_key:CSTV_20110301_0300 OR iq_cc_key:CSTV_20110301_0400 OR iq_cc_key:CSTV_20110301_0500 OR iq_cc_key:CSTV_20110301_0600 OR iq_cc_key:CSTV_20110301_0700 OR iq_cc_key:CSTV_20110301_0800 OR iq_cc_key:CSTV_20110301_0900 OR iq_cc_key:CSTV_20110301_1000 OR iq_cc_key:CSTV_20110301_1100 OR iq_cc_key:CSTV_20110301_1200 OR iq_cc_key:CSTV_20110301_1300 OR iq_cc_key:CSTV_20110301_1400 OR iq_cc_key:CSTV_20110301_1500 OR iq_cc_key:CSTV_20110301_1600 OR iq_cc_key:CSTV_20110301_1700 OR iq_cc_key:CSTV_20110301_1800 OR iq_cc_key:CSTV_20110301_1900 OR iq_cc_key:CSTV_20110301_2000 OR iq_cc_key:CSTV_20110301_2100 OR iq_cc_key:CSTV_20110301_2200 OR iq_cc_key:CSTV_20110301_2300 
+ 
+2011-06-02 18:48:34,997 INFO CheckRecords response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int><lst name="params"><str name="fl">iq_cc_key</str><arr name="q"><str>?rows=48</str><str>iq_cc_key:ALTSE_20110301_0000 OR iq_cc_key:ALTSE_20110301_0100 OR iq_cc_key:ALTSE_20110301_0200 OR iq_cc_key:ALTSE_20110301_0300 OR iq_cc_key:ALTSE_20110301_0400 OR iq_cc_key:ALTSE_20110301_0500 OR iq_cc_key:ALTSE_20110301_0600 OR iq_cc_key:ALTSE_20110301_0700 OR iq_cc_key:ALTSE_20110301_0800 OR iq_cc_key:ALTSE_20110301_0900 OR iq_cc_key:ALTSE_20110301_1000 OR iq_cc_key:ALTSE_20110301_1100 OR iq_cc_key:ALTSE_20110301_1200 OR iq_cc_key:ALTSE_20110301_1300 OR iq_cc_key:ALTSE_20110301_1400 OR iq_cc_key:ALTSE_20110301_1500 OR iq_cc_key:ALTSE_20110301_1600 OR iq_cc_key:ALTSE_20110301_1700 OR iq_cc_key:ALTSE_20110301_1800 OR iq_cc_key:ALTSE_20110301_1900 OR iq_cc_key:ALTSE_20110301_2000 OR iq_cc_key:ALTSE_20110301_2100 OR iq_cc_key:ALTSE_20110301_2200 OR iq_cc_key:ALTSE_20110301_2300 OR iq_cc_key:CSTV_20110301_0000 OR iq_cc_key:CSTV_20110301_0100 OR iq_cc_key:CSTV_20110301_0200 OR iq_cc_key:CSTV_20110301_0300 OR iq_cc_key:CSTV_20110301_0400 OR iq_cc_key:CSTV_20110301_0500 OR iq_cc_key:CSTV_20110301_0600 OR iq_cc_key:CSTV_20110301_0700 OR iq_cc_key:CSTV_20110301_0800 OR iq_cc_key:CSTV_20110301_0900 OR iq_cc_key:CSTV_20110301_1000 OR iq_cc_key:CSTV_20110301_1100 OR iq_cc_key:CSTV_20110301_1200 OR iq_cc_key:CSTV_20110301_1300 OR iq_cc_key:CSTV_20110301_1400 OR iq_cc_key:CSTV_20110301_1500 OR iq_cc_key:CSTV_20110301_1600 OR iq_cc_key:CSTV_20110301_1700 OR iq_cc_key:CSTV_20110301_1800 OR iq_cc_key:CSTV_20110301_1900 OR iq_cc_key:CSTV_20110301_2000 OR iq_cc_key:CSTV_20110301_2100 OR iq_cc_key:CSTV_20110301_2200 OR iq_cc_key:CSTV_20110301_2300</str></arr></lst></lst><result name="response" numFound="0" start="0"/></response> 
+ 
+2011-06-02 18:48:35,001 INFO CheckRecords finished 
+ 
+2011-06-02 18:48:35,002 INFO <IQMStatus>  <Indexing_Started>true</Indexing_Started>  <Index_Start_time>Thu Jun 02 18:48:33 EDT 2011</Index_Start_time>  <Core1Ingest>    <Core1_Ingest>Finished</Core1_Ingest>    <Core1_Ingest_time>Thu Jun 02 18:48:33 EDT 2011</Core1_Ingest_time>    <Core1_Ingest_Response>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;1&lt;/int&gt;&lt;/lst&gt;&lt;lst name=&quot;initArgs&quot;&gt;&lt;lst name=&quot;defaults&quot;&gt;&lt;str name=&quot;config&quot;&gt;clip.xml&lt;/str&gt;&lt;/lst&gt;&lt;/lst&gt;&lt;str name=&quot;command&quot;&gt;full-import&lt;/str&gt;&lt;str name=&quot;status&quot;&gt;idle&lt;/str&gt;&lt;str name=&quot;importResponse&quot;/&gt;&lt;lst name=&quot;statusMessages&quot;&gt;&lt;str name=&quot;Total Requests made to DataSource&quot;&gt;1&lt;/str&gt;&lt;str name=&quot;Total Rows Fetched&quot;&gt;0&lt;/str&gt;&lt;str name=&quot;Total Documents Skipped&quot;&gt;0&lt;/str&gt;&lt;str name=&quot;Full Dump Started&quot;&gt;2011-06-02 18:44:54&lt;/str&gt;&lt;str name=&quot;&quot;&gt;Indexing completed. Added/Updated: 0 documents. Deleted 0 documents.&lt;/str&gt;&lt;str name=&quot;Committed&quot;&gt;2011-06-02 18:44:54&lt;/str&gt;&lt;str name=&quot;Optimized&quot;&gt;2011-06-02 18:44:54&lt;/str&gt;&lt;str name=&quot;Total Documents Processed&quot;&gt;0&lt;/str&gt;&lt;str name=&quot;Time taken &quot;&gt;0:0:0.843&lt;/str&gt;&lt;/lst&gt;&lt;str name=&quot;WARNING&quot;&gt;This response format is experimental.  It is likely to change in the future.&lt;/str&gt;&lt;/response&gt;</Core1_Ingest_Response>    <SQLDB_Update>Finished</SQLDB_Update>    <SQLDB_Status_Time>Thu Jun 02 18:48:34 EDT 2011</SQLDB_Status_Time>    <SQLDB_Response>48</SQLDB_Response>  </Core1Ingest>  <Core0Commit>    <Core0_Commit>Finished</Core0_Commit>    <Core0_Commit_time>Thu Jun 02 18:48:34 EDT 2011</Core0_Commit_time>    <Core0_Commit_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;7&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core0_Commit_status>  </Core0Commit>  <Core1Commit>    <Core1_Commit>Finished</Core1_Commit>    <Core1_Commit_time>Thu Jun 02 18:48:34 EDT 2011</Core1_Commit_time>    <Core1_Commit_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;19&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core1_Commit_status>  </Core1Commit>  <CoreMerge>    <Core_merge>Finished</Core_merge>    <Core_merge_time>Thu Jun 02 18:48:34 EDT 2011</Core_merge_time>    <Core_merge_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;62&lt;/int&gt;&lt;/lst&gt;&lt;str name=&quot;saved&quot;&gt;/opt/solr/solr.xml&lt;/str&gt;&lt;/response&gt;</Core_merge_status>  </CoreMerge>  <Core2Commit>    <Core2_Commit>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;34&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core2_Commit>    <Core2_Commit_time>Thu Jun 02 18:48:34 EDT 2011</Core2_Commit_time>    <Core2_Commit_status></Core2_Commit_status>  </Core2Commit>  <Core2Optimize>    <Core2_optimize>Finished</Core2_optimize>    <Core2_optimize_time>Thu Jun 02 18:48:34 EDT 2011</Core2_optimize_time>    <Core2_optimize_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;9&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core2_optimize_status>  </Core2Optimize>  <CoreSwap>    <Core_swap>Finished</Core_swap>    <Core_swap_time>Thu Jun 02 18:48:34 EDT 2011</Core_swap_time>    <Core_swap_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;1&lt;/int&gt;&lt;/lst&gt;&lt;str name=&quot;saved&quot;&gt;/opt/solr/solr.xml&lt;/str&gt;&lt;/response&gt;</Core_swap_status>  </CoreSwap>  <CoreDelete>    <Core1_Delete>Finished</Core1_Delete>    <Core1_Delete_time>Thu Jun 02 18:48:34 EDT 2011</Core1_Delete_time>    <Core1_Delete_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;3&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core1_Delete_status>    <Core1_Commit>Finished</Core1_Commit>    <Core1_Commit_time>Thu Jun 02 18:48:34 EDT 2011</Core1_Commit_time>    <Core1_Commit_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;24&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core1_Commit_status>    <Core2_Delete>Finished</Core2_Delete>    <Core2_Delete_time>Thu Jun 02 18:48:34 EDT 2011</Core2_Delete_time>    <Core2_Delete_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;3&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core2_Delete_status>    <Core2_Commit>Finished</Core2_Commit>    <Core2_Commit_time>Thu Jun 02 18:48:34 EDT 2011</Core2_Commit_time>    <Core2_Commit_status>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;response&gt;&lt;lst name=&quot;responseHeader&quot;&gt;&lt;int name=&quot;status&quot;&gt;0&lt;/int&gt;&lt;int name=&quot;QTime&quot;&gt;13&lt;/int&gt;&lt;/lst&gt;&lt;/response&gt;</Core2_Commit_status>  </CoreDelete>  <SQLDB_Index_Update>    <SQLDB_I_Time>Thu Jun 02 18:48:34 EDT 2011</SQLDB_I_Time>    <SQLDB_I_Update>Finished</SQLDB_I_Update>  </SQLDB_Index_Update></IQMStatus> 
+ 
+2011-06-02 18:48:35,024 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:49:04,574 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:49:04,596 INFO Check method 
+ 
+2011-06-02 18:49:04,596 INFO Status called 
+ 
+2011-06-02 18:49:04,596 INFO IQMIndexUpdate Finished 
+ 
+2011-06-02 18:49:06,717 INFO IQMIndexUpdate Started 
+ 
+2011-06-02 18:49:06,747 INFO Check method 
+ 
+2011-06-02 18:49:06,747 INFO Status called 
+ 
+2011-06-02 18:49:06,748 INFO IQMIndexUpdate Finished 
+ 

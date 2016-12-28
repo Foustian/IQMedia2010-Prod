@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2B3BA7F0-F789-484A-AB01-4993FC30C915}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMedia.Service.Media.Social.GeneratePDF</RootNamespace>
+    <AssemblyName>IQMedia.Service.Media.Social.GeneratePDF</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Config\ConfigSettings.cs" />
+    <Compile Include="Config\Sections\GeneratePDFSettings.cs" />
+    <Compile Include="GeneratePDFController.cs" />
+    <Compile Include="GeneratePDFService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GeneratePDFService.Designer.cs">
+      <DependentUpon>GeneratePDFService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeneratePDFTask.cs" />
+    <Compile Include="GeneratePDFInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GeneratePDFInstaller.Designer.cs">
+      <DependentUpon>GeneratePDFInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\ISocialGeneratePDFWebService.cs" />
+    <Compile Include="Service\SocialGeneratePDFWebService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\IQMediaGroup_Bill\IQMedia.Common\IQMedia.Common.csproj">
+      <Project>{44CCB81E-DD46-428D-88F6-A16DFFF8A458}</Project>
+      <Name>IQMedia.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMedia.Service.Media.Domain\IQMedia.Service.Media.Domain.csproj">
+      <Project>{78F33DEC-6C3C-4A26-8782-73EAE8758218}</Project>
+      <Name>IQMedia.Service.Media.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMedia.Service.Media.Logic\IQMedia.Service.Media.Logic.csproj">
+      <Project>{FB78E4EC-ED42-4EF5-9135-BA547B2F0C3B}</Project>
+      <Name>IQMedia.Service.Media.Logic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GeneratePDFInstaller.resx">
+      <DependentUpon>GeneratePDFInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

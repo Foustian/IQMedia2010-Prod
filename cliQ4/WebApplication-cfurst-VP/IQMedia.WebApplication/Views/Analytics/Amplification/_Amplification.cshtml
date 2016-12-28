@@ -1,0 +1,150 @@
+﻿@using IQMedia.Model;
+@using System.Text.RegularExpressions;
+@using IQMedia.WebApplication.Utility;
+
+@{
+    ActiveUser sessionInfo = ActiveUserMgr.GetActiveUser();
+}
+
+<div id="divAmplificationContainer">
+    <div id="divTopNav" class="navbar bg-NavDarkGray navbar-inverse" style="margin-bottom:0px">
+        <div class="container">
+            <div class="collapse nav-collapse">
+                <span class="navbar-text navTabHeading">amplification</span>
+                <ul id="ampBar" class="nav navbar-nav navTabs font14Pt">
+                    <li id="liOverTime">
+                        <a id="ampOverTime" href="#">over time</a>
+                    </li>
+                    <li>
+                        <a id="ampDemographic" href="#">by demographic</a>
+                    </li>
+                    <li>
+                        <a id="ampSources" href="#">by sources</a>
+                    </li>
+                    <li>
+                        <a id="ampDMAs" href="#">by DMAs</a>
+                    </li>
+                    <li>
+                        <a id="ampGeography" href="#">by geography</a>
+                    </li>
+                    <li>
+                        <a id="ampOutlets" href="#">by outlets</a>
+                    </li>
+                    <li>
+                        <a id="ampDaypart" href="#">by daypart</a>
+                    </li>
+                    <li>
+                        <a id="ampTopTime" href="#">by top time</a>
+                    </li>
+                    <li>
+                        <a id="ampShows" href="#">by shows</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="divContentContainer">
+        <div id="divContent" class="pull-left" style="width:94%">
+            <div id="primaryContent" style="width:100%">
+                <div id="primaryContentHeader" class="bg-ContentGray">
+                    <div style="padding:10px 10px;">
+                        <span class="font22Pt">How are you being referenced across all mediums and engagement types?</span>
+                        <br />
+                        <span class="font15Pt">Results in the <a>trailing 12 months</a> by <a>month</a> with <a>no filters applied</a></span>
+                    </div>
+                    <div class="navbar" style="width:100%">
+                        <div class="container">
+                            <ul id="primaryNavBar" class="nav navbar-nav navBorderedTabs blMargins4">
+                                <li>
+                                    <a id="primaryNavAll" href="#">
+                                        <div style="width: 100%">
+                                            <span class="font12Pt">all</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavAll_Results" class="font14Pt">1,204</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavSeen" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">seen (tv)</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavSeen_Results" class="font14Pt">14</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavHeard" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">heard</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavHeard_Results" class="font14Pt">1,000</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavPaid" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">paid (tv)</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavPaid_Results" class="font14Pt">200</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavEarned" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">earned</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavEarned_Results" class="font14Pt">200</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavOnAir" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">on air reference</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavOnAir_Results" class="font14Pt">150</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="primaryNavOnline" href="#">
+                                        <div style="width: 100%">
+                                            <span  class="font12Pt">online reference</span>
+                                        </div>
+                                        <div style="width: 100%">
+                                            <span id="primaryNavOnline_Results" class="font14Pt">200</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="divPrimaryContent" style="min-height:300px">
+                    @if (Model != null)
+                    {
+                        @Html.Raw(Model["Primary"]);
+                    }
+                </div>
+            </div>
+            <div id="divSecondaryContent" style="width:100%;">
+                @if (Model != null)
+                {
+                    @Html.Raw(Model["Secondary"]);
+                }
+            </div>
+        </div>
+        <div id="divRightNav" class="pull-right bg-danger" style="border-left:thin solid black;min-height:500px;width:5%;">
+            <span>Reserved Space</span>
+        </div>
+    </div>
+</div>

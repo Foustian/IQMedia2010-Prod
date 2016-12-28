@@ -1,0 +1,1542 @@
+﻿@using IQMedia.Model;
+@using IQMedia.Shared.Utility;
+@using System.Text.RegularExpressions;
+@using IQMedia.WebApplication.Models.TempData;
+@model List<IQAgent_MediaResultsModel>
+@if (Model != null)
+{
+    ActiveUser sessioninfo = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+    FeedsTempData feedsTempData = ((IQMedia.WebApplication.Controllers.FeedsController)this.ViewContext.Controller).GetTempData();
+    int wordsBeforeSpan = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HighlightWordsBeforeSpan"]);
+    int wordsAfterSpan = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
+    string seprator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
+    string highlightKeyword = "span";
+    string mediaIconFormat = "../images/MediaIcon/{0}?v=1.3";
+    bool useProminenceMediaValue = feedsTempData.UseProminenceMediaValue == true;
+    
+    foreach (IQAgent_MediaResultsModel item in Model)
+    {
+        string maxNegativeSentimetnWidth = string.Empty;
+        string maxPositiveSentimetnWidth = string.Empty;
+        string iqAdShareValue = string.Empty;
+        string nielsen_Result = string.Empty;
+        string NielsenAudience = string.Empty;
+        string TotalNeilsenAudience = string.Empty;
+        string TotalAdShareValue = string.Empty;
+        string TotalNielsen_Result = string.Empty;
+
+        Decimal? localAdShare = null;
+        string sLocalAudience = string.Empty;
+        string fLocalAudience = string.Empty;
+        string sLocalMediaValue = string.Empty;
+        string fLocalMediaValue = string.Empty;
+        string sNationalAudience = string.Empty;
+        string fNationalAudience = string.Empty;
+        string sNationalMediaValue = string.Empty;
+        string fNationalMediaValue = string.Empty;
+                                    
+        int Billion = 1000000000;
+        decimal BillionD = 1000000000;
+        int Million = 1000000;
+        decimal MillionD = 1000000;
+
+        if ((item.NegativeSentiment * 6) > 25)
+        {
+            maxNegativeSentimetnWidth = "25px";
+        }
+        else
+        {
+            maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+        }
+
+        if ((item.PositiveSentiment * 6) > 25)
+        {
+            maxPositiveSentimetnWidth = "25px";
+        }
+        else
+        {
+            maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+        }
+
+        DateTime mediaDate = DateTime.MinValue;
+        switch (item.MediaType)
+        {
+            case "TV":
+                var media = (IQAgent_TVResultsModel)item.MediaData;
+                
+                if (media != null)
+                { 
+                    mediaDate = media.LocalDateTime;
+                }
+                
+                break;
+            case "TM":
+                var media2 = (IQAgent_TVEyesResultsModel)item.MediaData;
+                
+                if (media2 != null)
+                { 
+                    mediaDate = media2.LocalDateTime;
+                }
+                
+                break;
+            default:
+                mediaDate = item.MediaDateTime;
+                break;
+        }
+
+        switch (item.MediaType)
+        {
+            case "TV":
+                IQAgent_TVResultsModel iQAgent_TVResultsModel = (IQAgent_TVResultsModel)item.MediaData;
+                string highlightedText = string.Empty;
+                string highlightedCCOutput = string.Empty;
+                iqAdShareValue = string.Empty;
+
+                if (iQAgent_TVResultsModel.highlightedCCOutput != null && iQAgent_TVResultsModel.highlightedCCOutput.CC != null)
+                {
+                    highlightedCCOutput = string.Join(" ", iQAgent_TVResultsModel.highlightedCCOutput.CC.Select(c => c.Text));
+                }
+
+                highlightedCCOutput = highlightedCCOutput.Replace("&lt;", "<").Replace("&gt;", ">");
+
+                if (highlightedCCOutput.Length > 180)
+                {
+                    highlightedText = highlightedCCOutput.Substring(0, 180);
+                    highlightedText = System.Text.RegularExpressions.Regex.Replace(highlightedText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedText = highlightedCCOutput;
+                }
+
+                highlightedText = CommonFunctions.ProcessHighlightingText(highlightedCCOutput, highlightedText).Trim();
+
+                if (@iQAgent_TVResultsModel.Nielsen_Audience.HasValue)
+                {
+                    fLocalAudience = string.Format("{0:N0}", iQAgent_TVResultsModel.Nielsen_Audience);
+
+                    if (iQAgent_TVResultsModel.Nielsen_Audience >= Billion)
+                    {
+                        sLocalAudience = string.Format("{0:F1} bil", iQAgent_TVResultsModel.Nielsen_Audience / BillionD);
+                    }
+                    else if (iQAgent_TVResultsModel.Nielsen_Audience >= Million)
+                    {
+                        sLocalAudience = string.Format("{0:F1} mil", iQAgent_TVResultsModel.Nielsen_Audience / MillionD);
+                    }
+                    else
+                    {
+                        sLocalAudience = fLocalAudience;
+                    }
+                }
+                else
+                {
+                    sLocalAudience = "NA";
+                }
+
+                if (iQAgent_TVResultsModel.IQAdShareValue.HasValue && Decimal.Compare(Convert.ToDecimal(iQAgent_TVResultsModel.IQAdShareValue.Value), 0M) != 0 && (useProminenceMediaValue == false || (iQAgent_TVResultsModel.IQProminenceMultiplier != null && Decimal.Compare(Convert.ToDecimal(iQAgent_TVResultsModel.IQProminenceMultiplier), 0M) != 0)))
+                {
+                    localAdShare = useProminenceMediaValue ? (iQAgent_TVResultsModel.IQAdShareValue.Value * iQAgent_TVResultsModel.IQProminenceMultiplier) : iQAgent_TVResultsModel.IQAdShareValue.Value;
+                    fLocalMediaValue = string.Format("{0:n2}", localAdShare);
+
+                    if (localAdShare >= BillionD)
+                    {
+                        sLocalMediaValue = string.Format("{0:F1} bil", localAdShare / BillionD);
+                    }
+                    else if (localAdShare >= MillionD)
+                    {
+                        sLocalMediaValue = string.Format("{0:F1} mil", localAdShare / MillionD);
+                    }
+                    else
+                    {
+                        sLocalMediaValue = fLocalMediaValue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.Nielsen_Result))
+                    {
+                        nielsen_Result = iQAgent_TVResultsModel.Nielsen_Result.ToUpper();
+                    }
+                }
+                else
+                {
+                    sLocalMediaValue = "NA";
+                }
+
+                if (item.HasChildren)
+                {
+                    decimal SumAdShareValue = iQAgent_TVResultsModel.National_IQAdShareValue.HasValue ? iQAgent_TVResultsModel.National_IQAdShareValue.Value : 0;
+                    if (SumAdShareValue > 0)
+                    {
+                        TotalNielsen_Result = iQAgent_TVResultsModel.National_Nielsen_Result;
+                        fNationalMediaValue = string.Format("{0:N2}", SumAdShareValue);
+
+                        if (SumAdShareValue >= BillionD)
+                        {
+                            sNationalMediaValue = string.Format("{0:F1} bil", SumAdShareValue / BillionD);
+                        }
+                        else if (SumAdShareValue >= MillionD)
+                        {
+                            sNationalMediaValue = string.Format("{0:F1} mil", SumAdShareValue / MillionD);
+                        }
+                        else
+                        {
+                            sNationalMediaValue = fNationalMediaValue;
+                        }
+                    }
+
+                    long SumAudience = iQAgent_TVResultsModel.National_Nielsen_Audience.HasValue ? iQAgent_TVResultsModel.National_Nielsen_Audience.Value : 0;
+                    if (SumAudience > 0)
+                    {
+                        fNationalAudience = string.Format("{0:N0}", SumAudience);
+
+                        if (SumAudience >= Billion)
+                        {
+                            sNationalAudience = string.Format("{0:F1} bil", SumAudience / BillionD);
+                        }
+                        else if (SumAudience >= Million)
+                        {
+                            sNationalAudience = string.Format("{0:F1} mil", SumAudience / MillionD);
+                        }
+                        else
+                        {
+                            sNationalAudience = fNationalAudience;
+                        }
+                    }
+                }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@mediaDate.ToString("hh:mm tt") @iQAgent_TVResultsModel.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo" align="center">
+            <img src="@iQAgent_TVResultsModel.StationLogo" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" />
+        </div>
+        <div class="float-right FeedsVideoSpacer">
+            <div class="FeedsVideo positionRelative float-left">
+                <a onclick="SetVideoParentID(@item.ID); LoadPlayerbyAgentID('@item.ID');" class="cursorPointer">
+                    @{
+                        string rawMediaThumbUrl = string.Empty;
+                        if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.RawMediaThumbUrl))
+                        {
+                            rawMediaThumbUrl = iQAgent_TVResultsModel.RawMediaThumbUrl;
+                        }
+                        else
+                        {
+                            rawMediaThumbUrl = "../images/video.png";
+                        }
+                    }
+                    <img class="media-object" csrc="@rawMediaThumbUrl" alt="" />
+                    @if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.RawMediaThumbUrl))
+                    {
+                        <div class="PlayButton cursorPointer VideoPlayImageDiv">
+                            <img id="ibtnPlay" src="../images/play.png" alt="" />
+                        </div>  
+                    }
+                </a>
+            </div>
+            <div class="float-right">
+                <input type="checkbox" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" />
+            </div>
+            <input type="hidden" value="@iQAgent_TVResultsModel._ParentID" id="hdnParentID_@item.ID" />
+            <div class="clearfix"></div>
+        </div>
+        <div class="FeedsContentVideo">
+            @{
+                string tvTitle = string.Empty;
+
+                if (iQAgent_TVResultsModel.Title120.Trim().Length > 65)
+                {
+                    tvTitle = iQAgent_TVResultsModel.Title120.Trim().Substring(0, 62) + "...";  
+                }
+                else
+                {
+                    tvTitle = iQAgent_TVResultsModel.Title120.Trim();  
+                }
+            }
+            <div class="media-heading float-left" title="@iQAgent_TVResultsModel.Title120">
+                @tvTitle
+            </div>
+            <div class="subheading float-left margintop1" >
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+               @Html.Raw(highlightedText)
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLongLeftDiv">
+                <div class="viewmore">
+                    @if (item.HasChildren)
+                    {
+                        <a title="View More" onclick="ShowChild('@item.ID', 'TV');" href="javascript:void(0);">
+                            <img alt="" id="expand_@item.ID" src="../images/expand.png" />
+                        </a>
+                    }
+                </div>
+                <div id="divLocationTV_@item.ID" class="viewlocation">
+                    <div class="">
+                        @{
+                            if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.Market))
+                            {
+                                <div class="location-tag" title="@iQAgent_TVResultsModel.Market">    
+                                    @if (iQAgent_TVResultsModel.Market.Trim().Length > 23)
+                                    {
+                                        @(iQAgent_TVResultsModel.Market.Trim().Substring(0, 21) + "...")
+                                    }
+                                    else
+                                    {
+                                        @iQAgent_TVResultsModel.Market.Trim()
+                                    }
+                                </div>
+                            }
+                            else
+                            { 
+                                <div class="margintop2"></div>
+                            }                                      
+                        }
+                    </div>
+                </div>
+                <div id="divSentimentTV_@item.ID" class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment
+                                </div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="viewcontentdetail">
+                    <div class="viewshortdetail">
+                        @if (iQAgent_TVResultsModel.Nielsen_Audience > 0 && sessioninfo.IsNielsenData)
+                        {
+                            <div class="view" title="Local Audience @fLocalAudience">
+                                @sLocalAudience
+                            </div>
+                        }
+                        else
+                        {
+                            <div align="center" class="margintop2"></div>
+                        }
+                    </div>
+                    <div class="viewshortdetail">
+                            @if (localAdShare.HasValue && sessioninfo.IsNielsenData)
+                            {
+                                <div class="price" title="Local Media Value @fLocalMediaValue">
+                                    @sLocalMediaValue @nielsen_Result
+                                </div>
+                            }
+                            else
+                            {
+                                <div align="center" class="margintop2"></div>
+                            }  
+                    </div>
+                    <div class="viewlongdetail">
+                            @if (!string.IsNullOrEmpty(fNationalAudience) && sessioninfo.IsNielsenData)
+                            {
+                                <div class="totalview" title="National Audience @fNationalAudience">
+                                    @sNationalAudience
+                                </div>
+                            }
+                            else
+                            {
+                                <div align="center" class="margintop2"></div>
+                            }  
+                    </div>
+                    <div class="viewlongdetail">
+                            @if (!string.IsNullOrEmpty(fNationalMediaValue) && sessioninfo.IsNielsenData)
+                            {
+                                <div class="totalprice" title="National Media Value @fNationalMediaValue">
+                                    @sNationalMediaValue @TotalNielsen_Result
+                                </div>
+                            }
+                            else
+                            {
+                                <div align="center" class="margintop2"></div>
+                            }  
+                    </div>
+                </div>
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <!--Padding Save Article-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding View Article-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "TW":
+                IQAgent_TwitterResultsModel twitterModel = (IQAgent_TwitterResultsModel)item.MediaData;
+                string fTitle = string.Empty;
+                string sTitle = string.Empty;
+                string fSource = string.Empty;
+                string sSource = string.Empty;
+                string actorLink = string.Empty;
+                string highlightedTWText = string.Empty;
+                string highlightedTWOutput = string.Empty;
+                string sFollowers = string.Empty;
+                string fFollowers = string.Format("{0:N0}", twitterModel.Actor_FollowersCount);
+                string sFriends = string.Empty;
+                string fFriends = string.Format("{0:N0}", twitterModel.Actor_FriendsCount);
+
+                if (twitterModel.Actor_FollowersCount >= Billion)
+                {
+                    sFollowers = string.Format("{0:F1} bil", twitterModel.Actor_FollowersCount / BillionD);
+                }
+                else if (twitterModel.Actor_FollowersCount >= Million)
+                {
+                    sFollowers = string.Format("{0:F1} mil", twitterModel.Actor_FollowersCount / MillionD);
+                }
+                else
+                {
+                    sFollowers = fFollowers;
+                }
+
+                if (twitterModel.Actor_FriendsCount >= Billion)
+                {
+                    sFriends = string.Format("{0:F1} bil", twitterModel.Actor_FriendsCount / BillionD);
+                }
+                else if (twitterModel.Actor_FriendsCount >= Million)
+                {
+                    sFriends = string.Format("{0:F1} mil", twitterModel.Actor_FriendsCount / MillionD);
+                }
+                else
+                {
+                    sFriends = fFriends;
+                }
+                
+                if (CommonFunctions.Validate_url(twitterModel.Actor_Link + "/status/" + twitterModel.TweetID))
+                {
+                    actorLink = twitterModel.Actor_Link + "/status/" + twitterModel.TweetID;
+                }
+                
+                if (!string.IsNullOrWhiteSpace(twitterModel.Actor_PreferredName))
+                {
+                    fSource = twitterModel.Actor_PreferredName.Trim();
+
+                    if (fSource.Length > 23)
+                    {
+                        sSource = fSource.Substring(0, 21) + "...";
+                    }
+                    else
+                    {
+                        sSource = fSource;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(twitterModel.Actor_DisplayName))
+                {
+                    fTitle = twitterModel.Actor_DisplayName.Trim();
+
+                    if (fTitle.Length > 65)
+                    {
+                        sTitle = fTitle.Substring(0, 62) + "...";
+                    }
+                    else
+                    {
+                        sTitle = fTitle;
+                    }
+                }
+                
+                if (twitterModel.HighlightedOutput != null)
+                {
+                    highlightedTWOutput = twitterModel.HighlightedOutput.Highlights;
+                    highlightedTWText = highlightedTWOutput;
+                }
+
+                highlightedTWText = CommonFunctions.ProcessHighlightingText(highlightedTWOutput, highlightedTWText);
+
+                if ((item.NegativeSentiment * 6) > 25)
+                {
+                    maxNegativeSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                }
+                
+                if ((item.PositiveSentiment * 6) > 25)
+                {
+                    maxPositiveSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@item.MediaDateTime.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@item.MediaDateTime.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo">
+            <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" alt="" />
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+            <input type="hidden" value="0" id="hdnParentID_@item.ID" />
+        </div>
+        <div class="FeedsContentNone borderBoxSizing">
+            <div class="media-heading float-left">
+                <a id="aActorLink_@item.ID" title="@fTitle" target="_blank" href="@actorLink">
+                    <span id="lblDisplayName_@item.ID">@sTitle</span>
+                </a>
+            </div>
+            <div class="subheading float-left margintop1">
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                <span id="lblTweetBody_@item.ID">@Html.Raw(highlightedTWText)</span>
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore"></div>
+                <div id="divLocationTW_@item.ID" class="viewlocation">
+                    @if (!string.IsNullOrWhiteSpace(fSource))
+                    { 
+                        <div class="location-tag" title="@fSource">
+                            @sSource
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="margintop2"></div>
+                    }
+                </div>
+                <div id="divSentiment_@item.ID" class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment
+                                </div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="viewcontentdetail">
+                    <div class="viewshortdetail">
+                        <div id="lblKloutScore_@item.ID" class="klout" title="Klout Score">
+                            @string.Format("{0:N0}", twitterModel.KlOutScore)
+                        </div>
+                    </div>
+                    <div class="viewshortdetail">
+                        <div id="lblActorFollowers_@item.ID" class="followers" title="Followers @fFollowers">
+                            @sFollowers
+                        </div>
+                    </div>
+                    <div class="viewshortdetail">
+                        <div id="lblActorFriends_@item.ID" class="following" title="Following @fFriends">
+                            @sFriends
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="float-right">
+                    <div class="detailIcon">
+                        <a id="lnlSaveTweet_@item.ID" class="cursorPointer saveMedia saveArticle" title="Save Tweet" rel="popover" href="#"  onclick="ShowSaveArticle(@item.ID ,this.id);return false;"></a>
+                    </div>
+                    <div class="detailIcon">
+                        <!--Padding on the right-->
+                        <div align="center" class="margintop2"></div>
+                    </div>
+                    <div class="detailIcon">
+                        <!--Padding on the right-->
+                        <div align="center" class="margintop2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "NM": // News Media/Online News
+                IQAgent_NewsResultsModel iQAgent_NewsResultsModel = (IQAgent_NewsResultsModel)item.MediaData;
+                string highlightedNewsText = string.Empty;
+                string HighlightedNewsOutput = string.Empty;
+                string highlightedOriginalText = string.Empty;
+                iqAdShareValue = string.Empty;
+
+                if (iQAgent_NewsResultsModel.HighlightedNewsOutput != null && iQAgent_NewsResultsModel.HighlightedNewsOutput.Highlights != null)
+                {
+                    highlightedOriginalText = string.Join(" ", iQAgent_NewsResultsModel.HighlightedNewsOutput.Highlights.Select(c => c));
+                    HighlightedNewsOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+
+                    if (string.IsNullOrWhiteSpace(HighlightedNewsOutput)) 
+                    {
+                        HighlightedNewsOutput = highlightedOriginalText; 
+                    }
+                }
+                
+                if (HighlightedNewsOutput.Length > 300)
+                {
+                    highlightedNewsText = HighlightedNewsOutput.Substring(0, 300);
+                    highlightedNewsText = System.Text.RegularExpressions.Regex.Replace(highlightedNewsText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedNewsText = HighlightedNewsOutput;
+                }
+
+                highlightedNewsText = CommonFunctions.ProcessHighlightingText(HighlightedNewsOutput, highlightedNewsText).Trim();
+                //highlightedNewsText = CommonFunctions.ProcessHighlightingText(HighlightedNewsOutput, highlightedNewsText);
+
+                if (sessioninfo.IsCompeteData)
+                {
+                    if (iQAgent_NewsResultsModel.Compete_Audience.HasValue && iQAgent_NewsResultsModel.Compete_Audience > 0)
+                    {
+                        fLocalAudience = string.Format("{0:N0}", iQAgent_NewsResultsModel.Compete_Audience);
+
+                        if (iQAgent_NewsResultsModel.Compete_Audience >= Billion)
+                        {
+                            sLocalAudience = string.Format("{0:F1} bil", iQAgent_NewsResultsModel.Compete_Audience / BillionD);
+                        }
+                        else if (iQAgent_NewsResultsModel.Compete_Audience >= Million)
+                        {
+                            sLocalAudience = string.Format("{0:F1} mil", iQAgent_NewsResultsModel.Compete_Audience / MillionD);
+                        }
+                        else
+                        {
+                            sLocalAudience = fLocalAudience;
+                        }
+                    }
+                    else
+                    {
+                        sLocalAudience = "NA";
+                    }
+
+                    if (iQAgent_NewsResultsModel.IQAdShareValue.HasValue && Decimal.Compare(Convert.ToDecimal(iQAgent_NewsResultsModel.IQAdShareValue), 0M) != 0 && (useProminenceMediaValue == false || (iQAgent_NewsResultsModel.IQProminenceMultiplier != null && Decimal.Compare(Convert.ToDecimal(iQAgent_NewsResultsModel.IQProminenceMultiplier), 0M) != 0)))
+                    {
+                        localAdShare = useProminenceMediaValue ? (iQAgent_NewsResultsModel.IQAdShareValue.Value * iQAgent_NewsResultsModel.IQProminenceMultiplier) : iQAgent_NewsResultsModel.IQAdShareValue.Value;
+                        fLocalMediaValue = string.Format("{0:N2}", localAdShare);
+
+                        if (localAdShare >= BillionD)
+                        {
+                            sLocalMediaValue = string.Format("{0:F1} bil", localAdShare / BillionD);
+                        }
+                        else if (localAdShare >= MillionD)
+                        {
+                            sLocalMediaValue = string.Format("{0:F1} mil", localAdShare / MillionD);
+                        }
+                        else
+                        {
+                            sLocalMediaValue = fLocalMediaValue;
+                        }
+                    }
+                    else
+                    {
+                        sLocalMediaValue = "NA";
+                    }
+                }
+
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@mediaDate.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo" align="center">
+            <img src="@String.Format(mediaIconFormat, "25onlinenews.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" />
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+            <input type="hidden" value="@iQAgent_NewsResultsModel._ParentID" id="hdnParentID_@item.ID" />
+        </div>
+        <div class="FeedsContentNone">
+            @{
+                string nmTitle = string.Empty;
+                
+                if (iQAgent_NewsResultsModel.Title.Trim().Length > 65)
+                {
+                    nmTitle = iQAgent_NewsResultsModel.Title.Trim().Substring(0, 62) + "...";
+                }
+                else
+                {
+                    nmTitle = iQAgent_NewsResultsModel.Title.Trim();
+                }
+            }
+            <div class="media-heading float-left">           
+                @if (iQAgent_NewsResultsModel.IQLicense == 3)
+                {
+                    <img src="@String.Format(mediaIconFormat, "LexisNexis_Small.png")" title="LexisNexis(R)" alt="LexisNexis(R)" class="lexisNexisImg" />
+                }
+                <a target="_blank" title="@iQAgent_NewsResultsModel.Title.Trim()" href="@(iQAgent_NewsResultsModel.IQLicense > 0 ? Url.Action("Index", "Article", new { au = IQMedia.Shared.Utility.CommonFunctions.EncryptLicenseStringAES(sessioninfo.CustomerKey + "¶Feeds¶" + iQAgent_NewsResultsModel.Url + "&u1=cliq40&u2=" + sessioninfo.ClientID + "¶" + iQAgent_NewsResultsModel.IQLicense) }) : iQAgent_NewsResultsModel.Url)">
+                    @nmTitle
+                </a>
+            </div>
+            <div class="subheading float-left margintop1" >
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                @Html.Raw(highlightedNewsText)
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore">
+                    @if (item.HasChildren)
+                    {
+                        <a title="View More" onclick="ShowChild('@item.ID', 'NM');" href="javascript:void(0);">
+                            <img alt="" id="expand_@item.ID" src="../images/expand.png" />
+                        </a>
+                    }
+                </div>
+                <div id="divLocationNM_@item.ID" class="viewlocation">
+                    <div class="">
+                        @{
+                            if (!string.IsNullOrWhiteSpace(iQAgent_NewsResultsModel.Publication))
+                            {
+                                <div id="lblCompete_@item.ID" class="location-tag" title="@iQAgent_NewsResultsModel.Publication">
+                                    @{
+                                        if (iQAgent_NewsResultsModel.Publication.Trim().Length > 23)
+                                        {
+                                            @(iQAgent_NewsResultsModel.Publication.Trim().Substring(0, 21) + "...")
+                                        }
+                                        else
+                                        {
+                                            @iQAgent_NewsResultsModel.Publication.Trim()
+                                        }
+                                    }
+                                </div>   
+                            }
+                            else
+                            { 
+                                <div class="margintop2"></div>
+                            }  
+                        }
+                    </div>
+                </div>
+                <div id="divSentimentNM_@item.ID" class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment
+                                </div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (sessioninfo.IsCompeteData)
+                {
+                    <div class="viewcontentdetail">
+                        <div class="viewshortdetail">
+                            <div class="view" title="Local Audience @fLocalAudience">
+                                @sLocalAudience
+                                @if (!string.IsNullOrWhiteSpace(iQAgent_NewsResultsModel.Compete_Result) && iQAgent_NewsResultsModel.Compete_Result.ToUpper() == "A")
+                                {
+                                    <img class="competeIcon" title="Powered by Compete" src="~/Images/compete.png" />
+                                }
+                                else
+                                {
+                                    <div align="center" class="margintop2"></div>
+                                }
+                            </div>
+                        </div>
+                        <div class="viewshortdetail">
+                            <div class="price" title="Local Media Value @fLocalMediaValue">
+                                @sLocalMediaValue
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <a class="cursorPointer saveMedia saveArticle" title="Save Article" onclick="ShowSaveArticle(@item.ID,this.id);return false;" target="_blank" id="aSaveNM_@item.ID"></a>
+                </div>
+                <div class="detailIcon">
+                    <a class="cursorPointer viewArticle" title="View Article" href="@(iQAgent_NewsResultsModel.IQLicense > 0 ? Url.Action("Index", "Article", new { au = IQMedia.Shared.Utility.CommonFunctions.EncryptLicenseStringAES(sessioninfo.CustomerKey + "¶Feeds¶" + iQAgent_NewsResultsModel.Url + "&u1=cliq40&u2=" + sessioninfo.ClientID + "¶" + iQAgent_NewsResultsModel.IQLicense) }) : iQAgent_NewsResultsModel.Url)" target="_blank" id="aShowNews_@item.ID" ></a>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "SM": // Social Media
+                string catimg = string.Empty;
+                CommonFunctions.CategoryType catType;
+                IQAgent_SMResultsModel SMModel = (IQAgent_SMResultsModel)item.MediaData;
+                string highlightedSMText = string.Empty;
+                string HighlightedSMOutput = string.Empty;
+                string highlightedSMOriginalText = string.Empty;
+                iqAdShareValue = string.Empty;
+                string smTitle = string.Empty;
+                string contentClass = item.CategoryType == "IG" ? "FeedsContentVideo" : "FeedsContentNone";
+                string videoSpacer = item.CategoryType == "IG" ? "FeedsVideoSpacer" : string.Empty;
+                
+                string fLikes = string.Empty;
+                string sLikes = string.Empty;
+                string fComments = string.Empty;
+                string sComments = string.Empty;
+                string fShares = string.Empty;
+                string sShares = string.Empty;
+                
+                if (SMModel.HighlightedSMOutput != null && SMModel.HighlightedSMOutput.Highlights != null)
+                {
+                    highlightedSMOriginalText = string.Join(" ", SMModel.HighlightedSMOutput.Highlights.Select(c => c));
+                    HighlightedSMOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedSMOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+                    
+                    if (string.IsNullOrWhiteSpace(HighlightedSMOutput))
+                    {
+                        HighlightedSMOutput = highlightedSMOriginalText;
+                    }
+                }
+                
+                if (HighlightedSMOutput.Length > 300)
+                {
+                    highlightedSMText = HighlightedSMOutput.Substring(0, 300);
+                    highlightedSMText = Regex.Replace(highlightedSMText, "(</span(?!>)|</s(?!pan>)|</sp(?!an>)|</spa(?!n>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedSMText = HighlightedSMOutput;
+                }
+                
+                if (SMModel.Description.Trim().Length > 65)
+                {
+                    smTitle = SMModel.Description.Trim().Substring(0, 62) + "...";
+                }
+                else
+                {
+                    smTitle = SMModel.Description.Trim();
+                }
+                
+                highlightedSMText = CommonFunctions.ProcessHighlightingText(HighlightedSMOutput, highlightedSMText).Trim();
+                //highlightedSMText = CommonFunctions.ProcessHighlightingText(HighlightedSMOutput, highlightedSMText);
+                
+                // Blog content values
+                if (item.CategoryType == "Blog" && sessioninfo.IsCompeteData)
+                {
+                    if (SMModel.Compete_Audience.HasValue && SMModel.Compete_Audience > 0)
+                    {
+                        fLocalAudience = string.Format("{0:N0}", SMModel.Compete_Audience);
+
+                        if (SMModel.Compete_Audience >= Billion)
+                        {
+                            sLocalAudience = string.Format("{0:F1} bil", SMModel.Compete_Audience / BillionD);
+                        }
+                        else if (SMModel.Compete_Audience >= Million)
+                        {
+                            sLocalAudience = string.Format("{0:F1} mil", SMModel.Compete_Audience / MillionD);
+                        }
+                        else
+                        {
+                            sLocalAudience = fLocalAudience;
+                        }
+                    }
+                    else
+                    {
+                        sLocalAudience = "NA";
+                    }
+
+                    if (Decimal.Compare(Convert.ToDecimal(SMModel.IQAdShareValue), 0M) != 0 && SMModel.IQAdShareValue > 0)
+                    {
+                        localAdShare = useProminenceMediaValue ? (SMModel.IQAdShareValue.Value * SMModel.IQProminenceMultiplier) : SMModel.IQAdShareValue.Value;
+                        fLocalMediaValue = string.Format("{0:N2}", localAdShare);
+
+                        if (localAdShare >= BillionD)
+                        {
+                            sLocalMediaValue = string.Format("{0:F1} bil", localAdShare / BillionD);
+                        }
+                        else if (localAdShare >= MillionD)
+                        {
+                            sLocalMediaValue = string.Format("{0:F1} mil", localAdShare / MillionD);
+                        }
+                        else
+                        {
+                            sLocalMediaValue = fLocalMediaValue;
+                        }
+                    }
+                    else
+                    {
+                        sLocalMediaValue = "NA";
+                    }
+                }
+                else if ((item.CategoryType == "FB" || item.CategoryType == "IG") && SMModel.ArticleStats != null)
+                {
+                    fLikes = string.Format("{0:N0}", SMModel.ArticleStats.Likes);
+                    if (SMModel.ArticleStats.Likes >= Billion)
+                    {
+                        sLikes = string.Format("{0:F1} bil", SMModel.ArticleStats.Likes / BillionD);
+                    }
+                    else if (SMModel.ArticleStats.Likes >= Million)
+                    {
+                        sLikes = string.Format("{0:F1} mil", SMModel.ArticleStats.Likes / MillionD);
+                    }
+                    else
+                    {
+                        sLikes = fLikes;
+                    }
+                    
+                    fComments = string.Format("{0:N0}", SMModel.ArticleStats.Comments);
+                    if (SMModel.ArticleStats.Comments >= Billion)
+                    {
+                        sComments = string.Format("{0:F1} bil", SMModel.ArticleStats.Comments / BillionD);
+                    }
+                    else if (SMModel.ArticleStats.Comments >= Million)
+                    {
+                        sComments = string.Format("{0:F1} mil", SMModel.ArticleStats.Comments / MillionD);
+                    }
+                    else
+                    {
+                        sComments = fComments;
+                    }
+
+                    if (item.CategoryType == "FB")
+                    {
+                        fShares = string.Format("{0:N0}", SMModel.ArticleStats.Shares);
+                        if (SMModel.ArticleStats.Shares >= Billion)
+                        {
+                            sShares = string.Format("{0:F1} bil", SMModel.ArticleStats.Shares / BillionD);
+                        }
+                        else if (SMModel.ArticleStats.Shares >= Million)
+                        {
+                            sShares = string.Format("{0:F1} mil", SMModel.ArticleStats.Shares / MillionD);
+                        }
+                        else
+                        {
+                            sShares = fShares;
+                        }
+                    }
+                }
+
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@mediaDate.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo" align="center">
+            @switch (item.CategoryType)
+            {
+                case "Blog":
+                    catimg = "25blog.png";
+                    catType = CommonFunctions.CategoryType.Blog;
+                    break;
+                case "Forum":
+                    catimg = "25forum.png";
+                    catType = CommonFunctions.CategoryType.Forum;
+                    break;
+                case "SocialMedia":
+                    catimg = "25social.png";
+                    catType = CommonFunctions.CategoryType.SocialMedia;
+                    break;
+                case "FB":
+                    catimg = "25facebook.png";
+                    catType = CommonFunctions.CategoryType.FB;
+                    break;
+                case "IG":
+                    catimg = "instagram.png";
+                    catType = CommonFunctions.CategoryType.IG;
+                    break;
+                default:
+                    catimg = string.Empty;
+                    catType = CommonFunctions.CategoryType.SocialMedia;
+                    break;
+            }
+            <img src="@String.Format(mediaIconFormat, catimg)" title="@CommonFunctions.GetEnumDescription(catType)">
+        </div>
+        <div class="float-right @videoSpacer">
+            @if (item.CategoryType == "IG")
+            {
+                <div class="FeedsVideo positionRelative float-left">
+                    <img class="instagramIMG" csrc="@SMModel.ThumbUrl" />
+                </div>
+            }
+            <div class="float-right">
+                <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+                <input type="hidden" value="0" id="hdnParentID_@item.ID" />
+            </div>
+        </div>
+        <div class="@contentClass">
+            <div class="float-left media-heading">
+                <a target="_blank" href="@SMModel.Link" title="@SMModel.Description.Trim()">@smTitle</a>
+            </div>
+            <div class="subheading float-left margintop1">
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                @Html.Raw(highlightedSMText)
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore"></div>
+                <div id="divLocationSM_@item.ID" class="viewlocation">
+                    <div class="">
+                        @if (!string.IsNullOrWhiteSpace(SMModel.HomeLink))
+                        {
+                            <div id="lblCompete_@item.ID" class="location-tag" title="@SMModel.HomeLink">
+                                @{
+                                    if (SMModel.HomeLink.Trim().Length > 23)
+                                    {
+                                        @(SMModel.HomeLink.Trim().Substring(0, 21) + "...")
+                                    }
+                                    else
+                                    {
+                                        @SMModel.HomeLink.Trim()
+                                    }
+                                }
+                            </div>   
+                        }
+                        else
+                        { 
+                            <div class="margintop2"></div>
+                        }
+                    </div>
+                </div>
+                <div id="divSentimentSM_@item.ID" class="viewsentiment" title="Sentiment">                
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>@item.NegativeSentiment</div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>@item.PositiveSentiment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (item.CategoryType == "Blog" && Decimal.Compare(Convert.ToDecimal(SMModel.IQAdShareValue), 0M) != 0 && SMModel.Compete_Audience > 0 && sessioninfo.IsCompeteData)
+                {
+                    <div class="viewcontentdetail">
+                        <div class="viewshortdetail">
+                            <div class="view" title="Local Audience @fLocalAudience">
+                                @sLocalAudience 
+                                @if (!string.IsNullOrWhiteSpace(SMModel.Compete_Result) && SMModel.Compete_Result.ToUpper() == "A")
+                                {
+                                    <img class="competeIcon" title="Powered by Compete" src="~/Images/compete.png" />
+                                }
+                                else
+                                {
+                                    <div align="center" class="margintop2">
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="viewshortdetail">
+                            <div class="price" title="Local Media Value @fLocalMediaValue">
+                                @sLocalMediaValue
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if ((item.CategoryType == "FB" || item.CategoryType == "IG") && SMModel.ArticleStats != null)
+                {       
+                    <div class="viewcontentdetail">
+                        <div class="viewshortdetail">
+                            <div class="likes pull-left" title="Likes @fLikes">
+                                @sLikes
+                            </div>
+                        </div>
+                        <div class="viewshortdetail">
+                            <div class="comments pull-left" title="Comments @fComments">
+                                @sComments
+                            </div>
+                        </div>
+                        @if (item.CategoryType == "FB")
+                        { 
+                            <div class="viewshortdetail">
+                                <div class="shares pull-left" title="Shares @fShares">
+                                    @sShares
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <a class="cursorPointer saveMedia saveArticle" title="Save Article" onclick="ShowSaveArticle(@item.ID,this.id);return false;" target="_blank" id="aSaveSM_@item.ID"></a>
+                </div>
+                <div class="detailIcon">
+                    <a class="cursorPointer viewArticle" title="View Article" href="@SMModel.Link" target="_blank" id="aShowNews_@item.ID"></a>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                
+                break;
+            case "TM":
+                IQAgent_TVEyesResultsModel iQAgent_TVEyesResultsModel = (IQAgent_TVEyesResultsModel)item.MediaData;
+                string highlightedTMText = string.Empty;
+                string highlightedTMOutput = iQAgent_TVEyesResultsModel.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+
+                if (highlightedTMOutput.Length > 300)
+                {
+                    highlightedTMText = highlightedTMOutput.Substring(0, 300);
+                }
+                else
+                {
+                    highlightedTMText = highlightedTMOutput;
+                }
+                
+                highlightedTMText = CommonFunctions.ProcessHighlightingText(highlightedTMOutput, highlightedTMText).Trim();
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@mediaDate.ToString("hh:mm tt") @iQAgent_TVEyesResultsModel.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo">
+            <img src="@string.Format(mediaIconFormat, "25x25_radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" />
+        </div>
+        <div class="float-right FeedsVideoSpacer">
+            <div class="float-left FeedsVideo positionRelative">
+                <a onclick="LoadTMPopup('@iQAgent_TVEyesResultsModel.TranscriptUrl.Replace("\'", "\\\'")')" class="cursorPointer">
+                    <img class="media-object" src="~/images/video.png" alt="" />
+                </a>
+            </div>
+            <div class="float-right tvFeedsCheck">
+                <input type="checkbox" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" />
+                <input type="hidden" value="0" id="hdnParentID_@item.ID" />
+            </div>
+            <div class="clearfix">
+            </div>
+        </div>
+        <div class="FeedsContentVideo">
+            @{
+                string tmTitle = string.Empty;
+                
+                if (iQAgent_TVEyesResultsModel.Title.Trim().Length > 65)
+                {
+                    tmTitle = iQAgent_TVEyesResultsModel.Title.Trim().Substring(0, 62) + "...";
+                }
+                else
+                {
+                    tmTitle = iQAgent_TVEyesResultsModel.Title.Trim();
+                }
+            }
+
+            <div class="float-left media-heading" title="@iQAgent_TVEyesResultsModel.Title">
+                @tmTitle
+            </div>
+            <div class="subheading float-left margintop1" >
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                <span style="color:#73897F">@iQAgent_TVEyesResultsModel.StationID</span>
+                @if (!string.IsNullOrWhiteSpace(highlightedTMText))
+                {
+                    <span> - @Html.Raw(highlightedTMText)</span>
+                }
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore"></div>
+                <div id="divLocationTM_@item.ID" class="viewlocation">
+                    <div class="">
+                        @if (!string.IsNullOrWhiteSpace(iQAgent_TVEyesResultsModel.Market))
+                        {
+                            <div class="location-tag" title="@iQAgent_TVEyesResultsModel.Market">
+                                @{
+                                    if (iQAgent_TVEyesResultsModel.Market.Trim().Length > 23)
+                                    {
+                                        @(iQAgent_TVEyesResultsModel.Market.Trim().Substring(0, 21) + "...")
+                                    }
+                                    else
+                                    {
+                                        @iQAgent_TVEyesResultsModel.Market.Trim()
+                                    }
+                                }
+                            </div>   
+                        }
+                    </div>
+                </div>
+                <div class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment
+                                </div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="viewcontentdetail">
+                    @if (!string.IsNullOrEmpty(iQAgent_TVEyesResultsModel.DMARank))
+                    {
+                        <div class="marketrank pull-left" title="Market Rank @iQAgent_TVEyesResultsModel.DMARank">
+                            <span>@iQAgent_TVEyesResultsModel.DMARank</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div align="center" class="margintop2"></div>
+                    }
+                </div>
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <a class="cursorPointer saveMedia saveArticle" title="Save Article"  onclick="ShowSaveArticle(@item.ID,this.id);return false;" target="_blank" id=""></a>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding View Article-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "PM": // Publications (scanned)
+                IQAgent_BLPMResultsModel iQAgent_BLPMResultsModel = (IQAgent_BLPMResultsModel)item.MediaData;
+                string highlightedPMText = string.Empty;
+                string highlightedPMOutput = !string.IsNullOrEmpty(iQAgent_BLPMResultsModel.HighlightingText) ? iQAgent_BLPMResultsModel.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">") : string.Empty;
+                string sCirculation = string.Empty;
+                string fCirculation = string.Format("{0:N0}", iQAgent_BLPMResultsModel.Circulation);
+
+                if (iQAgent_BLPMResultsModel.Circulation >= Billion)
+                {
+                    sCirculation = string.Format("{0:F1} bil", iQAgent_BLPMResultsModel.Circulation / BillionD);
+                }
+                else if (iQAgent_BLPMResultsModel.Circulation >= Million)
+                {
+                    sCirculation = string.Format("{0:F1} mil", iQAgent_BLPMResultsModel.Circulation / MillionD);
+                }
+                else
+                {
+                    sCirculation = fCirculation;
+                }
+                
+                if (highlightedPMOutput.Length > 300)
+                {
+                    highlightedPMText = highlightedPMOutput.Substring(0, 300);
+                }
+                else
+                {
+                    highlightedPMText = highlightedPMOutput;
+                }
+                
+                highlightedPMText = CommonFunctions.ProcessHighlightingText(highlightedPMOutput, highlightedPMText).Trim();
+                
+                string PMBasePath = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]);
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@mediaDate.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo" align="center">
+            <img src="@String.Format(mediaIconFormat, "25x25_publicationScanned.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" />
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+            <input type="hidden" value="0" id="hdnParentID_@item.ID" />
+        </div>
+        <div class="FeedsContentNone">
+            @{
+                string pmTitle = string.Empty;
+                if (Html.Raw(iQAgent_BLPMResultsModel.Title).ToString().Trim().Length > 65)
+                {
+                    pmTitle = Html.Raw(iQAgent_BLPMResultsModel.Title).ToString().Trim().Substring(0, 62) + "...";
+                }
+                else
+                {
+                    pmTitle = Html.Raw(iQAgent_BLPMResultsModel.Title).ToString().Trim();
+                }
+            }
+            <div class="float-left media-heading">
+                <a target="_blank" href="@(PMBasePath + iQAgent_BLPMResultsModel.FileLocation.Replace(@"\", @"/"))" title="@Html.Raw(iQAgent_BLPMResultsModel.Title)">@pmTitle</a>
+            </div>
+            <div class="subheading float-left margintop1">
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                @Html.Raw(highlightedPMText)
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore"></div>
+                <div id="divLocationTM_@item.ID" class="viewlocation">
+                    <div class="">
+
+                        @if (!string.IsNullOrWhiteSpace(iQAgent_BLPMResultsModel.Pub_Name))
+                        {
+                            <div class="location-tag" title="@iQAgent_BLPMResultsModel.Pub_Name">
+                                @{
+                                    if (iQAgent_BLPMResultsModel.Pub_Name.Trim().Length > 23)
+                                    {
+                                        @(iQAgent_BLPMResultsModel.Pub_Name.Trim().Substring(0, 21) + "...")
+                                    }
+                                    else
+                                    {
+                                        @iQAgent_BLPMResultsModel.Pub_Name.Trim()
+                                    }
+                                }
+                            </div>   
+                        }
+                        else
+                        {
+                            <div align="center" class="margintop2"></div>
+                        }
+
+                    </div>
+                </div>
+                <div id="divSentimentPM_@item.ID" class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg" style="height:15px;">
+                            </div>
+                            <div class="divSentimentPos">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="viewcontentdetail">
+                    <div class="circulation pull-left" title="Circulation @fCirculation">
+                        <span>@sCirculation</span>
+                    </div>
+                </div>
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <!--Padding Save Article-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="detailIcon">
+                    <a class="cursorPointer viewArticle" title="View Article" href="@(PMBasePath + iQAgent_BLPMResultsModel.FileLocation.Replace(@"\", @"/"))" target="_blank"></a>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "PQ": // Publications (text)
+                IQAgent_PQResultsModel iQAgent_PQResultsModel = (IQAgent_PQResultsModel)item.MediaData;
+                string highlightedPQText = string.Empty;
+                string HighlightedPQOutput = string.Empty;
+                string highlightedPQOriginalText = string.Empty;
+                
+                if (iQAgent_PQResultsModel.HighlightedPQOutput != null && iQAgent_PQResultsModel.HighlightedPQOutput.Highlights != null)
+                {
+                    highlightedPQOriginalText = string.Join(" ", iQAgent_PQResultsModel.HighlightedPQOutput.Highlights.Select(c => c));
+                    HighlightedPQOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedPQOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+                    
+                    if (string.IsNullOrWhiteSpace(HighlightedPQOutput))
+                    {
+                        HighlightedPQOutput = highlightedPQOriginalText;
+                    }
+                }
+                
+                if (HighlightedPQOutput.Length > 300)
+                {
+                    highlightedPQText = HighlightedPQOutput.Substring(0, 300);
+                    highlightedPQText = Regex.Replace(highlightedPQText, "(</span(?!>)|</s(?!pan>)|</sp(?!an>)|</spa(?!n>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedPQText = HighlightedPQOutput;
+                }
+
+                highlightedPQText = CommonFunctions.ProcessHighlightingText(HighlightedPQOutput, highlightedPQText).Trim();
+                
+                string authors = String.Empty;
+                
+                if (iQAgent_PQResultsModel.Authors != null && iQAgent_PQResultsModel.Authors.Count > 0)
+                {
+                    authors = "(" + (iQAgent_PQResultsModel.Authors.Count > 2 ? String.Join(", ", iQAgent_PQResultsModel.Authors.Take(2)) : String.Join(", ", iQAgent_PQResultsModel.Authors)) + ") ";
+                }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="MediaDate">
+            <div class="post-date">
+                <span class="month">@mediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@mediaDate.Day</span>
+                </div>
+                <span class="timeWithTimeZone">&nbsp;</span>
+            </div>
+        </div>
+        <div class="MediaTypeLogo" align="center">
+            <img src="@String.Format(mediaIconFormat, "25x25_publicationText.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" />
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+            <input type="hidden" value="0" id="hdnParentID_@item.ID" />
+        </div>
+        <div class="FeedsContentNone">
+
+            @{
+                string pqTitle = string.Empty;
+                
+                if (Html.Raw(iQAgent_PQResultsModel.Title).ToString().Trim().Length > 65)
+                {
+                    pqTitle = Html.Raw(iQAgent_PQResultsModel.Title).ToString().Trim().Substring(0, 62) + "...";
+                }
+                else
+                {
+                    pqTitle = Html.Raw(iQAgent_PQResultsModel.Title).ToString().Trim();
+                }
+            }
+
+            <div class="float-left media-heading">
+                <a target="_blank" onclick="ShowViewArticleFeeds(@item.ID)" class="cursorPointer" title="@Html.Raw(iQAgent_PQResultsModel.Title)">@pqTitle</a>
+            </div>
+            <div class="subheading float-left margintop1">
+                @item.timeDifference
+            </div>
+            <div class="clear float-left media-body">
+                @Html.Raw(highlightedPQText)
+            </div>
+        </div>
+        <div class="clear post-divider"></div>
+        <div class="clear margintop2 marginbottom2">
+            <div class="FeedsActionBarLeftDiv">
+                <div class="viewmore"></div>
+                <div id="divLocationTM_@item.ID" class="viewlocation">
+                    <div class="">
+
+                        @if (!string.IsNullOrWhiteSpace(iQAgent_PQResultsModel.Publication))
+                        {
+                            var Journal = iQAgent_PQResultsModel.Publication.Trim() + authors.Trim();
+                            
+                            <div class="location-tag" title="@Journal">
+                                @{
+                                    if (Journal.Length > 23)
+                                    {
+                                        @(Journal.Substring(0, 21) + "...")
+                                    }
+                                    else
+                                    {
+                                        @(Journal)
+                                    }
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div align="center" class="margintop2"></div>
+                        }
+
+                    </div>
+                </div>
+                <div style="width: 12%" id="divSentimentSM_@item.ID" class="viewsentiment" title="Sentiment">
+                    <div class="sentimentLeftFloat sentiment-tag">
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment</div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="FeedsActionBarRightDiv minWidth52IE8">
+                <div class="detailIcon">
+                    <a class="cursorPointer saveMedia saveArticle" title="Save Article" onclick="ShowSaveArticle(@item.ID,this.id);return false;" target="_blank" id="aSavePQ_@item.ID"></a>
+                </div>
+                <div class="detailIcon">
+                    <a class="cursorPointer viewArticle" title="View Article" onclick="ShowViewArticleFeeds(@item.ID)" target="_blank" id="aShowPQ_@item.ID"></a>
+                </div>
+                <div class="detailIcon">
+                    <!--Padding on the right-->
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                break;
+        }
+    }
+}

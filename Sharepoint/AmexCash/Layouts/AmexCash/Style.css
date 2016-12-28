@@ -1,0 +1,164 @@
+﻿body
+{
+}
+
+.ms-input
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+	text-decoration: none;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 5px;
+	padding: 3px 5px;
+	width: 150px;
+}
+
+.txtbox
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+	text-decoration: none;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 5px;
+	padding: 3px 5px;
+	width: 150px;
+}
+.dropdown
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+	text-decoration: none;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 5px;
+	padding: 3px 5px;
+	width: 160px;
+}
+.txtlabel
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+	float: left; /*width: 200px;*/ /*padding: 4px 0px;*/
+}
+
+.addlabel
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+	float: right; /*width: 200px;*/ /*padding: 4px 0px;*/
+}
+
+
+.formmargin
+{
+	margin-left: 200px;
+}
+.txtbox:active, .txtbox:focus, .dropdown:active, .dropdown:focus
+{
+	box-shadow: 0px 0px 3px #ddd;
+}
+.btn
+{
+	font: 15px Calibri, Tahoma, Arial;
+	color: #999;
+	background: #f5f5f5;
+	border: 1px solid #e5e5e5;
+	/*border-radius: 5px;*/
+	padding: 3px 5px;
+	cursor: pointer;
+}
+.btn:hover
+{
+	background: #4b4b4b;
+	border: 1px solid #333;
+	color: #fff;
+}
+
+table.grid
+{
+	border-right: solid 1px #ddd;
+	border-top: solid 1px #ddd;
+	font: 15px Calibri, Tahoma, Arial;
+	color: #666;
+}
+table.grid th
+{
+	padding: 4px 7px;
+	background: #f1f1f1;
+	border-left: solid 1px #ddd;
+	border-bottom: solid 1px #ddd;
+	text-align: left;
+}
+table.grid td
+{
+	padding: 4px 7px;
+	border-left: solid 1px #ddd;
+	border-bottom: solid 1px #ddd;
+}
+table.grid tr
+{
+	background: #fff;
+}
+table.grid tr:hover
+{
+	background: #f7f7f7;
+}
+table.grid a
+{
+	color: #39C;
+	text-decoration: none;
+}
+table.grid a:hover
+{
+	text-decoration: underline;
+}
+
+
+.pagination {
+            font-size: 80%;
+        }
+
+.pagination a 
+{
+	display: block;
+    float: left;
+    padding: 0.3em 0.5em;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    
+    /*text-decoration: none;
+    border: solid 1px #AAE;
+    color: #15B;*/
+}
+
+ .pagination span 
+{
+	 text-decoration: none;
+    border: solid 1px #AAE;
+    color: #15B;
+    padding: 0.3em 0.5em;
+     margin-right: 5px;
+    margin-bottom: 5px;
+    display: block;
+    
+   /* display: block;
+    float: left;
+    padding: 0.3em 0.5em;
+    margin-right: 5px;
+    margin-bottom: 5px;*/
+}
+
+.pagination .current {
+    background: #26B;
+    color: #fff;
+    border: solid 1px #AAE;
+}
+
+.pagination .current.prev, .pagination .current.next{
+    color:#999;
+    border-color:#999;
+    background:#fff;
+}
+

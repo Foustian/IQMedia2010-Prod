@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Services.IOS", "IQMediaGroup.Services.IOS\IQMediaGroup.Services.IOS.csproj", "{5CC9C9C2-E731-48B6-80C1-286F803C7617}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Domain.IOS", "IQMediaGroup.Domain.IOS\IQMediaGroup.Domain.IOS.csproj", "{824962A8-0320-4414-8C1B-00B39BC78A60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Logic.IOS", "IQMediaGroup.Logic.IOS\IQMediaGroup.Logic.IOS.csproj", "{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common.IOS", "IQMediaGroup.Common.IOS\IQMediaGroup.Common.IOS.csproj", "{70493E33-472E-4DC1-AC68-34BA3B8210CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Security", "Security\IQMedia.Security\IQMedia.Security.csproj", "{CE5163B5-A186-41FA-9BC7-CE88FF750F39}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IQMediaGroup.Common.IOS\\IQMediaGroup.Common.IOS.csproj
+		SccProjectName1 = IQMediaGroup.Common.IOS
+		SccLocalPath1 = IQMediaGroup.Common.IOS
+		SccProjectUniqueName2 = IQMediaGroup.Domain.IOS\\IQMediaGroup.Domain.IOS.csproj
+		SccProjectName2 = IQMediaGroup.Domain.IOS
+		SccLocalPath2 = IQMediaGroup.Domain.IOS
+		SccProjectUniqueName3 = IQMediaGroup.Logic.IOS\\IQMediaGroup.Logic.IOS.csproj
+		SccProjectName3 = IQMediaGroup.Logic.IOS
+		SccLocalPath3 = IQMediaGroup.Logic.IOS
+		SccProjectUniqueName4 = IQMediaGroup.Services.IOS\\IQMediaGroup.Services.IOS.csproj
+		SccProjectName4 = IQMediaGroup.Services.IOS
+		SccLocalPath4 = IQMediaGroup.Services.IOS
+		SccProjectUniqueName5 = Security\\IQMedia.Security\\IQMedia.Security.csproj
+		SccProjectName5 = Security/IQMedia.Security
+		SccLocalPath5 = Security\\IQMedia.Security
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CC9C9C2-E731-48B6-80C1-286F803C7617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC9C9C2-E731-48B6-80C1-286F803C7617}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC9C9C2-E731-48B6-80C1-286F803C7617}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC9C9C2-E731-48B6-80C1-286F803C7617}.Release|Any CPU.Build.0 = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE5163B5-A186-41FA-9BC7-CE88FF750F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE5163B5-A186-41FA-9BC7-CE88FF750F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE5163B5-A186-41FA-9BC7-CE88FF750F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE5163B5-A186-41FA-9BC7-CE88FF750F39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

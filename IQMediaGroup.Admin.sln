@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.Controller", "IQMediaGroup.Admin.Controller\IQMediaGroup.Admin.Controller.csproj", "{3C1EAB6A-7DD1-4113-8125-EC687644EC79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.Model", "IQMediaGroup.Admin.Model\IQMediaGroup.Admin.Model.csproj", "{D4EEE614-28E7-4950-9713-E449D934ABF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.Usercontrol", "IQMediaGroup.Admin.Usercontrol\IQMediaGroup.Admin.Usercontrol.csproj", "{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.WebApplication", "IQMediaGroup.Admin.WebApplication\IQMediaGroup.Admin.WebApplication.csproj", "{3EB08009-F6BA-43B7-8859-4A966D07FBD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMGSearch", "PMGSearch\PMGSearch\PMGSearch.csproj", "{669A2777-33C6-4458-99D7-49A7466FE662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.Core", "IQMediaGroup.Admin.Core\IQMediaGroup.Admin.Core.csproj", "{A4B846D1-64EC-425B-BC34-5955E28CA331}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 7
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://dbvss:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IQMediaGroup.Admin.Controller\\IQMediaGroup.Admin.Controller.csproj
+		SccProjectName1 = IQMediaGroup.Admin.Controller
+		SccLocalPath1 = IQMediaGroup.Admin.Controller
+		SccProjectUniqueName2 = IQMediaGroup.Admin.Model\\IQMediaGroup.Admin.Model.csproj
+		SccProjectName2 = IQMediaGroup.Admin.Model
+		SccLocalPath2 = IQMediaGroup.Admin.Model
+		SccProjectUniqueName3 = IQMediaGroup.Admin.Usercontrol\\IQMediaGroup.Admin.Usercontrol.csproj
+		SccProjectName3 = IQMediaGroup.Admin.Usercontrol
+		SccLocalPath3 = IQMediaGroup.Admin.Usercontrol
+		SccProjectUniqueName4 = IQMediaGroup.Admin.WebApplication\\IQMediaGroup.Admin.WebApplication.csproj
+		SccProjectName4 = IQMediaGroup.Admin.WebApplication
+		SccLocalPath4 = IQMediaGroup.Admin.WebApplication
+		SccProjectUniqueName5 = PMGSearch\\PMGSearch\\PMGSearch.csproj
+		SccProjectName5 = PMGSearch/PMGSearch
+		SccLocalPath5 = PMGSearch\\PMGSearch
+		SccProjectUniqueName6 = IQMediaGroup.Admin.Core\\IQMediaGroup.Admin.Core.csproj
+		SccProjectName6 = IQMediaGroup.Admin.Core
+		SccLocalPath6 = IQMediaGroup.Admin.Core
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C1EAB6A-7DD1-4113-8125-EC687644EC79}.Release|x64.ActiveCfg = Release|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4EEE614-28E7-4950-9713-E449D934ABF4}.Release|x64.ActiveCfg = Release|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D98C6F0-CBF3-48CE-BB97-24C63E7F237A}.Release|x64.ActiveCfg = Release|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EB08009-F6BA-43B7-8859-4A966D07FBD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B846D1-64EC-425B-BC34-5955E28CA331}.Release|x64.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

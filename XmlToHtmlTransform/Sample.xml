@@ -1,0 +1,37 @@
+﻿<IQAgentDigest>
+  <ClientName>iQ Media</ClientName>
+  <ClientHeader>https://www.iqmediacorp.com/Images/ReportHeader/7722a116-c3bc-40ae-8070-8c59ee9e3d2a\DefaultEmailBanner.png</ClientHeader>
+  <ClientHeaderImagePath>\\10.100.1.91\ClientImages\7722a116-c3bc-40ae-8070-8c59ee9e3d2a\</ClientHeaderImagePath>
+  <ImageBaseUrl>http://l3cdn.iqmediacorp.com/scontent</ImageBaseUrl>
+  <IQAgentDigestUrl>https://www.iqmediacorp.com/report/dailydigest?ID=09f5e889-ff2a-445a-81c5-e84f36ccb7f5</IQAgentDigestUrl>
+  <Summary>
+    <Agent>&lt;a href = "#Stuff"&gt; Stuff &lt;/a&gt;                  [2,920], [50,695,616]</Agent>
+  </Summary>
+  <UseRollup>false</UseRollup>
+  <SearchRequest>
+    <ID>4484</ID>
+    <QueryName>Stuff</QueryName>
+    <SearchRequestUrl>https://www.iqmediacorp.com/report/dailydigest?ID=09f5e889-ff2a-445a-81c5-e84f36ccb7f5&amp;SearchRequest=4484</SearchRequestUrl>
+    <TV>
+      <NoOfTotalItems>954</NoOfTotalItems>
+      <NoOfDisplayItems>5</NoOfDisplayItems>
+      <TVNode>
+        <MediaID>32017527</MediaID>
+        <ParentID />
+        <StationLogo>https://iqmediacorp.com/StationLogoImages/foxnews.gif</StationLogo>
+        <MediaDate>2015-07-07T20:00:00</MediaDate>
+        <GmtDate>2015-07-08T00:00:00</GmtDate>
+        <TimeZone>EST</TimeZone>
+        <Audience>2844303</Audience>
+        <MediaValue>16569</MediaValue>
+        <Title><![CDATA[The O'Reilly Factor]]></Title>
+        <Market>National</Market>
+        <HighlightingText> SAVES 2 GRAND BECAU&gt;&gt; SO MUCH PRICE WART DISCOUNTS ITS &lt;span class="highlight"&gt;STUFF&lt;/span&gt; AATCH.  &gt;&gt; RIGHT. </HighlightingText>
+        <ThumbnailImage>http://media.iqmediacorp.com/im59/2015/07/08/c4663686-fb68-4d82-9779-66cbe879c4d2.jpg</ThumbnailImage>
+        <PositiveSentiment>0</PositiveSentiment>
+        <NegativeSentiment>0</NegativeSentiment>
+        <Url>https://www.iqmediacorp.com/RawMediaPlayer/?media=QmBtsp03pS9z6lls3QI6X7Mvlo8Yhs2WwPJmneZ8Oh%2fulSTsagcgjPTu2ta1bEHR</Url>
+      </TVNode>
+    </TV>
+  </SearchRequest>
+</IQAgentDigest>

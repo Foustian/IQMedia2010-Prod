@@ -1,0 +1,3 @@
+﻿function btnLogin_Click(ru, rp) {  var C = $("#lblLoginResults"); var B = ru; var A = rp; if (B == "" || A == "") { C.text("Please be sure to fill in all fields."); return } C.text("Please wait..."); var E = RedLasso.Service.ServiceFactory.CreateService("User"); E.login(B, A, function(F) { if (F[0] == "0") { setCookie("rl_uid", F[1]); C.html("You have successfully been logged in to Redlasso."); } else { if (F[0] == "7") { lazyFormLoad("#hTermsEmail", function() { $("#hTermsEmail").val(B); $("#hTermsPassword").val(A) }) } else { C.html(F[1]); D.removeAttr("disabled") } } }) }
+
+function lnkLogout_Click() { deleteCookie("rl_uid"); RL_CurrentUser = null; var A = RedLasso.Service.ServiceFactory.CreateService("User"); A.logout(function() { }) }

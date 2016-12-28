@@ -1,0 +1,29 @@
+/* 
+ * vim: noexpandtab
+ */
+img.ui-combobox-arrow {
+	position: relative;
+	vertical-align: text-bottom;
+	top: 4px;
+}
+
+
+
+.ui-combobox-list {
+	border: 1px solid black;
+}
+
+.ui-combobox-list, .ui-combobox-item {
+	display: block;
+	font-family: sans-serif;
+	font-size: 11px;
+	background-color: white;
+	padding-left:2px;
+}
+
+.ui-combobox-list .selected {
+	background-color: white;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	
+}

@@ -1,0 +1,64 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="Activate broadcast TV, online news, and social media with a media intelligence platform, search TV media and make video clips for sharing" />
+    <meta name="keywords" content="broadcast TV monitoring, television monitoring, media intelligence platform, media monitoring, video clips, video clipping service, TV media search, TV media alerts, online news, media monitoring services" />
+    <meta name="title" content="media intelligence platform" />
+    <title>iQ media Sign In</title>
+    <link href="~/Css/bootstrap3/fonts/fonts.css" rel="stylesheet">
+    <link href="~/Css/bootstrap3/bootstrap.css" rel="stylesheet">
+    <link href="~/Css/bootstrap3/bootstrap-theme.css" rel="stylesheet">
+    <link href="~/Css/bootstrap3/style.css" rel="stylesheet">
+    <link href="~/Css/bootstrap3/signin.css" rel="stylesheet">
+    <script src="~/Scripts/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+    @Html.Partial("~/Views/Shared/_Header_New.cshtml")
+    @if (ViewBag.Status != -1)
+    {    
+        <div class="jumbotron white-box">
+            <div class="container signinbox">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-4 col-lg-offset-4">
+                        <div class="heading01 mbp4">Sign In</div>
+                        <div class="well">
+                            @Html.Partial("~/Views/SignIn/_SignIn.cshtml")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="mainerrorDiv" style="text-align: left;">@ViewBag.Message</div>
+    }
+    @Html.Partial("~/Views/Shared/_FooterStatic_New.cshtml")
+
+    <!-- adroll -->
+    <script type="text/javascript">
+        adroll_adv_id = "OGUX6L2RVRFP3MDRQ5BZUX";
+        adroll_pix_id = "J4DYT22D2FFJFBVWRCGOQF";
+        (function () {
+            var oldonload = window.onload;
+            window.onload = function () {
+                __adroll_loaded = true;
+                var scr = document.createElement("script");
+                var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
+                scr.setAttribute('async', 'true');
+                scr.type = "text/javascript";
+                scr.src = host + "/j/roundtrip.js";
+                ((document.getElementsByTagName('head') || [null])[0] ||
+    document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
+                if (oldonload) { oldonload() }
+            };
+        } ());
+    </script>
+    <!-- end of adroll -->
+
+</body>
+</html>

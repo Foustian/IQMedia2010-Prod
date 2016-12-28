@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3C1EAB6A-7DD1-4113-8125-EC687644EC79}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Admin.Controller</RootNamespace>
+    <AssemblyName>IQMediaGroup.Admin.Controller</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Code\CommonController.cs" />
+    <Compile Include="Factory\ControllerFactory.cs" />
+    <Compile Include="Implementation\ClientController.cs" />
+    <Compile Include="Implementation\ClientRoleController.cs" />
+    <Compile Include="Implementation\BillTypeController.cs" />
+    <Compile Include="Implementation\BillFrequencyController.cs" />
+    <Compile Include="Implementation\StateController.cs" />
+    <Compile Include="Implementation\PricingCodeController.cs" />
+    <Compile Include="Implementation\IndustryController.cs" />
+    <Compile Include="Implementation\CustomerController.cs" />
+    <Compile Include="Implementation\CustomerRoleController.cs" />
+    <Compile Include="Implementation\IQAgentSearchRequestController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Implementation\IQMediaGroupExceptionsController.cs" />
+    <Compile Include="Implementation\Iq_Service_logController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Implementation\RoleController.cs" />
+    <Compile Include="Implementation\SearchLogController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Implementation\StatSkedProgController.cs" />
+    <Compile Include="Interface\IStateController.cs" />
+    <Compile Include="Interface\IPricingCodeController.cs" />
+    <Compile Include="Interface\IBillFrequencyController.cs" />
+    <Compile Include="Interface\IBillTypeController.cs" />
+    <Compile Include="Interface\IIndustryController.cs" />
+    <Compile Include="Interface\IClientController.cs" />
+    <Compile Include="Interface\IClientRoleController.cs" />
+    <Compile Include="Interface\ICustomerController.cs" />
+    <Compile Include="Interface\ICustomerRoleController.cs" />
+    <Compile Include="Interface\IIQMediaGroupExceptionsController.cs" />
+    <Compile Include="Interface\IIq_Service_logController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interface\IRoleController.cs" />
+    <Compile Include="Interface\ISearchLogController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interface\ISearchRequestController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interface\IStatSkedProgController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Admin.Core\IQMediaGroup.Admin.Core.csproj">
+      <Project>{A4B846D1-64EC-425B-BC34-5955E28CA331}</Project>
+      <Name>IQMediaGroup.Admin.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Admin.Model\IQMediaGroup.Admin.Model.csproj">
+      <Project>{D4EEE614-28E7-4950-9713-E449D934ABF4}</Project>
+      <Name>IQMediaGroup.Admin.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Common\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

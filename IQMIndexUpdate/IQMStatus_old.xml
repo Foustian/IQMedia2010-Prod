@@ -1,0 +1,64 @@
+<IQMStatus>
+  <Indexing_Started></Indexing_Started>
+  <Index_Start_time></Index_Start_time>
+  <Core1Ingest>
+        <Core1_Ingest></Core1_Ingest>
+        <Core1_Ingest_time></Core1_Ingest_time>
+         <Core1_Ingest_Response></Core1_Ingest_Response>
+  <SQLDB_Update></SQLDB_Update>
+  <SQLDB_Status_Time></SQLDB_Status_Time>
+  <SQLDB_Response>                     
+  </SQLDB_Response>
+  </Core1Ingest>
+  <Core0Commit>
+          <Core0_Commit></Core0_Commit>
+          <Core0_Commit_time></Core0_Commit_time>
+          <Core0_Commit_status></Core0_Commit_status>
+  </Core0Commit>
+  <Core1Commit>
+          <Core1_Commit></Core1_Commit>
+          <Core1_Commit_time></Core1_Commit_time>
+          <Core1_Commit_status></Core1_Commit_status>
+  </Core1Commit>
+<CoreMerge>
+          <Core_merge></Core_merge>
+          <Core_merge_time></Core_merge_time>
+          <Core_merge_status></Core_merge_status>
+  </CoreMerge>
+  <Core2Commit>
+          <Core2_Commit></Core2_Commit>
+          <Core2_Commit_time></Core2_Commit_time>
+          <Core2_Commit_status></Core2_Commit_status>
+  </Core2Commit>
+<Core2Optimize>
+          <Core2_optimize></Core2_optimize>
+          <Core2_optimize_time></Core2_optimize_time>
+          <Core2_optimize_status></Core2_optimize_status>
+  </Core2Optimize>
+<CoreSwap>
+          <Core_swap></Core_swap>
+          <Core_swap_time></Core_swap_time>
+          <Core_swap_status></Core_swap_status>
+  </CoreSwap>
+  <CoreDelete>
+          <Core1_Delete></Core1_Delete>
+          <Core1_Delete_time></Core1_Delete_time>
+          <Core1_Delete_status></Core1_Delete_status>
+          <Core1_Commit></Core1_Commit>
+          <Core1_Commit_time></Core1_Commit_time>
+          <Core1_Commit_status></Core1_Commit_status>        
+          <Core2_Delete></Core2_Delete>
+          <Core2_Delete_time></Core2_Delete_time>
+          <Core2_Delete_status></Core2_Delete_status>
+          <Core2_Commit></Core2_Commit>
+          <Core2_Commit_time></Core2_Commit_time>
+          <Core2_Commit_status></Core2_Commit_status>
+  </CoreDelete>
+<SQLDB_Index_Update>    
+<SQLDB_I_Update></SQLDB_I_Update>
+<SQLDB_I_Time></SQLDB_I_Time>
+<No_rows_fetched ></No_rows_fetched>
+<No_rows_updated></No_rows_updated>
+</SQLDB_Index_Update>
+</IQMStatus>
+

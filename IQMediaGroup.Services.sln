@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Services", "IQMediaGroup.Services\IQMediaGroup.Services.csproj", "{06100E75-00D2-47B0-BD3C-BDA71BBDB577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Domain", "IQMediaGroup.Domain\IQMediaGroup.Domain.csproj", "{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Logic", "IQMediaGroup.Logic\IQMediaGroup.Logic.csproj", "{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common", "IQMediaGroup.Common\IQMediaGroup.Common.csproj", "{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMGSearch", "PMGSearch\PMGSearch\PMGSearch.csproj", "{669A2777-33C6-4458-99D7-49A7466FE662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sentiment", "Sentiment\Sentiment.csproj", "{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQRadioSearch", "IQRadioSearch\IQRadioSearch\IQRadioSearch.csproj", "{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IQMediaGroup.Services\\IQMediaGroup.Services.csproj
+		SccProjectName1 = IQMediaGroup.Services
+		SccLocalPath1 = IQMediaGroup.Services
+		SccProjectUniqueName2 = IQMediaGroup.Domain\\IQMediaGroup.Domain.csproj
+		SccProjectName2 = IQMediaGroup.Domain
+		SccLocalPath2 = IQMediaGroup.Domain
+		SccProjectUniqueName3 = IQMediaGroup.Logic\\IQMediaGroup.Logic.csproj
+		SccProjectName3 = IQMediaGroup.Logic
+		SccLocalPath3 = IQMediaGroup.Logic
+		SccProjectUniqueName4 = IQMediaGroup.Common\\IQMediaGroup.Common.csproj
+		SccProjectName4 = IQMediaGroup.Common
+		SccLocalPath4 = IQMediaGroup.Common
+		SccProjectUniqueName5 = PMGSearch\\PMGSearch\\PMGSearch.csproj
+		SccProjectName5 = PMGSearch/PMGSearch
+		SccLocalPath5 = PMGSearch\\PMGSearch
+		SccProjectUniqueName6 = Sentiment\\Sentiment.csproj
+		SccProjectName6 = Sentiment
+		SccLocalPath6 = Sentiment
+		SccProjectUniqueName7 = IQRadioSearch\\IQRadioSearch\\IQRadioSearch.csproj
+		SccProjectName7 = IQRadioSearch/IQRadioSearch
+		SccLocalPath7 = IQRadioSearch\\IQRadioSearch
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{06100E75-00D2-47B0-BD3C-BDA71BBDB577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06100E75-00D2-47B0-BD3C-BDA71BBDB577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06100E75-00D2-47B0-BD3C-BDA71BBDB577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06100E75-00D2-47B0-BD3C-BDA71BBDB577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D35A8EEE-E3CA-4130-89CA-3F0592FAE0A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AF658BA-A4EA-4A26-B621-5D8B6BF4BB2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{669A2777-33C6-4458-99D7-49A7466FE662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2171FFA6-BDEC-4882-94F9-50FEE34F9ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,1 @@
+Returns the data in JSON format for development of Initial UI for searching criteria.

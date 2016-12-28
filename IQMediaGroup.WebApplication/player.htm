@@ -1,0 +1,31 @@
+﻿<html>
+<head>
+    <title>IQMedia : Player</title>
+    <style type="text/css">
+        .expiredLink
+        {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-size: 20px;
+            height: 100%;
+            text-align: center;
+            vertical-align: middle;
+            width: 100%;
+        }
+    </style>
+    <script src="/Script/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="/Script/MediaContent.js" type="text/javascript"></script>
+</head>
+<body>
+    <div>
+        <div id="divRawMedia" style="width: 545px; height: 340px;" class="expiredLink">
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var clipid = 'd87e7ff8-a8ed-463e-9452-c4286ceca403';
+            SetPlayerObject('divRawMedia', clipid, '545px', '340px');
+        });
+    </script>
+</body>
+</html>

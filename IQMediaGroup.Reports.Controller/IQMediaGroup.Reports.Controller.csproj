@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{99A694A0-9841-4740-A001-29C06FF5265C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Reports.Controller</RootNamespace>
+    <AssemblyName>IQMediaGroup.Reports.Controller</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\IQMediaPlayer.cs" />
+    <Compile Include="Factory\ControllerFactory.cs" />
+    <Compile Include="Implementation\ArchiveClipController.cs" />
+    <Compile Include="Implementation\ArchiveNMController.cs" />
+    <Compile Include="Implementation\ArchiveTweetsController.cs" />
+    <Compile Include="Implementation\ClipController.cs" />
+    <Compile Include="Implementation\CustomCategoryController.cs" />
+    <Compile Include="Implementation\IQAgentResultsController.cs" />
+    <Compile Include="Implementation\IQAgent_SearchRequestController.cs" />
+    <Compile Include="Implementation\IQMediaGroupExceptionsController.cs" />
+    <Compile Include="Implementation\IQ_ReportController.cs" />
+    <Compile Include="Implementation\IQ_ReportTypeController.cs" />
+    <Compile Include="Implementation\NMController.cs" />
+    <Compile Include="Implementation\RoleController.cs" />
+    <Compile Include="Implementation\SMController.cs" />
+    <Compile Include="Implementation\SocialMediaController.cs" />
+    <Compile Include="Implementation\TwitterController.cs" />
+    <Compile Include="Interface\IArchiveClipController.cs" />
+    <Compile Include="Interface\IArchiveNMController.cs" />
+    <Compile Include="Interface\IArchiveTweetsController.cs" />
+    <Compile Include="Interface\IClipController.cs" />
+    <Compile Include="Interface\ICustomCategoryController.cs" />
+    <Compile Include="Interface\IIQAgentResultsController.cs" />
+    <Compile Include="Interface\IIQAgent_SearchRequestController.cs" />
+    <Compile Include="Interface\IIQMediaGroupExceptionsController.cs" />
+    <Compile Include="Interface\IIQ_ReportController.cs" />
+    <Compile Include="Interface\IIQ_ReportTypeController.cs" />
+    <Compile Include="Interface\INMController.cs" />
+    <Compile Include="Interface\IRoleController.cs" />
+    <Compile Include="Interface\ISMController.cs" />
+    <Compile Include="Interface\ISocialMediaController.cs" />
+    <Compile Include="Interface\ITwitterController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Reports.Model\IQMediaGroup.Reports.Model.csproj">
+      <Project>{BD4C5B0F-5CD2-487E-919F-5F8FE1C68394}</Project>
+      <Name>IQMediaGroup.Reports.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,143 @@
+﻿@model IQMedia.Model.IQUGCArchiveResult
+@if (Model != null && Model.IQUGCArchiveList != null)
+{
+    IQMedia.Model.SessionInformation sessionInformation = IQMedia.WebApplication.Utility.CommonFunctions.GetSessionInformation();
+    foreach (IQMedia.Model.IQUGCArchiveModel item in Model.IQUGCArchiveList)
+    {
+        string Month = item.AirDate.HasValue ? item.AirDate.Value.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+        string Day = item.AirDate.HasValue != null ? item.AirDate.Value.Day.ToString() : string.Empty;
+        string Time = item.AirDate.HasValue != null ? item.AirDate.Value.ToString("hh:mm tt") : string.Empty;
+        string strDesc = string.Empty;
+        string catimg = string.Empty;
+        if (!string.IsNullOrWhiteSpace(item.Description))
+        {
+            strDesc = item.Description.Length > 300 ? item.Description.Substring(0, 300) : item.Description;
+        }
+        switch (item.FileType)
+        {
+            case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.VMedia: 
+    <div id="divIQUGCArchive_@item.IQUGCArchiveKey" class="media">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@Month</span><div>
+                    <span class="today">@Day</span></div>
+                <span class="time">@Time</span></div>
+            <div align="center" class="network">
+                <img src="~/images/MediaIcon/video-ugc.png" alt="ugc" /></div>
+        </div>
+        <div class="pull-left  media-body maxWidth63p">
+            <span class="media-heading"  id="spanUGCTitle_@item.IQUGCArchiveKey" >@item.Title</span>
+            <div class="clearfix" id="divUGCDescription_@item.IQUGCArchiveKey">
+                @Html.Raw(@IQMedia.Shared.Utility.CommonFunctions.ProcessHighlightingText(item.Description, strDesc))
+            </div>
+        </div>
+        <div class="pull-right">
+            <div class="pull-left video-thumb-width">
+                <div class="positionRelative" style="text-align:center;">
+                    <a class="cursorPointer" onclick="LoadPlayerbyGuidTS('@item.UGCGuid','','',true);">
+                        <img src="@(!string.IsNullOrWhiteSpace(item.ThumbnailImage) ? item.ThumbnailImage.Replace("\\", "/") : "../../Images/video.png")" class="maxwidth130" style="max-height:100px;" alt="video icon"/></a></div>
+            </div>
+            @if (sessionInformation.Isv4UGCUploadEdit)
+            {
+                <div class="pull-right">
+                    <input type="checkbox" onclick="javascript:void(0);" id="chkIQUGCArchive_@item.IQUGCArchiveKey" value="@item.IQUGCArchiveKey" />
+                </div>
+            }
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDiv float-left marginleft62">
+                <div class="TVvideo-tags margintop0  marginright35 actionBarsection">
+                    @( item.DateUploaded.HasValue ? item.DateUploaded.Value.ToString("MMM dd, yyyy hh:mm:ss tt") : string.Empty)
+                </div>
+            </div>
+            <div class="marginRight10 pull-right minWidth52IE8">
+                <div class="margintop2">
+                    @if (sessionInformation.Isv4UGCUploadEdit)
+                    {<a href="javascript:void(0);"  class="marginLeft13 fleft cursorPointer" title="Edit Record" onclick="GetUGCContentEditForm(@item.IQUGCArchiveKey);"><img src="~/images/edit.png" alt="edit" /></a>}
+                    @if (sessionInformation.Isv4UGCDownload)
+                    {<a href="javascript:void(0);" onclick="DownloadUGCFile('@item.IQUGCArchiveKey');" class="marginLeft13 fleft cursorPointer saveMedia">
+                        <img title="Download" alt="Donwload" src="~/images/save.png" /></a>}
+                    @if (sessionInformation.Isv4UGCUploadEdit)
+                    {<a href="javascript:void(0);" class="marginLeft13 fleft cursorPointer" title="Delete Item" onclick="DeleteIQUGCArchiveByID('@item.IQUGCArchiveKey');">
+                        <img src="~/images/trash.png" alt="Delete" />
+                    </a>}
+                </div>
+            </div>
+        </div>
+    </div>
+                    break;
+            case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Doc:
+            case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Excel:
+            case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Pdf:
+            case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Image:
+    <div class="media" id="divIQUGCArchive_@item.IQUGCArchiveKey">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@Month</span><div>
+                    <span class="today">@Day</span></div>
+                <span class="time">@Time</span></div>
+            <div align="center" class="network">
+                @switch (item.FileType)
+                {
+                    case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Doc:
+                        catimg = "word.png";
+                        break;
+                    case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Excel:
+                        catimg = "excel.png";
+                        break;
+                    case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Pdf:
+                        catimg = "pdf.png";
+                        break;
+                    case IQMedia.Shared.Utility.CommonFunctions.IQUGCMediaTypes.Image:
+                        catimg = "image.png";
+                        break;
+                    default:
+                        catimg = string.Empty;
+                        break;
+                }
+                <img src="/images/MediaIcon/@catimg">
+             </div>
+        </div>
+        <div class="pull-left maxWidth83">
+            <div>
+                <span class="media-heading"><a target="_blank" href="@item.MediaUrl" id="spanUGCTitle_@item.IQUGCArchiveKey">@Html.Raw(item.Title)</a>
+                </span>
+            </div>
+            <div class="newsMediadiv" id="divUGCDescription_@item.IQUGCArchiveKey">
+                @Html.Raw(@IQMedia.Shared.Utility.CommonFunctions.ProcessHighlightingText(item.Description, strDesc))
+            </div>
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="javascript:void(0);" id="chkIQUGCArchive_@item.IQUGCArchiveKey" value="@item.IQUGCArchiveKey" />
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDiv float-left">
+                <div style="width: 65px" class="float-left">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="float-left actionBarsection">
+                    @( item.DateUploaded.HasValue ? item.DateUploaded.Value.ToString("MMM dd, yyyy hh:mm:ss tt") : string.Empty)
+                </div>
+            </div>
+            <div class="marginRight10 pull-right minWidth52IE8">
+                <div class="margintop2">
+                    @if (sessionInformation.Isv4UGCUploadEdit)
+                    {<a href="javascript:void(0);"  class="marginLeft13 fleft cursorPointer" title="Edit Record" onclick="GetUGCContentEditForm(@item.IQUGCArchiveKey);"><img src="~/images/edit.png" alt="edit" /></a>}
+                    @if (sessionInformation.Isv4UGCDownload)
+                    {<a href="javascript:void(0);" onclick="DownloadUGCFile('@item.IQUGCArchiveKey');" class="marginLeft13 fleft cursorPointer saveMedia">
+                        <img title="Download" alt="Donwload" src="~/images/save.png" /></a>}
+                    @if (sessionInformation.Isv4UGCUploadEdit)
+                    {<a href="javascript:void(0);" class="marginLeft13 fleft cursorPointer" title="Delete Item" onclick="DeleteIQUGCArchiveByID('@item.IQUGCArchiveKey');">
+                        <img src="~/images/trash.png" alt="Delete" />
+                    </a>}
+                    <a id="aShowNewsPM_@item.IQUGCArchiveKey" target="_blank" href="@(@item.MediaUrl)" class="marginLeft13 fleft cursorPointer">
+                        <img title="View Article" alt="View" src="~/images/viewArticle.png" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                                   break;
+        }
+    }
+}

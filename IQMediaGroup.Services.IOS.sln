@@ -1,0 +1,95 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Services.IOS.ExportClip", "IQMediaGroup.Services.IOS.ExportClip\IQMediaGroup.Services.IOS.ExportClip.csproj", "{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common.IOS", "IQMediaGroup.Common.IOS\IQMediaGroup.Common.IOS.csproj", "{70493E33-472E-4DC1-AC68-34BA3B8210CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Domain.IOS", "IQMediaGroup.Domain.IOS\IQMediaGroup.Domain.IOS.csproj", "{824962A8-0320-4414-8C1B-00B39BC78A60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Logic.IOS", "IQMediaGroup.Logic.IOS\IQMediaGroup.Logic.IOS.csproj", "{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IQMediaGroup.Services.IOS.ExportSetup", "IQMediaGroup.Services.IOS.ExportSetup\IQMediaGroup.Services.IOS.ExportSetup.vdproj", "{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IQMediaGroup.Services.IOS.ExportClip\\IQMediaGroup.Services.IOS.ExportClip.csproj
+		SccProjectName1 = IQMediaGroup.Services.IOS.ExportClip
+		SccLocalPath1 = IQMediaGroup.Services.IOS.ExportClip
+		SccProjectUniqueName2 = IQMediaGroup.Common.IOS\\IQMediaGroup.Common.IOS.csproj
+		SccProjectName2 = IQMediaGroup.Common.IOS
+		SccLocalPath2 = IQMediaGroup.Common.IOS
+		SccProjectUniqueName3 = IQMediaGroup.Domain.IOS\\IQMediaGroup.Domain.IOS.csproj
+		SccProjectName3 = IQMediaGroup.Domain.IOS
+		SccLocalPath3 = IQMediaGroup.Domain.IOS
+		SccProjectUniqueName4 = IQMediaGroup.Logic.IOS\\IQMediaGroup.Logic.IOS.csproj
+		SccProjectName4 = IQMediaGroup.Logic.IOS
+		SccLocalPath4 = IQMediaGroup.Logic.IOS
+		SccProjectUniqueName5 = IQMediaGroup.Services.IOS.ExportSetup\\IQMediaGroup.Services.IOS.ExportSetup.vdproj
+		SccProjectName5 = IQMediaGroup.Services.IOS.ExportSetup
+		SccLocalPath5 = IQMediaGroup.Services.IOS.ExportSetup
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Debug|x86.ActiveCfg = Debug|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Debug|x86.Build.0 = Debug|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Release|Any CPU.ActiveCfg = Release|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Release|Mixed Platforms.Build.0 = Release|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Release|x86.ActiveCfg = Release|x86
+		{C6F1D730-91EF-4FBE-B587-51401D1ADBFB}.Release|x86.Build.0 = Release|x86
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{70493E33-472E-4DC1-AC68-34BA3B8210CD}.Release|x86.ActiveCfg = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{824962A8-0320-4414-8C1B-00B39BC78A60}.Release|x86.ActiveCfg = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A2E8DE32-1668-4BB4-A6EF-8E5D763A9E1E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Debug|Any CPU.ActiveCfg = Debug
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Debug|Mixed Platforms.ActiveCfg = Debug
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Debug|x86.ActiveCfg = Debug
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Release|Any CPU.ActiveCfg = Release
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Release|Mixed Platforms.ActiveCfg = Release
+		{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}.Release|x86.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

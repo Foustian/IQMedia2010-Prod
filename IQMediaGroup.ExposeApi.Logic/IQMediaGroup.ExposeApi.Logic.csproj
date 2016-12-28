@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{401A6840-57EC-44F5-9BBB-8B08FB03233E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.ExposeApi.Logic</RootNamespace>
+    <AssemblyName>IQMediaGroup.ExposeApi.Logic</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArchiveLogic.cs" />
+    <Compile Include="AuthenticationLogic.cs" />
+    <Compile Include="BaseLogic.cs" />
+    <Compile Include="CategoryLogic.cs" />
+    <Compile Include="Config\ConfigSettings.cs" />
+    <Compile Include="Config\Sections\MessageSettings.cs" />
+    <Compile Include="ILogic.cs" />
+    <Compile Include="IQAgentLogic.cs" />
+    <Compile Include="LogicFactory.cs" />
+    <Compile Include="NMLogic.cs" />
+    <Compile Include="PMGSearchLogLogic.cs" />
+    <Compile Include="PMLogic.cs" />
+    <Compile Include="PQLogic.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RadioStationLogic.cs" />
+    <Compile Include="RawMediaLogic.cs" />
+    <Compile Include="SMLogic.cs" />
+    <Compile Include="SolrEngineLogic.cs" />
+    <Compile Include="StatskedprogLogic.cs" />
+    <Compile Include="TMLogic.cs" />
+    <Compile Include="TVLogic.cs" />
+    <Compile Include="TWLogic.cs" />
+    <Compile Include="ValidationLogic.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FeedsSearch\FeedsSearch.csproj">
+      <Project>{CB4A97E5-1C6F-4BF0-AEA4-B8D143CBD503}</Project>
+      <Name>FeedsSearch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.ExposeApi.Domain\IQMediaGroup.ExposeApi.Domain.csproj">
+      <Project>{02D09AB6-1296-48CB-82B5-B0930489C468}</Project>
+      <Name>IQMediaGroup.ExposeApi.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Security\IQMedia.Security\IQMedia.Security.csproj">
+      <Project>{CE5163B5-A186-41FA-9BC7-CE88FF750F39}</Project>
+      <Name>IQMedia.Security</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

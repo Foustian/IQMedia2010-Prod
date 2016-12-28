@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupRemoteModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupRemoteModelStoreContainer">
+          <EntitySet Name="IQService_Export" EntityType="IQMediaGroupRemoteModel.Store.IQService_Export" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="IQService_Export">
+          <Key>
+            <PropertyRef Name="IQService_ExportKey" />
+          </Key>
+          <Property Name="IQService_ExportKey" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ClipGUID" Type="uniqueidentifier" />
+          <Property Name="ClipRemoteLocation" Type="varchar" MaxLength="250" />
+          <Property Name="ClipInfo" Type="xml" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="DateModified" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupRemoteModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupRemoteEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="IQService_Export" EntityType="IQMediaGroupRemoteModel.IQService_Export" />
+        </EntityContainer>
+        <EntityType Name="IQService_Export">
+          <Key>
+            <PropertyRef Name="IQService_ExportKey" />
+          </Key>
+          <Property Type="Int64" Name="IQService_ExportKey" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Guid" Name="ClipGUID" />
+          <Property Type="String" Name="ClipRemoteLocation" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ClipInfo" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DateCreated" />
+          <Property Type="DateTime" Name="DateModified" />
+          <Property Type="Boolean" Name="IsActive" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupRemoteModelStoreContainer" CdmEntityContainer="IQMediaGroupRemoteEntities" >
+          <EntitySetMapping Name="IQService_Export">
+            <EntityTypeMapping TypeName="IQMediaGroupRemoteModel.IQService_Export">
+              <MappingFragment StoreEntitySet="IQService_Export">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ClipInfo" ColumnName="ClipInfo" />
+                <ScalarProperty Name="ClipRemoteLocation" ColumnName="ClipRemoteLocation" />
+                <ScalarProperty Name="ClipGUID" ColumnName="ClipGUID" />
+                <ScalarProperty Name="IQService_ExportKey" ColumnName="IQService_ExportKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMediaGroup.ExportClip" >
+        <EntityTypeShape EntityType="IQMediaGroupRemoteModel.IQService_Export" Width="1.5" PointX="0.75" PointY="0.75" Height="2.085348307291667" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

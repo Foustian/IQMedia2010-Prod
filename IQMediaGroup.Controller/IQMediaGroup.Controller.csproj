@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{16F7492F-BD20-4DD7-9E84-DA7FDD882F43}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.Controller</RootNamespace>
+    <AssemblyName>IQMediaGroup.Controller</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IQMedia.Logic">
+      <HintPath>..\IQMediaGroup.WebApplication\bin\IQMedia.Logic.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Code\CommonController.cs" />
+    <Compile Include="Common\IQMediaScript.cs" />
+    <Compile Include="Factory\ControllerFactory.cs" />
+    <Compile Include="Implementation\ArchiveBLPMController.cs" />
+    <Compile Include="Implementation\ArchiveBLPMDownloadController.cs" />
+    <Compile Include="Implementation\ArchiveClipController.cs" />
+    <Compile Include="Implementation\ArchiveNMController.cs" />
+    <Compile Include="Implementation\ArchiveNMDownloadController.cs" />
+    <Compile Include="Implementation\ArchiveSMDownloadController.cs" />
+    <Compile Include="Implementation\ArchiveTweetsController.cs" />
+    <Compile Include="Implementation\ClientController.cs" />
+    <Compile Include="Implementation\ClipController.cs" />
+    <Compile Include="Implementation\ClipDownloadController.cs" />
+    <Compile Include="Implementation\ContactUsController.cs" />
+    <Compile Include="Implementation\ClientRoleController.cs" />
+    <Compile Include="Implementation\CustomCategoryController.cs" />
+    <Compile Include="Implementation\InboundReportingController.cs" />
+    <Compile Include="Implementation\IQAgent_NMResultsController.cs" />
+    <Compile Include="Implementation\IQAgent_SMResultsController.cs" />
+    <Compile Include="Implementation\IQAgent_TwitterResultsController.cs" />
+    <Compile Include="Implementation\IQClient_CustomSettingsController.cs" />
+    <Compile Include="Implementation\IQClient_UGCMapController.cs" />
+    <Compile Include="Implementation\IQCoreClipMetaController.cs" />
+    <Compile Include="Implementation\IQCustomer_DefaultSettingsController.cs" />
+    <Compile Include="Implementation\IQCustomer_SavedSearchController.cs" />
+    <Compile Include="Implementation\IQNielsenSquadController.cs" />
+    <Compile Include="Implementation\IQRegionController.cs" />
+    <Compile Include="Implementation\IQServiceUGCRawClipExportController.cs" />
+    <Compile Include="Implementation\IQ_CompeteAllController.cs" />
+    <Compile Include="Implementation\IQ_NewsController.cs" />
+    <Compile Include="Implementation\IQ_SMSCampaignController.cs" />
+    <Compile Include="Implementation\NB_GenreController.cs" />
+    <Compile Include="Implementation\NB_NewsCategoryController.cs" />
+    <Compile Include="Implementation\NB_PublicationCategoryController.cs" />
+    <Compile Include="Implementation\NB_RegionController.cs" />
+    <Compile Include="Implementation\OutboundReportingController.cs" />
+    <Compile Include="Implementation\RawMediaController.cs" />
+    <Compile Include="Implementation\SearchLogController.cs" />
+    <Compile Include="Implementation\IQNotificationSettingsController.cs" />
+    <Compile Include="Implementation\IQAgentResultsController.cs" />
+    <Compile Include="Implementation\IQNotificationTrackingController.cs" />
+    <Compile Include="Implementation\Iq_Service_logController.cs" />
+    <Compile Include="Implementation\IQAgentSearchResponceController.cs" />
+    <Compile Include="Implementation\IQAgentSearchRequestController.cs" />
+    <Compile Include="Common\IQMediaPlayer.cs" />
+    <Compile Include="Implementation\CustomerRoleController.cs" />
+    <Compile Include="Implementation\RL_GUIDSController.cs" />
+    <Compile Include="Implementation\IQ_STATIONController.cs" />
+    <Compile Include="Implementation\RoleController.cs" />
+    <Compile Include="Implementation\IQMediaGroupExceptionsController.cs" />
+    <Compile Include="Implementation\CustomerController.cs" />
+    <Compile Include="Implementation\SocialMediaController.cs" />
+    <Compile Include="Implementation\StatSkedProgController.cs" />
+    <Compile Include="Implementation\UGCDownloadTrackingController.cs" />
+    <Compile Include="Implementation\UGCRawMediaController.cs" />
+    <Compile Include="Implementation\UGC_Upload_LogController.cs" />
+    <Compile Include="Interface\IArchiveBLPMController.cs" />
+    <Compile Include="Interface\IArchiveBLPMDownloadController.cs" />
+    <Compile Include="Interface\IArchiveNMController.cs" />
+    <Compile Include="Interface\IArchiveNMDownloadController.cs" />
+    <Compile Include="Interface\IArchiveSMDownloadController.cs" />
+    <Compile Include="Interface\IArchiveTweetsController.cs" />
+    <Compile Include="Interface\IClipDownloadController.cs" />
+    <Compile Include="Interface\ICustomCategoryController.cs" />
+    <Compile Include="Interface\IInboundReportingController.cs" />
+    <Compile Include="Interface\IIQAgent_NMResultsController.cs" />
+    <Compile Include="Interface\IIQAgent_SMResultsController.cs" />
+    <Compile Include="Interface\IIQAgent_TwitterResultsController.cs" />
+    <Compile Include="Interface\IIQClient_CustomSettingsController.cs" />
+    <Compile Include="Interface\IIQClient_UGCMapController.cs" />
+    <Compile Include="Interface\IIQCoreClipMetaController.cs" />
+    <Compile Include="Interface\IIQCustomer_DefaultSettingsController.cs" />
+    <Compile Include="Interface\IIQCustomer_SavedSearchController.cs" />
+    <Compile Include="Interface\IIQNielsenSquadController.cs" />
+    <Compile Include="Interface\IIQRegionController.cs" />
+    <Compile Include="Interface\IIQServiceUGCRawClipExportController.cs" />
+    <Compile Include="Interface\IIQ_CompeteAllController.cs" />
+    <Compile Include="Interface\IIQ_NewsController.cs" />
+    <Compile Include="Interface\IIQ_SMSCampaignController.cs" />
+    <Compile Include="Interface\INB_GenreController.cs" />
+    <Compile Include="Interface\INB_NewsCategoryController.cs" />
+    <Compile Include="Interface\INB_PublicationCategoryController.cs" />
+    <Compile Include="Interface\INB_RegionController.cs" />
+    <Compile Include="Interface\IOutboundReportingController.cs" />
+    <Compile Include="Interface\IRawMediaController.cs" />
+    <Compile Include="Interface\ISearchLogController.cs" />
+    <Compile Include="Interface\IIQNotificationSettingsController.cs" />
+    <Compile Include="Interface\IIQAgentResultsController.cs" />
+    <Compile Include="Interface\IIQNotificationTrackingController.cs" />
+    <Compile Include="Interface\IIq_Service_logController.cs" />
+    <Compile Include="Interface\IRL_GUIDSController.cs" />
+    <Compile Include="Interface\IIQ_STATIONController.cs" />
+    <Compile Include="Interface\ISearchResponceController.cs" />
+    <Compile Include="Interface\ISearchRequestController.cs" />
+    <Compile Include="Interface\IArchiveClipController.cs" />
+    <Compile Include="Interface\IClientRoleController.cs" />
+    <Compile Include="Interface\IClientController.cs" />
+    <Compile Include="Interface\ICustomerRoleController.cs" />
+    <Compile Include="Interface\IRoleController.cs" />
+    <Compile Include="Interface\IIQMediaGroupExceptionsController.cs" />
+    <Compile Include="Interface\IClipController.cs" />
+    <Compile Include="Interface\IContactUsController.cs" />
+    <Compile Include="Interface\ICustomerController.cs" />
+    <Compile Include="Interface\ISocialMediaController.cs" />
+    <Compile Include="Interface\IStatSkedProgController.cs" />
+    <Compile Include="Interface\IUGCDownloadTrackingController.cs" />
+    <Compile Include="Interface\IUGCRawMediaController.cs" />
+    <Compile Include="Interface\IUGC_Upload_LogController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Core\IQMediaGroup.Core.csproj">
+      <Project>{30193821-3397-4049-BF34-CCD4332E027A}</Project>
+      <Name>IQMediaGroup.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IQMediaGroup.Model\IQMediaGroup.Model.csproj">
+      <Project>{ECD89522-E787-4273-ADFB-5814E5FBED99}</Project>
+      <Name>IQMediaGroup.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PMGSearch\PMGSearch\PMGSearch.csproj">
+      <Project>{669A2777-33C6-4458-99D7-49A7466FE662}</Project>
+      <Name>PMGSearch</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\IQMediaGroup.Core.dll" />
+    <Content Include="bin\Debug\IQMediaGroup.Core.pdb" />
+    <Content Include="bin\Debug\IQMediaGroup.Model.dll" />
+    <Content Include="bin\Debug\IQMediaGroup.Model.pdb" />
+    <Content Include="bin\Debug\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="bin\Debug\Microsoft.Practices.EnterpriseLibrary.Common.xml" />
+    <Content Include="bin\Debug\Microsoft.Practices.EnterpriseLibrary.Data.dll" />
+    <Content Include="bin\Debug\Microsoft.Practices.EnterpriseLibrary.Data.xml" />
+    <Content Include="bin\Debug\Microsoft.Practices.ObjectBuilder.dll" />
+    <Content Include="bin\Debug\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="bin\Debug\Microsoft.Practices.Unity.dll" />
+    <Content Include="bin\Debug\IQMedia.Common.dll" />
+    <Content Include="bin\Debug\IQMedia.Domain.dll" />
+    <Content Include="bin\Debug\IQMedia.Logic.dll" />
+    <Content Include="bin\Debug\IQMedia.Web.Common.dll" />
+    <Content Include="bin\Release\IQMediaGroup.Controller.dll" />
+    <Content Include="bin\Release\IQMediaGroup.Controller.pdb" />
+    <Content Include="bin\Release\IQMediaGroup.Core.dll" />
+    <Content Include="bin\Release\IQMediaGroup.Core.pdb" />
+    <Content Include="bin\Release\IQMediaGroup.Model.dll" />
+    <Content Include="bin\Release\IQMediaGroup.Model.pdb" />
+    <Content Include="bin\Release\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="bin\Release\Microsoft.Practices.EnterpriseLibrary.Common.xml" />
+    <Content Include="bin\Release\Microsoft.Practices.EnterpriseLibrary.Data.dll" />
+    <Content Include="bin\Release\Microsoft.Practices.EnterpriseLibrary.Data.xml" />
+    <Content Include="bin\Release\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="bin\Release\Microsoft.Practices.Unity.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\x64\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

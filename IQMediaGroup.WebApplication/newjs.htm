@@ -1,0 +1,56 @@
+
+<html>
+  <head>
+     <script type="text/javascript" >
+        var childWindow;
+
+	function togglePref() {
+	    childWindow = window.open("http://qa.iqmediacorp.com/ProPrep/", "prefPopup", "width=400,height=700");
+            childWindow.onload = function() {
+		    var childDoc = childWindow.document;
+	        alert('childDoc');
+	    	var childLink = childDoc.createElement("input");
+	    	childLink.setAttribute("type", "button");
+	    	childLink.setAttribute("value", "Print Article");
+
+	    	childDoc.body.appendChild(childLink);
+                alert(childDoc.body);
+            };
+        }
+
+        function togglePref2() {
+            childWindow = window.open("http://qa.iqmediacorp.com/ProPrep/", "prefPopup2", "width=400,height=700");
+            childWindow.addEventListener('load', doSomething, true);
+        }
+
+        function doSomething() {
+            var childDoc = childWindow.document;
+            alert('childDoc');
+            var childLink = childDoc.createElement("input");
+            childLink.setAttribute("type", "button");
+            childLink.setAttribute("value", "Print Article");
+
+            childDoc.body.appendChild(childLink);
+            alert(childDoc.body);
+        }	
+     </script>
+  </head>
+  <body>
+      <form id="from1" >
+
+        <input type=button value="Click me to goto Google" onclick="LoadForm()">
+      </form>
+      <form id="myawsmform" method="get" target="myawsmwindow" >
+            <input type="submit" />
+      </form>
+</body>	
+</html>
+<script type="text/javascript">
+
+    function LoadForm() {
+        var myawsmform = document.getElementById("myawsmform");
+        myawsmform.action = "http://qa.iqmediacorp.com/ProPrep/";
+        myawsmform.submit();
+    }
+</script>
+

@@ -1,0 +1,28 @@
+<RegexExp>
+  <Regex Expression="&amp;gt(?!;)" ReplaceWith="&amp;gt;" />
+  <Regex Expression="&amp;g(?!t;)" ReplaceWith="&amp;gt;" />
+  <Regex Expression="&amp;apos(?!;)" ReplaceWith="&amp;apos;" />
+  <Regex Expression="&amp;apo(?!s;)" ReplaceWith="&amp;apos;" />
+  <Regex Expression="&amp;ap(?!os;)" ReplaceWith="&amp;apos;" />
+  <Regex Expression="&amp;a(?!pos;)" ReplaceWith="&amp;apos;" />
+  <Regex Expression="&amp;quot(?!;)" ReplaceWith="&amp;quot;" />
+  <Regex Expression="&amp;quo(?!t;)" ReplaceWith="&amp;quot;" />
+  <Regex Expression="&amp;qu(?!ot;)" ReplaceWith="&amp;quot;" />
+  <Regex Expression="&amp;q(?!uot;)" ReplaceWith="&amp;quot;" />
+  <Regex Expression="&amp;lt;/p(?!>)" ReplaceWith="&amp;lt;/p>" />
+  <Regex Expression="&amp;reg;" ReplaceWith="&amp;#174;" />
+  <Regex Expression="&amp;" ReplaceWith="&amp;amp;" />
+  <Regex Expression="(?&amp;lt;=&amp;lt;body region=&quot;\w*&quot;>)(.*?)(?=&amp;lt;p)" ReplaceWith="&amp;lt;div>" />
+  <Regex Expression="&amp;lt;\?xml(.*?)(?:&amp;lt;div>)" ReplaceWith="" />
+  <Regex Expression="(?&amp;lt;=&amp;lt;/p>)(?!&amp;lt;p)(.*?)(?=&amp;lt;)" ReplaceWith="" />
+  <Regex Expression="&amp;lt;p[^>]*[^/]\>[^&amp;lt;]*?(?=\s*\&amp;lt;([^/]|/(?!p)))" ReplaceWith="$0&amp;lt;/p>" />
+  <Regex Expression="&amp;lt;p\s*(\bxml:id=&quot;\s*\w*&quot;\s*begin=&quot;\s*\w*&quot;\s*end=&quot;\s*\w*&quot;)>+(.*?)(?=&amp;lt;/p>)" ReplaceWith="" />
+  <Regex Expression="&amp;lt;p\ss*(\bxml:id=&quot;\s*\w*&quot;\s*begin=&quot;\s*\w*&quot;\s*end=&quot;\s*\w*&quot;)(?!>)" ReplaceWith="$0>" />
+  <Regex Expression="(?&amp;lt;!&amp;lt;/tt>\s*)(?=$)" ReplaceWith="&amp;lt;/tt>" />
+  <Regex Expression="(?&amp;lt;!&amp;lt;/body>\s*)(?=&amp;lt;/tt>)" ReplaceWith="&amp;lt;/body>" />
+  <Regex Expression="(?&amp;lt;!&amp;lt;/div>\s*)(?=&amp;lt;/body>)" ReplaceWith="&amp;lt;/div>" />
+  <Regex Expression="(&amp;lt;p\s*(\bxml:id=&quot;\s*\w*&quot;\s*begin=&quot;\s*\w*&quot;\s*end=&quot;\s*\w*&quot;)>(.*?)(?=&amp;lt;/div>))" ReplaceWith="" />
+  <Regex Expression="(?&amp;lt;=&amp;lt;/p>)(.*?)(?=&amp;lt;/div>)" ReplaceWith="" />
+  <Regex Expression="(?&amp;lt;=&amp;lt;/p>)(.*?)(?=&amp;lt;p)" ReplaceWith="" />
+</RegexExp>
+

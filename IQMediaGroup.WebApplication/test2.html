@@ -1,0 +1,56 @@
+<object height="340" width="545" data="http://local.iqmediacorp.com/FTPExample.swf"
+    type="application/x-shockwave-flash" name="HYETA" id="HUY">
+    <param value="http://iqmediacorp.com/FTPExample.swf" name="movie">
+    <param value="true" name="allowfullscreen">
+    <param value="always" name="allowscriptaccess">
+    <param value="high" name="quality">
+    <param value="transparent" name="wmode">
+</object>
+
+<script type="text/javascript" >
+
+    FormatDate();
+    function FormatDate() {
+        var DateStr = "Apr 25 2012 11:58PM";
+        DateStr.replace("PM", " PM");
+        var DateVar = new Date(DateStr);
+        var HMonth, HDate, HHours, HMinutes;
+
+        if (DateVar.getMonth() > 9) {
+            HMonth = DateVar.getMonth();
+        }
+        else {
+            HMonth = '0' + DateVar.getMonth();
+            
+        }
+
+        if (DateVar.getDate() > 9) {
+            HDate = DateVar.getDate();
+            
+        }
+        else {
+            HDate = '0' + DateVar.getDate();
+        }
+
+       
+        if (DateVar.getHours() > 9) {
+            HHours = DateVar.getHours();
+        }
+        else {
+            HHours = '0' + DateVar.getHours();
+            
+        }
+
+        if (DateVar.getMinutes() > 9) {
+            HMinutes = DateVar.getMinutes();
+        }
+        else {
+            HMinutes = '0' + DateVar.getMinutes();
+            
+        }
+
+        var MyDateFmt = DateVar.getFullYear() + '-' + HMonth + '-' + HDate + 'T' + HHours + ':' + HMinutes + ':00Z';
+        
+    }
+
+</script>

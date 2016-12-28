@@ -1,0 +1,422 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="IQ_Five_Min_Staging" EntityType="IQMediaGroupModel.Store.IQ_Five_Min_Staging" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="IQ_Five_Min_Staging">
+          <Key>
+            <PropertyRef Name="IQ_FiveMS_Key" />
+          </Key>
+          <Property Name="IQ_FiveMS_Key" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="IQ_CC_Key" Type="varchar" MaxLength="150" />
+          <Property Name="Media_Recordfile_GUID" Type="uniqueidentifier" />
+          <Property Name="Last_Media_Segment" Type="int" />
+          <Property Name="Current_Active_Media_File" Type="varchar" MaxLength="150" />
+          <Property Name="CCTxt_Recordfile_GUID" Type="uniqueidentifier" />
+          <Property Name="Media_Process_Status" Type="varchar" MaxLength="50" />
+          <Property Name="Last_CCTxt_Segment" Type="int" />
+          <Property Name="Current_Active_CCTxt_File" Type="varchar" MaxLength="150" />
+          <Property Name="CC_Process_Status" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+        </EntityType>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQCCKey" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_InsertWithCC" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQ_CC_Key" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_SelectByIQCCKey" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQCCKey" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_SelectCCByIqCCKey" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQ_CC_Key" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQCCKey" Type="varchar" Mode="In" />
+          <Parameter Name="RecordFileGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="LastMediaSegment" Type="int" Mode="In" />
+          <Parameter Name="MediaStatus" Type="varchar" Mode="In" />
+          <Parameter Name="MediaFilename" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Five_Min_Staging_UpdateCC" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IQCCKey" Type="varchar" Mode="In" />
+          <Parameter Name="RecordFileGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="LastCCTextSegment" Type="int" Mode="In" />
+          <Parameter Name="CCTxtFilename" Type="varchar" Mode="In" />
+          <Parameter Name="CCTxtStatus" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Ingestion_SelectParamsForFiveMinDuration" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StationID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQ_Ingestion_SelectParamsForOneHourDuration" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StationID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_Clip_CheckClipByRecordfileGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="MediaGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_Recordfile_UpdateStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecordGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_RootPath_SelectMediaLocationByRecordFileGUID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecordFileGUID" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_RootPath_SelectRoothPathByIPAddress" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ip_adress_mask" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_Rootpath_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ID" Type="bigint" Mode="In" />
+          <Parameter Name="status" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQCore_Source_SelectGuidBySourceID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SourceID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQService_Expiration_SelectServiceExpiration" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="NumRecord" Type="bigint" Mode="In" />
+          <Parameter Name="RPSiteID" Type="varchar" Mode="In" />
+          <Parameter Name="IsRemoteLocation" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="usp_coresvc_IQService_Expiration_UpdateStatus" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="RecordfileGuid" Type="uniqueidentifier" Mode="In" />
+        </Function>
+        <Function Name="usp_IQCore_Recordfile_CreateNewRecordFile" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecordFileGuid" Type="uniqueidentifier" Mode="InOut" />
+          <Parameter Name="DestinationFile" Type="varchar" Mode="InOut" />
+          <Parameter Name="FileExtension" Type="varchar" Mode="In" />
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndOffset" Type="int" Mode="In" />
+          <Parameter Name="SourceGuid" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="RecordFileTypeID" Type="int" Mode="In" />
+          <Parameter Name="RootPathID" Type="int" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+          <Parameter Name="IsUGC" Type="bit" Mode="In" />
+          <Parameter Name="UGCMetaData" Type="xml" Mode="In" />
+          <Parameter Name="Message" Type="varchar" Mode="InOut" />
+        </Function>
+        <Function Name="usp_IQCore_Recordfile_UpdateRecordFile" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RecordfileID" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="Location" Type="varchar" Mode="In" />
+          <Parameter Name="EndOffset" Type="int" Mode="In" />
+          <Parameter Name="RootPathID" Type="int" Mode="In" />
+          <Parameter Name="Status" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_IQLog_Ingestion_Insert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StationID" Type="varchar" Mode="In" />
+          <Parameter Name="IQ_CC_Key" Type="varchar" Mode="In" />
+          <Parameter Name="MediaType" Type="varchar" Mode="In" />
+          <Parameter Name="date" Type="datetime" Mode="In" />
+          <Parameter Name="Level" Type="varchar" Mode="In" />
+          <Parameter Name="Logger" Type="varchar" Mode="In" />
+          <Parameter Name="LogMessage" Type="varchar" Mode="In" />
+        </Function>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupEntities" annotation:LazyLoadingEnabled="true" >
+          <FunctionImport Name="Insert_IQCore_RecordFile">
+            <Parameter Name="RecordFileGuid" Mode="InOut" Type="Guid" />
+            <Parameter Name="DestinationFile" Mode="InOut" Type="String" />
+            <Parameter Name="FileExtension" Mode="In" Type="String" />
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndOffset" Mode="In" Type="Int32" />
+            <Parameter Name="SourceGuid" Mode="In" Type="Guid" />
+            <Parameter Name="RecordFileTypeID" Mode="In" Type="Int32" />
+            <Parameter Name="RootPathID" Mode="In" Type="Int32" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="IsUGC" Mode="In" Type="Boolean" />
+            <Parameter Name="UGCMetaData" Mode="In" Type="String" />
+            <Parameter Name="Message" Mode="InOut" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="Update_IQCore_RecordFile" ReturnType="Collection(Int32)">
+            <Parameter Name="RecordfileID" Mode="In" Type="Guid" />
+            <Parameter Name="Location" Mode="In" Type="String" />
+            <Parameter Name="EndOffset" Mode="In" Type="Int32" />
+            <Parameter Name="RootPathID" Mode="In" Type="Int32" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="IQ_Five_Min_Staging" EntityType="IQMediaGroupModel.IQ_Five_Min_Staging" />
+          <FunctionImport Name="InsertFiveMinStaging" ReturnType="Collection(Int64)">
+          <Parameter Name="IQCCKey" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetFiveMinStagingByIQCCKey" ReturnType="Collection(IQMediaGroupModel.FiveMinStaging)">
+          <Parameter Name="IQCCKey" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateFiveMinStaging" ReturnType="Collection(Int32)">
+            <Parameter Name="IQCCKey" Mode="In" Type="String" />
+            <Parameter Name="RecordFileGuid" Mode="In" Type="Guid" />
+            <Parameter Name="LastMediaSegment" Mode="In" Type="Int32" />
+            <Parameter Name="MediaStatus" Mode="In" Type="String" />
+            <Parameter Name="MediaFilename" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetActiveRootPathByIP" ReturnType="Collection(IQMediaGroupModel.RootPath)">
+          <Parameter Name="ip_adress_mask" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateRootPathStatus" ReturnType="Collection(Int32)">
+            <Parameter Name="ID" Mode="In" Type="Int64" />
+            <Parameter Name="status" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="GetSourceGUIDBySourceID" ReturnType="Collection(Guid)">
+          <Parameter Name="SourceID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIQFiveMinStagingWithCC" ReturnType="Collection(Int64)">
+          <Parameter Name="IQ_CC_Key" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetFiveMinStagingCCByIQCCKey" ReturnType="Collection(IQMediaGroupModel.FiveMinStagingCC)">
+          <Parameter Name="IQ_CC_Key" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateFiveMinStagingCC" ReturnType="Collection(Int32)">
+            <Parameter Name="IQCCKey" Mode="In" Type="String" />
+            <Parameter Name="RecordFileGuid" Mode="In" Type="Guid" />
+            <Parameter Name="LastCCTextSegment" Mode="In" Type="Int32" />
+            <Parameter Name="CCTxtFilename" Mode="In" Type="String" />
+            <Parameter Name="CCTxtStatus" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetParamsForFiveMinDuration" ReturnType="Collection(IQMediaGroupModel.FiveMinIngestParam)">
+          <Parameter Name="StationID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetParamsForOneHourDuration" ReturnType="Collection(IQMediaGroupModel.OneHourIngestParam)">
+          <Parameter Name="StationID" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="InsertIQLog_Ingestion" ReturnType="Collection(Int64)">
+            <Parameter Name="StationID" Mode="In" Type="String" />
+            <Parameter Name="IQ_CC_Key" Mode="In" Type="String" />
+            <Parameter Name="MediaType" Mode="In" Type="String" />
+            <Parameter Name="date" Mode="In" Type="DateTime" />
+            <Parameter Name="Level" Mode="In" Type="String" />
+            <Parameter Name="Logger" Mode="In" Type="String" />
+            <Parameter Name="LogMessage" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="CheckClipByRecordFileGUID" ReturnType="Collection(Boolean)">
+          <Parameter Name="MediaGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="GetMediaLocationByRecordFileGUID" ReturnType="Collection(IQMediaGroupModel.MediaLocation)">
+          <Parameter Name="RecordFileGUID" Mode="In" Type="Guid" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateIQCoreRecordFileStatus" ReturnType="Collection(Int32)">
+            <Parameter Name="RecordGuid" Mode="In" Type="Guid" />
+            <Parameter Name="Status" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetServiceExpirationList" ReturnType="Collection(IQMediaGroupModel.ServiceExpiration)">
+            <Parameter Name="NumRecord" Mode="In" Type="Int64" />
+            <Parameter Name="RPSiteID" Mode="In" Type="String" />
+            <Parameter Name="IsRemoteLocation" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateIQServiceExpirationStatus" ReturnType="Collection(Int32)">
+            <Parameter Name="Status" Mode="In" Type="String" />
+            <Parameter Name="RecordfileGuid" Mode="In" Type="Guid" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="IQ_Five_Min_Staging">
+          <Key>
+            <PropertyRef Name="IQ_FiveMS_Key" />
+          </Key>
+          <Property Type="Int64" Name="IQ_FiveMS_Key" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="IQ_CC_Key" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="Media_Recordfile_GUID" />
+          <Property Type="Int32" Name="Last_Media_Segment" />
+          <Property Type="String" Name="Current_Active_Media_File" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="CCTxt_Recordfile_GUID" />
+          <Property Type="String" Name="Media_Process_Status" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="Last_CCTxt_Segment" />
+          <Property Type="String" Name="Current_Active_CCTxt_File" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CC_Process_Status" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="ModifiedDate" />
+        </EntityType>
+        <ComplexType Name="FiveMinStaging" >
+          <Property Type="String" Name="recordFileGuid" Nullable="true" />
+          <Property Type="String" Name="lastMediaSeg" Nullable="true" />
+          <Property Type="String" Name="mediaStatus" Nullable="true" />
+          <Property Type="String" Name="mediaFilename" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="RootPath" >
+          <Property Type="Int32" Name="id" Nullable="false" />
+          <Property Type="Boolean" Name="isActive" Nullable="true" />
+          <Property Type="Int32" Name="rootPathTypeID" Nullable="false" />
+          <Property Type="String" Name="storagePath" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="FiveMinStagingCC" >
+          <Property Type="String" Name="ccStatus" Nullable="true" />
+          <Property Type="String" Name="recordFileGuid" Nullable="true" />
+          <Property Type="String" Name="CCTxtFilename" Nullable="true" />
+          <Property Type="String" Name="lastCCTxtSegment" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="OneHourIngestParam" >
+          <Property Type="String" Name="LogFolder" Nullable="false" />
+          <Property Type="String" Name="LogLevel" Nullable="false" />
+          <Property Type="String" Name="InputFolder" Nullable="false" />
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="String" Name="RPLocationIP" Nullable="false" />
+          <Property Type="String" Name="MediaFileType" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="FiveMinIngestParam" >
+          <Property Type="String" Name="LogFolder" Nullable="false" />
+          <Property Type="String" Name="LogLevel" Nullable="false" />
+          <Property Type="String" Name="InputFolder" Nullable="false" />
+          <Property Type="String" Name="MediaStagingFolder" Nullable="false" />
+          <Property Type="String" Name="StationID" Nullable="false" />
+          <Property Type="String" Name="RPLocationIP" Nullable="false" />
+          <Property Type="Int32" Name="StagingRootPathID" Nullable="true" />
+          <Property Type="String" Name="DuplicateFolder" Nullable="false" />
+          <Property Type="String" Name="ProcessedFolder" Nullable="false" />
+          <Property Type="String" Name="MP4Boxlocation" Nullable="false" />
+          <Property Type="String" Name="MP4Boxtempdir" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="MediaLocation" >
+          <Property Type="Guid" Name="GUID" Nullable="false" />
+          <Property Type="String" Name="FullLocation" Nullable="false" />
+          <Property Type="String" Name="MediaStatus" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="ServiceExpiration" >
+          <Property Type="Guid" Name="GUID" Nullable="false" />
+          <Property Type="String" Name="IQCCKey" Nullable="false" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupEntities" >
+          <FunctionImportMapping FunctionImportName="Insert_IQCore_RecordFile" FunctionName="IQMediaGroupModel.Store.usp_IQCore_Recordfile_CreateNewRecordFile" />
+          <EntitySetMapping Name="IQ_Five_Min_Staging">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.IQ_Five_Min_Staging">
+              <MappingFragment StoreEntitySet="IQ_Five_Min_Staging">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CC_Process_Status" ColumnName="CC_Process_Status" />
+                <ScalarProperty Name="Current_Active_CCTxt_File" ColumnName="Current_Active_CCTxt_File" />
+                <ScalarProperty Name="Last_CCTxt_Segment" ColumnName="Last_CCTxt_Segment" />
+                <ScalarProperty Name="Media_Process_Status" ColumnName="Media_Process_Status" />
+                <ScalarProperty Name="CCTxt_Recordfile_GUID" ColumnName="CCTxt_Recordfile_GUID" />
+                <ScalarProperty Name="Current_Active_Media_File" ColumnName="Current_Active_Media_File" />
+                <ScalarProperty Name="Last_Media_Segment" ColumnName="Last_Media_Segment" />
+                <ScalarProperty Name="Media_Recordfile_GUID" ColumnName="Media_Recordfile_GUID" />
+                <ScalarProperty Name="IQ_CC_Key" ColumnName="IQ_CC_Key" />
+                <ScalarProperty Name="IQ_FiveMS_Key" ColumnName="IQ_FiveMS_Key" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetFiveMinStagingByIQCCKey" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_SelectByIQCCKey" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.FiveMinStaging">
+                <ScalarProperty Name="recordFileGuid" ColumnName="recordFileGuid" />
+                <ScalarProperty Name="lastMediaSeg" ColumnName="lastMediaSeg" />
+                <ScalarProperty Name="mediaStatus" ColumnName="mediaStatus" />
+                <ScalarProperty Name="mediaFilename" ColumnName="mediaFilename" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertFiveMinStaging" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_Insert" />
+          <FunctionImportMapping FunctionImportName="UpdateFiveMinStaging" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_Update" />
+          <FunctionImportMapping FunctionImportName="GetActiveRootPathByIP" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_RootPath_SelectRoothPathByIPAddress">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.RootPath">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="rootPathTypeID" ColumnName="rootPathTypeID" />
+                <ScalarProperty Name="storagePath" ColumnName="storagePath" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetSourceGUIDBySourceID" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_Source_SelectGuidBySourceID" />
+          <FunctionImportMapping FunctionImportName="UpdateRootPathStatus" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_Rootpath_Update" />
+          <FunctionImportMapping FunctionImportName="InsertIQFiveMinStagingWithCC" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_InsertWithCC" />
+          <FunctionImportMapping FunctionImportName="UpdateFiveMinStagingCC" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_UpdateCC" />
+          <FunctionImportMapping FunctionImportName="GetFiveMinStagingCCByIQCCKey" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Five_Min_Staging_SelectCCByIqCCKey">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.FiveMinStagingCC">
+                <ScalarProperty Name="ccStatus" ColumnName="ccStatus" />
+                <ScalarProperty Name="recordFileGuid" ColumnName="recordFileGuid" />
+                <ScalarProperty Name="CCTxtFilename" ColumnName="CCTxtFilename" />
+                <ScalarProperty Name="lastCCTxtSegment" ColumnName="lastCCTxtSegment" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="Update_IQCore_RecordFile" FunctionName="IQMediaGroupModel.Store.usp_IQCore_Recordfile_UpdateRecordFile" />
+          <FunctionImportMapping FunctionImportName="GetParamsForFiveMinDuration" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Ingestion_SelectParamsForFiveMinDuration">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.FiveMinIngestParam">
+                <ScalarProperty Name="LogFolder" ColumnName="LogFolder" />
+                <ScalarProperty Name="LogLevel" ColumnName="LogLevel" />
+                <ScalarProperty Name="InputFolder" ColumnName="InputFolder" />
+                <ScalarProperty Name="MediaStagingFolder" ColumnName="MediaStagingFolder" />
+                <ScalarProperty Name="StationID" ColumnName="StationID" />
+                <ScalarProperty Name="RPLocationIP" ColumnName="RPLocationIP" />
+                <ScalarProperty Name="StagingRootPathID" ColumnName="StagingRootPathID" />
+                <ScalarProperty Name="DuplicateFolder" ColumnName="DuplicateFolder" />
+                <ScalarProperty Name="ProcessedFolder" ColumnName="ProcessedFolder" />
+                <ScalarProperty Name="MP4Boxlocation" ColumnName="MP4Boxlocation" />
+                <ScalarProperty Name="MP4Boxtempdir" ColumnName="MP4Boxtempdir" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetParamsForOneHourDuration" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQ_Ingestion_SelectParamsForOneHourDuration">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.OneHourIngestParam">
+                <ScalarProperty Name="LogFolder" ColumnName="LogFolder" />
+                <ScalarProperty Name="LogLevel" ColumnName="LogLevel" />
+                <ScalarProperty Name="InputFolder" ColumnName="InputFolder" />
+                <ScalarProperty Name="StationID" ColumnName="StationID" />
+                <ScalarProperty Name="RPLocationIP" ColumnName="RPLocationIP" />
+                <ScalarProperty Name="MediaFileType" ColumnName="MediaFileType" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="InsertIQLog_Ingestion" FunctionName="IQMediaGroupModel.Store.usp_IQLog_Ingestion_Insert" />
+          <FunctionImportMapping FunctionImportName="CheckClipByRecordFileGUID" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_Clip_CheckClipByRecordfileGUID" />
+          <FunctionImportMapping FunctionImportName="GetMediaLocationByRecordFileGUID" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_RootPath_SelectMediaLocationByRecordFileGUID">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.MediaLocation">
+                <ScalarProperty Name="GUID" ColumnName="GUID" />
+                <ScalarProperty Name="FullLocation" ColumnName="FullLocation" />
+                <ScalarProperty Name="MediaStatus" ColumnName="MediaStatus" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetServiceExpirationList" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQService_Expiration_SelectServiceExpiration" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="IQMediaGroupModel.ServiceExpiration">
+                <ScalarProperty Name="GUID" ColumnName="GUID" />
+                <ScalarProperty Name="IQCCKey" ColumnName="IQCCKey" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="UpdateIQServiceExpirationStatus" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQService_Expiration_UpdateStatus" />
+          <FunctionImportMapping FunctionImportName="UpdateIQCoreRecordFileStatus" FunctionName="IQMediaGroupModel.Store.usp_coresvc_IQCore_Recordfile_UpdateStatus" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Default" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMediaGroup.CoreServices" >
+        <EntityTypeShape EntityType="IQMediaGroupModel.IQ_Five_Min_Staging" Width="2.25" PointX="0.75" PointY="0.75" Height="3.3263964843749996" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

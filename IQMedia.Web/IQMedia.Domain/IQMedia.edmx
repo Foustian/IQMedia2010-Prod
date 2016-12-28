@@ -1,0 +1,1104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IQMediaGroupModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="IQMediaGroupModelStoreContainer">
+          <EntitySet Name="Customer" EntityType="IQMediaGroupModel.Store.Customer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_AssetLocation" EntityType="IQMediaGroupModel.Store.IQCore_AssetLocation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_AssetType" EntityType="IQMediaGroupModel.Store.IQCore_AssetType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_Clip" EntityType="IQMediaGroupModel.Store.IQCore_Clip" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_ClipInfo" EntityType="IQMediaGroupModel.Store.IQCore_ClipInfo" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_ClipMeta" EntityType="IQMediaGroupModel.Store.IQCore_ClipMeta" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_LegacyCustomer" EntityType="IQMediaGroupModel.Store.IQCore_LegacyCustomer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_Recordfile" EntityType="IQMediaGroupModel.Store.IQCore_Recordfile" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_RecordfileType" EntityType="IQMediaGroupModel.Store.IQCore_RecordfileType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_Recording" EntityType="IQMediaGroupModel.Store.IQCore_Recording" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_RootPath" EntityType="IQMediaGroupModel.Store.IQCore_RootPath" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_RootPathType" EntityType="IQMediaGroupModel.Store.IQCore_RootPathType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_Source" EntityType="IQMediaGroupModel.Store.IQCore_Source" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQCore_Timezone" EntityType="IQMediaGroupModel.Store.IQCore_Timezone" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_ImpressionSummary" EntityType="IQMediaGroupModel.Store.IQTrack_ImpressionSummary" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_PlayerMsgLog" EntityType="IQMediaGroupModel.Store.IQTrack_PlayerMsgLog" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_PlayLog" EntityType="IQMediaGroupModel.Store.IQTrack_PlayLog" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="IQTrack_PlaySummary" EntityType="IQMediaGroupModel.Store.IQTrack_PlaySummary" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_IQCore_AssetLocation_IQCore_AssetType" Association="IQMediaGroupModel.Store.FK_IQCore_AssetLocation_IQCore_AssetType">
+            <End Role="IQCore_AssetType" EntitySet="IQCore_AssetType" />
+            <End Role="IQCore_AssetLocation" EntitySet="IQCore_AssetLocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_AssetLocation_IQCore_RootPath" Association="IQMediaGroupModel.Store.FK_IQCore_AssetLocation_IQCore_RootPath">
+            <End Role="IQCore_RootPath" EntitySet="IQCore_RootPath" />
+            <End Role="IQCore_AssetLocation" EntitySet="IQCore_AssetLocation" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Clip_IQCore_Recordfile" Association="IQMediaGroupModel.Store.FK_IQCore_Clip_IQCore_Recordfile">
+            <End Role="IQCore_Recordfile" EntitySet="IQCore_Recordfile" />
+            <End Role="IQCore_Clip" EntitySet="IQCore_Clip" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_ClipInfo_IQCore_Clip" Association="IQMediaGroupModel.Store.FK_IQCore_ClipInfo_IQCore_Clip">
+            <End Role="IQCore_Clip" EntitySet="IQCore_Clip" />
+            <End Role="IQCore_ClipInfo" EntitySet="IQCore_ClipInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_ClipMeta_IQCore_Clip" Association="IQMediaGroupModel.Store.FK_IQCore_ClipMeta_IQCore_Clip">
+            <End Role="IQCore_Clip" EntitySet="IQCore_Clip" />
+            <End Role="IQCore_ClipMeta" EntitySet="IQCore_ClipMeta" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_RecordfileType" Association="IQMediaGroupModel.Store.FK_IQCore_Recordfile_IQCore_RecordfileType">
+            <End Role="IQCore_RecordfileType" EntitySet="IQCore_RecordfileType" />
+            <End Role="IQCore_Recordfile" EntitySet="IQCore_Recordfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_Recording" Association="IQMediaGroupModel.Store.FK_IQCore_Recordfile_IQCore_Recording">
+            <End Role="IQCore_Recording" EntitySet="IQCore_Recording" />
+            <End Role="IQCore_Recordfile" EntitySet="IQCore_Recordfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_RootPath" Association="IQMediaGroupModel.Store.FK_IQCore_Recordfile_IQCore_RootPath">
+            <End Role="IQCore_RootPath" EntitySet="IQCore_RootPath" />
+            <End Role="IQCore_Recordfile" EntitySet="IQCore_Recordfile" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recording_IQCore_Source" Association="IQMediaGroupModel.Store.FK_IQCore_Recording_IQCore_Source">
+            <End Role="IQCore_Source" EntitySet="IQCore_Source" />
+            <End Role="IQCore_Recording" EntitySet="IQCore_Recording" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_RootPath_IQCore_RootPathType" Association="IQMediaGroupModel.Store.FK_IQCore_RootPath_IQCore_RootPathType">
+            <End Role="IQCore_RootPathType" EntitySet="IQCore_RootPathType" />
+            <End Role="IQCore_RootPath" EntitySet="IQCore_RootPath" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Source_IQCore_Timezone" Association="IQMediaGroupModel.Store.FK_IQCore_Source_IQCore_Timezone">
+            <End Role="IQCore_Timezone" EntitySet="IQCore_Timezone" />
+            <End Role="IQCore_Source" EntitySet="IQCore_Source" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Name="CustomerKey" Type="bigint" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="varchar" MaxLength="50" />
+          <Property Name="LastName" Type="varchar" MaxLength="50" />
+          <Property Name="Email" Type="varchar" MaxLength="300" />
+          <Property Name="CustomerPassword" Type="varchar" MaxLength="30" />
+          <Property Name="ContactNo" Type="varchar" MaxLength="50" />
+          <Property Name="CustomerComment" Type="varchar" MaxLength="300" />
+          <Property Name="RedlassoUserName" Type="varchar" MaxLength="50" />
+          <Property Name="RedlassoPassword" Type="varchar" MaxLength="50" />
+          <Property Name="RedlassoUserGUID" Type="varchar" MaxLength="50" />
+          <Property Name="ClientID" Type="bigint" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
+          <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="CreatedDate" Type="datetime" />
+          <Property Name="ModifiedDate" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="CustomerGUID" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="IQCore_AssetLocation">
+          <Key>
+            <PropertyRef Name="_AssetGuid" />
+            <PropertyRef Name="_AssetTypeID" />
+          </Key>
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="_AssetTypeID" Type="int" Nullable="false" />
+          <Property Name="_RootPathID" Type="int" Nullable="false" />
+          <Property Name="Location" Type="varchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="IQCore_AssetType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="IQCore_Clip">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StartOffset" Type="int" Nullable="false" />
+          <Property Name="EndOffset" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="_RecordfileGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="_UserGuid" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_ClipInfo">
+          <Key>
+            <PropertyRef Name="_ClipGuid" />
+          </Key>
+          <Property Name="_ClipGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Description" Type="varchar" Nullable="false" MaxLength="2048" />
+          <Property Name="Category" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Keywords" Type="varchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="IQCore_ClipMeta">
+          <Key>
+            <PropertyRef Name="_ClipGuid" />
+            <PropertyRef Name="Field" />
+          </Key>
+          <Property Name="_ClipGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Field" Type="varchar" Nullable="false" MaxLength="128" />
+          <Property Name="Value" Type="varchar" Nullable="false" MaxLength="2048" />
+        </EntityType>
+        <EntityType Name="IQCore_LegacyCustomer">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="Password" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="Email" Type="nvarchar" Nullable="false" MaxLength="256" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="256" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="128" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="128" />
+          <Property Name="IsLockedOut" Type="bit" Nullable="false" />
+          <Property Name="_ClientGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Comment" Type="ntext" />
+          <Property Name="CreatedBy" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="CreatedDate" Type="datetime" Nullable="false" />
+          <Property Name="ModifiedBy" Type="nvarchar" Nullable="false" MaxLength="128" />
+          <Property Name="ModifiedDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_Recordfile">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Location" Type="varchar" Nullable="false" MaxLength="2048" />
+          <Property Name="Status" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="StartOffset" Type="int" Nullable="false" />
+          <Property Name="EndOffset" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="LastModified" Type="datetime" Nullable="false" />
+          <Property Name="_RecordingID" Type="int" Nullable="false" />
+          <Property Name="_RecordfileTypeID" Type="int" Nullable="false" />
+          <Property Name="_RootPathID" Type="int" Nullable="false" />
+          <Property Name="_ParentGuid" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="IQCore_RecordfileType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Extension" Type="varchar" Nullable="false" MaxLength="5" />
+        </EntityType>
+        <EntityType Name="IQCore_Recording">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="_SourceGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StartDate" Type="datetime" Nullable="false" />
+          <Property Name="EndDate" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_RootPath">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="StoragePath" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="StreamSuffixPath" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="AppName" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="_RootPathTypeID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_RootPathType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Description" Type="varchar" Nullable="false" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="IQCore_Source">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SourceID" Type="varchar" Nullable="false" MaxLength="20" />
+          <Property Name="Title" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="Logo" Type="varchar" Nullable="false" MaxLength="150" />
+          <Property Name="URL" Type="varchar" MaxLength="255" />
+          <Property Name="BroadcastType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="BroadcastLocation" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="RetentionDays" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="_TimezoneID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQCore_Timezone">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Code" Type="char" Nullable="false" MaxLength="4" />
+          <Property Name="Name" Type="varchar" Nullable="false" MaxLength="45" />
+        </EntityType>
+        <EntityType Name="IQTrack_ImpressionSummary">
+          <Key>
+            <PropertyRef Name="_AssetGuid" />
+          </Key>
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="IQTrack_PlayerMsgLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="LogDate" Type="datetime" Nullable="false" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="16" />
+          <Property Name="LogType" Type="varchar" Nullable="false" MaxLength="50" />
+          <Property Name="Message" Type="varchar" Nullable="false" MaxLength="2048" />
+          <Property Name="AdditionalData" Type="varchar" MaxLength="2048" />
+          <Property Name="Referrer" Type="varchar" MaxLength="2048" />
+          <Property Name="_AssetGuid" Type="uniqueidentifier" />
+          <Property Name="_UserGuid" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="IQTrack_PlayLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PlayDate" Type="datetime" Nullable="false" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="16" />
+          <Property Name="Referrer" Type="varchar" MaxLength="2048" />
+          <Property Name="_UserGuid" Type="uniqueidentifier" />
+        </EntityType>
+        <EntityType Name="IQTrack_PlaySummary">
+          <Key>
+            <PropertyRef Name="_AssetGuid" />
+          </Key>
+          <Property Name="_AssetGuid" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Count" Type="int" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_IQCore_AssetLocation_IQCore_AssetType">
+          <End Role="IQCore_AssetType" Type="IQMediaGroupModel.Store.IQCore_AssetType" Multiplicity="1" />
+          <End Role="IQCore_AssetLocation" Type="IQMediaGroupModel.Store.IQCore_AssetLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_AssetType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_AssetLocation">
+              <PropertyRef Name="_AssetTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_AssetLocation_IQCore_RootPath">
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.Store.IQCore_RootPath" Multiplicity="1" />
+          <End Role="IQCore_AssetLocation" Type="IQMediaGroupModel.Store.IQCore_AssetLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_AssetLocation">
+              <PropertyRef Name="_RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Clip_IQCore_Recordfile">
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Store.IQCore_Recordfile" Multiplicity="1" />
+          <End Role="IQCore_Clip" Type="IQMediaGroupModel.Store.IQCore_Clip" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Recordfile">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_Clip">
+              <PropertyRef Name="_RecordfileGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_ClipInfo_IQCore_Clip">
+          <End Role="IQCore_Clip" Type="IQMediaGroupModel.Store.IQCore_Clip" Multiplicity="1" />
+          <End Role="IQCore_ClipInfo" Type="IQMediaGroupModel.Store.IQCore_ClipInfo" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Clip">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_ClipInfo">
+              <PropertyRef Name="_ClipGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_ClipMeta_IQCore_Clip">
+          <End Role="IQCore_Clip" Type="IQMediaGroupModel.Store.IQCore_Clip" Multiplicity="1" />
+          <End Role="IQCore_ClipMeta" Type="IQMediaGroupModel.Store.IQCore_ClipMeta" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Clip">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_ClipMeta">
+              <PropertyRef Name="_ClipGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_RecordfileType">
+          <End Role="IQCore_RecordfileType" Type="IQMediaGroupModel.Store.IQCore_RecordfileType" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Store.IQCore_Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RecordfileType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="_RecordfileTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_Recording">
+          <End Role="IQCore_Recording" Type="IQMediaGroupModel.Store.IQCore_Recording" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Store.IQCore_Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Recording">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="_RecordingID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_RootPath">
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.Store.IQCore_RootPath" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Store.IQCore_Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="_RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recording_IQCore_Source">
+          <End Role="IQCore_Source" Type="IQMediaGroupModel.Store.IQCore_Source" Multiplicity="1" />
+          <End Role="IQCore_Recording" Type="IQMediaGroupModel.Store.IQCore_Recording" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Source">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_Recording">
+              <PropertyRef Name="_SourceGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_RootPath_IQCore_RootPathType">
+          <End Role="IQCore_RootPathType" Type="IQMediaGroupModel.Store.IQCore_RootPathType" Multiplicity="1" />
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.Store.IQCore_RootPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPathType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_RootPath">
+              <PropertyRef Name="_RootPathTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Source_IQCore_Timezone">
+          <End Role="IQCore_Timezone" Type="IQMediaGroupModel.Store.IQCore_Timezone" Multiplicity="1" />
+          <End Role="IQCore_Source" Type="IQMediaGroupModel.Store.IQCore_Source" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Timezone">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Source">
+              <PropertyRef Name="_TimezoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IQMediaGroupModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="IQMediaGroupEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Clips" EntityType="IQMediaGroupModel.Clip" />
+          <EntitySet Name="ClipInfo" EntityType="IQMediaGroupModel.ClipInfo" />
+          <EntitySet Name="ClipMeta" EntityType="IQMediaGroupModel.ClipMeta" />
+          <EntitySet Name="Recordfiles" EntityType="IQMediaGroupModel.Recordfile" />
+          <EntitySet Name="RecordfileTypes" EntityType="IQMediaGroupModel.RecordfileType" />
+          <EntitySet Name="Recordings" EntityType="IQMediaGroupModel.Recording" />
+          <EntitySet Name="RootPaths" EntityType="IQMediaGroupModel.RootPath" />
+          <EntitySet Name="RootPathTypes" EntityType="IQMediaGroupModel.RootPathType" />
+          <EntitySet Name="Sources" EntityType="IQMediaGroupModel.Source" />
+          <EntitySet Name="Timezones" EntityType="IQMediaGroupModel.Timezone" />
+          <EntitySet Name="ImpressionSummary" EntityType="IQMediaGroupModel.ImpressionSummary" />
+          <EntitySet Name="PlaySummary" EntityType="IQMediaGroupModel.PlaySummary" />
+          <AssociationSet Name="FK_IQCore_Clip_IQCore_Recordfile" Association="IQMediaGroupModel.FK_IQCore_Clip_IQCore_Recordfile">
+            <End Role="IQCore_Recordfile" EntitySet="Recordfiles" />
+            <End Role="IQCore_Clip" EntitySet="Clips" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_ClipMeta_IQCore_Clip" Association="IQMediaGroupModel.FK_IQCore_ClipMeta_IQCore_Clip">
+            <End Role="IQCore_Clip" EntitySet="Clips" />
+            <End Role="IQCore_ClipMeta" EntitySet="ClipMeta" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_RecordfileType" Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RecordfileType">
+            <End Role="IQCore_RecordfileType" EntitySet="RecordfileTypes" />
+            <End Role="IQCore_Recordfile" EntitySet="Recordfiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_Recording" Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_Recording">
+            <End Role="IQCore_Recording" EntitySet="Recordings" />
+            <End Role="IQCore_Recordfile" EntitySet="Recordfiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recordfile_IQCore_RootPath" Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RootPath">
+            <End Role="IQCore_RootPath" EntitySet="RootPaths" />
+            <End Role="IQCore_Recordfile" EntitySet="Recordfiles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Recording_IQCore_Source" Association="IQMediaGroupModel.FK_IQCore_Recording_IQCore_Source">
+            <End Role="IQCore_Source" EntitySet="Sources" />
+            <End Role="IQCore_Recording" EntitySet="Recordings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_RootPath_IQCore_RootPathType" Association="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType">
+            <End Role="IQCore_RootPathType" EntitySet="RootPathTypes" />
+            <End Role="IQCore_RootPath" EntitySet="RootPaths" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_Source_IQCore_Timezone" Association="IQMediaGroupModel.FK_IQCore_Source_IQCore_Timezone">
+            <End Role="IQCore_Timezone" EntitySet="Timezones" />
+            <End Role="IQCore_Source" EntitySet="Sources" />
+          </AssociationSet>
+          <EntitySet Name="AssetLocations" EntityType="IQMediaGroupModel.AssetLocation" />
+          <EntitySet Name="AssetTypes" EntityType="IQMediaGroupModel.AssetType" />
+          <AssociationSet Name="FK_IQCore_AssetLocation_IQCore_AssetType" Association="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_AssetType">
+            <End Role="IQCore_AssetType" EntitySet="AssetTypes" />
+            <End Role="IQCore_AssetLocation" EntitySet="AssetLocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_AssetLocation_IQCore_RootPath" Association="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_RootPath">
+            <End Role="RootPath" EntitySet="RootPaths" />
+            <End Role="IQCore_AssetLocation" EntitySet="AssetLocations" />
+          </AssociationSet>
+          <AssociationSet Name="FK_IQCore_ClipInfo_IQCore_Clip" Association="IQMediaGroupModel.FK_IQCore_ClipInfo_IQCore_Clip">
+            <End Role="Clip" EntitySet="Clips" />
+            <End Role="ClipInfo" EntitySet="ClipInfo" />
+          </AssociationSet>
+          <EntitySet Name="PlayerMsgLogs" EntityType="IQMediaGroupModel.PlayerMsgLog" />
+          <EntitySet Name="PlayLogs" EntityType="IQMediaGroupModel.PlayLog" />
+          <EntitySet Name="Customers" EntityType="IQMediaGroupModel.Customer" />
+          <EntitySet Name="LegacyCustomers" EntityType="IQMediaGroupModel.LegacyCustomer" />
+        </EntityContainer>
+        <EntityType Name="Clip">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="Guid" Nullable="false" />
+          <Property Name="StartOffset" Type="Int32" Nullable="false" />
+          <Property Name="EndOffset" Type="Int32" Nullable="false" />
+          <Property Name="RecordfileGuid" Type="Guid" Nullable="false" />
+          <Property Name="UserGuid" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="Recordfile" Relationship="IQMediaGroupModel.FK_IQCore_Clip_IQCore_Recordfile" FromRole="IQCore_Clip" ToRole="IQCore_Recordfile" />
+          <NavigationProperty Name="ClipMeta" Relationship="IQMediaGroupModel.FK_IQCore_ClipMeta_IQCore_Clip" FromRole="IQCore_Clip" ToRole="IQCore_ClipMeta" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <NavigationProperty Name="ClipInfo" Relationship="IQMediaGroupModel.FK_IQCore_ClipInfo_IQCore_Clip" FromRole="Clip" ToRole="ClipInfo" />
+        </EntityType>
+        <EntityType Name="ClipInfo">
+          <Key>
+            <PropertyRef Name="ClipGuid" />
+          </Key>
+          <Property Name="ClipGuid" Type="Guid" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="2048" Unicode="false" FixedLength="false" />
+          <Property Name="CategoryKey" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Keywords" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="ClipMeta">
+          <Key>
+            <PropertyRef Name="ClipGuid" />
+            <PropertyRef Name="Field" />
+          </Key>
+          <Property Name="ClipGuid" Type="Guid" Nullable="false" />
+          <Property Name="Field" Type="String" Nullable="false" MaxLength="128" Unicode="false" FixedLength="false" />
+          <Property Name="Value" Type="String" Nullable="false" MaxLength="2048" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Recordfile">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="Guid" Nullable="false" />
+          <Property Name="Location" Type="String" Nullable="false" MaxLength="2048" Unicode="false" FixedLength="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="StartOffset" Type="Int32" Nullable="false" />
+          <Property Name="EndOffset" Type="Int32" Nullable="false" />
+          <Property Name="LastModified" Type="DateTime" Nullable="false" />
+          <Property Name="RecordingID" Type="Int32" Nullable="false" />
+          <Property Name="RecordfileTypeID" Type="Int32" Nullable="false" />
+          <Property Name="RootPathID" Type="Int32" Nullable="false" />
+          <Property Name="ParentGuid" Type="Guid" />
+          <NavigationProperty Name="Clips" Relationship="IQMediaGroupModel.FK_IQCore_Clip_IQCore_Recordfile" FromRole="IQCore_Recordfile" ToRole="IQCore_Clip" />
+          <NavigationProperty Name="RecordfileType" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RecordfileType" FromRole="IQCore_Recordfile" ToRole="IQCore_RecordfileType" />
+          <NavigationProperty Name="Recording" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_Recording" FromRole="IQCore_Recordfile" ToRole="IQCore_Recording" />
+          <NavigationProperty Name="RootPath" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RootPath" FromRole="IQCore_Recordfile" ToRole="IQCore_RootPath" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+        </EntityType>
+        <EntityType Name="RecordfileType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Extension" Type="String" Nullable="false" MaxLength="5" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Recordfiles" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RecordfileType" FromRole="IQCore_RecordfileType" ToRole="IQCore_Recordfile" />
+        </EntityType>
+        <EntityType Name="Recording">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" annotation:StoreGeneratedPattern="None" Nullable="false" />
+          <Property Name="SourceGuid" Type="Guid" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Recordfiles" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_Recording" FromRole="IQCore_Recording" ToRole="IQCore_Recordfile" />
+          <NavigationProperty Name="Source" Relationship="IQMediaGroupModel.FK_IQCore_Recording_IQCore_Source" FromRole="IQCore_Recording" ToRole="IQCore_Source" />
+        </EntityType>
+        <EntityType Name="RootPath">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="StoragePath" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="StreamSuffixPath" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="AppName" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="RootPathTypeID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Recordfiles" Relationship="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RootPath" FromRole="IQCore_RootPath" ToRole="IQCore_Recordfile" a:GetterAccess="Private" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" a:SetterAccess="Private" />
+          <NavigationProperty Name="RootPathType" Relationship="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" FromRole="IQCore_RootPath" ToRole="IQCore_RootPathType" />
+        </EntityType>
+        <EntityType Name="RootPathType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="RootPaths" Relationship="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" FromRole="IQCore_RootPathType" ToRole="IQCore_RootPath" />
+        </EntityType>
+        <EntityType Name="Source">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Name="Guid" Type="Guid" Nullable="false" />
+          <Property Name="SourceID" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="Logo" Type="String" Nullable="false" MaxLength="150" Unicode="false" FixedLength="false" />
+          <Property Name="Url" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="BroadcastType" Type="String" Nullable="false" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="BroadcastLocation" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="RetentionDays" Type="Int32" Nullable="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="TimezoneID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Recordings" Relationship="IQMediaGroupModel.FK_IQCore_Recording_IQCore_Source" FromRole="IQCore_Source" ToRole="IQCore_Recording" />
+          <NavigationProperty Name="Timezone" Relationship="IQMediaGroupModel.FK_IQCore_Source_IQCore_Timezone" FromRole="IQCore_Source" ToRole="IQCore_Timezone" />
+        </EntityType>
+        <EntityType Name="Timezone">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="4" Unicode="false" FixedLength="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="45" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Sources" Relationship="IQMediaGroupModel.FK_IQCore_Source_IQCore_Timezone" FromRole="IQCore_Timezone" ToRole="IQCore_Source" />
+        </EntityType>
+        <EntityType Name="ImpressionSummary">
+          <Key>
+            <PropertyRef Name="AssetGuid" />
+          </Key>
+          <Property Name="AssetGuid" Type="Guid" Nullable="false" />
+          <Property Name="Count" Type="Int32" Nullable="false" />
+          <Property Name="LastUpdated" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PlaySummary">
+          <Key>
+            <PropertyRef Name="AssetGuid" />
+          </Key>
+          <Property Name="AssetGuid" Type="Guid" Nullable="false" />
+          <Property Name="Count" Type="Int32" Nullable="false" />
+          <Property Name="LastUpdated" Type="DateTime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_IQCore_Clip_IQCore_Recordfile">
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Recordfile" Multiplicity="1" />
+          <End Role="IQCore_Clip" Type="IQMediaGroupModel.Clip" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Recordfile">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_Clip">
+              <PropertyRef Name="RecordfileGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_ClipMeta_IQCore_Clip">
+          <End Role="IQCore_Clip" Type="IQMediaGroupModel.Clip" Multiplicity="1" />
+          <End Role="IQCore_ClipMeta" Type="IQMediaGroupModel.ClipMeta" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Clip">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_ClipMeta">
+              <PropertyRef Name="ClipGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_RecordfileType">
+          <End Role="IQCore_RecordfileType" Type="IQMediaGroupModel.RecordfileType" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RecordfileType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="RecordfileTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_Recording">
+          <End Role="IQCore_Recording" Type="IQMediaGroupModel.Recording" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Recording">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="RecordingID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recordfile_IQCore_RootPath">
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.RootPath" Multiplicity="1" />
+          <End Role="IQCore_Recordfile" Type="IQMediaGroupModel.Recordfile" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Recordfile">
+              <PropertyRef Name="RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Recording_IQCore_Source">
+          <End Role="IQCore_Source" Type="IQMediaGroupModel.Source" Multiplicity="1" />
+          <End Role="IQCore_Recording" Type="IQMediaGroupModel.Recording" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Source">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="IQCore_Recording">
+              <PropertyRef Name="SourceGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_RootPath_IQCore_RootPathType">
+          <End Role="IQCore_RootPathType" Type="IQMediaGroupModel.RootPathType" Multiplicity="1" />
+          <End Role="IQCore_RootPath" Type="IQMediaGroupModel.RootPath" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_RootPathType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_RootPath">
+              <PropertyRef Name="RootPathTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_Source_IQCore_Timezone">
+          <End Role="IQCore_Timezone" Type="IQMediaGroupModel.Timezone" Multiplicity="1" />
+          <End Role="IQCore_Source" Type="IQMediaGroupModel.Source" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_Timezone">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_Source">
+              <PropertyRef Name="TimezoneID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AssetLocation">
+          <Key>
+            <PropertyRef Name="AssetGuid" />
+            <PropertyRef Name="AssetTypeID" />
+          </Key>
+          <Property Type="Guid" Name="AssetGuid" Nullable="false" />
+          <Property Type="Int32" Name="AssetTypeID" Nullable="false" />
+          <Property Type="Int32" Name="RootPathID" Nullable="false" />
+          <Property Type="String" Name="Location" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AssetType" Relationship="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_AssetType" FromRole="IQCore_AssetLocation" ToRole="IQCore_AssetType" />
+          <NavigationProperty Name="RootPath" Relationship="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_RootPath" FromRole="IQCore_AssetLocation" ToRole="RootPath" />
+        </EntityType>
+        <EntityType Name="AssetType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Description" MaxLength="255" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_IQCore_AssetLocation_IQCore_AssetType">
+          <End Type="IQMediaGroupModel.AssetType" Role="IQCore_AssetType" Multiplicity="1" />
+          <End Type="IQMediaGroupModel.AssetLocation" Role="IQCore_AssetLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="IQCore_AssetType">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_AssetLocation">
+              <PropertyRef Name="AssetTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_AssetLocation_IQCore_RootPath">
+          <End Type="IQMediaGroupModel.RootPath" Role="RootPath" Multiplicity="1" />
+          <End Type="IQMediaGroupModel.AssetLocation" Role="IQCore_AssetLocation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RootPath">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="IQCore_AssetLocation">
+              <PropertyRef Name="RootPathID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_IQCore_ClipInfo_IQCore_Clip">
+          <End Type="IQMediaGroupModel.Clip" Role="Clip" Multiplicity="1" />
+          <End Type="IQMediaGroupModel.ClipInfo" Role="ClipInfo" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="Clip">
+              <PropertyRef Name="Guid" />
+            </Principal>
+            <Dependent Role="ClipInfo">
+              <PropertyRef Name="ClipGuid" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PlayerMsgLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="DateTime" Name="LogDate" Nullable="false" />
+          <Property Type="String" Name="IPAddress" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LogType" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Message" Nullable="false" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdditionalData" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Referrer" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="AssetGuid" />
+          <Property Type="Guid" Name="UserGuid" />
+        </EntityType>
+        <EntityType Name="PlayLog">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="Guid" Name="AssetGuid" Nullable="false" />
+          <Property Type="DateTime" Name="PlayDate" Nullable="false" />
+          <Property Type="String" Name="IPAddress" MaxLength="16" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Referrer" MaxLength="2048" FixedLength="false" Unicode="false" />
+          <Property Type="Guid" Name="UserGuid" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerKey" />
+          </Key>
+          <Property Type="Int64" Name="CustomerKey" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="FirstName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="LastName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="Email" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CustomerPassword" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ContactNo" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="CustomerComment" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RedlassoUserName" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RedlassoPassword" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="RedlassoUserGUID" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="ClientID" Nullable="false" />
+          <Property Type="String" Name="CreatedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ModifiedBy" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="CreatedDate" />
+          <Property Type="DateTime" Name="ModifiedDate" />
+          <Property Type="Boolean" Name="IsActive" />
+          <Property Type="Guid" Name="CustomerGUID" />
+        </EntityType>
+        <EntityType Name="LegacyCustomer">
+          <Key>
+            <PropertyRef Name="Guid" />
+          </Key>
+          <Property Type="Guid" Name="Guid" Nullable="false" />
+          <Property Type="String" Name="UserName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Password" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FullName" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FirstName" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LastName" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="Boolean" Name="IsLockedOut" Nullable="false" />
+          <Property Type="Guid" Name="ClientGuid" Nullable="false" />
+          <Property Type="String" Name="Comment" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CreatedBy" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="String" Name="ModifiedBy" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="ModifiedDate" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IQMediaGroupModelStoreContainer" CdmEntityContainer="IQMediaGroupEntities">
+          <EntitySetMapping Name="Clips"><EntityTypeMapping TypeName="IQMediaGroupModel.Clip"><MappingFragment StoreEntitySet="IQCore_Clip">
+            <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+            <ScalarProperty Name="StartOffset" ColumnName="StartOffset" />
+            <ScalarProperty Name="EndOffset" ColumnName="EndOffset" />
+            <ScalarProperty Name="RecordfileGuid" ColumnName="_RecordfileGuid" />
+            <ScalarProperty Name="UserGuid" ColumnName="_UserGuid" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ClipInfo"><EntityTypeMapping TypeName="IQMediaGroupModel.ClipInfo"><MappingFragment StoreEntitySet="IQCore_ClipInfo">
+            <ScalarProperty Name="ClipGuid" ColumnName="_ClipGuid" />
+            <ScalarProperty Name="Title" ColumnName="Title" />
+            <ScalarProperty Name="Description" ColumnName="Description" />
+            <ScalarProperty Name="CategoryKey" ColumnName="Category" />
+            <ScalarProperty Name="Keywords" ColumnName="Keywords" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ClipMeta"><EntityTypeMapping TypeName="IQMediaGroupModel.ClipMeta"><MappingFragment StoreEntitySet="IQCore_ClipMeta">
+            <ScalarProperty Name="ClipGuid" ColumnName="_ClipGuid" />
+            <ScalarProperty Name="Field" ColumnName="Field" />
+            <ScalarProperty Name="Value" ColumnName="Value" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Recordfiles"><EntityTypeMapping TypeName="IQMediaGroupModel.Recordfile"><MappingFragment StoreEntitySet="IQCore_Recordfile">
+            <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+            <ScalarProperty Name="Location" ColumnName="Location" />
+            <ScalarProperty Name="Status" ColumnName="Status" />
+            <ScalarProperty Name="StartOffset" ColumnName="StartOffset" />
+            <ScalarProperty Name="EndOffset" ColumnName="EndOffset" />
+            <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+            <ScalarProperty Name="RecordingID" ColumnName="_RecordingID" />
+            <ScalarProperty Name="RecordfileTypeID" ColumnName="_RecordfileTypeID" />
+            <ScalarProperty Name="RootPathID" ColumnName="_RootPathID" />
+            <ScalarProperty Name="ParentGuid" ColumnName="_ParentGuid" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="RecordfileTypes"><EntityTypeMapping TypeName="IQMediaGroupModel.RecordfileType"><MappingFragment StoreEntitySet="IQCore_RecordfileType">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="Description" ColumnName="Description" />
+            <ScalarProperty Name="Extension" ColumnName="Extension" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Recordings"><EntityTypeMapping TypeName="IQMediaGroupModel.Recording"><MappingFragment StoreEntitySet="IQCore_Recording">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="SourceGuid" ColumnName="_SourceGuid" />
+            <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+            <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="RootPaths"><EntityTypeMapping TypeName="IQMediaGroupModel.RootPath"><MappingFragment StoreEntitySet="IQCore_RootPath">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Comment" ColumnName="Comment" />
+            <ScalarProperty Name="StoragePath" ColumnName="StoragePath" />
+            <ScalarProperty Name="StreamSuffixPath" ColumnName="StreamSuffixPath" />
+            <ScalarProperty Name="AppName" ColumnName="AppName" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="RootPathTypeID" ColumnName="_RootPathTypeID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="RootPathTypes"><EntityTypeMapping TypeName="IQMediaGroupModel.RootPathType"><MappingFragment StoreEntitySet="IQCore_RootPathType">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="Description" ColumnName="Description" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Sources"><EntityTypeMapping TypeName="IQMediaGroupModel.Source"><MappingFragment StoreEntitySet="IQCore_Source">
+            <ScalarProperty Name="Guid" ColumnName="Guid" />
+            <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+            <ScalarProperty Name="Title" ColumnName="Title" />
+            <ScalarProperty Name="Logo" ColumnName="Logo" />
+            <ScalarProperty Name="Url" ColumnName="URL" />
+            <ScalarProperty Name="BroadcastType" ColumnName="BroadcastType" />
+            <ScalarProperty Name="BroadcastLocation" ColumnName="BroadcastLocation" />
+            <ScalarProperty Name="RetentionDays" ColumnName="RetentionDays" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="TimezoneID" ColumnName="_TimezoneID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Timezones"><EntityTypeMapping TypeName="IQMediaGroupModel.Timezone"><MappingFragment StoreEntitySet="IQCore_Timezone">
+            <ScalarProperty Name="ID" ColumnName="ID" />
+            <ScalarProperty Name="Code" ColumnName="Code" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ImpressionSummary"><EntityTypeMapping TypeName="IQMediaGroupModel.ImpressionSummary"><MappingFragment StoreEntitySet="IQTrack_ImpressionSummary">
+            <ScalarProperty Name="AssetGuid" ColumnName="_AssetGuid" />
+            <ScalarProperty Name="Count" ColumnName="Count" />
+            <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PlaySummary"><EntityTypeMapping TypeName="IQMediaGroupModel.PlaySummary"><MappingFragment StoreEntitySet="IQTrack_PlaySummary">
+            <ScalarProperty Name="AssetGuid" ColumnName="_AssetGuid" />
+            <ScalarProperty Name="Count" ColumnName="Count" />
+            <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AssetLocations">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.AssetLocation">
+              <MappingFragment StoreEntitySet="IQCore_AssetLocation">
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="RootPathID" ColumnName="_RootPathID" />
+                <ScalarProperty Name="AssetTypeID" ColumnName="_AssetTypeID" />
+                <ScalarProperty Name="AssetGuid" ColumnName="_AssetGuid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AssetTypes">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.AssetType">
+              <MappingFragment StoreEntitySet="IQCore_AssetType">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlayerMsgLogs">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.PlayerMsgLog">
+              <MappingFragment StoreEntitySet="IQTrack_PlayerMsgLog">
+                <ScalarProperty Name="UserGuid" ColumnName="_UserGuid" />
+                <ScalarProperty Name="AssetGuid" ColumnName="_AssetGuid" />
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="AdditionalData" ColumnName="AdditionalData" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="LogType" ColumnName="LogType" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PlayLogs">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.PlayLog">
+              <MappingFragment StoreEntitySet="IQTrack_PlayLog">
+                <ScalarProperty Name="UserGuid" ColumnName="_UserGuid" />
+                <ScalarProperty Name="Referrer" ColumnName="Referrer" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="PlayDate" ColumnName="PlayDate" />
+                <ScalarProperty Name="AssetGuid" ColumnName="_AssetGuid" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.Customer">
+              <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="CustomerGUID" ColumnName="CustomerGUID" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="RedlassoUserGUID" ColumnName="RedlassoUserGUID" />
+                <ScalarProperty Name="RedlassoPassword" ColumnName="RedlassoPassword" />
+                <ScalarProperty Name="RedlassoUserName" ColumnName="RedlassoUserName" />
+                <ScalarProperty Name="CustomerComment" ColumnName="CustomerComment" />
+                <ScalarProperty Name="ContactNo" ColumnName="ContactNo" />
+                <ScalarProperty Name="CustomerPassword" ColumnName="CustomerPassword" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="CustomerKey" ColumnName="CustomerKey" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LegacyCustomers">
+            <EntityTypeMapping TypeName="IQMediaGroupModel.LegacyCustomer">
+              <MappingFragment StoreEntitySet="IQCore_LegacyCustomer">
+                <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="ClientGuid" ColumnName="_ClientGuid" />
+                <ScalarProperty Name="IsLockedOut" ColumnName="IsLockedOut" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="IQMedia" ZoomLevel="74">
+        <EntityTypeShape EntityType="IQMediaGroupModel.Clip" Width="1.5" PointX="9.5" PointY="1" Height="2.5571907552083335" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.ClipInfo" Width="1.5" PointX="11.625" PointY="2.875" Height="1.9802864583333326" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.ClipMeta" Width="1.5" PointX="11.625" PointY="1" Height="1.59568359375" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Recordfile" Width="1.5" PointX="7.5" PointY="1" Height="3.9033007812499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RecordfileType" Width="1.5" PointX="5.375" PointY="3.5" Height="1.9802864583333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Recording" Width="1.5" PointX="5.375" PointY="1" Height="2.1725878906249996" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RootPath" Width="1.5" PointX="7.5" PointY="5.5" Height="2.7494921874999996" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.RootPathType" Width="1.5" PointX="5.25" PointY="5.875" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Source" Width="1.5" PointX="3.375" PointY="1" Height="3.3263964843750027" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Timezone" Width="1.5" PointX="1.375" PointY="1" Height="1.7879850260416745" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.ImpressionSummary" Width="1.5" PointX="1.875" PointY="12.375" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.PlaySummary" Width="1.5" PointX="3.5" PointY="12.375" Height="1.5956835937500031" IsExpanded="true" />
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Clip_IQCore_Recordfile" ManuallyRouted="false">
+          <ConnectorPoint PointX="9" PointY="2.37474609375" />
+          <ConnectorPoint PointX="9.5" PointY="2.37474609375" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_ClipMeta_IQCore_Clip" ManuallyRouted="false">
+          <ConnectorPoint PointX="11" PointY="1.7978417968749998" />
+          <ConnectorPoint PointX="11.625" PointY="1.7978417968749998" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RecordfileType" ManuallyRouted="false">
+          <ConnectorPoint PointX="6.875" PointY="4.201650390625" />
+          <ConnectorPoint PointX="7.5" PointY="4.201650390625" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_Recording" ManuallyRouted="false">
+          <ConnectorPoint PointX="6.875" PointY="2.0862939453125" />
+          <ConnectorPoint PointX="7.5" PointY="2.0862939453125" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Recordfile_IQCore_RootPath" ManuallyRouted="false">
+          <ConnectorPoint PointX="8.25" PointY="5.5" />
+          <ConnectorPoint PointX="8.25" PointY="4.90330078125" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Recording_IQCore_Source" ManuallyRouted="false">
+          <ConnectorPoint PointX="4.875" PointY="2.0862939453125" />
+          <ConnectorPoint PointX="5.375" PointY="2.0862939453125" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_RootPath_IQCore_RootPathType" ManuallyRouted="false">
+          <ConnectorPoint PointX="6.75" PointY="6.7689925130208337" />
+          <ConnectorPoint PointX="7.5" PointY="6.7689925130208337" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_Source_IQCore_Timezone" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.875" PointY="1.8939925130208373" />
+          <ConnectorPoint PointX="3.375" PointY="1.8939925130208373" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="IQMediaGroupModel.AssetLocation" Width="1.5" PointX="9.5" PointY="4.625" Height="2.172587890624996" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.AssetType" Width="1.5" PointX="9.5" PointY="7.25" Height="1.5956835937499996" />
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_AssetType" >
+          <ConnectorPoint PointX="10.25" PointY="7.25" />
+          <ConnectorPoint PointX="10.25" PointY="6.797587890624996" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_AssetLocation_IQCore_RootPath" >
+          <ConnectorPoint PointX="9" PointY="6.148793945312498" />
+          <ConnectorPoint PointX="9.5" PointY="6.148793945312498" />
+        </AssociationConnector>
+        <AssociationConnector Association="IQMediaGroupModel.FK_IQCore_ClipInfo_IQCore_Clip" >
+          <ConnectorPoint PointX="11" PointY="3.31224609375" />
+          <ConnectorPoint PointX="11.625" PointY="3.31224609375" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="IQMediaGroupModel.PlayerMsgLog" Width="1.5" PointX="1.875" PointY="9.5" Height="2.7494921875000031" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.PlayLog" Width="1.5" PointX="3.5" PointY="9.5" Height="2.1725878906250031" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.Customer" Width="1.5" PointX="5.875" PointY="9.5" Height="4.2879036458333388" />
+        <EntityTypeShape EntityType="IQMediaGroupModel.LegacyCustomer" Width="1.5" PointX="7.5" PointY="9.5" Height="3.7109993489583388" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

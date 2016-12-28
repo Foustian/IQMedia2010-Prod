@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.Web.Service", "IQMedia.TVEyes.Web.Service\IQMedia.TVEyes.Web.Service.csproj", "{C4445FF6-C31F-4486-B95F-64269658F0AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.Logic", "IQMedia.TVEyes.Logic\IQMedia.TVEyes.Logic.csproj", "{3FC3627A-15D0-4F97-8C83-1F5CE0B72A06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.Domain", "IQMedia.TVEyes.Domain\IQMedia.TVEyes.Domain.csproj", "{20C9E3DE-CBBC-4CED-8F38-BE65AA4EA4A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.Common", "IQMedia.TVEyes.Common\IQMedia.TVEyes.Common.csproj", "{48C38C0C-2DFC-4954-997B-7EAA92122D73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.ServiceClient", "IQMedia.TVEyes.ServiceClient\IQMedia.TVEyes.ServiceClient.csproj", "{256E5E09-4983-4362-8EAE-782548A5635C}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://dbvss:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = IQMedia.TVEyes.Web.Service\\IQMedia.TVEyes.Web.Service.csproj
+		SccProjectName1 = IQMedia.TVEyes.Web.Service
+		SccLocalPath1 = IQMedia.TVEyes.Web.Service
+		SccProjectUniqueName2 = IQMedia.TVEyes.Logic\\IQMedia.TVEyes.Logic.csproj
+		SccProjectName2 = IQMedia.TVEyes.Logic
+		SccLocalPath2 = IQMedia.TVEyes.Logic
+		SccProjectUniqueName3 = IQMedia.TVEyes.Domain\\IQMedia.TVEyes.Domain.csproj
+		SccProjectName3 = IQMedia.TVEyes.Domain
+		SccLocalPath3 = IQMedia.TVEyes.Domain
+		SccProjectUniqueName4 = IQMedia.TVEyes.Common\\IQMedia.TVEyes.Common.csproj
+		SccProjectName4 = IQMedia.TVEyes.Common
+		SccLocalPath4 = IQMedia.TVEyes.Common
+		SccProjectUniqueName5 = IQMedia.TVEyes.ServiceClient\\IQMedia.TVEyes.ServiceClient.csproj
+		SccProjectName5 = IQMedia.TVEyes.ServiceClient
+		SccLocalPath5 = IQMedia.TVEyes.ServiceClient
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4445FF6-C31F-4486-B95F-64269658F0AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4445FF6-C31F-4486-B95F-64269658F0AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4445FF6-C31F-4486-B95F-64269658F0AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4445FF6-C31F-4486-B95F-64269658F0AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FC3627A-15D0-4F97-8C83-1F5CE0B72A06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FC3627A-15D0-4F97-8C83-1F5CE0B72A06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FC3627A-15D0-4F97-8C83-1F5CE0B72A06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FC3627A-15D0-4F97-8C83-1F5CE0B72A06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20C9E3DE-CBBC-4CED-8F38-BE65AA4EA4A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C9E3DE-CBBC-4CED-8F38-BE65AA4EA4A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20C9E3DE-CBBC-4CED-8F38-BE65AA4EA4A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C9E3DE-CBBC-4CED-8F38-BE65AA4EA4A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C38C0C-2DFC-4954-997B-7EAA92122D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C38C0C-2DFC-4954-997B-7EAA92122D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C38C0C-2DFC-4954-997B-7EAA92122D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C38C0C-2DFC-4954-997B-7EAA92122D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{256E5E09-4983-4362-8EAE-782548A5635C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256E5E09-4983-4362-8EAE-782548A5635C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256E5E09-4983-4362-8EAE-782548A5635C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256E5E09-4983-4362-8EAE-782548A5635C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

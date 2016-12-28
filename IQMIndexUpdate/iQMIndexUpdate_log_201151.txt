@@ -1,0 +1,152 @@
+2011-06-01 12:04:13,349 INFO IQMIndexUpdate Started 
+ 
+2011-06-01 12:04:13,366 INFO Check method 
+ 
+2011-06-01 12:04:13,367 INFO Status called 
+ 
+2011-06-01 12:04:13,367 INFO IQMIndexUpdate Finished 
+ 
+2011-06-01 12:04:41,174 INFO IQMIndexUpdate Started 
+ 
+2011-06-01 12:04:41,182 INFO Check method 
+ 
+2011-06-01 12:04:41,182 INFO Index called 
+ 
+2011-06-01 12:04:41,182 INFO Indexing started 
+ 
+2011-06-01 12:04:41,196 INFO Core1Ingest started 
+ 
+2011-06-01 12:04:41,201 INFO Core1Ingest request:http://192.168.1.85:8080/solr/core1/dataimport?command=full-import 
+ 
+2011-06-01 12:04:41,251 INFO Core1Ingest response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="command">full-import</str><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"/><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-01 12:04:41,254 INFO Core1Ingest finished 
+ 
+2011-06-01 12:04:41,255 INFO CheckCore1Status started 
+ 
+2011-06-01 12:04:41,255 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-01 12:04:41,256 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">0</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">busy</str><str name="importResponse">A command is still running...</str><lst name="statusMessages"/><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-01 12:04:42,273 INFO CheckCore1Status finished 
+ 
+2011-06-01 12:04:42,273 INFO CheckCore1Status started 
+ 
+2011-06-01 12:04:42,273 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-01 12:04:42,278 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">3</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">busy</str><str name="importResponse">A command is still running...</str><lst name="statusMessages"><str name="Time Elapsed">0:0:1.13</str><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">1</str><str name="Total Documents Processed">0</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-01 12:04:41</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-01 12:04:43,280 INFO CheckCore1Status finished 
+ 
+2011-06-01 12:04:43,280 INFO CheckCore1Status started 
+ 
+2011-06-01 12:04:43,280 INFO CheckCore1Status request:http://192.168.1.85:8080/solr/core1/dataimport 
+ 
+2011-06-01 12:04:43,282 INFO CheckCore1Status response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">0</int></lst><lst name="initArgs"><lst name="defaults"><str name="config">clip.xml</str></lst></lst><str name="status">idle</str><str name="importResponse"/><lst name="statusMessages"><str name="Total Requests made to DataSource">1</str><str name="Total Rows Fetched">48</str><str name="Total Documents Skipped">0</str><str name="Full Dump Started">2011-06-01 12:04:41</str><str name="">Indexing completed. Added/Updated: 48 documents. Deleted 0 documents.</str><str name="Committed">2011-06-01 12:04:42</str><str name="Optimized">2011-06-01 12:04:42</str><str name="Total Documents Processed">48</str><str name="Time taken ">0:0:1.347</str></lst><str name="WARNING">This response format is experimental.  It is likely to change in the future.</str></response> 
+ 
+2011-06-01 12:04:43,290 INFO UpdateDBStatus started 
+ 
+2011-06-01 12:04:43,300 INFO UpdateDBStatus request:http://192.168.1.85:8080/solr/core1/select?q=*:*&facet=on&facet.field=iq_cc_key&facet.limit=-1&fl=null 
+ 
+2011-06-01 12:04:43,326 INFO UpdateDBStatus response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">22</int><lst name="params"><str name="facet">on</str><str name="fl">null</str><str name="q">*:*</str><str name="facet.limit">-1</str><str name="facet.field">iq_cc_key</str></lst></lst><result name="response" numFound="48" start="0"><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc><doc></doc></result><lst name="facet_counts"><lst name="facet_queries"/><lst name="facet_fields"><lst name="iq_cc_key"><int name="ALTSE_20110301_0000">1</int><int name="ALTSE_20110301_0100">1</int><int name="ALTSE_20110301_0200">1</int><int name="ALTSE_20110301_0300">1</int><int name="ALTSE_20110301_0400">1</int><int name="ALTSE_20110301_0500">1</int><int name="ALTSE_20110301_0600">1</int><int name="ALTSE_20110301_0700">1</int><int name="ALTSE_20110301_0800">1</int><int name="ALTSE_20110301_0900">1</int><int name="ALTSE_20110301_1000">1</int><int name="ALTSE_20110301_1100">1</int><int name="ALTSE_20110301_1200">1</int><int name="ALTSE_20110301_1300">1</int><int name="ALTSE_20110301_1400">1</int><int name="ALTSE_20110301_1500">1</int><int name="ALTSE_20110301_1600">1</int><int name="ALTSE_20110301_1700">1</int><int name="ALTSE_20110301_1800">1</int><int name="ALTSE_20110301_1900">1</int><int name="ALTSE_20110301_2000">1</int><int name="ALTSE_20110301_2100">1</int><int name="ALTSE_20110301_2200">1</int><int name="ALTSE_20110301_2300">1</int><int name="CSTV_20110301_0000">1</int><int name="CSTV_20110301_0100">1</int><int name="CSTV_20110301_0200">1</int><int name="CSTV_20110301_0300">1</int><int name="CSTV_20110301_0400">1</int><int name="CSTV_20110301_0500">1</int><int name="CSTV_20110301_0600">1</int><int name="CSTV_20110301_0700">1</int><int name="CSTV_20110301_0800">1</int><int name="CSTV_20110301_0900">1</int><int name="CSTV_20110301_1000">1</int><int name="CSTV_20110301_1100">1</int><int name="CSTV_20110301_1200">1</int><int name="CSTV_20110301_1300">1</int><int name="CSTV_20110301_1400">1</int><int name="CSTV_20110301_1500">1</int><int name="CSTV_20110301_1600">1</int><int name="CSTV_20110301_1700">1</int><int name="CSTV_20110301_1800">1</int><int name="CSTV_20110301_1900">1</int><int name="CSTV_20110301_2000">1</int><int name="CSTV_20110301_2100">1</int><int name="CSTV_20110301_2200">1</int><int name="CSTV_20110301_2300">1</int></lst></lst><lst name="facet_dates"/></lst></response> 
+ 
+2011-06-01 12:04:43,398 INFO UpdateDBStatus finished 
+ 
+2011-06-01 12:04:43,398 INFO CommitCore0 started 
+ 
+2011-06-01 12:04:43,401 INFO CommitCore0 request:http://192.168.1.85:8080/solr/core0/update?commit=true 
+ 
+2011-06-01 12:04:43,417 INFO CommitCore0 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">13</int></lst></response> 
+ 
+2011-06-01 12:04:43,423 INFO CommitCore0 finished 
+ 
+2011-06-01 12:04:43,423 INFO CommitCore1 started 
+ 
+2011-06-01 12:04:43,440 INFO CommitCore1 request:http://192.168.1.85:8080/solr/core1/update?commit=true 
+ 
+2011-06-01 12:04:43,455 INFO CommitCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">12</int></lst></response> 
+ 
+2011-06-01 12:04:43,458 INFO CommitCore1 finished 
+ 
+2011-06-01 12:04:43,458 INFO MergeCore started 
+ 
+2011-06-01 12:04:43,492 INFO MergeCore request:http://192.168.1.85:8080/solr/admin/cores?action=mergeindexes&core=core2&indexDir=/opt/solr/core2/data/index&indexDir=/opt/solr/core1/data/index 
+ 
+2011-06-01 12:04:43,510 INFO MergeCore response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">17</int></lst><str name="saved">/opt/solr/solr.xml</str></response> 
+ 
+2011-06-01 12:04:43,513 INFO MergeCore finished 
+ 
+2011-06-01 12:04:43,513 INFO CommitCore2 started 
+ 
+2011-06-01 12:04:43,519 INFO CommitCore2 request:http://192.168.1.85:8080/solr/core2/update?commit=true 
+ 
+2011-06-01 12:04:43,561 INFO CommitCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">37</int></lst></response> 
+ 
+2011-06-01 12:04:43,566 INFO CommitCore2 finished 
+ 
+2011-06-01 12:04:43,566 INFO OptimizeCore2 started 
+ 
+2011-06-01 12:04:43,569 INFO OptimizeCore2 request:http://192.168.1.85:8080/solr/core2/update?optimize=true 
+ 
+2011-06-01 12:04:43,610 INFO OptimizeCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">36</int></lst></response> 
+ 
+2011-06-01 12:04:43,613 INFO OptimizeCore2 finished 
+ 
+2011-06-01 12:04:43,613 INFO SwapCore started 
+ 
+2011-06-01 12:04:43,647 INFO SwapCore request:http://192.168.1.85:8080/solr/admin/cores?action=SWAP&core=core2&other=core0 
+ 
+2011-06-01 12:04:43,649 INFO SwapCore response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">2</int></lst><str name="saved">/opt/solr/solr.xml</str></response> 
+ 
+2011-06-01 12:04:43,653 INFO SwapCore finished 
+ 
+2011-06-01 12:04:43,653 INFO DeleteIndexOfCore1 started 
+ 
+2011-06-01 12:04:43,666 INFO DeleteIndexOfCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E 
+ 
+2011-06-01 12:04:43,677 INFO DeleteIndexOfCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">9</int></lst></response> 
+ 
+2011-06-01 12:04:43,692 INFO DeleteCommitCore1 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Ccommit/%3E 
+ 
+2011-06-01 12:04:43,715 INFO DeleteCommitCore1 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">20</int></lst></response> 
+ 
+2011-06-01 12:04:43,718 INFO DeleteIndexOfCore1 finished 
+ 
+2011-06-01 12:04:43,718 INFO DeleteIndexOfCore2 started 
+ 
+2011-06-01 12:04:43,720 INFO DeleteIndexOfCore2 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Cdelete%3E%3Cquery%3E*:*%3C/query%3E%3C/delete%3E 
+ 
+2011-06-01 12:04:43,734 INFO DeleteIndexOfCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">2</int></lst></response> 
+ 
+2011-06-01 12:04:43,739 INFO DeleteCommitCore2 request:http://192.168.1.85:8080/solr/core1/update?stream.body=%3Ccommit/%3E 
+ 
+2011-06-01 12:04:43,755 INFO DeleteCommitCore2 response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">11</int></lst></response> 
+ 
+2011-06-01 12:04:43,758 INFO DeleteIndexOfCore2 finished 
+ 
+2011-06-01 12:04:43,758 INFO CheckRecords started 
+ 
+2011-06-01 12:04:43,760 INFO CheckRecords request:q=iq_cc_key:ALTSE_20110301_0000 OR iq_cc_key:ALTSE_20110301_0100 OR iq_cc_key:ALTSE_20110301_0200 OR iq_cc_key:ALTSE_20110301_0300 OR iq_cc_key:ALTSE_20110301_0400 OR iq_cc_key:ALTSE_20110301_0500 OR iq_cc_key:ALTSE_20110301_0600 OR iq_cc_key:ALTSE_20110301_0700 OR iq_cc_key:ALTSE_20110301_0800 OR iq_cc_key:ALTSE_20110301_0900 OR iq_cc_key:ALTSE_20110301_1000 OR iq_cc_key:ALTSE_20110301_1100 OR iq_cc_key:ALTSE_20110301_1200 OR iq_cc_key:ALTSE_20110301_1300 OR iq_cc_key:ALTSE_20110301_1400 OR iq_cc_key:ALTSE_20110301_1500 OR iq_cc_key:ALTSE_20110301_1600 OR iq_cc_key:ALTSE_20110301_1700 OR iq_cc_key:ALTSE_20110301_1800 OR iq_cc_key:ALTSE_20110301_1900 OR iq_cc_key:ALTSE_20110301_2000 OR iq_cc_key:ALTSE_20110301_2100 OR iq_cc_key:ALTSE_20110301_2200 OR iq_cc_key:ALTSE_20110301_2300 OR iq_cc_key:CSTV_20110301_0000 OR iq_cc_key:CSTV_20110301_0100 OR iq_cc_key:CSTV_20110301_0200 OR iq_cc_key:CSTV_20110301_0300 OR iq_cc_key:CSTV_20110301_0400 OR iq_cc_key:CSTV_20110301_0500 OR iq_cc_key:CSTV_20110301_0600 OR iq_cc_key:CSTV_20110301_0700 OR iq_cc_key:CSTV_20110301_0800 OR iq_cc_key:CSTV_20110301_0900 OR iq_cc_key:CSTV_20110301_1000 OR iq_cc_key:CSTV_20110301_1100 OR iq_cc_key:CSTV_20110301_1200 OR iq_cc_key:CSTV_20110301_1300 OR iq_cc_key:CSTV_20110301_1400 OR iq_cc_key:CSTV_20110301_1500 OR iq_cc_key:CSTV_20110301_1600 OR iq_cc_key:CSTV_20110301_1700 OR iq_cc_key:CSTV_20110301_1800 OR iq_cc_key:CSTV_20110301_1900 OR iq_cc_key:CSTV_20110301_2000 OR iq_cc_key:CSTV_20110301_2100 OR iq_cc_key:CSTV_20110301_2200 OR iq_cc_key:CSTV_20110301_2300 
+ 
+2011-06-01 12:04:43,777 INFO CheckRecords response:<?xml version="1.0" encoding="UTF-8"?><response><lst name="responseHeader"><int name="status">0</int><int name="QTime">1</int><lst name="params"><str name="fl">iq_cc_key</str><arr name="q"><str>?rows=48</str><str>iq_cc_key:ALTSE_20110301_0000 OR iq_cc_key:ALTSE_20110301_0100 OR iq_cc_key:ALTSE_20110301_0200 OR iq_cc_key:ALTSE_20110301_0300 OR iq_cc_key:ALTSE_20110301_0400 OR iq_cc_key:ALTSE_20110301_0500 OR iq_cc_key:ALTSE_20110301_0600 OR iq_cc_key:ALTSE_20110301_0700 OR iq_cc_key:ALTSE_20110301_0800 OR iq_cc_key:ALTSE_20110301_0900 OR iq_cc_key:ALTSE_20110301_1000 OR iq_cc_key:ALTSE_20110301_1100 OR iq_cc_key:ALTSE_20110301_1200 OR iq_cc_key:ALTSE_20110301_1300 OR iq_cc_key:ALTSE_20110301_1400 OR iq_cc_key:ALTSE_20110301_1500 OR iq_cc_key:ALTSE_20110301_1600 OR iq_cc_key:ALTSE_20110301_1700 OR iq_cc_key:ALTSE_20110301_1800 OR iq_cc_key:ALTSE_20110301_1900 OR iq_cc_key:ALTSE_20110301_2000 OR iq_cc_key:ALTSE_20110301_2100 OR iq_cc_key:ALTSE_20110301_2200 OR iq_cc_key:ALTSE_20110301_2300 OR iq_cc_key:CSTV_20110301_0000 OR iq_cc_key:CSTV_20110301_0100 OR iq_cc_key:CSTV_20110301_0200 OR iq_cc_key:CSTV_20110301_0300 OR iq_cc_key:CSTV_20110301_0400 OR iq_cc_key:CSTV_20110301_0500 OR iq_cc_key:CSTV_20110301_0600 OR iq_cc_key:CSTV_20110301_0700 OR iq_cc_key:CSTV_20110301_0800 OR iq_cc_key:CSTV_20110301_0900 OR iq_cc_key:CSTV_20110301_1000 OR iq_cc_key:CSTV_20110301_1100 OR iq_cc_key:CSTV_20110301_1200 OR iq_cc_key:CSTV_20110301_1300 OR iq_cc_key:CSTV_20110301_1400 OR iq_cc_key:CSTV_20110301_1500 OR iq_cc_key:CSTV_20110301_1600 OR iq_cc_key:CSTV_20110301_1700 OR iq_cc_key:CSTV_20110301_1800 OR iq_cc_key:CSTV_20110301_1900 OR iq_cc_key:CSTV_20110301_2000 OR iq_cc_key:CSTV_20110301_2100 OR iq_cc_key:CSTV_20110301_2200 OR iq_cc_key:CSTV_20110301_2300</str></arr></lst></lst><result name="response" numFound="0" start="0"/></response> 
+ 
+2011-06-01 12:04:43,781 INFO CheckRecords finished 
+ 
+2011-06-01 12:04:43,786 INFO IQMIndexUpdate Finished 
+ 
+2011-06-01 12:04:48,649 INFO IQMIndexUpdate Started 
+ 
+2011-06-01 12:04:48,668 INFO Check method 
+ 
+2011-06-01 12:04:48,668 INFO Status called 
+ 
+2011-06-01 12:04:48,668 INFO IQMIndexUpdate Finished 
+ 
+2011-06-01 12:04:53,065 INFO IQMIndexUpdate Started 
+ 
+2011-06-01 12:04:53,073 INFO Check method 
+ 
+2011-06-01 12:04:53,073 INFO Status called 
+ 
+2011-06-01 12:04:53,073 INFO IQMIndexUpdate Finished 
+ 

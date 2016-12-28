@@ -1,0 +1,470 @@
+﻿@{
+    
+    ViewBag.Title = "iQ media: Media intelligence for Broadcast Television, Online News & Social Media";
+    Layout = "~/Views/Shared/_IQMediaMasterStaticPages_New.cshtml";   
+}
+@section HeadSection
+{
+    <meta name="description" content="iQ media makes media intelligence tools for smart marketing & PR professionals. Pencil yourself in for a personalized demo today!" />
+
+    <!-- social & seo markup -->
+    <title>iQ media: Media intelligence for Broadcast Television, Online News & Social Media</title>
+    <meta name="description" content="iQ media makes media intelligence tools for smart marketing & PR professionals. Pencil yourself in for a personalized demo today!" />
+    <link rel="canonical" href="https://iqmediacorp.com" />
+    <!-- Schema.org markup for Google+ -->
+    <meta itemprop="name" content="iQ media">
+    <meta itemprop="description" content="iQ media makes media intelligence tools for smart marketing & PR professionals. Pencil yourself in for a personalized demo today!">
+    <meta itemprop="image" content="https://iqmediacorp.com/images/home_new/home_header.png">
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="https://iqmediacorp.com/images/home_new/home_header.png">
+    <meta name="twitter:site" content="&#64;iqmediacorp">
+    <meta name="twitter:title" content="Media intelligence for Broadcast Television, Online News & Social Media">
+    <meta name="twitter:description" content="iQ media makes media intelligence tools for smart marketing & PR professionals. Pencil yourself in for a personalized demo today!">
+    <!-- Open Graph data -->
+    <meta property="og:title" content="iQ media: Media intelligence for Broadcast Television, Online News & Social Media" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://iqmediacorp.com/" />
+    <meta property="og:image" content="https://iqmediacorp.com/images/home_new/home_header.png" />
+    <meta property="og:description" content="iQ media makes media intelligence tools for smart marketing & PR professionals. Pencil yourself in for a personalized demo today!" />
+    <meta property="og:site_name" content="iQ media" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="fb:admins" content="394445033944927" />
+
+    <link rel="canonical" href="https://iqmediacorp.com" />
+    <link href="~/Css/home.css?v=1.1" rel="Stylesheet" type="text/css" />
+    <script>
+        $(function () { $('#liHome').addClass('activeHome'); });
+    </script>
+    @*<link href="~/Css/home-banner.css?v=1.1" rel="stylesheet" />
+    <link href="~/Css/lightSlider.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/jquery.lightSlider.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var isManualChange = false;
+            var myTimer = null;
+
+            var sliderHome = $("#HomeBanner").lightSlider({
+                minSlide: 1,
+                maxSlide: 1,
+                pager: false,
+                keyPress: false,
+                auto: true,
+                pause: 5000,
+                loop: true,
+                controls: false,
+                onBeforeSlide: function () {
+                    console.log('before slide call');
+                    SetActiveIcon(0);
+                },
+                onAfterSlide: function () {
+                    if (isManualChange) {
+                        console.log('pause slide');
+                        sliderHome.pause();
+                        if (myTimer != null) {
+                            clearTimeout(myTimer);
+                        }
+
+                        myTimer = setTimeout(function () {
+                            console.log('play slide');
+                            isManualChange = false;
+                            myTimer = null;
+                            sliderHome.play();
+                        }, 10000);
+                    }
+                }
+            });
+
+            $('#liHome').siblings().removeClass('activeHome')
+            $('#liHome').addClass('activeHome');
+
+            //$("#lightSlider1").lightSlider();
+            var sliders = new Array()
+
+            var slider1 = $('#lightSlider1').lightSlider({
+                minSlide: 1,
+                maxSlide: 1,
+                pager: false,
+                keyPress: false,
+                auto: false,
+                pause: 5000,
+                loop: true,
+                controls: false,
+                onBeforeSlide: function () {
+                    console.log('before slide call');
+                    SetActiveIcon(0);
+                }
+            });
+            sliders.push(slider1);
+            function SetActiveIcon(slideIndex) {
+                var cuurentSlideIndex = sliders[slideIndex].getCurrentSlideCount() - 1;
+                sliders[slideIndex].closest('.csSlideOuter').siblings('.col-lg-12 ').children('.round-btn').find('a').removeClass('active')
+                $(sliders[slideIndex].closest('.csSlideOuter').siblings('.col-lg-12 ').children('.round-btn').find('a')[cuurentSlideIndex]).addClass('active')
+            }
+
+            $(".round-btn a").click(function (e) {
+                var liIndex = $(this).index();
+                var parent = $(this).closest('.jumbotron');
+                var index = $(".jumbotron").index(parent);
+                if (index < 4) {
+                    if (index == 0) {
+                        isManualChange = true;
+                    }
+                    sliders[index].goToSlide(liIndex);
+                }
+            });
+
+            $('#goToPrevSlideHome').click(function () {
+                isManualChange = true;
+                sliderHome.goToPrevSlide();
+
+            });
+
+            $('#goToNextSlideHome').click(function () {
+                isManualChange = true;
+                sliderHome.goToNextSlide();
+            });
+
+            $('#goToPrevSlide').click(function () {
+                isManualChange = true;
+                slider1.goToPrevSlide();
+
+            });
+
+            $('#goToNextSlide').click(function () {
+                isManualChange = true;
+                slider1.goToNextSlide();
+            });
+
+        });
+        
+    </script>*@
+}
+<!-- Main jumbotron for a primary marketing message or call to action -->
+@*<div class="white-first-box" style="position: relative">
+    <div class="clAction" style="top: 0; right: 0; bottom: 0; left: 0; margin: auto;">
+        <a id="goToPrevSlideHome" class="clPrev" style="left: 13px;"></a><a id="goToNextSlideHome"
+            class="clNext" style="background-position: 56px 0; right: 13px;"></a>
+    </div>
+    <ul id="HomeBanner" class="content-slider">
+        <li class="FirsthomeImg">
+            <img src="~/images/home_new/main_home.jpg" />
+            <div class="pinkbg">
+                <span>
+                    <label class="Pink">
+                        media</label>
+                    intelligence, im<label class="Blue">media</label>te results</span>
+                <h1 class="font-italic">
+                    smarter than media monitoring
+                </h1>
+                <a href="http://go.iqmediacorp.com/demo" target="_blank" class="greenbtn">Request a
+                    Demo</a>
+            </div>
+        </li>
+        <li class="CodiehomeImg">
+            <img src="~/images/home_new/codie_home.jpg" />
+            <div class="Blackbg">
+                <img src="~/images/home_new/codie_logo.png" alt="codie" />
+                <h1 class="font-italic">
+                    Best Software-as-a-Service Application
+                </h1>
+                <a href="http://www.prweb.com/releases/2015/05/prweb12709777.htm" target="_blank" class="Bluebtn">Learn More</a>
+            </div>
+        </li>
+        <li class="SecondhomeImg">
+            <img src="~/images/home_new/cliq_home.jpg" />
+            <div class="Blackbg">
+                <h1 class="font-italic">
+                    find your solution to<br />
+                    media intelligence with <strong class="green-txt">cliQ</strong>
+                </h1>
+                <a href="~/Cliq/" class="Bluebtn">Learn More</a>
+            </div>
+        </li>
+        <li class="ThirdhomeImg">
+            <img src="~/images/home_new/optiq_home.jpg" />
+            <div class="Blackbg">
+                <h1 class="font-italic">
+                    <strong class="pink-txt">optiQ</strong> is image recognition<br />
+                    without all the noise
+                </h1>
+                <a href="~/impact-visualization/" class="greenbtn">Learn More</a>
+            </div>
+        </li>
+        <li class="FourthhomeImg">
+            <img src="~/images/home_new/traffiq_home.jpg" />
+            <div class="Blackbg">
+                <h1 class="font-italic">
+                    <strong class="blue-txt">traffiQ</strong> is impact visualization<br />
+                    for brands and broadcasters on tv</h1>
+                <a href="~/impact-visualization/" class="pinkbtn">Learn More</a>
+            </div>
+           </li>
+    </ul>
+</div>*@
+<div class="jumbotron img-Header" style="position: relative;">
+    <img src="~/images/home_new/home_header.png" alt="media intelligence, smarter than media monitoring"
+        class="img100" />
+    <div class="divdemobtn" align="center">
+        <a href="http://info.iqmediacorp.com/iq-media-request-a-demo" title="request a demo of the next big thing in media intellignece">
+            <img src="~/images/home_new/demobtn.png" alt="request a demo" /></a>
+    </div>    
+</div>
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <ul class="ulProdDetail">
+                <li>
+                    <figure>
+                <img src="~/images/home_new/learn.png?v=1.1" alt="Learn" />
+               </figure>
+                    <h3>
+                        learn</h3>
+                    <div>
+                        Discover what really<br />
+                        sparks audience<br />
+                        engagement, second by second.
+                    </div>
+                </li>
+                <li>
+                    <figure>
+                <img src="~/images/home_new/prepare.png?v=1.1" alt="Prepare" />
+               </figure>
+                    <h3>
+                        prepare</h3>
+                    <div>
+                        Get the data you need<br />
+                        to make smart,<br />
+                        data-driven decisions.
+                    </div>
+                </li>
+                <li>
+                    <figure>
+                <img src="~/images/home_new/compete.png?v=1.1" alt="Compete" />
+               </figure>
+                    <h3>
+                        compete</h3>
+                    <div>
+                        Track your competitors<br />
+                        across paid, earned, shared<br />
+                        and owned media.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="jumbotron clientGreyImg" style="position: relative; overflow: hidden;
+    padding-top: 10px;">
+    <div class="container">
+        <div class="row">
+            <div id="divClient1" style="text-align:center;">
+                <img src="~/images/home_new/leggmason_grey.png" alt="Legg Mason" /><img src="~/images/home_new/maserati_grey.png"
+                    alt="Maserati" /><img src="~/images/home_new/nfl_grey.png" alt="NFL" /><img src="~/images/home_new/mercedes.png"
+                        alt="Mercedes" /><img src="~/images/home_new/miami.png" alt="Miami" /><img src="~/images/home_new/temple_grey.png" alt="Temple" /><img src="~/images/home_new/puma_grey.png"
+                                alt="Puma" /></div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron txt-center pad-tb-30" style="padding-bottom: 60px !important;">
+    <div class="container">
+        <div class="row" align="center">
+            <div>
+                <h1 class="orange-txt" style="font-size: 120px;">
+                    meet iQ</h1>
+                <div id="divMeetIQ" style="position:relative;">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/KDpXj0qTHBg" frameborder="0" allowfullscreen></iframe>
+                </div>          
+                <p style="text-align:center;margin:40px 0px;">With unprecedented data and research functionality, 
+                iQ media equips every marketer with better data and deeper analysis for smarter media 
+                intelligence. We overlay each of your most important KPIs in one simple visualization, 
+                and sync that data directly with the exact moments your brand is seen or heard on every screen.</p>
+                <p style="font-family:'lato-italic';text-align:center;">Go ahead, track everything.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron result">
+    <div class="container">
+        <div class="row">
+            <div style="width: 66.6666%; float: right;" class="resultPoints">
+                <div style="clear: both;">
+                    <div style="width: 50%; float: right; padding-left: 25px;">
+                        <h2>
+                            <img src="~/images/home_new/blue_arrow.png" />
+                            <span class="blue-txt">public relations</span>
+                        </h2>
+                        <p style="margin: 0;">
+                            Our highly searchable index of TV data helps public relations professionals keep 
+                            tabs on their brand across every channel and keep messaging stakeholders prepped 
+                            for future media engagement.</p>
+                    </div>
+                    <div style="width: 50%; float: left;padding-right:25px;">
+                        <h2>
+                            <img src="~/images/home_new/orange_arrow.png" />
+                            <span class="orange-txt">marketing</span>
+                        </h2>
+                        <p style="margin: 0;">
+                            Whether you’re strategizing for a product launch or tapping into industry trends,
+                            iQ media equips marketers with the integrated media analytics they need to optimize
+                            cross-channel marketing efforts.</p>
+                    </div>
+                </div>
+                <div style="clear: both; padding-top: 20px;">
+                    <div style="width: 50%; float: right; padding-left: 25px;">
+                        <h2>
+                            <img src="~/images/home_new/purple_arrow.png" />
+                            <span class="purple-txt">advertising</span>
+                        </h2>
+                        <p style="margin: 0;">
+                            We provide the same data-rich experience you're used to with digital buying for 
+                            earned and paid media on TV so you can effectively analyze every buy on any channel.</p>
+                    </div>
+                    <div style="width: 50%; float: left;padding-right:25px;">
+                        <h2>
+                            <img src="~/images/home_new/green_arrow.png" />
+                            <span class="green-txt">broadcasters</span>
+                        </h2>
+                        <p style="margin: 0;">
+                            Your audience engages with your program on multiple screens and channels. 
+                            Shouldn't your data reflect that? iQ media gives TV brands an unprecedented 
+                            view into the real impact of multiscreen engagement.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 33.3333%" class="h-result-title">
+                <h1><a href="~/solutions">
+                    we like<br />
+                    smart people<br />
+                    (like you).</a>
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron txt-center pad-tb-30" style="padding-bottom: 25px;">
+    <div class="container">
+        <div class="row" align="center">
+            <div class="media-content">
+                <h1>
+                    master your<br />
+                    media strategy</h1>
+                <span style="width: 50%;">iQ media engages every PR & marketing professional with better data 
+                        in paid, earned, shared & owned media analytics across television, online, social & 
+                        first-party data sources.</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron peso">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <div>
+                    <h2 class="orange-txt text-pos-right">
+                        paid</h2>
+                    <p>
+                        iQ media users are able to track exactly how paid media affects the rest of their 
+                        marketing and communications efforts, second by second, without having to pull report 
+                        after report.
+                    </p>
+                </div>
+                <div>
+                    <h2 class="blue-txt text-pos-right">
+                        shared</h2>
+                    <p>
+                        Our social listening features carefully curate shared content based on influencer 
+                        impact and keyword relevancy so you can focus on truly meaningful engagement online.
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-6" align="center">
+                <img src="~/images/home_new/peso.png" />
+            </div>
+            <div class="col-sm-3">
+                <div>
+                    <h2 class="purple-txt">
+                        earned</h2>
+                    <p>
+                        We don't believe that all publicity is good publicity. Equipped with years of historical 
+                        data, our award-winning PR software helps prepare leadership with the context needed to 
+                        make the most out of every earned media opportunity.
+                    </p>
+                </div>
+                <div>
+                    <h2 class="green-txt">
+                        owned</h2>
+                    <p>
+                        Marketing content can't live in a silo anymore. iQ media's data suites help you make 
+                        meaningful correlations between the campaigns you manage and how they affect your brand.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron resources">
+    <div class="container">
+        <h1>
+            resources</h1>
+        <div class="row">
+            <div class="col-sm-3">
+                <img src="~/images/home_new/blog.png" alt="blog pose" />
+                <div class="resources-label">
+                    earned media is more than "mentions"<span>blog post</span>
+                </div>
+                <a href="http://blog.iqmediacorp.com/earned-media-is-more-than-mentions" target="_blank"></a>
+            </div>
+            <div class="col-sm-3">
+                <img src="~/images/home_new/ebook.png" alt="e-book" />
+                <div class="resources-label">
+                    marketing 5.0<span>e-book</span>
+                </div><a href="http://info.iqmediacorp.com/iq-media-ebook-marketing-5.0" target="_blank"></a>
+            </div>
+            <div class="col-sm-3">
+                <img src="~/images/home_new/casestudy.png" alt="case study" />
+                <div class="resources-label">
+                    edmunds.com<span>case study</span>
+                </div><a href="~/pdf/EDMUNDS_SUCCESS.pdf" target="_blank"></a>
+            </div>
+            <div class="col-sm-3">
+                <img src="~/images/home_new/guide.png" alt="guide" />
+                <div class="resources-label">
+                    ditch the “divide and conquer” media approach<span>guide</span>
+                </div><a href="http://info.iqmediacorp.com/iq-media-ebook-media-approach" target="_blank"></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="jumbotron hiring" style="position:relative;">
+    <div class="container">
+        <div class="row">
+            <h1 class="green-txt">
+                we’re hiring. <span style="display: block;">come challenge an industry!</span></h1>                
+                <div style="text-align: center;margin-top:40px;">
+                <a href="~/careers" class="reqdemo-green" title="we're hiring. come challenge an industry">current openings</a>
+            </div>
+        </div>
+    </div>    
+</div>
+@*<div id="divClient2" style="position:absolute;left:-101%;width:200%;overflow:hidden;">
+        <img src="~/images/home_new/leggmason_grey.png" alt="Legg Mason" />
+        <img src="~/images/home_new/maserati_grey.png" alt="Maserati" />
+        <img src="~/images/home_new/nfl_grey.png" alt="NFL" />
+        <img src="~/images/home_new/nutrisystem_grey.png" alt="Nutri System" />
+        <img src="~/images/home_new/septa_grey.png" alt="Septa" />
+        <img src="~/images/home_new/temple_grey.png" alt="Temple" />
+        <img src="~/images/home_new/puma_grey.png" alt="Puma" />       
+    </div>*@ @*<script>
+
+    var RotateClient = function (duration1, pos, duration2) {
+        $('#divClient1').animate({ "left": "101%" }, duration1, function () { $('#divClient1').css("left", "-101%"); });
+        setTimeout(function () { $('#divClient2').animate({ "left": "101%" }, duration2, function () { $('#divClient2').css("left", "-101%"); }); setTimeout(function () { RotateClient(40000, "101%", 40000); }, duration2 / 2); }, duration1 / 2);
+
+        
+
+    }
+
+    $(window).load(function () { RotateClient(20000,"101%",40000); });
+</script>*@ 

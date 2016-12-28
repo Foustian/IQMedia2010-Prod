@@ -1,0 +1,158 @@
+.chromestyle{
+width: 100%;
+}
+
+.chromestyle:after{ /*Add margin between menu and rest of content in Firefox*/
+content: "."; 
+display: block; 
+height: 0; 
+clear: both; 
+visibility: hidden;
+}
+
+.chromestyle ul{
+/*border: 1px solid #BBB;*/
+width: 100%;
+/*background: url(mainlink-bg.jpg) center center repeat-x; THEME CHANGE HERE*/
+padding: 0px 0;
+margin: 0;
+text-align: left; /*set value to "left", "center", or "right"*/
+}
+
+.chromestyle ul li{
+display: inline;
+}
+
+.chromestyle ul li a{
+	background: url(mainlink-bg.png) center center repeat-x;
+	color: #778997;
+	margin: 0;
+	margin-right: -4px;
+	padding-bottom:5px;
+	text-decoration: none;
+	display: inline-block;
+	font: bold 13px "quicksand_bookregular";
+	/*text-transform: uppercase;*/
+}
+.chromestyle ul li a span{
+	color: #778997;
+	padding: 10px 62px 6px 62px;
+	margin: 0;
+	height: 19px;
+	text-decoration: none;
+	cursor:pointer;
+	border-right: 1px solid #d7d7d7;
+	border-left: 1px solid #f1f1f1;
+	display: inline-block;
+	font: bold 13px "quicksand_bookregular";
+}
+
+.chromestyle ul li.first a{
+	background: url(mainlink-hover.png) left center no-repeat;
+	color: #778997;
+	margin: 0;
+	margin-right: -4px;
+	padding-bottom:5px;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+	font: bold 13px "quicksand_bookregular";
+}
+.chromestyle ul li.first a span{
+	color: #778997;
+	padding: 10px 0px 6px 0px;
+	margin: 0;
+	height: 19px;
+	text-decoration: none;
+	width: 185px;
+	cursor:pointer;
+	border-right: 1px solid #d7d7d7;
+	border-left: 1px solid #f1f1f1;
+	text-align: center;
+	font: bold 13px "quicksand_bookregular";
+}
+.chromestyle ul li.last a{
+	background: url(mainlink2-hover.png) right center no-repeat;
+	color: #778997;
+	margin: 0;
+	margin-right: -4px;
+	padding-bottom:5px;
+	text-decoration: none;
+	display: inline-block;
+	text-align: center;
+	font: bold 13px "quicksand_bookregular";
+}
+.chromestyle ul li.last a span{
+	color: #778997;
+	padding: 10px 0px 6px 0px;
+	margin: 0;
+	height: 19px;
+	text-decoration: none;
+	width: 183px;
+	border-right:none;
+	text-align: center;
+	cursor:pointer;
+	font: bold 13px "quicksand_bookregular";
+}
+
+/*.chromestyle ul li.last a{
+	background: url(mainlink2-hover.png) right center no-repeat;
+	color: #778997;
+	padding: 8px 0px;
+	margin: 0;
+	margin-right: -4px;
+	height: 24px;
+	text-decoration: none;
+	border-right: none;
+	display: inline-block;
+	width: 150px;
+	text-align: center;
+	font: bold 14px "quicksand_bookregular";
+}*/
+
+.chromestyle ul li a span:hover, .chromestyle ul li a span.selected{ /*script dynamically adds a class of "selected" to the current active menu item*/
+background: url(mainlink-bg-hover.png) center center repeat-x; color:#FFF; /*THEME CHANGE HERE*/
+}
+.chromestyle ul li.last a span:hover, .chromestyle ul li.last a span.selected{ /*script dynamically adds a class of "selected" to the current active menu item*/
+background: url(mainlink2.png) right center no-repeat; color:#FFF; /*THEME CHANGE HERE*/
+}
+.chromestyle ul li.first a span:hover, .chromestyle ul li.first a span.selected{ /*script dynamically adds a class of "selected" to the current active menu item*/
+background: url(mainlink-b.png) left center no-repeat; color:#FFF; /*THEME CHANGE HERE*/
+}
+
+/* ######### Style for Drop Down Menu ######### */
+
+.dropmenudiv{
+position:absolute;
+top: 0;
+border: 1px solid #d6e3ed; /*THEME CHANGE HERE*/
+border-bottom-width: 0;
+font:normal 11px Tahoma, Verdana, Arial;
+line-height:18px;
+z-index:100;
+background-color: #eff8ff;
+width: auto;
+visibility: hidden;
+}
+
+
+.dropmenudiv a{
+	width: auto;
+	display: block;
+	text-indent: 3px;
+	border-bottom: 1px solid #d6e3ed; /*THEME CHANGE HERE*/
+	padding: 2px 7px;
+	text-decoration: none;
+	font-weight: bold;
+	color: #657d95;
+}
+
+* html .dropmenudiv a{ /*IE only hack*/
+width: auto;
+}
+
+.dropmenudiv a:hover{ /*THEME CHANGE HERE*/
+	background-color: #fff;
+	color: #576B80;
+}
+

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+    <siteMapNode url="~/Default.aspx" title="Root"  description="Root">
+        <siteMapNode url="" title="Content Management"  description="Content Management" >
+            <siteMapNode title="Career" description="Career" url="~/CareerContent/"></siteMapNode>
+            <siteMapNode title="Contact Us" description="Contact Us" url="~/ContactUsContent/"></siteMapNode>
+            <siteMapNode title="About Us" description="About Us" url="~/AboutUsContent/"></siteMapNode>
+            <siteMapNode title="Product" description="Product" url="~/ProductContent/"></siteMapNode>
+        </siteMapNode>
+        <siteMapNode url="" title="Registration"  description="Registration" >
+            <siteMapNode title="Client Registration" description="Client Registration" url="~/ClientRegistration/"></siteMapNode>
+            <siteMapNode title="Customer Registration" description="Customer Registration" url="~/CustomerRegistration/"></siteMapNode>
+        </siteMapNode>
+        <siteMapNode url="" title="Role Mapping"  description="Role Mapping" >
+            <siteMapNode title="IQ Role" description="IQ Role" url="~/IQRole/"></siteMapNode>
+            <siteMapNode title="Customer Role Mapping" description="Customer Role Mapping" url="~/CustomerRole/"></siteMapNode>
+            <siteMapNode title="Client Role Mapping" description="Client Role Mapping" url="~/ClientRole/"></siteMapNode>
+        </siteMapNode>
+        <siteMapNode url="" title="Export"  description="Export" >
+            <siteMapNode title="Clip Export" description="Clip Export" url="~/ClipExport/"></siteMapNode>
+        </siteMapNode>
+        <siteMapNode url="" title="IQAgent"  description="IQAgent" >
+            <!--<siteMapNode title="Agent Setup" description="Agent Setup" url="~/IQAgentSetup/"></siteMapNode>-->
+            <siteMapNode title="Agent Queries" description="Agent Queries" url="~/IQAgentConsole/"></siteMapNode>
+        </siteMapNode>
+        <siteMapNode url="" title="Demo"  description="Demo" >
+            <siteMapNode title="PMG Search" description="PMG Search" url="~/PMGSearchDemo/"></siteMapNode>
+        </siteMapNode>
+    </siteMapNode>
+</siteMap>

@@ -1,0 +1,1693 @@
+.clear
+{
+    clear: both;
+    overflow: hidden;
+}
+.flot-left
+{
+    float: left;
+}
+.flot-right
+{
+    float: right;
+}
+.search-box-bg
+{
+    background-color: #339cc9;
+    text-align: center;
+    width: 99.5%;
+    margin: 0 auto;
+    padding: 2px 2px 6px 2px;
+    border-radius: 5px;
+    margin-top: 6px;
+}
+.search-nav
+{
+    margin-top: -10px;
+}
+.content-borader
+{
+    border: solid 1px #cecfcf;
+    width: 97.7%;
+}
+.result-title
+{
+    background-color: #F8F8F8;
+    padding-bottom: 5px; /*padding-top:8px; */
+    min-height: 10px;
+}
+.result-title span
+{
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0099ff;
+}
+.show-content-bg
+{
+    margin-top: 3px;
+    background-color: #f4f4f4;
+    border: solid 1px #eaeaea;
+}
+.show-link
+{
+    border-right: none;
+    color: #40aad8;
+    padding: 3px 6px;
+    text-decoration: none;
+}
+.show-link:hover
+{
+    color: #000;
+    text-decoration: none;
+}
+.logo
+{
+    padding-top: 22px;
+    padding-bottom: 19px;
+    float: left;
+}
+.header-right2
+{
+    /*width:335px;*/
+    float: right;
+    margin-top: 22px;
+    text-align: left;
+    color: #52bee8;
+    text-decoration: none; /*font: bold 10px Arial, Helvetica, sans-serif;*/
+    font: 11px "avenir_65medium";
+    text-transform: uppercase;
+    bottom: 0px;
+    padding-bottom: 10px;
+}
+.header-right2 .logout
+{
+    margin-right: 3px;
+    margin-top: 15px;
+    margin-left: 10px;
+    background-color: #52bde7; /*-moz-border-radius: 5px;    -webkit-border-radius: 5px;    -khtml-border-radius: 5px;*/
+    border-radius: 5px;
+    color: #FFF;
+    padding: 3px 20px;
+    border: none;
+    float: right;
+    cursor: pointer; /*behavior: url(css/border-radius.htc);*/
+}
+.header-right2 .logout:hover
+{
+    background-color: #c0d653;
+}
+
+span input
+{
+    margin-left: 0px !important;
+}
+
+.MyCalendar .ajax__calendar_container
+{
+    background-color: white;
+    z-index: 999999;
+}
+.MyCalendar .ajax__calendar_other .ajax__calendar_day, .MyCalendar .ajax__calendar_other .ajax__calendar_year
+{
+}
+.MyCalendar .ajax__calendar_hover .ajax__calendar_day, .MyCalendar .ajax__calendar_hover .ajax__calendar_month, .MyCalendar .ajax__calendar_hover .ajax__calendar_year
+{
+}
+.MyCalendar .ajax__calendar_active .ajax__calendar_day, .MyCalendar .ajax__calendar_active .ajax__calendar_month, .MyCalendar .ajax__calendar_active .ajax__calendar_year
+{
+}
+
+.btn-play
+{
+    background-color: #ffffff;
+    background-image: url(../images/btn-play.jpg);
+    background-repeat: no-repeat;
+    height: 22px;
+    width: 24px !important;
+    border-style: none;
+    font-weight: bold;
+    color: #FFFFFF; /*font-family: Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+    font-size: 11px;
+}
+
+.ModalBackground
+{
+    background-color: gray;
+    filter: alpha(opacity=70);
+    opacity: 0.7;
+}
+.btn-cancel
+{
+    background-color: #fff;
+    height: 22px;
+    width: 22px !important;
+    border-style: none;
+    font-weight: bold;
+    color: #fff; /*font-family: Arial, Helvetica, sans-serif;*/
+    font-size: 11px;
+    cursor: pointer;
+    background: url(../images/gridicon-delete.png) no-repeat;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.grayinput
+{
+    background-color: #E0DFDF;
+    border: medium none;
+    border-radius: 5px 5px 5px 5px;
+    color: #000000;
+    float: left; /*font: 10px Arial,Helvetica,sans-serif;*/ /* margin-left: 15px;     margin-right: 10px;*/
+    font: 14px/24px "avenir_65medium" !important;
+    padding: 5px 6px;
+    width: 170px;
+    z-index: 1;
+}
+
+.show-hide
+{
+    background-color: #f5f5f5; /*padding:3px 10px 3px 10px;*/
+    padding: 3px;
+    display: block;
+    color: #2f2f2f;
+    font-weight: bold;
+    border: solid 1px #dfdfdf;
+    border-radius: 5px 5px 0px 0px;
+    background: #dfdfdf url(../images/show-hide-bg.png) repeat-y center top;
+    clear: both;
+    overflow: hidden;
+}
+.cursor
+{
+    cursor: pointer;
+}
+.show-hide a
+{
+    display: block;
+    color: #5e5e5e;
+    text-decoration: none;
+    margin-top: 4px;
+    font: normal 14px "avenir_65medium";
+    text-transform: uppercase;
+}
+.show-hide a:hover
+{
+    display: block;
+    color: #32b0cf;
+    text-decoration: none;
+}
+.imgshowHide
+{
+    margin-top: 3px;
+    margin-left: 3px;
+}
+
+
+.float-left
+{
+    float: left;
+}
+.float-right
+{
+    float: right;
+}
+
+/* Grid Style */
+.gridIQA-th
+{
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+    font-size: 10px;
+    font-weight: bold;
+    color: #909190;
+    line-height: 10px;
+    background-color: #efefef;
+    text-decoration: none;
+}
+.gridIQA-th A
+{
+    color: #909190;
+    text-decoration: none;
+}
+
+.gridIQA-th A:hover
+{
+    color: #909190;
+    text-decoration: underline;
+}
+table.grid
+{
+   /* word-break: break-all !important;
+    word-wrap: break-word !important;
+    overflow: hidden !important;
+    table-layout: fixed !important;
+    border: solid 1px #c6c5c5;*/
+}
+table.grid td
+{
+    border: none;
+    border-bottom: solid 1px #c6c5c5;
+    font-size: 11px;
+    font-family: "avenir_65medium";
+    line-height: 15px;
+    color: #535353;
+    text-decoration: none;
+    padding: 4px 4px 4px 4px;
+    vertical-align: top;
+}
+table.grid td td
+{
+    border: none;
+}
+table.grid th
+{
+    border: none;
+    border-bottom: solid 1px #c6c5c5;
+}
+
+div.center
+{
+    text-align: center;
+}
+
+div.left
+{
+    text-align: left;
+}
+
+div.right
+{
+    text-align: right;
+}
+
+table.grid td.center
+{
+    text-align: center;
+    width: auto;
+}
+
+table.grid td.left
+{
+    text-align: left;
+    width: auto;
+}
+
+table.grid td.right
+{
+    text-align: right;
+    width: auto;
+}
+
+
+
+.grid-th
+{
+    /*font: bold 12px Arial, Helvetica, sans-serif;*/
+    font: bold "avenir_65medium"; /*font-size:10px;*/
+    font-size: 9px;
+    color: #161616;
+    background: #dedede;
+    text-align: center;
+    font-weight: bold;
+}
+
+.grid-th A
+{
+    color: #161616;
+    text-decoration: none;
+    text-align: center;
+}
+
+.grid-th A:hover
+{
+    color: #161616;
+    text-decoration: underline;
+}
+
+.grid-th-left
+{
+    /*font: bold 12px Arial, Helvetica, sans-serif;*/
+    font: bold "avenir_65medium"; /*font-size:10px;*/
+    font-size: 10px;
+    color: #161616;
+    background: #dedede;
+    text-align: left;
+    font-weight: bold;
+}
+
+.grid-th-left A
+{
+    color: #161616;
+    text-decoration: none;
+    text-align: left;
+}
+
+.grid-th-left A:hover
+{
+    color: #161616;
+    text-decoration: underline;
+    text-align: left;
+}
+
+.grid-th-right
+{
+    /*font: bold 12px Arial, Helvetica, sans-serif;*/
+    font: bold "avenir_65medium"; /*font-size:10px;*/
+    font-size: 9px;
+    color: #161616;
+    background: #dedede;
+    text-align: right;
+    font-weight: bold;
+}
+
+.grid-th-right A
+{
+    color: #161616;
+    text-decoration: none;
+    text-align: right;
+}
+
+.grid-th-right A:hover
+{
+    color: #161616;
+    text-decoration: underline;
+    text-align: right;
+}
+
+
+.grid-bg
+{
+    padding-bottom: 2px;
+    clear: both;
+    overflow: hidden;
+    margin-top: 4px;
+    background: #f8f8f8 url(../images/grid-bg.jpg) repeat-x left top;
+}
+
+.ModalBackgroundLightBox
+{
+    background-color: #000000;
+    filter: alpha(opacity=40);
+    opacity: 0.4;
+}
+.highlight
+{
+    background-color: #8FD8D8;
+    color: blue;
+}
+
+.PopupCancelbtn
+{
+    margin-left: 50%;
+    border-style: none;
+    font-weight: bold;
+    color: Red;
+    font-size: 24px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.boldgray
+{
+    color: #454545;
+    font-weight: bold;
+    font: 14px/24px "avenir_65medium";
+}
+
+.Caption
+{
+    float: left;
+    height: 340px;
+    width: 300px;
+    background-color: White;
+    color: #1F4D82;
+    overflow: auto; /*display: none;*/
+    margin-right: 3.5px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.intervalTextbox
+{
+    /*width:47%;   */ /*width:75px;*/ /*width:72px;*/
+    width: 85%;
+    border: 1px solid #CCCCCC !important;
+    background-color: White !important;
+}
+
+.hourDropDown
+{
+    /*width:55px;*/ /*width:62px;*/
+    width: 100%; /*padding:0 0 0 3px;*/
+    padding: 4px 0px 3px 0px; /*padding-left:3px;*/
+}
+
+.divApply
+{
+    padding-right: 10px;
+    padding-top: 10px;
+    text-align: right; /*display:none;*/
+}
+
+.filterul
+{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.filterul li
+{
+    min-height: 20px; /*border-bottom:0px !important;*/
+    margin: 3px;
+    border-bottom: 0px !important;
+    padding: 3px 0;
+}
+
+.filterul li div.divflt
+{
+    border: 1px solid #CECFCF; /* min-height: 20px;*/
+    border-radius: 4px; /*border-top:1px solid #CECFCF;     border-left:1px solid #CECFCF;     border-right:1px solid #CECFCF;     border-bottom:0px !important;*/
+}
+
+#search-list
+{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+#search-list li
+{
+    min-height: 20px;
+    margin: 2px;
+    border-bottom: 0px !important;
+}
+
+
+.InformationTag
+{
+    padding-left: 5px;
+}
+
+/*#search-list li > div
+{
+    
+}
+
+#search-list li
+{
+    
+}
+
+#search-list li div.divflt
+{
+    border: 1px solid #CECFCF; 
+    border-radius: 4px;
+}
+
+#ulNews
+{
+    padding-right: 2px;
+    padding-left: 2px;
+}
+#ulNews li
+{
+    min-height: 20px;
+    margin: 2px;
+    border-bottom: 0px !important;
+}
+
+
+
+#ulNews li > div
+{
+    
+}
+
+#ulNews li div.divflt
+{
+    border: 1px solid #CECFCF;    
+    border-radius: 4px;
+}*/
+
+.programTextbox
+{
+    width: 88%;
+    border: 1px solid #CCCCCC !important;
+    background-color: White !important;
+    margin-top: 4px;
+    margin-bottom: 14px;
+}
+
+#divFilterSide
+{
+    background-color: #FFFFFF !important;
+}
+
+.lidivTop
+{
+    padding: 6px 2px;
+    min-height: 15px;
+    background-color: #EAEAEA;
+    cursor: pointer;
+}
+
+
+.lidivLeft
+{
+    float: left; /*padding-top: 5px;*/
+}
+
+.lidivRight
+{
+    margin-left: 78%; /*padding-top: 5px; */ /*margin-left: 95%; */
+}
+
+.lidivRightHeader
+{
+    margin-left: 78%;
+}
+
+.ulhead
+{
+    /*background-color: #0088CC;*/
+    background-color: #339CC9;
+    color: White;
+    padding-top: 6px !important;
+    padding-left: 10px !important;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0px !important;
+}
+
+.ulheader
+{
+    margin-left: -5px !important; /*margin-right:10px!important;*/
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    display: block;
+    padding: 3px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #0088CC;
+    text-transform: uppercase;
+}
+
+.MarketDropdown
+{
+    width: 95%;
+    margin-bottom: 9px;
+}
+
+.btn-blue2
+{
+    border: solid 1px #d9d9d9;
+    color: #3290b4;
+    background-color: #FFF;
+    font-weight: bold;
+    font-size: 12px; /*font: bold 12px Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+    padding: 5px 10px;
+    overflow: visible;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn-blue2:hover
+{
+    color: #fff;
+    background-color: #aec443;
+}
+
+.browseButton
+{
+    background-image: url(../images/browse-ftp.png); /*background-repeat:repeat-x;*/
+}
+
+.PopupCancelbtnImg
+{
+    background-image: url(../images/gridicon-delete.png);
+    margin-left: 50%;
+    border-style: none;
+    font-weight: bold;
+    color: Red;
+    font-size: 24px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.filterDirectionImg
+{
+    float: right;
+    margin-top: -12px;
+}
+
+/* added for myIQ new */
+.imgicon
+{
+    width: 22px !important;
+}
+/* added for myIQ new */
+
+.MsgSuccess
+{
+    color: Green;
+}
+
+.MsgFail
+{
+    color: Red;
+}
+
+
+
+.modalPopupDiv
+{
+    border: 10px solid #6f6f6f;
+    background-color: #FFFFFF; /*Added below style on 7/Jan/2013 for shwowing Scroll Bar in Inner Div instead of outer Main Div */
+    overflow: visible;
+    width: 57%;
+    margin-left: 0px;
+    left: 21%;
+    position: fixed !important;
+}
+
+.modalPopupCloseButtonDiv
+{
+    width: 27px;
+    float: right;
+}
+
+.modalPopupMediaDiv
+{
+    /*width: 565px;*/
+    width: 885px;
+    padding: 15px 15px 15px 0;
+    height: 345px;
+}
+
+.modalPopupPlayer
+{
+    width: 545px;
+    height: 340px;
+    float: right;
+    background-color: Black;
+}
+
+.modalPopupDivNews
+{
+    height: 90%;
+    width: 80%;
+    border: 10px solid #6f6f6f;
+    background-color: #FFFFFF;
+}
+.divShowCaption
+{
+    float: left;
+    cursor: pointer;
+}
+
+.ModalBackgroundSaveArticle
+{
+    background-color: gray;
+    filter: alpha(opacity=70);
+    opacity: 0.7;
+    z-index: 100002 !important;
+}
+
+.pnlPopup
+{
+    border: 10px solid #6f6f6f;
+    background-color: White;
+    width: 52%;
+    z-index: 999;
+}
+
+
+.popup-hd
+{
+    background-color: #0088CC;
+    color: White;
+    padding: 5px 5px 5px 10px;
+    cursor: move;
+}
+
+.blue-content-bg
+{
+    background: url(../images/blue-content-bg.jpg) repeat-x center top; /*padding: 10px 7px;*/
+    padding: 1% 1%;
+    background-color: #FFFFFF; /*Added below style on 7/Jan/2013 for shwowing Scroll Bar in Inner Div instead of outer Main Div */
+    overflow: auto; /*height:490px;*/
+}
+
+.popContainMain
+{
+    background-color: white;
+    width: 100%;
+    height: 100%;
+}
+
+.height90p
+{
+    height: 90%; /*!important;*/
+}
+
+.height80p
+{
+    height: 74%; /*min-height:10% !important;     height:80% !important;*/
+}
+
+.height80p > div
+{
+    /*[class!='ui-resizable-handle']*/
+    height: 100%;
+}
+
+.height80p > div.ui-resizable-handle
+{
+    /*[class!='ui-resizable-handle']*/
+    height: 10px;
+}
+
+.height80p > div.ui-icon
+{
+    /*[class!='ui-resizable-handle']*/
+    height: 16px;
+}
+
+.btn-green
+{
+    border: solid 1px #d9d9d9;
+    color: #fff;
+    background-color: #aec443;
+    font-weight: bold;
+    font-size: 12px; /*font: bold 12px Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+    padding: 5px 10px;
+    overflow: visible;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-green:hover
+{
+    background-color: #D8407D;
+}
+
+.searchterm-link
+{
+    color: #FFFFFF;
+    font: bold 13px Arial,Helvetica,sans-serif;
+    margin: 0 6px;
+    text-decoration: none;
+}
+
+
+footer
+{
+    border-top: 1px solid #DBDBDB;
+    clear: both;
+    color: #515151;
+    font: 14px/24px "avenir_65medium";
+    margin-top: 30px;
+    overflow: hidden;
+    padding-bottom: 20px;
+    /*padding-left: 60px;*/
+    text-align:center;
+    padding-top: 20px;
+    text-decoration: none;
+}
+
+
+.tabMain
+{
+    display: block;
+    background-color: White;
+    border: 1px solid #AAAAAA;
+}
+
+.tabdiv
+{
+    /*background-color: #0088CC;*/
+    background-color: #339CC9;
+    border-radius: 4px 4px 0px 0px;
+    border-left: 5px solid #339CC9;
+    border-top: 5px solid #339CC9;
+    border-right: 5px solid #339CC9;
+    margin: 2px 2px 0px 2px;
+}
+
+.tabdiv div
+{
+    padding: 0.3em 1em; /*5px;*/
+    color: White;
+    min-width: 16px; /*25px;*/
+    text-align: center;
+    cursor: pointer;
+}
+
+.tabdiv div.active
+{
+    background-color: White;
+    color: #0088CC;
+    border-left: 1px solid white;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    border-radius: 4px 4px 0px 0px;
+    cursor: default;
+}
+
+.tabInnerDiv
+{
+    margin: 0 3px;
+}
+
+.tabContentDiv
+{
+    border-right: 5px solid #339CC9;
+    border-left: 5px solid #339CC9;
+    border-bottom: 5px solid #339CC9;
+    margin: 0px 2px 2px 2px;
+    padding: 3px;
+}
+
+.listBorder
+{
+    /*border: 1.5px solid rgb(0, 136, 204);*/
+    border: 1.5px solid #339CC9;
+    margin: 0px 2px;
+}
+
+.text-align-center
+{
+    text-align: center;
+}
+
+.pnlPopup textarea
+{
+    width: 74%;
+    height: 145px;
+    overflow: auto;
+}
+
+.pnlPopup select
+{
+    width: 36% !important;
+}
+
+.pnlPopup-right-close
+{
+    float: right;
+    padding-right: 10px;
+}
+
+.display-none
+{
+    display: none;
+}
+
+.pnlPopup .error-msg, .error-msg
+{
+    color: Red;
+    width: 100%;
+    float: left;
+}
+
+.pnlPopup .error-summery
+{
+    color: #bd0000;
+    font-size: smaller;
+}
+
+.modalPopupDivNews iframe
+{
+    width: 100%;
+    height: 100%;
+}
+
+.popup-top-close
+{
+    position: absolute;
+    margin: -24px 0 0 23px;
+    cursor: pointer;
+}
+
+#divCloseNews
+{
+    width: 27px;
+    float: right;
+}
+
+#divClosePlayer
+{
+    width: 27px;
+    float: right;
+}
+
+.modalPopupDivNews .DivNews-btn
+{
+    width: 100%;
+    text-align: right;
+    position: absolute;
+    margin: -40px 0 0 -25px;
+}
+
+#divfcexNews
+{
+    display: none;
+    float: left;
+    margin-top: -12px;
+}
+
+#chartTab2
+{
+    display: block;
+    background-color: White;
+}
+
+table.grid-iq
+{
+    background-color: White; /*width: 100%;*/
+    border-collapse: collapse;
+    border: 1px solid #C6C5C5;
+}
+
+div.grid-iq
+{
+    background-color: White;
+    width: 100%;
+    border-collapse: collapse;
+    border: 0px none;
+}
+
+
+
+#spnNewsChart #spnChartActive
+{
+    color: Red;
+    float: left;
+    margin-left: 15px;
+    margin-top: 2px;
+}
+
+.div-subchecklist
+{
+    margin-left: 25px;
+    display: none;
+}
+
+.bs-docs-example img
+{
+    cursor: pointer;
+    width: 16px;
+}
+
+.bs-docs-example
+{
+    /*padding: 8px 3px 5px 5px;*/
+    padding: 8px 5px;
+    display: none;
+}
+
+.iq-ampm-div
+{
+    float: right;
+    margin-top: -5px;
+    width: 41%;
+}
+.iq-ampm-div label
+{
+    font-size: 11px;
+}
+.iq-hour-div
+{
+    float: left;
+    vertical-align: middle;
+    width: 55%;
+}
+
+.iq-time-div
+{
+    float: right;
+    width: 55%;
+}
+
+.iq-date-div
+{
+    float: left;
+    width: 43%;
+}
+.iq-date-div input
+{
+    font-size: 12px !important;
+}
+.iq-hour-div select
+{
+    font-size: 12px !important;
+}
+
+.iq-duration
+{
+    width: 60% !important;
+    margin-top: 8px;
+}
+
+.paddingtop15
+{
+    padding-top: 15px;
+}
+
+.sublist div
+{
+    margin-left: 25px;
+}
+
+.height30
+{
+    height: 30px;
+}
+
+.height8
+{
+    height: 8px;
+}
+
+.height6
+{
+    height: 6px;
+}
+
+.marginbottom5
+{
+    margin-bottom: 5px;
+}
+
+.marginleft15
+{
+    margin-left: 15px;
+}
+.marginleft20
+{
+    margin-left: 20px;
+}
+
+.paddingleft4
+{
+    padding-left: 4px;
+}
+.paddingleft17
+{
+    padding-left: 17px;
+}
+
+.paddingright4
+{
+    padding-right: 4px;
+}
+.margintop8
+{
+    margin-top: 8px;
+}
+.margintop12
+{
+    margin-top: 12px;
+}
+.marginleft72p
+{
+    margin-left: 72%;
+}
+.marginleft-28
+{
+    margin-left: -28px;
+}
+.paddingleft-5
+{
+    padding-left: -5px;
+}
+.width100p
+{
+    width: 100%;
+}
+.minheight106
+{
+    min-height: 106px;
+}
+.marginleft2
+{
+    margin-left: 2px;
+}
+
+.savesearch-title
+{
+    float: left;
+    width: 64%;
+}
+
+.form-search .input-append .search-query
+{
+    width: 50%;
+    background-color: White;
+}
+
+.fusion-chart
+{
+    display: none;
+    float: left;
+    margin-top: -12px;
+}
+
+.subdivheight div
+{
+    padding: 4px 0px;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+    table-layout: fixed;
+}
+
+div.grid
+{
+    border: none;
+    border-bottom: solid 1px #c6c5c5;
+    font-size: 11px;
+    font-family: "avenir_65medium";
+    line-height: 15px;
+    color: #535353;
+    text-decoration: none;
+}
+
+div.grid div
+{
+    float: left;
+}
+.hederdiv div
+{
+    float: left;
+}
+
+div.grid div span
+{
+    padding: 0px 4px;
+    display: block;
+}
+
+.hederdiv div span
+{
+    padding: 0px 4px;
+    display: block;
+}
+
+.RateArticleNumberLeft
+{
+    margin-right: 9px;
+    margin-top: 2px;
+}
+
+.RateArticleNumberRight
+{
+    margin-left: 9px;
+    margin-top: 2px;
+}
+
+.pnlwithScrolling
+{
+    z-index: 999;
+    width: 57%;
+    height: 90%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.prefferredcheckbox
+{
+    margin-left: 9px;
+}
+.prefferredcheckbox label
+{
+    float: none !important;
+}
+
+.div-subchecklist > img
+{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 4px;
+}
+
+.div-subchecklist input[type="checkbox"]
+{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 6px;
+}
+
+
+.bs-docs-example img
+{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 4px;
+}
+
+.bs-docs-example input[type="checkbox"]
+{
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-right: 6px;
+}
+
+.bs-docs-example input[type="text"]:last-of-type
+{
+    margin-bottom: 0px !important;
+}
+
+
+.bs-docs-example input[type="text"].last-of-type
+{
+    margin-bottom: 0px !important;
+}
+
+.btn-edit
+{
+    height: 22px;
+    width: 22px;
+    border-style: none;
+    cursor: pointer;
+    background: url(../images/gridicon-edit.png) no-repeat;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-update
+{
+    background: url("../images/gridicon-update.png") no-repeat scroll 0 0 transparent;
+    border-style: none;
+    cursor: pointer;
+    display: inline-block;
+    height: 22px;
+    text-decoration: none;
+    width: 22px;
+}
+
+.btn-delete
+{
+    height: 22px;
+    width: 22px;
+    border-style: none;
+    cursor: pointer;
+    background: url(../images/gridicon-delete.png) no-repeat;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.width90
+{
+    width: 90%;
+}
+
+.padding5
+{
+    padding: 5px;
+}
+
+#pnlEmailInner input[type="text"], textarea
+{
+    width: 97%;
+}
+
+/*.handleImage
+{
+    width: 10px;
+    height: 10px;
+    background-color: Red;
+}
+
+.resizing
+{
+    padding:0px;
+    border-style:solid;
+    border-width:1px;
+    border-color:Red;
+    cursor:se-resize;
+}*/
+
+.modal.fade
+{
+    top: 50%;
+    position: absolute;
+    -webkit-transition: visibility 0s 0.3s, opacity 0.3s linear !important;
+    -moz-transition: visibility 0s 0.3s, opacity 0.3s linear !important;
+    -o-transition: visibility 0s 0.3s, opacity 0.3s linear !important;
+    transition: visibility 0s 0.3s, opacity 0.3s linear !important;
+}
+
+.iframePopup
+{
+    height: 85%; /*left: 31%;*/
+    left: 7% !important;
+    top: 10% !important;
+    margin-top: 0px;
+    height: 85%\9 !important;
+    width: 82%;
+    cursor: move;
+}
+
+.playerPopUp
+{
+    border: 10px solid #6f6f6f;
+    background-color: #FFFFFF;
+    overflow: visible;
+    width: 900px;
+    left: 21%;
+    margin-left: 0px;
+}
+
+.popup-hd img
+{
+    margin: -29px 0 0 30px;
+    cursor: pointer;
+    position: absolute;
+}
+
+.ui-icon
+{
+    margin-right: -12px;
+    margin-bottom: -12px;
+}
+
+.ui-resizable-e
+{
+}
+
+.ui-resizable-s
+{
+}
+
+.expiredLink
+{
+    background-color: Black;
+    color: White;
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.paddingTop30p
+{
+    padding-top: 30%;
+}
+
+.link-in-page:hover
+{
+    color: #ef2a7c;
+}
+
+.link-in-page
+{
+    font: normal 14px "avenir_65medium";
+    color: #3aa9d5;
+    text-decoration: none;
+}
+
+.reportHeader
+{
+    background-color: #339CC9;
+    color: White;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 0px;
+    width: 100%;
+    text-indent: 5px;
+}
+
+
+.heading-blue2
+{
+    /*font-family: Arial, Helvetica, sans-serif;*/
+    font: 14px/24px "avenir_65medium";
+    line-height: 19px;
+    font-weight: bold;
+    color: #4FB8E6;
+    text-decoration: none;
+}
+
+.caption
+{
+    margin-bottom: 5px;
+    width: 100%;
+    cursor: pointer;
+    font: 14px/24px "avenir_65medium";
+}
+
+.navbar .nav > li
+{
+    border-top: solid 1px #ececec;
+}
+
+.display-block
+{
+    display: block;
+}
+
+table.grid tr td, table.grid tr th
+{
+    page-break-inside: avoid !important;
+}
+
+.mraginleft2p
+{
+    margin-left: 2.5641% !important;
+    margin-left: 2.1%\9 !important;
+    
+}
+
+.paddingClientReport
+{
+    padding: 9px 5px;
+}
+
+.paddingtop5
+{
+    padding-top: 5px;
+}
+
+.paddingTop2p
+{
+    padding-top: 2%;
+}
+
+.div75pleft
+{
+    float: left;
+    width: 75%;
+}
+
+.div25pleft
+{
+    float: left;
+    width: 25%;
+}
+
+.divtitle40p
+{
+    float: left;
+    width: 40%;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.div30pleft
+{
+    float: left;
+    width: 30%;
+}
+.marginleft5
+{
+    margin-left: 5px;
+}
+
+.TweetInnerDiv
+{
+    border-bottom: 1px solid #999999;
+    padding: 5px;
+}
+
+.TweetBodyDiv
+{
+    width: 89%;
+    vertical-align: top;
+    padding-right: 3%;    
+}
+
+.TweetBodyDivIQP
+{
+    width: 85%;
+    vertical-align: top;
+}
+
+.TweetSubdivFont
+{
+    font-size: 11px; color: #999999;
+}
+
+.TweetImageDiv
+{
+    width: 8%;
+}
+
+.Width3p
+{
+    width:3%;
+}
+
+.borderBoxSizing
+{
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.PaddingTopBottom1p
+{
+    padding: 1% 0%;
+}
+
+.TweetActorDisplayName
+{
+    font-size:14px;    
+    max-width:45%;    
+}
+
+.TweetBodyText
+{
+    color: #535353;
+}
+
+.TweetImageDiv img
+{    
+    max-width:100%;
+    height:auto;
+}
+
+.IQPremiumTweetImageDiv
+{
+    width: 12%;
+}
+
+
+.IQPremiumTweetImageDiv img
+{    
+    max-width:100%;
+    height:auto;
+}
+
+.ClipPlayerPopUpReport
+{
+    border: 10px solid #6f6f6f;
+    background-color: #FFFFFF;
+    overflow: visible;
+    width: 900px;
+    left: 0%;
+    top: 0% !important;
+    margin-left: 0px;
+}
+.paddingright4p
+{
+    padding-right: 4% !important;
+}
+
+.paddingleft4p
+{
+    padding-left:4% !important;
+}
+
+#main-nav
+{
+    font:bold 13px "QuicksandBold";
+}
+
+.PositiveSentiment
+{
+    line-height:15px;
+    font-size:11px;
+    color:Green;
+}
+
+.NegativeSentiment
+{
+    line-height:15px;
+    font-size:11px;
+    color:Red;
+}
+
+.divSentimentMain
+{
+    height:15px;
+    color:White;
+    padding:0px !important;
+    background-color:#DEDEDE;    
+    width:51px;
+    text-align:center;
+    float:right !important;
+}
+
+.divSentimentMainTW
+{
+    height:15px;
+    color:White;
+    padding:0px !important;
+    background-color:#DEDEDE;    
+    width:51px;
+    text-align:center;
+    float:right !important;
+    margin-top:2px;
+    line-height:15px;
+}
+
+.divSentimentPos
+{
+    width:25px;
+    padding:0px !important;
+    float:right !important;  
+    /*background-color:#88BA88;           */
+}
+
+.divSentimentPos div
+{
+    background-color:green;float:left !important;color:white;padding:0px !important;overflow:hidden;    
+}
+
+.divSentimentNeg
+{
+    width:26px;
+    padding:0px !important;
+    float:left !important;        
+    /*background-color:#EB8888;*/
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    border-right:1px solid #ffffff; 
+}
+
+.divSentimentNeg div
+{
+    background-color:red;float:right !important;color:white;padding:0px !important;overflow:hidden;
+}
+
+.height35p
+{
+    height:35%;
+}
+
+.break-words
+{
+    word-break:break-all;
+    word-wrap:break-word;
+    width:auto;
+}
+

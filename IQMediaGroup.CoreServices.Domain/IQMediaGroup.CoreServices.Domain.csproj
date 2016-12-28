@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1C91611E-6A0D-4652-9F26-B31E9B704ABA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IQMediaGroup.CoreServices.Domain</RootNamespace>
+    <AssemblyName>IQMediaGroup.CoreServices.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EFExtensions">
+      <HintPath>..\IQMediaGroup.ReferenceAssembies\EFExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActiveRootPathOutput.cs" />
+    <Compile Include="CustomContext.cs" />
+    <Compile Include="FiveMinIngestParamOutput.cs" />
+    <Compile Include="FiveMinStagingCCMetaData.cs" />
+    <Compile Include="FiveMinStagingCCOutput.cs" />
+    <Compile Include="FiveMinStagingMetaData.cs" />
+    <Compile Include="FiveMinStagingOutput.cs" />
+    <Compile Include="GetMediaLocationOutput.cs" />
+    <Compile Include="GetMoveMediaListInput.cs" />
+    <Compile Include="GetMoveMediaListOutput.cs" />
+    <Compile Include="GetMoveRecordFileListOutput.cs" />
+    <Compile Include="GetServiceExpirationOutput.cs" />
+    <Compile Include="InsertFiveMinStagingCCOutput.cs" />
+    <Compile Include="InsertMoveMediaInput.cs" />
+    <Compile Include="InsertMoveMediaOutput.cs" />
+    <Compile Include="IQLog_IngestionInput.cs" />
+    <Compile Include="IQLog_IngestionOutput.cs" />
+    <Compile Include="MediaLocationOutput.cs" />
+    <Compile Include="MoveMedia.cs" />
+    <Compile Include="OneHourIngestParamOutput.cs" />
+    <Compile Include="SourceGuidOutput.cs" />
+    <Compile Include="InsertFiveMinStagingOutput.cs" />
+    <Compile Include="CustomException.cs" />
+    <Compile Include="IQMediaGroup.CoreServices.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IQMediaGroup.CoreServices.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecordFileInput.cs" />
+    <Compile Include="RecordFileOutput.cs" />
+    <Compile Include="RecordFileUpdate.cs" />
+    <Compile Include="RecordFileUpdateOutput.cs" />
+    <Compile Include="UGCXml.cs" />
+    <Compile Include="UpdateFiveMinStagingCCOutput.cs" />
+    <Compile Include="UpdateFiveMinStagingOutput.cs" />
+    <Compile Include="UpdateMoveMediaInput.cs" />
+    <Compile Include="UpdateMoveMediaOutput.cs" />
+    <Compile Include="UpdateRootPathStatusOutput.cs" />
+    <Compile Include="UpdateServiceExpirationOutput.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <EntityDeploy Include="IQMediaGroup.CoreServices.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>IQMediaGroup.CoreServices.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IQMediaGroup.Common\IQMediaGroup.Common.csproj">
+      <Project>{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}</Project>
+      <Name>IQMediaGroup.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

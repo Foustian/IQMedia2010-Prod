@@ -1,0 +1,1128 @@
+﻿@using IQMedia.Model;
+@using IQMedia.Shared.Utility;
+@using System.Text.RegularExpressions;
+@using IQMedia.WebApplication.Models.TempData;
+@model List<IQAgent_MediaResultsModel>
+@if (Model != null)
+{
+    SessionInformation sessioninfo = IQMedia.WebApplication.Utility.CommonFunctions.GetSessionInformation();
+    FeedsTempData feedsTempData = ((IQMedia.WebApplication.Controllers.FeedsController)this.ViewContext.Controller).GetTempData();
+    int wordsBeforeSpan = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HighlightWordsBeforeSpan"]);
+    int wordsAfterSpan = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
+    string seprator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
+    string highlightKeyword = "span";
+    string mediaIconFormat = "../images/MediaIcon/{0}?v=1.3";
+    bool useProminenceMediaValue = feedsTempData.UseProminenceMediaValue == true;
+    
+    foreach (IQAgent_MediaResultsModel item in Model)
+    {
+        string maxNegativeSentimetnWidth = string.Empty;
+        string maxPositiveSentimetnWidth = string.Empty;
+        string iqAdShareValue = string.Empty;
+        string nielsen_Result = string.Empty;
+        string NielsenAudience = string.Empty;
+        string TotalNeilsenAudience = string.Empty;
+        string TotalAdShareValue = string.Empty;
+        string TotalNielsen_Result = string.Empty;
+        switch (item.MediaType)
+        {
+            case "TV":
+                IQAgent_TVResultsModel iQAgent_TVResultsModel = (IQAgent_TVResultsModel)item.MediaData;
+                string highlightedText = string.Empty;
+                string highlightedCCOutput = string.Empty;
+                iqAdShareValue = string.Empty;
+
+                if (iQAgent_TVResultsModel.highlightedCCOutput != null && iQAgent_TVResultsModel.highlightedCCOutput.CC != null)
+                {
+                    highlightedCCOutput = string.Join(" ", iQAgent_TVResultsModel.highlightedCCOutput.CC.Select(c => c.Text));
+                }
+
+                highlightedCCOutput = highlightedCCOutput.Replace("&lt;", "<").Replace("&gt;", ">");
+
+                if (highlightedCCOutput.Length > 300)
+                {
+                    highlightedText = highlightedCCOutput.Substring(0, 300);
+                    highlightedText = System.Text.RegularExpressions.Regex.Replace(highlightedText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedText = highlightedCCOutput;
+                }
+
+                highlightedText = CommonFunctions.ProcessHighlightingText(highlightedCCOutput, highlightedText);
+
+                if ((item.NegativeSentiment * 6) > 25)
+                {
+
+                    maxNegativeSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                }
+
+
+                if ((item.PositiveSentiment * 6) > 25)
+                {
+
+                    maxPositiveSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                }
+
+
+
+                if (@iQAgent_TVResultsModel.Nielsen_Audience.HasValue)
+                {
+                    NielsenAudience = string.Format("{0:n0}", iQAgent_TVResultsModel.Nielsen_Audience);
+                }
+
+
+                if (iQAgent_TVResultsModel.IQAdShareValue.HasValue && Decimal.Compare(Convert.ToDecimal(iQAgent_TVResultsModel.IQAdShareValue.Value), 0M) != 0 && (useProminenceMediaValue == false || (iQAgent_TVResultsModel.IQProminenceMultiplier != null && Decimal.Compare(Convert.ToDecimal(iQAgent_TVResultsModel.IQProminenceMultiplier), 0M) != 0)))
+                {
+                    iqAdShareValue = string.Format("{0:n2}", useProminenceMediaValue ? (iQAgent_TVResultsModel.IQAdShareValue.Value * iQAgent_TVResultsModel.IQProminenceMultiplier) : iQAgent_TVResultsModel.IQAdShareValue.Value);
+
+                    if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.Nielsen_Result))
+                    {
+                        nielsen_Result = iQAgent_TVResultsModel.Nielsen_Result.ToUpper();
+                    }
+                }
+
+                if (item.HasChildren)
+                {
+                    decimal SumAdShareValue = iQAgent_TVResultsModel.National_IQAdShareValue.HasValue ? iQAgent_TVResultsModel.National_IQAdShareValue.Value : 0;
+                    if (SumAdShareValue > 0)
+                    {
+                        TotalAdShareValue = string.Format("{0:n2}", (SumAdShareValue));
+                        TotalNielsen_Result = iQAgent_TVResultsModel.National_Nielsen_Result;
+                    }
+
+                    long SumAudience = iQAgent_TVResultsModel.National_Nielsen_Audience.HasValue ? iQAgent_TVResultsModel.National_Nielsen_Audience.Value : 0;
+                    if (SumAudience > 0)
+                    {
+                        TotalNeilsenAudience = string.Format("{0:n0}", (SumAudience));
+                    }
+
+                }
+                
+                                
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="tvFeedsDate">
+            <div class="pull-left">
+                <div class="post-date">
+                    <span class="month">@iQAgent_TVResultsModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)
+                    </span>
+                    <div>
+                        <span class="today">@iQAgent_TVResultsModel.LocalDateTime.Day </span>
+                    </div>
+                    <span class="timeWithTimeZone">@iQAgent_TVResultsModel.LocalDateTime.ToString("hh:mm tt")
+                        @iQAgent_TVResultsModel.TimeZone
+                    </span>
+                </div>
+                <div class="network" align="center">
+                    <img src="@String.Format(mediaIconFormat, "network-icon.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" /></div>
+            </div>
+        </div>
+        <div class="pull-left tvFeedsMarket">
+            <div style="float: left">
+                <div class="minHeight32">
+                    <img alt="" src="@iQAgent_TVResultsModel.StationLogo" /></div>
+            </div>
+        </div>
+        <div class="tvFeedsContent">
+            <div class="pull-left media-body tvFeedsDetail">
+                <span class="media-heading">
+                    @iQAgent_TVResultsModel.Title120
+                </span>
+                <div class="clearfix">
+                </div>
+                @{
+               if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.Market))
+               {
+                    <span style="color: #73797F;">
+                        @iQAgent_TVResultsModel.Market - </span>
+               }
+
+                                                            
+                }
+                @Html.Raw(highlightedText)
+            </div>
+        </div>
+        <div class="float-right tvFeedsThumbParent">
+            <div class="float-left video-thumb-width tvFeedsThumb marginRight10">
+                <div class="positionRelative">
+                    <a onclick="LoadPlayerbyAgentID('@item.ID');" class="cursorPointer">
+                        @{
+                                                string rawMediaThumbUrl = string.Empty;
+                                                if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.RawMediaThumbUrl))
+                                                {
+                                                    rawMediaThumbUrl = iQAgent_TVResultsModel.RawMediaThumbUrl;
+                                                }
+                                                else
+                                                {
+                                                    rawMediaThumbUrl = "../images/video.png";
+                                                }
+                        }
+                        <img class="media-object" csrc="@rawMediaThumbUrl" alt="" />
+                        @if (!string.IsNullOrWhiteSpace(iQAgent_TVResultsModel.RawMediaThumbUrl))
+                        {
+                            <div class="PlayButton cursorPointer VideoPlayImageDiv">
+                                <img width="28" height="28" id="ibtnPlay" src="../Images/Play.png" alt="" /></div>  
+                        }
+                    </a>
+                </div>
+            </div>
+            <div class="float-right tvFeedsCheck">
+                <input type="checkbox" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" /></div>
+            <input type="hidden" value="@((iQAgent_TVResultsModel._ParentID == 0 || iQAgent_TVResultsModel._ParentID == null) ? "true" : "false")" id="hdnIsParent_@item.ID" />
+            <div class="clearfix">
+            </div>
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivTV float-left">
+                <div style="width: 65px" class="float-left">
+                    <div align="center" class="margintop2">
+                        @if (item.HasChildren)
+                        {
+                            <a href="javascript:void(0);"  title="View More" onclick="ShowChild('@item.ID', 'TV');">
+                                <img alt="" id="expand_@item.ID" src="../images/expand.png" /></a>
+                        }
+                    </div>
+                </div>
+                <div id="divSentimentTV_@item.ID" class="margintop2 lineHeight15 float-left marginright35 actionBarsection">
+                    <div class="float-right sentimentLeftFloat actionBarsection" title="Sentiment">
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentMain">
+                                <div class="divSentimentNeg">
+                                    <div style='width:@maxNegativeSentimetnWidth'>
+                                        @item.NegativeSentiment
+                                    </div>
+                                </div>
+                                <div class="divSentimentPos">
+                                    <div style='width:@maxPositiveSentimetnWidth'>
+                                        @item.PositiveSentiment
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="float-left tvchild-tag margintop2">
+                    <div class="TVvideo-tags-ParentChild margintop0 actionBarsection">
+                        <div class="view" title="Audience">
+                            @if (iQAgent_TVResultsModel.Nielsen_Audience > 0 && sessioninfo.IsNielsenData)
+                            {
+                                <text>@NielsenAudience</text>
+                            }
+                        </div>
+                    </div>
+                    <div class="TVvideo-tags-ParentChild margintop0  actionBarsection">
+                        <div class="price">
+                            @if (!string.IsNullOrEmpty(iqAdShareValue) && sessioninfo.IsNielsenData)
+                            {
+                                <text>@iqAdShareValue @nielsen_Result</text>
+                            }
+                        </div>
+                    </div>
+                    <div class="TVvideo-tags-ParentChild margintop0  actionBarsection">
+                        <div class="totalprice">
+                            @if (!string.IsNullOrEmpty(TotalAdShareValue) && sessioninfo.IsNielsenData)
+                            {
+                                <text>@TotalAdShareValue @TotalNielsen_Result</text>
+                            }
+                        </div>
+                    </div>
+                    <div class="TVvideo-tags-ParentChildLast margintop0 actionBarsection">
+                        <div class="totalview" title="Audience">
+                            @if (!string.IsNullOrEmpty(TotalNeilsenAudience) && sessioninfo.IsNielsenData)
+                            {
+                                <text>@TotalNeilsenAudience</text>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                break;
+            case "NM":
+                IQAgent_NewsResultsModel iQAgent_NewsResultsModel = (IQAgent_NewsResultsModel)item.MediaData;
+
+                string highlightedNewsText = string.Empty;
+                string HighlightedNewsOutput = string.Empty;
+                string highlightedOriginalText = string.Empty;
+                iqAdShareValue = string.Empty;
+
+                if (iQAgent_NewsResultsModel.HighlightedNewsOutput != null && iQAgent_NewsResultsModel.HighlightedNewsOutput.Highlights != null)
+                {
+                    highlightedOriginalText = string.Join(" ", iQAgent_NewsResultsModel.HighlightedNewsOutput.Highlights.Select(c => c));
+                    HighlightedNewsOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+
+                    if (string.IsNullOrWhiteSpace(HighlightedNewsOutput))
+                    {
+                        HighlightedNewsOutput = highlightedOriginalText;
+                    }
+                }
+                if (HighlightedNewsOutput.Length > 300)
+                {
+                    highlightedNewsText = HighlightedNewsOutput.Substring(0, 300);
+                    highlightedNewsText = System.Text.RegularExpressions.Regex.Replace(highlightedNewsText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedNewsText = HighlightedNewsOutput;
+                }
+
+                highlightedNewsText = CommonFunctions.ProcessHighlightingText(HighlightedNewsOutput, highlightedNewsText);
+                //highlightedNewsText = CommonFunctions.ProcessHighlightingText(HighlightedNewsOutput, highlightedNewsText);
+
+                maxNegativeSentimetnWidth = string.Empty;
+                if ((item.NegativeSentiment * 6) > 25)
+                {
+
+                    maxNegativeSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                }
+
+                if ((item.PositiveSentiment * 6) > 25)
+                {
+
+                    maxPositiveSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                }
+    <div class="media" id="divMedia_@item.ID">
+        <div class="tvFeedsDate">
+            <div class="pull-left">
+                <div class="post-date">
+                    <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                    <div>
+                        <span class="today">@item.MediaDateTime.Day</span>
+                    </div>
+                    <span class="timeWithTimeZone">@item.MediaDateTime.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+                </div>
+                <div class="network" align="center">
+                    <img src="@String.Format(mediaIconFormat, "news.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" /></div>
+            </div>
+        </div>
+        <div class="pull-left maxWidth83">
+            <div>
+                <span class="media-heading">                
+                    @if (iQAgent_NewsResultsModel.IQLicense == 3)
+                    {
+                        <img src="@String.Format(mediaIconFormat, "LexisNexis_Small.png")" title="LexisNexis(R)" alt="LexisNexis(R)" class="lexisNexisImg" />
+                    }
+                    <a target="_blank" href="@(iQAgent_NewsResultsModel.IQLicense > 0 ? Url.Action("Index", "Article", new { au = IQMedia.Shared.Utility.CommonFunctions.EncryptLicenseStringAES(sessioninfo.CustomerKey + "¶Feeds¶" + iQAgent_NewsResultsModel.Url + "&u1=cliq40&u2=" + sessioninfo.ClientID + "¶" + iQAgent_NewsResultsModel.IQLicense) }) : iQAgent_NewsResultsModel.Url)">
+                        @iQAgent_NewsResultsModel.Title</a></span>
+            </div>
+            <div class="newsMediadiv">
+                @if (!string.IsNullOrWhiteSpace(iQAgent_NewsResultsModel.Publication))
+                {
+                    <span style="color: #73797F;" id="lblCompete_@item.ID">@iQAgent_NewsResultsModel.Publication
+                        - </span>
+                }
+                @Html.Raw(highlightedNewsText)
+            </div>
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivNM  float-left">
+                <div style="width: 65px" class="float-left">
+                    <div align="center" class="margintop2">
+                        @if (item.HasChildren)
+                        {
+                            <a href="javascript:void(0);"  title="View More" onclick="ShowChild('@item.ID', 'NM');">
+                                <img alt="" id="expand_@item.ID" src="../images/expand.png" /></a>
+                        }
+                    </div>
+                </div>
+                <div id="divSentimentSM_@item.ID" class="margintop2 lineHeight15 float-left marginright35 actionBarsection">
+                    <div class="float-right sentimentLeftFloat actionBarsection" title="Sentiment">
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentMain">
+                                <div class="divSentimentNeg">
+                                    <div style='width:@maxNegativeSentimetnWidth'>
+                                        @item.NegativeSentiment
+                                    </div>
+                                </div>
+                                <div class="divSentimentPos">
+                                    <div style='width:@maxPositiveSentimetnWidth'>
+                                        @item.PositiveSentiment
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (sessioninfo.IsCompeteData)
+                {
+                    if (iQAgent_NewsResultsModel.Compete_Audience.HasValue && iQAgent_NewsResultsModel.Compete_Audience > 0)
+                    {
+                        NielsenAudience = string.Format("{0:n0}", iQAgent_NewsResultsModel.Compete_Audience);
+
+                    }
+                    else
+                    {
+                        NielsenAudience = "NA";
+                    }
+                        
+                    if (iQAgent_NewsResultsModel.IQAdShareValue.HasValue && Decimal.Compare(Convert.ToDecimal(iQAgent_NewsResultsModel.IQAdShareValue), 0M) != 0 && (useProminenceMediaValue == false || (iQAgent_NewsResultsModel.IQProminenceMultiplier != null && Decimal.Compare(Convert.ToDecimal(iQAgent_NewsResultsModel.IQProminenceMultiplier), 0M) != 0)))
+                    {
+                        iqAdShareValue = string.Format("{0:n2}", useProminenceMediaValue ? (iQAgent_NewsResultsModel.IQAdShareValue.Value * iQAgent_NewsResultsModel.IQProminenceMultiplier) : iQAgent_NewsResultsModel.IQAdShareValue.Value);
+                    }
+                    else
+                    {
+                        iqAdShareValue = "NA";
+                    }
+                    
+                    <div class="float-left nmchild-tag margintop2">
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="view" title="Audience">
+                                @NielsenAudience
+                                @if (!string.IsNullOrWhiteSpace(iQAgent_NewsResultsModel.Compete_Result) && iQAgent_NewsResultsModel.Compete_Result.ToUpper() == "A")
+                                {
+                                    <img title="Powered by Compete" style="width: 14px; vertical-align: inherit;" src="../Images/compete.png"
+                                        alt="Compete Image" />
+                                }
+                            </div>
+                        </div>
+                        <div class="NMvideo-tags-ParentChild margintop0  actionBarsection">
+                            <div class="price">
+                                @iqAdShareValue
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="marginright35 float-right minWidth52IE8">
+                <div class="margintop3">
+                    <a target="_blank" class="cursorPointer saveMedia" onclick="ShowSaveArticle(@item.ID,this.id);return false;" id="aSaveNM_@item.ID">
+                        <img src="../images/save.png" alt="Save" title="Save Article" /></a><a class="paddinLeft20" href="@(iQAgent_NewsResultsModel.IQLicense > 0 ? Url.Action("Index", "Article", new { au = IQMedia.Shared.Utility.CommonFunctions.EncryptLicenseStringAES(sessioninfo.CustomerKey + "¶Feeds¶" + iQAgent_NewsResultsModel.Url + "&u1=cliq40&u2=" + sessioninfo.ClientID + "¶" + iQAgent_NewsResultsModel.IQLicense) }) : iQAgent_NewsResultsModel.Url)" target="_blank" id="aShowNews_@item.ID" ><img
+                            src="../images/viewArticle.png" alt="View" title="View Article" /></a>
+                </div>
+            </div>
+        </div>
+    </div>   
+                break;
+            case "SM":
+                string catimg = string.Empty;
+                CommonFunctions.CategoryType catType;
+                IQAgent_SMResultsModel iQAgent_SMResultsModel = (IQAgent_SMResultsModel)item.MediaData;
+
+                string highlightedSMText = string.Empty;
+                string HighlightedSMOutput = string.Empty;
+                string highlightedSMOriginalText = string.Empty;
+                iqAdShareValue = string.Empty;
+
+                if (iQAgent_SMResultsModel.HighlightedSMOutput != null && iQAgent_SMResultsModel.HighlightedSMOutput.Highlights != null)
+                {
+                    highlightedSMOriginalText = string.Join(" ", iQAgent_SMResultsModel.HighlightedSMOutput.Highlights.Select(c => c));
+                    HighlightedSMOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedSMOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+
+                    if (string.IsNullOrWhiteSpace(HighlightedSMOutput))
+                    {
+                        HighlightedSMOutput = highlightedSMOriginalText;
+                    }
+                }
+                if (HighlightedSMOutput.Length > 300)
+                {
+                    highlightedSMText = HighlightedSMOutput.Substring(0, 300);
+                    highlightedSMText = Regex.Replace(highlightedSMText, "(</span(?!>)|</s(?!pan>)|</sp(?!an>)|</spa(?!n>)|</(?!span>))\\Z", "</span>");
+                }
+                else
+                {
+                    highlightedSMText = HighlightedSMOutput;
+                }
+
+
+                highlightedSMText = CommonFunctions.ProcessHighlightingText(HighlightedSMOutput, highlightedSMText);
+                //highlightedSMText = CommonFunctions.ProcessHighlightingText(HighlightedSMOutput, highlightedSMText);
+
+                maxNegativeSentimetnWidth = string.Empty;
+                if ((item.NegativeSentiment * 6) > 25)
+                {
+
+                    maxNegativeSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                }
+
+                if ((item.PositiveSentiment * 6) > 25)
+                {
+
+                    maxPositiveSentimetnWidth = "25px";
+                }
+                else
+                {
+                    maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@item.MediaDateTime.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@item.MediaDateTime.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+            <div class="network" align="center">
+                @switch (item.CategoryType)
+                {
+                    case "Blog":
+                        catimg = "blog.png";
+                        catType = CommonFunctions.CategoryType.Blog;
+                        break;
+                    case "Forum":
+                        catimg = "forum.png";
+                        catType = CommonFunctions.CategoryType.Forum;
+                        break;
+                    case "SocialMedia":
+                        catimg = "social-media.png";
+                        catType = CommonFunctions.CategoryType.SocialMedia;
+                        break;
+                    case "FB":
+                        catimg = "facebook.png";
+                        catType = CommonFunctions.CategoryType.FB;
+                        break;
+                    default:
+                        catimg = string.Empty;
+                        catType = CommonFunctions.CategoryType.SocialMedia;
+                        break;
+                }
+                <img src="@String.Format(mediaIconFormat, catimg)" title="@CommonFunctions.GetEnumDescription(catType)">
+            </div>
+        </div>
+        <div class="pull-left @(item.CategoryType == "FB" ? "TweetBodyDivIQP" : "maxWidth83")">
+            <div class="@(item.CategoryType == "FB" ? "media-heading-fb" : "media-heading")">
+                <span><a target="_blank" href="@iQAgent_SMResultsModel.Link">@iQAgent_SMResultsModel.Description</a></span>
+                @if (item.CategoryType == "FB")
+                {
+                    <span class="arrow"></span>
+                    <span>@iQAgent_SMResultsModel.HomeLink</span>
+                    if (iQAgent_SMResultsModel.ArticleStats != null && iQAgent_SMResultsModel.ArticleStats.IsVerified)
+                    {
+                        <span class="verified" title="Verified Page"></span>
+                    }
+                }
+            </div>
+            <div class="newsMediadiv">
+                @if (item.CategoryType != "FB" && !string.IsNullOrWhiteSpace(iQAgent_SMResultsModel.HomeLink))
+                {
+                    <span style="color: #73797F;" id="lblCompete_@item.ID">@iQAgent_SMResultsModel.HomeLink
+                        - </span>
+                }
+                @Html.Raw(highlightedSMText)
+            </div>
+        </div>
+        <div class="pull-right">
+		    @if (IQMedia.Shared.Utility.CommonFunctions.Validate_url(iQAgent_SMResultsModel.ThumbUrl))
+            {
+	        <div class="pull-left">
+			    <img class="borderWidth0 maxWidth48" csrc="@iQAgent_SMResultsModel.ThumbUrl" alt="" />
+		        <br />
+	        </div>
+            }
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivNM float-left">
+                <div class="float-left" style="width: 65px">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div id="divSentimentSM_@item.ID" class="margintop2 lineHeight15 float-left marginright35 actionBarsection" title="Sentiment">                
+                    <div class="float-right sentimentLeftFloat actionBarsection">
+                        @if (item.CategoryType != "FB")
+                        {
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment</div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment</div>
+                            </div>
+                        </div>
+                        }
+                        else
+                        {
+                            <!-- Add placeholders to maintain spacing -->
+                            <div class="float-left" style="width:26px;">&nbsp;</div>
+                            <div class="divSentimentMain" style="background-color:transparent;">&nbsp;</div>
+                        }
+                    </div>
+                </div>
+                @if (item.CategoryType == "Blog" && Decimal.Compare(Convert.ToDecimal(iQAgent_SMResultsModel.IQAdShareValue), 0M) != 0 && iQAgent_SMResultsModel.Compete_Audience > 0 && sessioninfo.IsCompeteData)
+                {
+                    if (iQAgent_SMResultsModel.Compete_Audience.HasValue)
+                    {
+                        NielsenAudience = string.Format("{0:n0}", iQAgent_SMResultsModel.Compete_Audience);
+                    }
+                    else
+                    {
+                        NielsenAudience = "NA";
+                    }
+
+                    if (iQAgent_SMResultsModel.IQAdShareValue.HasValue && (useProminenceMediaValue == false || (iQAgent_SMResultsModel.IQProminenceMultiplier != null && Decimal.Compare(Convert.ToDecimal(iQAgent_SMResultsModel.IQProminenceMultiplier), 0M) != 0)))
+                    {
+                        iqAdShareValue = string.Format("{0:n2}", useProminenceMediaValue ? (iQAgent_SMResultsModel.IQAdShareValue.Value * iQAgent_SMResultsModel.IQProminenceMultiplier) : iQAgent_SMResultsModel.IQAdShareValue.Value);
+                    }
+                    else
+                    {
+                        iqAdShareValue = "NA";
+                    }
+                    <div class="float-left nmchild-tag margintop2">
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="view pull-left" title="Audience">
+                                @{
+                                    @NielsenAudience 
+                    if (!string.IsNullOrWhiteSpace(iQAgent_SMResultsModel.Compete_Result) && iQAgent_SMResultsModel.Compete_Result.ToUpper() == "A")
+                    {
+                                    <img title="Powered by Compete" style="width: 14px; vertical-align: inherit;" src="../Images/compete.png"
+                                        alt="Compete Image" />
+                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="price pull-left">
+                                @iqAdShareValue
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (item.CategoryType == "FB" && iQAgent_SMResultsModel.ArticleStats != null)
+                {                    
+                    <div class="float-left nmchild-tag margintop2">
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="likes pull-left" title="Likes">
+                                @iQAgent_SMResultsModel.ArticleStats.Likes
+                            </div>
+                        </div>
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="comments pull-left" title="Comments">
+                                @iQAgent_SMResultsModel.ArticleStats.Comments
+                            </div>
+                        </div>
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            <div class="shares pull-left" title="Shares">
+                                @iQAgent_SMResultsModel.ArticleStats.Shares
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="marginright35 float-right minWidth52IE8">
+                <div class="margintop3">
+                    <a target="_blank" class="cursorPointer saveMedia" onclick="ShowSaveArticle(@item.ID,this.id);return false;" id="aSaveSM_@item.ID">
+                        <img src="../images/save.png" alt="Save" title="Save Article" /></a><a class="paddinLeft20" href="@iQAgent_SMResultsModel.Link" target="_blank" id="aShowNews_@item.ID"><img
+                            src="../images/viewArticle.png" alt="View" title="View Article" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+                
+                                                                                                                                                                                 break;
+            case "TW":
+                                                                                                                                                                                 IQAgent_TwitterResultsModel iQAgent_TwitterResultsModel = (IQAgent_TwitterResultsModel)item.MediaData;
+
+                                                                                                                                                                                 string highlightedTWText = string.Empty;
+                                                                                                                                                                                 string highlightedTWOutput = string.Empty;
+
+                                                                                                                                                                                 if (iQAgent_TwitterResultsModel.HighlightedOutput != null)
+                                                                                                                                                                                 {
+                                                                                                                                                                                     highlightedTWOutput = iQAgent_TwitterResultsModel.HighlightedOutput.Highlights;
+
+                                                                                                                                                                                     highlightedTWText = highlightedTWOutput;
+
+                                                                                                                                                                                 }
+
+                                                                                                                                                                                 highlightedTWText = CommonFunctions.ProcessHighlightingText(highlightedTWOutput, highlightedTWText);
+
+                                                                                                                                                                                 if ((item.NegativeSentiment * 6) > 25)
+                                                                                                                                                                                 {
+
+                                                                                                                                                                                     maxNegativeSentimetnWidth = "25px";
+                                                                                                                                                                                 }
+                                                                                                                                                                                 else
+                                                                                                                                                                                 {
+                                                                                                                                                                                     maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                                                                                                                                                                                 }
+
+                                                                                                                                                                                 if ((item.PositiveSentiment * 6) > 25)
+                                                                                                                                                                                 {
+
+                                                                                                                                                                                     maxPositiveSentimetnWidth = "25px";
+                                                                                                                                                                                 }
+                                                                                                                                                                                 else
+                                                                                                                                                                                 {
+                                                                                                                                                                                     maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                                                                                                                                                                                 }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@item.MediaDateTime.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@item.MediaDateTime.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+            <div class="network" align="center">
+                <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" />
+            </div>
+        </div>
+        <div class="pull-left TweetBodyDivIQP borderBoxSizing">
+            <div class="pull-left TweetActorDisplayName">
+                @{
+                    string actorlink = string.Empty;
+                }
+                @if (IQMedia.Shared.Utility.CommonFunctions.Validate_url(iQAgent_TwitterResultsModel.Actor_Link + "/status/" + iQAgent_TwitterResultsModel.TweetID))
+                {
+                    actorlink = iQAgent_TwitterResultsModel.Actor_Link + "/status/" + iQAgent_TwitterResultsModel.TweetID;
+                }
+                <a target="_blank" id="aActorLink_@item.ID"  href="@actorlink" ><span id="lblDisplayName_@item.ID">@iQAgent_TwitterResultsModel.Actor_DisplayName</span>
+                </a><span class="TweetSubdivFont">@@</span><span class="TweetSubdivFont" id="lblPrefferedUserName_@item.ID">@iQAgent_TwitterResultsModel.Actor_PreferredName</span>
+                <br />
+            </div>
+            <div class="clear PaddingTopBottom1p TweetBodyText">
+                <div class="">
+                    <span id="lblTweetBody_@item.ID">@Html.Raw(highlightedTWText)</span>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right">
+            <div class="pull-left">
+                @if (IQMedia.Shared.Utility.CommonFunctions.Validate_url(iQAgent_TwitterResultsModel.Actor_Image))
+                {
+                    <img class="borderWidth0 maxWidth48" csrc="@iQAgent_TwitterResultsModel.Actor_Image" id="imgActor_@item.ID" alt="" />
+                }
+                <br />
+            </div>
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" /></div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDiv float-left">
+                <div style="width: 65px" class="float-left">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div id="divSentiment_@item.ID" class="lineHeight15 float-left marginright35 actionBarsection" title="Sentiment">
+                    <div title="Sentiment" class="float-right sentimentLeftFloat actionBarsection">
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment
+                                </div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="float-left marginright35 actionBarsection">
+                    <div class="klout margintop2" title="Klout Score" id="lblKloutScore_@item.ID">@string.Format("{0:n0}", iQAgent_TwitterResultsModel.KlOutScore)</div>
+                </div>
+                <div class="float-left marginright35 actionBarsection">
+                    <div class="followers margintop2" title="Followers" id="lblActorFollowers_@item.ID">@string.Format("{0:n0}", iQAgent_TwitterResultsModel.Actor_FollowersCount)</div>
+                </div>
+                <div class="float-left marginright35 actionBarsection">
+                    <div class="following margintop2" title="Following" id="lblActorFriends_@item.ID">@string.Format("{0:n0}", iQAgent_TwitterResultsModel.Actor_FriendsCount)</div>
+                </div>
+            </div>
+            <div class="float-right marginright35 margintop3">
+                <a class="cursorPointer" rel="popover" href="#"  onclick="ShowSaveArticle(@item.ID ,this.id);return false;" id="lnlSaveTweet_@item.ID">
+                    <img src="../images/save.png" alt="Save Tweet" title="Save Tweet" /></a></div>
+        </div>
+    </div>
+                                                                                                                                        break;
+            case "TM":
+                                                                                                                                        IQAgent_TVEyesResultsModel iQAgent_TVEyesResultsModel = (IQAgent_TVEyesResultsModel)item.MediaData;
+
+                                                                                                                                        string highlightedTMText = string.Empty;
+                                                                                                                                        string highlightedTMOutput = iQAgent_TVEyesResultsModel.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+
+
+                                                                                                                                        if (highlightedTMOutput.Length > 300)
+                                                                                                                                        {
+
+                                                                                                                                            highlightedTMText = highlightedTMOutput.Substring(0, 300);
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            highlightedTMText = highlightedTMOutput;
+                                                                                                                                        }
+
+
+                                                                                                                                        highlightedTMText = CommonFunctions.ProcessHighlightingText(highlightedTMOutput, highlightedTMText);
+
+                                                                                                                                        maxNegativeSentimetnWidth = string.Empty;
+                                                                                                                                        if ((item.NegativeSentiment * 6) > 25)
+                                                                                                                                        {
+
+                                                                                                                                            maxNegativeSentimetnWidth = "25px";
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                                                                                                                                        }
+
+                                                                                                                                        if ((item.PositiveSentiment * 6) > 25)
+                                                                                                                                        {
+
+                                                                                                                                            maxPositiveSentimetnWidth = "25px";
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                                                                                                                                        }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="tvFeedsDate">
+            <div class="pull-left">
+                <div class="post-date">
+                    <span class="month">@iQAgent_TVEyesResultsModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)
+                    </span>
+                    <div>
+                        <span class="today">@iQAgent_TVEyesResultsModel.LocalDateTime.Day </span>
+                    </div>
+                    <span class="timeWithTimeZone">@iQAgent_TVEyesResultsModel.LocalDateTime.ToString("hh:mm tt")
+                        @iQAgent_TVEyesResultsModel.TimeZone
+                    </span>
+                </div>
+                <div class="network" align="center">
+                    <img src="@String.Format(mediaIconFormat, "radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" /></div>
+            </div>
+        </div>
+        <div class="pull-left tvFeedsMarket tmStationDiv">
+            <div style="float: left; color: Red">
+                <div class="minHeight32">
+                    @iQAgent_TVEyesResultsModel.StationID</div>
+            </div>
+        </div>
+        <div class="tvFeedsContent">
+            <div class="pull-left media-body tvFeedsDetail">
+                <span class="media-heading">
+                    @iQAgent_TVEyesResultsModel.Title
+                </span>
+                <div class="clearfix">
+                </div>
+                @{
+               if (!string.IsNullOrWhiteSpace(iQAgent_TVEyesResultsModel.Market))
+               {
+                    <span style="color: #73797F;">
+                        @iQAgent_TVEyesResultsModel.Market - </span>
+               }
+
+                                                            
+                }
+                @Html.Raw(highlightedTMText)
+            </div>
+        </div>
+        <div class="float-right tvFeedsThumbParent">
+            <div class="float-left video-thumb-width tvFeedsThumb marginRight10">
+                <div class="positionRelative">
+                    <a onclick="LoadTMPopup('@iQAgent_TVEyesResultsModel.TranscriptUrl.Replace("\'", "\\\'")')" class="cursorPointer">
+                        <img class="media-object" csrc="~/images/radio.png" alt="" />
+                    </a>
+                </div>
+            </div>
+            <div class="float-right tvFeedsCheck">
+                <input type="checkbox" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" />
+            </div>
+            <div class="clearfix">
+            </div>
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivNM float-left">
+                <div class="float-left" style="width: 65px">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div id="divSentimentTM_@item.ID" class="lineHeight15 float-left marginright35 actionBarsection" title="Sentiment">
+                    <div title="Sentiment" class="float-right sentimentLeftFloat actionBarsection">
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentMain">
+                                <div class="divSentimentNeg">
+                                    <div style='width:@maxNegativeSentimetnWidth'>
+                                        @item.NegativeSentiment
+                                    </div>
+                                </div>
+                                <div class="divSentimentPos">
+                                    <div style='width:@maxPositiveSentimetnWidth'>
+                                        @item.PositiveSentiment
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(iQAgent_TVEyesResultsModel.DMARank))
+                {
+                    <div class="float-left nmchild-tag margintop2">
+                        <div class="NMvideo-tags-ParentChild margintop0 actionBarsection">
+                            Market Rank:&nbsp;<span>@iQAgent_TVEyesResultsModel.DMARank</span>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="marginright35 float-right minWidth52IE8">
+                <div class="margintop2">
+                    <a target="_blank" class="cursorPointer saveMedia" onclick="ShowSaveArticle(@item.ID,this.id);return false;" id="aSaveTM_@item.ID">
+                        <img src="../images/save.png" alt="Save" title="Save Article" /></a>
+                </div>
+            </div>
+        </div>
+    </div> 
+                                                                                                                                        break;
+            case "PM":
+                                                                                                                                        IQAgent_BLPMResultsModel iQAgent_BLPMResultsModel = (IQAgent_BLPMResultsModel)item.MediaData;
+
+                                                                                                                                        string highlightedPMText = string.Empty;
+
+                                                                                                                                        string highlightedPMOutput = !string.IsNullOrEmpty(iQAgent_BLPMResultsModel.HighlightingText) ? iQAgent_BLPMResultsModel.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">") : string.Empty;
+
+
+                                                                                                                                        if (highlightedPMOutput.Length > 300)
+                                                                                                                                        {
+
+                                                                                                                                            highlightedPMText = highlightedPMOutput.Substring(0, 300);
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            highlightedPMText = highlightedPMOutput;
+                                                                                                                                        }
+
+
+                                                                                                                                        highlightedPMText = CommonFunctions.ProcessHighlightingText(highlightedPMOutput, highlightedPMText);
+
+                                                                                                                                        maxNegativeSentimetnWidth = string.Empty;
+                                                                                                                                        if ((item.NegativeSentiment * 6) > 25)
+                                                                                                                                        {
+
+                                                                                                                                            maxNegativeSentimetnWidth = "25px";
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                                                                                                                                        }
+
+                                                                                                                                        if ((item.PositiveSentiment * 6) > 25)
+                                                                                                                                        {
+
+                                                                                                                                            maxPositiveSentimetnWidth = "25px";
+                                                                                                                                        }
+                                                                                                                                        else
+                                                                                                                                        {
+                                                                                                                                            maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                                                                                                                                        }
+                                                                                                                                        string PMBasePath = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]);
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@item.MediaDateTime.Day</span>
+                </div>
+                <span class="timeWithTimeZone">@item.MediaDateTime.ToString("hh:mm tt") @sessioninfo.TimeZone</span>
+            </div>
+            <div class="network" align="center">
+                <img src="@String.Format(mediaIconFormat, "print-media.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" />
+            </div>
+        </div>
+        <div class="pull-left maxWidth83">
+            <div>
+                <span class="media-heading"><a target="_blank" href="@(PMBasePath + iQAgent_BLPMResultsModel.FileLocation.Replace(@"\", @"/"))">@Html.Raw(iQAgent_BLPMResultsModel.Title)</a>
+                </span>
+            </div>
+            <div class="newsMediadiv">
+                @if (!string.IsNullOrWhiteSpace(iQAgent_BLPMResultsModel.Pub_Name))
+                {
+                    <span style="color: #73797F;">@iQAgent_BLPMResultsModel.Pub_Name
+                        - </span>
+                }
+                @Html.Raw(highlightedPMText)
+            </div>
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivNM float-left">
+                <div style="width: 65px" class="float-left">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div class="float-left actionBarsection">
+                    Circulation:&nbsp;<span>@(string.Format("{0:n0}", iQAgent_BLPMResultsModel.Circulation))</span>
+                </div>
+            </div>
+            <div class="marginright35 float-right minWidth52IE8">
+                <div class="margintop2">
+                    <a id="aShowNewsPM_@item.ID" target="_blank" href="@(PMBasePath + iQAgent_BLPMResultsModel.FileLocation.Replace(@"\", @"/"))" class="paddinLeft20 fleft">
+                        <img title="View Article" alt="View" src="~/images/viewArticle.png" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                                   break;
+            case "PQ":
+                                                                   IQAgent_PQResultsModel iQAgent_PQResultsModel = (IQAgent_PQResultsModel)item.MediaData;
+
+                                                                   string highlightedPQText = string.Empty;
+                                                                   string HighlightedPQOutput = string.Empty;
+                                                                   string highlightedPQOriginalText = string.Empty;
+
+                                                                   if (iQAgent_PQResultsModel.HighlightedPQOutput != null && iQAgent_PQResultsModel.HighlightedPQOutput.Highlights != null)
+                                                                   {
+                                                                       highlightedPQOriginalText = string.Join(" ", iQAgent_PQResultsModel.HighlightedPQOutput.Highlights.Select(c => c));
+                                                                       HighlightedPQOutput = IQMedia.Shared.Utility.CommonFunctions.GetWordsAround(highlightedPQOriginalText, highlightKeyword, wordsBeforeSpan, wordsAfterSpan, seprator);
+
+                                                                       if (string.IsNullOrWhiteSpace(HighlightedPQOutput))
+                                                                       {
+                                                                           HighlightedPQOutput = highlightedPQOriginalText;
+                                                                       }
+                                                                   }
+                                                                   if (HighlightedPQOutput.Length > 300)
+                                                                   {
+                                                                       highlightedPQText = HighlightedPQOutput.Substring(0, 300);
+                                                                       highlightedPQText = Regex.Replace(highlightedPQText, "(</span(?!>)|</s(?!pan>)|</sp(?!an>)|</spa(?!n>)|</(?!span>))\\Z", "</span>");
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       highlightedPQText = HighlightedPQOutput;
+                                                                   }
+
+
+                                                                   highlightedPQText = CommonFunctions.ProcessHighlightingText(HighlightedPQOutput, highlightedPQText);
+
+                                                                   maxNegativeSentimetnWidth = string.Empty;
+                                                                   if ((item.NegativeSentiment * 6) > 25)
+                                                                   {
+
+                                                                       maxNegativeSentimetnWidth = "25px";
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       maxNegativeSentimetnWidth = Convert.ToString(item.NegativeSentiment * 6) + "px";
+                                                                   }
+
+                                                                   if ((item.PositiveSentiment * 6) > 25)
+                                                                   {
+
+                                                                       maxPositiveSentimetnWidth = "25px";
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                       maxPositiveSentimetnWidth = Convert.ToString(item.PositiveSentiment * 6) + "px";
+                                                                   }
+
+                                                                   string authors = String.Empty;
+                                                                   if (iQAgent_PQResultsModel.Authors != null && iQAgent_PQResultsModel.Authors.Count > 0)
+                                                                   {
+                                                                       authors = "(" + (iQAgent_PQResultsModel.Authors.Count > 2 ? String.Join(", ", iQAgent_PQResultsModel.Authors.Take(2)) : String.Join(", ", iQAgent_PQResultsModel.Authors)) + ") ";
+                                                                   }
+                
+    <div class="media" id="divMedia_@item.ID">
+        <div class="pull-left">
+            <div class="post-date">
+                <span class="month">@item.MediaDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture)</span>
+                <div>
+                    <span class="today">@item.MediaDateTime.Day</span>
+                </div>
+                <span class="timeWithTimeZone">&nbsp;</span>
+            </div>
+            <div class="network" align="center">
+                <img src="@String.Format(mediaIconFormat, "print-media_T.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" />
+            </div>
+        </div>
+        <div class="pull-left maxWidth83">
+            <div>
+                <span class="media-heading">
+                    <a target="_blank" onclick="ShowViewArticleFeeds(@item.ID)" class="cursorPointer">@iQAgent_PQResultsModel.Title</a>
+                </span>
+            </div>
+            <div class="newsMediadiv">
+                @if (!string.IsNullOrWhiteSpace(iQAgent_PQResultsModel.Publication))
+                {
+                    <span style="color: #73797F;">@iQAgent_PQResultsModel.Publication @(authors)- </span>}
+                @Html.Raw(highlightedPQText)
+            </div>
+        </div>
+        <div class="pull-right">
+            <input type="checkbox" onclick="CheckUncheckMasterCheckBox(this.id,'ulMediaResults','chkInputAll');" value="@item.ID:@item.MediaType" id="chkdivResults_@item.ID" />
+        </div>
+        <div class="clear borderdiv">
+            <div class="actionBarLeftDivNM float-left">
+                <div class="float-left" style="width: 65px">
+                    <div align="center" class="margintop2">
+                    </div>
+                </div>
+                <div id="divSentimentSM_@item.ID" class="margintop2 lineHeight15 float-left marginright35 actionBarsection" title="Sentiment">
+                    <div class="float-right sentimentLeftFloat actionBarsection">
+                        <div class="float-left">
+                            <img src="../Images/thumbs-up.png" style="width: 13px; margin-top: -4px;"><img src="../Images/thumbs-down.png"
+                                style="width: 13px; margin-top: 3px;">&nbsp;</div>
+                        <div class="divSentimentMain sentimentFont">
+                            <div class="divSentimentNeg">
+                                <div style='width:@maxNegativeSentimetnWidth'>
+                                    @item.NegativeSentiment</div>
+                            </div>
+                            <div class="divSentimentPos">
+                                <div style='width:@maxPositiveSentimetnWidth'>
+                                    @item.PositiveSentiment</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="marginright35 float-right minWidth52IE8">
+                <div class="margintop3">
+                    <a target="_blank" class="cursorPointer saveMedia" onclick="ShowSaveArticle(@item.ID,this.id);return false;" id="aSavePQ_@item.ID">
+                        <img src="../images/save.png" alt="Save" title="Save Article" />
+                    </a>
+                    <a class="paddinLeft20 cursorPointer" onclick="ShowViewArticleFeeds(@item.ID)" target="_blank" id="aShowPQ_@item.ID">
+                        <img src="../images/viewArticle.png" alt="View" title="View Article" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>                
+                break;
+        }
+
+    }
+}

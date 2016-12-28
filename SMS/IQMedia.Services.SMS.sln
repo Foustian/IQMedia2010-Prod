@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Services.SMS.Logic", "IQMedia.Services.SMS.Logic\IQMedia.Services.SMS.Logic.csproj", "{6D64EC40-ACC3-45D2-8066-56D865C122C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common", "..\IQMediaGroup.Common\IQMediaGroup.Common.csproj", "{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Services.SMS.Domain", "IQMedia.Services.SMS.Domain\IQMedia.Services.SMS.Domain.csproj", "{3D2128DE-7CD0-47BD-9574-2BBD20D629D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Services.SMS", "IQMedia.Services.SMS\IQMedia.Services.SMS.csproj", "{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://dbvss:8080/
+		SccProjectUniqueName0 = ..\\IQMediaGroup.Common\\IQMediaGroup.Common.csproj
+		SccProjectName0 = ../IQMediaGroup.Common
+		SccLocalPath0 = ..\\IQMediaGroup.Common
+		SccLocalPath1 = .
+		SccProjectUniqueName2 = IQMedia.Services.SMS.Domain\\IQMedia.Services.SMS.Domain.csproj
+		SccProjectName2 = IQMedia.Services.SMS.Domain
+		SccLocalPath2 = IQMedia.Services.SMS.Domain
+		SccProjectUniqueName3 = IQMedia.Services.SMS.Logic\\IQMedia.Services.SMS.Logic.csproj
+		SccProjectName3 = IQMedia.Services.SMS.Logic
+		SccLocalPath3 = IQMedia.Services.SMS.Logic
+		SccProjectUniqueName4 = IQMedia.Services.SMS\\IQMedia.Services.SMS.csproj
+		SccProjectName4 = IQMedia.Services.SMS
+		SccLocalPath4 = IQMedia.Services.SMS
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6D64EC40-ACC3-45D2-8066-56D865C122C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D64EC40-ACC3-45D2-8066-56D865C122C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D64EC40-ACC3-45D2-8066-56D865C122C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D64EC40-ACC3-45D2-8066-56D865C122C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2128DE-7CD0-47BD-9574-2BBD20D629D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2128DE-7CD0-47BD-9574-2BBD20D629D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2128DE-7CD0-47BD-9574-2BBD20D629D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2128DE-7CD0-47BD-9574-2BBD20D629D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

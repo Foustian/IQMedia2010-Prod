@@ -1,0 +1,1711 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>iQ media Report</title>
+    <style type="text/css">
+	
+		body
+		{
+			font-family:sans-serif;
+		}
+        .highlight
+        {
+            color: blue;
+            font-weight: bold;
+            font-style: italic;
+        }
+        .mediatitle
+        {
+            background-color: #EAEAEA;
+            font-weight: bold;
+            font-size: 15px;
+            border: 1px solid #A0A0A0;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-left: 10px;
+        }
+        .categorytitle
+        {
+            line-height: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #A0A0A0;
+        }
+        
+        .trHeader
+        {
+            background-color: #393939;
+            height: 33px;
+			color:#fff;
+        }
+
+		.trHeader a
+        {
+            color:#fff;
+        }
+        
+        .trMediaHeader
+        {
+            background-color: #909090;
+            height: 27px;
+        }
+        
+        .trHeader td, trMediaHeader td
+        {
+        }
+        
+        .btn-primary
+        {            
+            border: 1px solid #000000;
+            font-size: 16pt;
+            font-weight: bold;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color: #000000;
+        }
+		
+		.mediumHeader
+		{
+			font-size:12px;			
+		}
+		
+		H4
+		{
+			color:#666666;
+		}
+		
+		.fnt12px
+		{
+			font-size:12px;
+		}
+		
+		.fnt16px
+		{
+			font-size:16px;
+			color: #333333;
+			font-weight:bold;
+		}
+		
+    </style>
+</head>
+<body>
+    @if (Model != null)
+    {
+        <table style="background-color: #ffffff; width: 650px; border: solid 1px #dadada;
+            padding: 3px 3px 3px 3px;" width="650px" align="center">
+            <tr>
+                <td>
+                    <table style="width: 100%">
+                        <tr>
+                            <td id="divLogo" colspan="2">
+                                @if (!string.IsNullOrEmpty(Model.ClientHeader))
+                                {
+                                    <img src="@Model.ClientHeader" alt="logo" style="max-width:650px;" />
+                                }
+                                else
+                                {
+                                    <img src="@(Model.ImageBaseUrl)/logo_N.png" alt="iq logo" />
+                                }
+                            </td>
+                        </tr>
+                        <tr class="trHeader">
+                            <td colspan="2">
+                                @Model.ClientName
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;">
+                                <table width="100%">
+                                    @foreach (string agent in Model.Summary.OrderBy(a => a))
+                                    {
+                                        <tr>
+                                            <td style="font-weight: normal; font-size: 14pt;">
+                                                @agent
+                                            </td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td colspan="2">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: normal; font-size: 14pt;">
+                                            Total Number of Clips: @Model.SearchRequest.Sum(a => ((a.TV != null && a.TV.TVNode != null) ? a.TV.TVNode.Count() : 0)
+                                                                                                    + ((a.News != null && a.News.NMNode != null) ? a.News.NMNode.Count() : 0)
+                                                                                                    + ((a.SocialMedia != null && a.SocialMedia.SMNode != null) ? a.SocialMedia.SMNode.Count() : 0)
+                                                                                                    + ((a.Twitter != null && a.Twitter.TWNode != null) ? a.Twitter.TWNode.Count() : 0)
+                                                                                                    + ((a.Blog != null && a.Blog.BlogNode != null) ? a.Blog.BlogNode.Count() : 0)
+                                                                                                    + ((a.Forum != null && a.Forum.ForumNode != null) ? a.Forum.ForumNode.Count() : 0)
+																									+ ((a.PrintMedia != null && a.PrintMedia.PMNode != null) ? a.PrintMedia.PMNode.Count() : 0)
+																									+ ((a.TM != null && a.TM.TMNode != null) ? a.TM.TMNode.Count() : 0))
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: normal; font-size: 14pt;">
+                                            Total Audience: @String.Format("{0:N0}", Model.SearchRequest.Sum(a => ((a.TV != null && a.TV.TVNode != null) ? a.TV.TVNode.Sum(b => b.Audience) : 0)
+                                                                                                    + ((a.News != null && a.News.NMNode != null) ? a.News.NMNode.Sum(b => b.Audience) : 0)
+                                                                                                    + ((a.Twitter != null && a.Twitter.TWNode != null) ? a.Twitter.TWNode.Sum(b => b.FollowersCount) : 0)
+                                                                                                    + ((a.Blog != null && a.Blog.BlogNode != null) ? a.Blog.BlogNode.Sum(b => b.Audience) : 0)
+																									+ ((a.PrintMedia != null && a.PrintMedia.PMNode != null) ? a.PrintMedia.PMNode.Sum(b => b.Circulation) : 0)))
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td style="text-align: right; vertical-align: middle;">
+                                <a href="@Model.IQAgentDigestUrl" target="_blank" class="btn-primary">View Full Report</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            @if (Model.SearchRequest != null && Model.SearchRequest.Count > 0)
+            {
+                foreach (XmlToHtmlTransform.SearchRequest request in Model.SearchRequest.OrderBy(a => a.QueryName))
+                {
+                <tr class="trHeader">
+					<td>
+						<table style="width:100%">
+							<tr>
+								<td><H3><A name="@request.QueryName">@request.QueryName</A><H3></td>
+								<td style="text-align:right">
+									<a href="@request.SearchRequestUrl">View All Results</a>
+								</td>
+							</tr>
+						</table>
+					</td>
+                </tr>
+                    if (request.TV != null && request.TV.TVNode != null && request.TV.TVNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.TVNode> TVItems = request.TV.TVNode.Where(t=>!t.ParentID.HasValue).OrderBy(a => a.GmtDate).Take(request.TV.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    <span class="mediumHeader">Television</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#TV">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                
+                        foreach (var item in TVItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/network-icon.png" alt="TV" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td class="minHeight32" valign="top">
+                                                <img alt="" src="@item.StationLogo" />
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table style="width: 100%">
+                                                    <tr>
+                                                        <td>
+                                                            <table cellspacing="0" cellpadding="0" style="width: 100%">
+                                                                <tr>
+                                                                    <td valign="top" style="font-family: 'Microsoft Sans Serif'">
+                                                                        <span style="font-family: 'Microsoft Sans Serif'; margin-left: 10px; margin-bottom: 0px;
+                                                                            font-size: 14px;"><span style="vertical-align: top; font-family: 'Microsoft Sans Serif'"><a href="@item.Url" class="fnt16px">@System.Net.WebUtility.HtmlDecode(item.Title)</a></span>
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif';">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.Market))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.Market
+                                                                        - </span>
+                                                                }
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td valign="top" align="right">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="@item.Url">
+                                                                <img width="130" height="auto" style="width: 130px;height:auto;" src="@item.ThumbnailImage" alt="clip"/>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 90px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 180px;">
+                                                @if (item.Audience > 0 && item.MediaValue > 0)
+                                                {
+                                                    <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/view.png" style="margin-top:3px;" alt="view" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @string.Format("{0:n0}", item.Audience)
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/dollar.png" style="margin-top:3px;" alt="dollar" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                <table cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <td style="font-family: 'Microsoft Sans Serif';">@(string.Format("{0:n2}", item.MediaValue))
+                                                                        </td>
+                                                                        @if (!string.IsNullOrWhiteSpace(item.Nielsen_Result))
+                                                                        {
+                                                                            <td style="font-family: 'Microsoft Sans Serif';">
+                                                                                &nbsp;@("(" + item.Nielsen_Result.ToUpper() + ")")
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+                                                else
+                                                {
+                                                                                
+                                                    <div style="height: 15px">
+                                                        &nbsp;</div>
+                                                                                
+                                                }
+                                            </td>
+                                            <td style="width: 180px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tr>
+                                                        @if (item.National_Audience.HasValue)
+                                                        {
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/us-map.png" style="margin-top:3px;" alt="view" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @string.Format("{0:n0}", item.National_Audience)
+                                                            </td>
+                                                        }
+                                                        @if (item.National_MediaValue.HasValue)
+                                                        {
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/us-dollar.png" style="margin-top:3px;" alt="dollar" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                <table cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <td style="font-family: 'Microsoft Sans Serif';">@(string.Format("{0:n2}", item.National_MediaValue))
+                                                                        </td>
+                                                                        @if (!string.IsNullOrWhiteSpace(item.National_Nielsen_Result))
+                                                                        {
+                                                                            <td style="font-family: 'Microsoft Sans Serif';">
+                                                                                &nbsp;@("(" + item.National_Nielsen_Result.ToUpper() + ")")
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        }
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+							if(request.TV != null && request.TV.TVNode != null && request.TV.TVNode.Count > 0 && request.TV.TVNode.Where(c=>c.ParentID==item.MediaID).Count>0)
+							{
+								<tr>
+									<td>
+										<table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';line-height: 20px; width: 100%;">
+								foreach (var childTV in request.TV.TVNode.Where(c=>c.ParentID==item.MediaID).ToList())
+								{
+									string childTime = childTV.MediaDate != null ? childTV.MediaDate.ToString("hh:mm tt") : string.Empty;
+									
+									<tr>
+										<td style="width:80px;">
+											<span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+												@if (!string.IsNullOrWhiteSpace(childTV.Market))
+												{
+													<span style="color: #73797F;">@childTV.Market
+													 </span>
+												}												
+                                            </span>
+										</td>
+										<td style="width: 90px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((childTV.NegativeSentiment * 6) > 25 ? 25 : (childTV.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(childTV.NegativeSentiment > 0 ? childTV.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((childTV.PositiveSentiment * 6) > 25 ? 25 : (childTV.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(childTV.PositiveSentiment > 0 ? childTV.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                        </td>
+										<td style="width: 180px;">
+                                                @if (childTV.Audience > 0 && childTV.MediaValue > 0)
+                                                {
+                                                    <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/view.png" style="margin-top:3px;" alt="view" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @string.Format("{0:n0}", childTV.Audience)
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/dollar.png" style="margin-top:3px;" alt="dollar" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                <table cellpadding="0" cellspacing="0">
+                                                                    <tr>
+                                                                        <td style="font-family: 'Microsoft Sans Serif';">@(string.Format("{0:n2}", childTV.MediaValue))
+                                                                        </td>
+                                                                        @if (!string.IsNullOrWhiteSpace(childTV.Nielsen_Result))
+                                                                        {
+                                                                            <td style="font-family: 'Microsoft Sans Serif';">
+                                                                                &nbsp;@("(" + childTV.Nielsen_Result.ToUpper() + ")")
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+                                                else
+                                                {
+                                                                                
+                                                    <div style="height: 15px">
+                                                        &nbsp;</div>
+                                                                                
+                                                }
+                                        </td>
+										<td style="width:180px;padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+											@childTime
+										</td>
+									</tr>
+								}
+										</table>
+									</td>
+								</tr>
+							}
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.News != null && request.News.NMNode != null && request.News.NMNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.NMNode> NMItems = request.News.NMNode.OrderBy(a => a.GmtDate).Take(request.News.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    <span class="mediumHeader">Online News</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#NM">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in NMItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/News.png" alt="News" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;" class="fnt16px">
+                                                                <a href="@(item.Url)" target="_blank"
+                                                            style="color: #333333;">
+															@System.Net.WebUtility.HtmlDecode(item.Title)
+																</a></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.CompeteUrl))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.CompeteUrl
+                                                                        - </span>}
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px; background-color: #F4F4F4;">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 160px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 240px;">
+                                                @if (Decimal.Compare(Convert.ToDecimal(item.MediaValue), -1M) != 0 && item.Audience != -1)
+                                                {
+                                                    <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/view.png" style="margin-top:3px;" alt="view" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @if (item.Audience.HasValue)
+                                                                {
+                                                                    @(string.Format("{0:n0}", item.Audience))
+                                                       
+                                                                }
+                                                                else
+                                                                {
+                                                                    @("NA")
+                                                                }
+                                                                @if (!string.IsNullOrWhiteSpace(item.Compete_Result) && item.Compete_Result.ToUpper() == "A")
+                                                                {
+                                                                    <img title="Powered by Compete" width="14" height="auto" style="width: 14px; height: auto;"
+                                                                        src="@(Model.ImageBaseUrl)/compete.png" alt="Compete Image" />
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/dollar.png" style="margin-top:3px;" alt="dollar" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @if (item.MediaValue.HasValue)
+                                                                {
+                                                                    @(string.Format("{0:n2}", item.MediaValue))
+                                                                }
+                                                                else
+                                                                {
+                                                                    @("NA")
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+                                            </td>
+                                            <td align="right">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.Blog != null && request.Blog.BlogNode != null && request.Blog.BlogNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.BlogNode> BlogItems = request.Blog.BlogNode.OrderBy(a => a.GmtDate).Take(request.Blog.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                   <span class="mediumHeader">Blog</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#Blog">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in BlogItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/blog.png" alt="blog" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;" class="fnt16px">
+                                                                <a href="@item.Url" target="_blank"
+                                                            style="color: #333333;">@System.Net.WebUtility.HtmlDecode(item.Title)</a></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.CompeteUrl))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.CompeteUrl
+                                                                        - </span>
+                                                                }
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px; background-color: #F4F4F4;">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 160px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 240px;">
+                                                @if (Decimal.Compare(Convert.ToDecimal(item.MediaValue), -1M) != 0 && item.Audience != -1)
+                                                {
+                                                    <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/view.png" style="margin-top:3px;" alt="view" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @if (item.Audience.HasValue)
+                                                                {
+                                                                    @(string.Format("{0:n0}", item.Audience))
+                                                       
+                                                                }
+                                                                else
+                                                                {
+                                                                    @("NA")
+                                                                }
+                                                                @if (!string.IsNullOrWhiteSpace(item.Compete_Result) && item.Compete_Result.ToUpper() == "A")
+                                                                {
+                                                                    <img title="Powered by Compete" width="14" height="auto" style="width: 14px; height: auto;"
+                                                                        src="@(Model.ImageBaseUrl)/compete.png" alt="Compete Image" />
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/dollar.png" style="margin-top:3px;" alt="dollar" />
+                                                            </td>
+                                                            <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                                @if (item.MediaValue.HasValue)
+                                                                {
+                                                                    @(string.Format("{0:n2}", item.MediaValue))
+                                                                }
+                                                                else
+                                                                {
+                                                                    @("NA")
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                }
+                                            </td>
+                                            <td align="right">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.Forum != null && request.Forum.ForumNode != null && request.Forum.ForumNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.ForumNode> ForumItems = request.Forum.ForumNode.OrderBy(a => a.GmtDate).Take(request.Forum.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                  <span class="mediumHeader">Forum</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#Forum">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in ForumItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/forum.png" alt="forum" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;" class="fnt16px">
+                                                                <a href="@item.Url" target="_blank"
+                                                            style="color: #333333;">@System.Net.WebUtility.HtmlDecode(item.Title)</a></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.CompeteUrl))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.CompeteUrl
+                                                                        - </span>}
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px; background-color: #F4F4F4;">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: height: 20px; width: 100%;">
+                                        <tr style="height: height:20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 160px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 240px;">
+                                            </td>
+                                            <td align="right">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.SocialMedia != null && request.SocialMedia.SMNode != null && request.SocialMedia.SMNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.SMNode> SMItems = request.SocialMedia.SMNode.OrderBy(a => a.GmtDate).Take(request.SocialMedia.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                  <span class="mediumHeader">Social Media</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#SM">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in SMItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/social-media.png" alt="social media" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;" class="fnt16px">
+                                                                <a href="@item.Url" target="_blank"
+                                                            style="color: #333333;">@System.Net.WebUtility.HtmlDecode(item.Title)</a></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.CompeteUrl))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.CompeteUrl
+                                                                        - </span>
+                                                                }
+
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px; background-color: #F4F4F4;">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 160px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 240px;">
+                                            </td>
+                                            <td align="right">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.Twitter != null && request.Twitter.TWNode != null && request.Twitter.TWNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.TWNode> TWItems = request.Twitter.TWNode.OrderBy(a => a.GmtDate).Take(request.Twitter.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                  <span class="mediumHeader">Twitter</span>
+                                </td>
+                                <td style="text-align: right;">
+                                    <a class="fnt12px" href="@(request.SearchRequestUrl)#TW">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in TWItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="font-family: 'Microsoft Sans Serif'; background-color: #EEEEEE; color: #fff;
+                                                            width: 65px; height: auto; text-align: center; padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/twitter.png" alt="Twitter" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            @{
+                            string actorlink = string.Empty;
+                            
+                                                            }
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;">
+                                                                <a href="@item.Url" target="_blank" style="color: #333333;">@item.ActorDisplayname</a>
+                                                                &nbsp;&nbsp;<span style="font-family: 'Microsoft Sans Serif'; font-size: 11px; color: #999999"><a href="@item.Url" target="_blank" style="text-decoration:none;">@@
+                                                                    (@item.PreferredUserName)</a></span></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="padding: 1% 0%;">
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td valign="top" style="width: 50px;" align="right">
+                                                <a href="@item.Url" target="_blank" style="text-decoration:none;"><img src="@item.ActorImage" width="50" alt="actor image" /></a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 90px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px; overflow: hidden">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td>
+                                                <table cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                                    line-height: 20px; text-align: center;">
+                                                    <tr>
+                                                        <td style="font-family: 'Microsoft Sans Serif';">
+                                                            <img src="@(Model.ImageBaseUrl)/Klout.png" alt="Klout Score" />
+                                                        </td>
+                                                        <td style="font-family: 'Microsoft Sans Serif'; padding-left: 10px; padding-right: 15px;">@(string.Format("{0:n0}", item.KloutScore))
+                                                        </td>
+                                                        <td style="font-family: 'Microsoft Sans Serif';">
+                                                            <img src="@(Model.ImageBaseUrl)/followers.png" alt="Followers" />
+                                                        </td>
+                                                        <td style="font-family: 'Microsoft Sans Serif'; padding-left: 10px; padding-right: 15px;">@(string.Format("{0:n0}", item.FollowersCount))
+                                                        </td>
+                                                        <td style="font-family: 'Microsoft Sans Serif';">
+                                                            <img src="@(Model.ImageBaseUrl)/following.png" alt="Following" />
+                                                        </td>
+                                                        <td style="font-family: 'Microsoft Sans Serif'; padding-left: 10px; padding-right: 15px;">@(string.Format("{0:n0}", item.FreiendsCount))
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td align="right">
+                                                &nbsp;
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.PrintMedia != null && request.PrintMedia.PMNode != null && request.PrintMedia.PMNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.PMNode> PMItems = request.PrintMedia.PMNode.OrderBy(a => a.GmtDate).Take(request.PrintMedia.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    Print Media
+                                </td>
+                                <td style="text-align: right;">
+                                    <a href="@(request.SearchRequestUrl)#PM">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        foreach (var item in PMItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img src="@(Model.ImageBaseUrl)/MediaIcon/print-media.png" alt="print media" />
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <span style="font-family: 'Microsoft Sans Serif'; margin-right: 10px; font-size: 14px;">
+                                                                <a href="@(Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]) + item.FileLocation.Replace(@"\", @"/"))" target="_blank"
+                                                            style="color: #333333;">@System.Net.WebUtility.HtmlDecode(item.Title)</a></span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+						            
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.Pub_Name))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.Pub_Name
+                                                                        - </span>
+                                                                }
+
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px; background-color: #F4F4F4;">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 80px;">
+                                            </td>
+                                            <td style="width: 160px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; overflow: hidden;">
+                                                                                Circulation:&nbsp;<span>@(string.Format("{0:n0}", item.Circulation))</span>
+                                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="width: 240px;">
+                                            </td>
+                                            <td align="right">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                    if (request.TM != null && request.TM.TMNode != null && request.TM.TMNode.Count > 0)
+                    {
+                        List<XmlToHtmlTransform.TMNode> RDItems = request.TM.TMNode.OrderBy(a => a.GmtDate).Take(request.TM.NoOfDisplayItems).ToList();
+                <tr class="trHeader">
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    Radio
+                                </td>
+                                <td style="text-align: right;">
+                                    <a href="@(request.SearchRequestUrl)#TM">See More</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                
+                        foreach (var item in RDItems)
+                        {
+                            string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                            string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                            string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+
+                            string hilightedText = string.Empty;
+                            if (!string.IsNullOrEmpty(item.HighlightingText))
+                            {
+                                item.HighlightingText = item.HighlightingText.Replace("&lt;", "<").Replace("&gt;", ">");
+                                hilightedText = item.HighlightingText.Length > 300 ? item.HighlightingText.Substring(0, 300) : item.HighlightingText;
+                                hilightedText = XmlToHtmlTransform.Transform.ProcessHighlightingText(item.HighlightingText, hilightedText);
+                            }
+                <tr>
+                    <td style="padding-top: 5px; padding-bottom: 10px;">
+                        <table style="padding: 10px 0; width: 100%; background-color: #FFFFFF;">
+                            <tr>
+                                <td style="padding: 0;">
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td valign="top" style="width: 65px;">
+                                                <table style="margin-right: 10px; width: 69px;">
+                                                    <tr>
+                                                        <td style="background-color: #EEEEEE; color: #fff; width: 65px; height: auto; text-align: center;
+                                                            padding: 0px;">
+                                                            <table style="width: 100%">
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; text-transform: uppercase; display: block;
+                                                                        font-size: 13px; font-weight: bold; padding: 0px; background: #666666; color: #fff;
+                                                                        text-align: center;">
+                                                                        @Month
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; background-color: white; text-align: center;
+                                                                        z-index: 10; padding-bottom: 1px; padding-top: 1px; font-size: 22px; display: block;
+                                                                        color: #2B2B2B; text-align: center;">
+                                                                        @Day
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-family: 'Microsoft Sans Serif'; font-weight: bold; font-size: 11px;
+                                                                        color: #2B2B2B; display: block; text-align: center;">
+                                                                        @Time
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+													<tr>
+                                                        <td align="center" style="margin: 10px 0 3px 0px;">
+                                                            <img alt="print media" src="@(Model.ImageBaseUrl)/MediaIcon/radio.png">
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                            <td style="padding-right: 6px; font-size: 13px; font-family: 'Microsoft Sans Serif';
+                                                vertical-align: top;">
+                                                <table style="width: 100%">
+                                                    <tr>
+                                                        <td>
+                                                            <table cellspacing="0" cellpadding="0" style="width: 100%">
+                                                                <tr>
+                                                                    <td valign="top" style="font-family: 'Microsoft Sans Serif'">
+																		<a href="@item.TranscriptUrl" target="_blank">
+																			<span style="font-family: 'Microsoft Sans Serif'; margin-bottom: 0px;
+																				font-size: 14px;"><span style="vertical-align: top; font-family: 'Microsoft Sans Serif'">@System.Net.WebUtility.HtmlDecode(item.Title)</span>
+																			</span>
+																		</a>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="margin-top: 5px; font-family: 'Microsoft Sans Serif';">
+                                                            <span style="font-family: 'Microsoft Sans Serif'; font-size: 14px;">
+                                                                @if (!string.IsNullOrWhiteSpace(item.Market))
+                                                                {
+                                                                    <span style="color: #73797F;">@item.Market
+                                                                        - </span>
+                                                                }
+																@System.Net.WebUtility.HtmlDecode(hilightedText)
+                                                            </span>
+                                                        </td>
+														<td valign="top" align="right">
+															<a href="@item.TranscriptUrl" class="cursorPointer" target="_blank">
+																<img width="50" height="auto" style="width: 50px;height:auto;" src="http://qav4.iqmediacorp.com/images/radioplay.png" alt="play"/>
+															</a>
+														</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr style="height: 20px">
+                                <td style="padding: 0;">
+                                    <table width="100%" cellspacing="0" cellpadding="0" style="font-family: 'Microsoft Sans Serif';
+                                        line-height: 20px; width: 100%;">
+                                        <tr style="height: 20px; background-color: #F4F4F4;">
+                                            <td style="width: 50px;">
+                                            </td>
+											<td style="width: 90px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-up.png" style="margin-bottom: 1px" width="13" />
+                                                            </td>
+                                                            <td>
+                                                                <img src="@(Model.ImageBaseUrl)/thumbs-down.png" style="margin-top: 6px" width="13" />
+                                                            </td>
+                                                            <td style="background-color: #DEDEDE; color: #FFFFFF; float: right; height: 15px;
+                                                                margin-left: 3px; padding: 0 !important; text-align: center; width: 52px;margin-top: 4px;">
+                                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td align="right" style="width: 26px; padding: 0px !important; -moz-box-sizing: border-box;
+                                                                                box-sizing: border-box; border-right: 1px solid #ffffff; background-color: #DEDEDE;
+                                                                                color: White; overflow: hidden;">
+                                                                                <span style="width:@((item.NegativeSentiment * 6) > 25 ? 25 : (item.NegativeSentiment * 6))px;background-color: #FF0000; color: #FFFFFF; float: right !important;line-height: 15px; overflow: hidden; padding: 0 !important;">
+                                                                                    @(item.NegativeSentiment > 0 ? item.NegativeSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                            <td align="left" style="width: 25px;">
+                                                                                <span style="width:@((item.PositiveSentiment * 6) > 25 ? 25 : (item.PositiveSentiment * 6))px;color: #FFFFFF; line-height: 15px; background-color: #008000;overflow: hidden; padding: 0px ! important; float: left ! important;">
+                                                                                    @(item.PositiveSentiment > 0 ? item.PositiveSentiment.ToString() : string.Empty)</span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+											<td style="width: 240px;">
+                                                <table cellspacing="0" cellpadding="0" style="height: 15px; text-align: center;">
+                                                    <tr>
+                                                        <td>
+                                                            Market Rank:
+                                                        </td>
+                                                        <td style="padding-left: 10px; padding-right: 15px; font-family: 'Microsoft Sans Serif';">
+                                                            @(string.Format("{0:n0}", item.DMARank))
+                                                        </td>
+                                                        </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                        }
+                    }
+                }
+            }
+        </table>
+    }
+</body>
+</html>
