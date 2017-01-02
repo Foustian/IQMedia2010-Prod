@@ -16,33 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQRadioSearch", "IQRadioSearch\IQRadioSearch\IQRadioSearch.csproj", "{42C034CA-BFEA-4C5E-9B74-9415518C0FCC}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMediaGroup.Services\\IQMediaGroup.Services.csproj
-		SccProjectName1 = IQMediaGroup.Services
-		SccLocalPath1 = IQMediaGroup.Services
-		SccProjectUniqueName2 = IQMediaGroup.Domain\\IQMediaGroup.Domain.csproj
-		SccProjectName2 = IQMediaGroup.Domain
-		SccLocalPath2 = IQMediaGroup.Domain
-		SccProjectUniqueName3 = IQMediaGroup.Logic\\IQMediaGroup.Logic.csproj
-		SccProjectName3 = IQMediaGroup.Logic
-		SccLocalPath3 = IQMediaGroup.Logic
-		SccProjectUniqueName4 = IQMediaGroup.Common\\IQMediaGroup.Common.csproj
-		SccProjectName4 = IQMediaGroup.Common
-		SccLocalPath4 = IQMediaGroup.Common
-		SccProjectUniqueName5 = PMGSearch\\PMGSearch\\PMGSearch.csproj
-		SccProjectName5 = PMGSearch/PMGSearch
-		SccLocalPath5 = PMGSearch\\PMGSearch
-		SccProjectUniqueName6 = Sentiment\\Sentiment.csproj
-		SccProjectName6 = Sentiment
-		SccLocalPath6 = Sentiment
-		SccProjectUniqueName7 = IQRadioSearch\\IQRadioSearch\\IQRadioSearch.csproj
-		SccProjectName7 = IQRadioSearch/IQRadioSearch
-		SccLocalPath7 = IQRadioSearch\\IQRadioSearch
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

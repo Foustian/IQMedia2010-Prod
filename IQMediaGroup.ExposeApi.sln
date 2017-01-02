@@ -16,33 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Security", "Security\IQMedia.Security\IQMedia.Security.csproj", "{CE5163B5-A186-41FA-9BC7-CE88FF750F39}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMediaGroup.ExposeApi.Services\\IQMediaGroup.ExposeApi.Services.csproj
-		SccProjectName1 = IQMediaGroup.ExposeApi.Services
-		SccLocalPath1 = IQMediaGroup.ExposeApi.Services
-		SccProjectUniqueName2 = IQMediaGroup.ExposeApi.Domain\\IQMediaGroup.ExposeApi.Domain.csproj
-		SccProjectName2 = IQMediaGroup.ExposeApi.Domain
-		SccLocalPath2 = IQMediaGroup.ExposeApi.Domain
-		SccProjectUniqueName3 = IQMediaGroup.ExposeApi.Logic\\IQMediaGroup.ExposeApi.Logic.csproj
-		SccProjectName3 = IQMediaGroup.ExposeApi.Logic
-		SccLocalPath3 = IQMediaGroup.ExposeApi.Logic
-		SccProjectUniqueName4 = PMGSearch\\PMGSearch\\PMGSearch.csproj
-		SccProjectName4 = PMGSearch/PMGSearch
-		SccLocalPath4 = PMGSearch\\PMGSearch
-		SccProjectUniqueName5 = IQMediaGroup.Common\\IQMediaGroup.Common.csproj
-		SccProjectName5 = IQMediaGroup.Common
-		SccLocalPath5 = IQMediaGroup.Common
-		SccProjectUniqueName6 = FeedsSearch\\FeedsSearch.csproj
-		SccProjectName6 = FeedsSearch
-		SccLocalPath6 = FeedsSearch
-		SccProjectUniqueName7 = Security\\IQMedia.Security\\IQMedia.Security.csproj
-		SccProjectName7 = Security/IQMedia.Security
-		SccLocalPath7 = Security\\IQMedia.Security
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

@@ -12,27 +12,6 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IQMediaGroup.Services.IOS.ExportSetup", "IQMediaGroup.Services.IOS.ExportSetup\IQMediaGroup.Services.IOS.ExportSetup.vdproj", "{C0DA7769-31C3-47A7-94D2-2BDD19C3DA1C}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMediaGroup.Services.IOS.ExportClip\\IQMediaGroup.Services.IOS.ExportClip.csproj
-		SccProjectName1 = IQMediaGroup.Services.IOS.ExportClip
-		SccLocalPath1 = IQMediaGroup.Services.IOS.ExportClip
-		SccProjectUniqueName2 = IQMediaGroup.Common.IOS\\IQMediaGroup.Common.IOS.csproj
-		SccProjectName2 = IQMediaGroup.Common.IOS
-		SccLocalPath2 = IQMediaGroup.Common.IOS
-		SccProjectUniqueName3 = IQMediaGroup.Domain.IOS\\IQMediaGroup.Domain.IOS.csproj
-		SccProjectName3 = IQMediaGroup.Domain.IOS
-		SccLocalPath3 = IQMediaGroup.Domain.IOS
-		SccProjectUniqueName4 = IQMediaGroup.Logic.IOS\\IQMediaGroup.Logic.IOS.csproj
-		SccProjectName4 = IQMediaGroup.Logic.IOS
-		SccLocalPath4 = IQMediaGroup.Logic.IOS
-		SccProjectUniqueName5 = IQMediaGroup.Services.IOS.ExportSetup\\IQMediaGroup.Services.IOS.ExportSetup.vdproj
-		SccProjectName5 = IQMediaGroup.Services.IOS.ExportSetup
-		SccLocalPath5 = IQMediaGroup.Services.IOS.ExportSetup
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

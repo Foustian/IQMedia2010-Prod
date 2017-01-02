@@ -10,24 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Common", "IQMediaGroup.Common\IQMediaGroup.Common.csproj", "{9DFE357F-5254-4EC1-BA94-8E8C15C8046C}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccProjectUniqueName0 = IQMediaGroup.Services.CaptureLog\\IQMediaGroup.Services.CaptureLog.csproj
-		SccProjectName0 = IQMediaGroup.Services.CaptureLog
-		SccLocalPath0 = IQMediaGroup.Services.CaptureLog
-		SccProjectUniqueName1 = IQMediaGroup.Logic.CaptureLog\\IQMediaGroup.Logic.CaptureLog.csproj
-		SccProjectName1 = IQMediaGroup.Logic.CaptureLog
-		SccLocalPath1 = IQMediaGroup.Logic.CaptureLog
-		SccProjectUniqueName2 = IQMediaGroup.Domain.CaptureLog\\IQMediaGroup.Domain.CaptureLog.csproj
-		SccProjectName2 = IQMediaGroup.Domain.CaptureLog
-		SccLocalPath2 = IQMediaGroup.Domain.CaptureLog
-		SccProjectUniqueName3 = IQMediaGroup.Common\\IQMediaGroup.Common.csproj
-		SccProjectName3 = IQMediaGroup.Common
-		SccLocalPath3 = IQMediaGroup.Common
-		SccLocalPath4 = .
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

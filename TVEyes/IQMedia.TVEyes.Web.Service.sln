@@ -12,27 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.TVEyes.ServiceClient", "IQMedia.TVEyes.ServiceClient\IQMedia.TVEyes.ServiceClient.csproj", "{256E5E09-4983-4362-8EAE-782548A5635C}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMedia.TVEyes.Web.Service\\IQMedia.TVEyes.Web.Service.csproj
-		SccProjectName1 = IQMedia.TVEyes.Web.Service
-		SccLocalPath1 = IQMedia.TVEyes.Web.Service
-		SccProjectUniqueName2 = IQMedia.TVEyes.Logic\\IQMedia.TVEyes.Logic.csproj
-		SccProjectName2 = IQMedia.TVEyes.Logic
-		SccLocalPath2 = IQMedia.TVEyes.Logic
-		SccProjectUniqueName3 = IQMedia.TVEyes.Domain\\IQMedia.TVEyes.Domain.csproj
-		SccProjectName3 = IQMedia.TVEyes.Domain
-		SccLocalPath3 = IQMedia.TVEyes.Domain
-		SccProjectUniqueName4 = IQMedia.TVEyes.Common\\IQMedia.TVEyes.Common.csproj
-		SccProjectName4 = IQMedia.TVEyes.Common
-		SccLocalPath4 = IQMedia.TVEyes.Common
-		SccProjectUniqueName5 = IQMedia.TVEyes.ServiceClient\\IQMedia.TVEyes.ServiceClient.csproj
-		SccProjectName5 = IQMedia.TVEyes.ServiceClient
-		SccLocalPath5 = IQMedia.TVEyes.ServiceClient
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

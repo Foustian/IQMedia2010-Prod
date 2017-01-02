@@ -8,21 +8,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.ExportClip.Domain", "..\IQMediaGroup.ExportClip.Domain\IQMediaGroup.ExportClip.Domain.csproj", "{CED49FF8-FBF6-4034-8D4D-C8F53C966F1F}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMediaGroup.ExportClip\\IQMediaGroup.ExportClip.csproj
-		SccProjectName1 = IQMediaGroup.ExportClip
-		SccLocalPath1 = IQMediaGroup.ExportClip
-		SccProjectUniqueName2 = ..\\IQMediaGroup.ExportClip.Logic\\IQMediaGroup.ExportClip.Logic.csproj
-		SccProjectName2 = ../IQMediaGroup.ExportClip.Logic
-		SccLocalPath2 = ..\\IQMediaGroup.ExportClip.Logic
-		SccProjectUniqueName3 = ..\\IQMediaGroup.ExportClip.Domain\\IQMediaGroup.ExportClip.Domain.csproj
-		SccProjectName3 = ../IQMediaGroup.ExportClip.Domain
-		SccLocalPath3 = ..\\IQMediaGroup.ExportClip.Domain
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

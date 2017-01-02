@@ -14,30 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Service.NM", "IQMedia.Service.NM\IQMedia.Service.NM.csproj", "{9FC43C56-7479-4F01-87F1-29A289BACFFE}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\..\\IQMediaGroup_Bill\\IQMedia.Common\\IQMedia.Common.csproj
-		SccProjectName1 = ../../IQMediaServices/IQMedia.Web/IQMedia.Common
-		SccLocalPath1 = ..\\..\\IQMediaGroup_Bill\\IQMedia.Common
-		SccProjectUniqueName2 = IQMedia.Domain.NM\\IQMedia.Domain.NM.csproj
-		SccProjectName2 = IQMedia.Domain.NM
-		SccLocalPath2 = IQMedia.Domain.NM
-		SccProjectUniqueName3 = IQMedia.Logic.NM\\IQMedia.Logic.NM.csproj
-		SccProjectName3 = IQMedia.Logic.NM
-		SccLocalPath3 = IQMedia.Logic.NM
-		SccProjectUniqueName4 = IQMedia.Service.NM.GeneratePDF\\IQMedia.Service.NM.GeneratePDF.csproj
-		SccProjectName4 = IQMedia.Service.NM.GeneratePDF
-		SccLocalPath4 = IQMedia.Service.NM.GeneratePDF
-		SccProjectUniqueName5 = IQMedia.Service.NM.GeneratePDFSetup\\IQMedia.Service.NM.GeneratePDFSetup.vdproj
-		SccProjectName5 = IQMedia.Service.NM.GeneratePDFSetup
-		SccLocalPath5 = IQMedia.Service.NM.GeneratePDFSetup
-		SccProjectUniqueName6 = IQMedia.Service.NM\\IQMedia.Service.NM.csproj
-		SccProjectName6 = IQMedia.Service.NM
-		SccLocalPath6 = IQMedia.Service.NM
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

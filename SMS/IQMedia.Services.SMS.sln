@@ -10,24 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMedia.Services.SMS", "IQMedia.Services.SMS\IQMedia.Services.SMS.csproj", "{E2B85A87-3D0B-4AD7-A977-AA398CFDACB0}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccProjectUniqueName0 = ..\\IQMediaGroup.Common\\IQMediaGroup.Common.csproj
-		SccProjectName0 = ../IQMediaGroup.Common
-		SccLocalPath0 = ..\\IQMediaGroup.Common
-		SccLocalPath1 = .
-		SccProjectUniqueName2 = IQMedia.Services.SMS.Domain\\IQMedia.Services.SMS.Domain.csproj
-		SccProjectName2 = IQMedia.Services.SMS.Domain
-		SccLocalPath2 = IQMedia.Services.SMS.Domain
-		SccProjectUniqueName3 = IQMedia.Services.SMS.Logic\\IQMedia.Services.SMS.Logic.csproj
-		SccProjectName3 = IQMedia.Services.SMS.Logic
-		SccLocalPath3 = IQMedia.Services.SMS.Logic
-		SccProjectUniqueName4 = IQMedia.Services.SMS\\IQMedia.Services.SMS.csproj
-		SccProjectName4 = IQMedia.Services.SMS
-		SccLocalPath4 = IQMedia.Services.SMS
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

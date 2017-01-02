@@ -12,27 +12,6 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IQMedia.Service.IngestionSetup", "IQMedia.Service.IngestionSetup\IQMedia.Service.IngestionSetup.vdproj", "{969DFEA7-7C40-4D59-A064-CA9B408BACC0}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 6
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccProjectUniqueName0 = IQMedia.Common\\IQMedia.Common.csproj
-		SccProjectName0 = IQMedia.Common
-		SccLocalPath0 = IQMedia.Common
-		SccProjectUniqueName1 = IQMedia.Domain\\IQMedia.Domain.csproj
-		SccProjectName1 = IQMedia.Domain
-		SccLocalPath1 = IQMedia.Domain
-		SccProjectUniqueName2 = IQMedia.Logic\\IQMedia.Logic.csproj
-		SccProjectName2 = IQMedia.Logic
-		SccLocalPath2 = IQMedia.Logic
-		SccLocalPath3 = .
-		SccProjectUniqueName4 = IQMedia.Service.Ingestion\\IQMedia.Service.Ingestion.csproj
-		SccProjectName4 = IQMedia.Service.Ingestion
-		SccLocalPath4 = IQMedia.Service.Ingestion
-		SccProjectUniqueName5 = IQMedia.Service.IngestionSetup\\IQMedia.Service.IngestionSetup.vdproj
-		SccProjectName5 = IQMedia.Service.IngestionSetup
-		SccLocalPath5 = IQMedia.Service.IngestionSetup
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

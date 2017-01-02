@@ -14,30 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQMediaGroup.Admin.Core", "IQMediaGroup.Admin.Core\IQMediaGroup.Admin.Core.csproj", "{A4B846D1-64EC-425B-BC34-5955E28CA331}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 7
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMediaGroup.Admin.Controller\\IQMediaGroup.Admin.Controller.csproj
-		SccProjectName1 = IQMediaGroup.Admin.Controller
-		SccLocalPath1 = IQMediaGroup.Admin.Controller
-		SccProjectUniqueName2 = IQMediaGroup.Admin.Model\\IQMediaGroup.Admin.Model.csproj
-		SccProjectName2 = IQMediaGroup.Admin.Model
-		SccLocalPath2 = IQMediaGroup.Admin.Model
-		SccProjectUniqueName3 = IQMediaGroup.Admin.Usercontrol\\IQMediaGroup.Admin.Usercontrol.csproj
-		SccProjectName3 = IQMediaGroup.Admin.Usercontrol
-		SccLocalPath3 = IQMediaGroup.Admin.Usercontrol
-		SccProjectUniqueName4 = IQMediaGroup.Admin.WebApplication\\IQMediaGroup.Admin.WebApplication.csproj
-		SccProjectName4 = IQMediaGroup.Admin.WebApplication
-		SccLocalPath4 = IQMediaGroup.Admin.WebApplication
-		SccProjectUniqueName5 = PMGSearch\\PMGSearch\\PMGSearch.csproj
-		SccProjectName5 = PMGSearch/PMGSearch
-		SccLocalPath5 = PMGSearch\\PMGSearch
-		SccProjectUniqueName6 = IQMediaGroup.Admin.Core\\IQMediaGroup.Admin.Core.csproj
-		SccProjectName6 = IQMediaGroup.Admin.Core
-		SccLocalPath6 = IQMediaGroup.Admin.Core
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64

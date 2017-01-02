@@ -16,33 +16,6 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IQMedia.Services.TVEyes.RequestDownloadSetup", "IQMedia.Service.TVEyes\IQMedia.Service.TVEyes.RequestDownloadSetup\IQMedia.Services.TVEyes.RequestDownloadSetup.vdproj", "{E988494E-1DB2-48B5-84EE-20FAACDCA24D}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://dbvss:8080/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = IQMedia.TVEyes.Logic\\IQMedia.TVEyes.Logic.csproj
-		SccProjectName1 = IQMedia.TVEyes.Logic
-		SccLocalPath1 = IQMedia.TVEyes.Logic
-		SccProjectUniqueName2 = IQMedia.TVEyes.Domain\\IQMedia.TVEyes.Domain.csproj
-		SccProjectName2 = IQMedia.TVEyes.Domain
-		SccLocalPath2 = IQMedia.TVEyes.Domain
-		SccProjectUniqueName3 = IQMedia.TVEyes.Common\\IQMedia.TVEyes.Common.csproj
-		SccProjectName3 = IQMedia.TVEyes.Common
-		SccLocalPath3 = IQMedia.TVEyes.Common
-		SccProjectUniqueName4 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.Download\\IQMedia.Service.TVEyes.Download.csproj
-		SccProjectName4 = IQMedia.Service.TVEyes/IQMedia.Service.TVEyes.Download
-		SccLocalPath4 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.Download
-		SccProjectUniqueName5 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.DownloadSetup\\IQMedia.Services.TVEyes.DownloadSetup.vdproj
-		SccProjectName5 = IQMedia.Service.TVEyes/IQMedia.Service.TVEyes.DownloadSetup
-		SccLocalPath5 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.DownloadSetup
-		SccProjectUniqueName6 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.RequestDownload\\IQMedia.Service.TVEyes.RequestDownload.csproj
-		SccProjectName6 = IQMedia.Service.TVEyes/IQMedia.Service.TVEyes.RequestDownload
-		SccLocalPath6 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.RequestDownload
-		SccProjectUniqueName7 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.RequestDownloadSetup\\IQMedia.Services.TVEyes.RequestDownloadSetup.vdproj
-		SccProjectName7 = IQMedia.Service.TVEyes/IQMedia.Service.TVEyes.RequestDownloadSetup
-		SccLocalPath7 = IQMedia.Service.TVEyes\\IQMedia.Service.TVEyes.RequestDownloadSetup
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

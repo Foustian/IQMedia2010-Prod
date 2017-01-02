@@ -47,44 +47,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IQCommon", "..\..\..\..\IQCommon\IQCommon\IQCommon.csproj", "{6C491916-50C9-4E52-A355-596FDE89816B}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 12
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://10.100.1.73:8080/tfs/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\IQMedia.Data\\IQMedia.Data.csproj
-		SccProjectName1 = ../IQMedia.Data
-		SccLocalPath1 = ..\\IQMedia.Data
-		SccProjectUniqueName2 = ..\\IQMedia.Logic\\IQMedia.Web.Logic.csproj
-		SccProjectName2 = ../IQMedia.Logic
-		SccLocalPath2 = ..\\IQMedia.Logic
-		SccProjectUniqueName3 = ..\\IQMedia.Model\\IQMedia.Model.csproj
-		SccProjectName3 = ../IQMedia.Model
-		SccLocalPath3 = ..\\IQMedia.Model
-		SccProjectUniqueName4 = IQMedia.WebApplication.csproj
-		SccLocalPath4 = .
-		SccProjectUniqueName5 = ..\\..\\..\\PMGSearch\\PMGSearch\\PMGSearch.csproj
-		SccProjectName5 = ../../../PMGSearch/PMGSearch
-		SccLocalPath5 = ..\\..\\..\\PMGSearch\\PMGSearch
-		SccProjectUniqueName6 = ..\\..\\Common\\IQMedia.Shared\\IQMedia.Shared.csproj
-		SccProjectName6 = ../../Common/IQMedia.Shared
-		SccLocalPath6 = ..\\..\\Common\\IQMedia.Shared
-		SccProjectUniqueName7 = ..\\..\\..\\Sentiment\\Sentiment.csproj
-		SccProjectName7 = ../../../Sentiment
-		SccLocalPath7 = ..\\..\\..\\Sentiment
-		SccProjectUniqueName8 = ..\\..\\Prominence\\Prominence.csproj
-		SccProjectName8 = ../../Prominence
-		SccLocalPath8 = ..\\..\\Prominence
-		SccProjectUniqueName9 = ..\\..\\..\\FeedsSearch\\FeedsSearch.csproj
-		SccProjectName9 = ../../../FeedsSearch
-		SccLocalPath9 = ..\\..\\..\\FeedsSearch
-		SccProjectUniqueName10 = ..\\..\\..\\Security\\IQMedia.Security\\IQMedia.Security.csproj
-		SccProjectName10 = ../../../Security/IQMedia.Security
-		SccLocalPath10 = ..\\..\\..\\Security\\IQMedia.Security
-		SccProjectUniqueName11 = ..\\..\\..\\..\\IQCommon\\IQCommon\\IQCommon.csproj
-		SccProjectName11 = ../../../../IQCommon/IQCommon
-		SccLocalPath11 = ..\\..\\..\\..\\IQCommon\\IQCommon
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
