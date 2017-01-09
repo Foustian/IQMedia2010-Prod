@@ -3,7 +3,10 @@ var CONST_DeleteNoteIQAgent = "Note:  By deleting this agent, you are also delet
 var CONST_SuspendNoteIQAgent = "Note:  By suspending this agent, new content will no longer populate for the agent. Existing content will be kept and displayed.";
 var TotalTabs = 0;
 var _PreviousZipCodes = [];
+var _PreviousExcludeZipCodes = [];
 var searchTermCapitalized = false;
+var _HasUnsavedTwitterRule = false;
+var _HasUnsavedTVEyesRule = false;
 
 $(function () {
 
@@ -26,7 +29,11 @@ $(function () {
     });
 
     $("#txtIQAgentSetupZipCodes").blur(function () {
-        LookupDMAs(true);
+        LookupDMAs(true, false);
+    });
+
+    $("#txtIQAgentSetupExcludeZipCodes").blur(function () {
+        LookupDMAs(true, true);
     });
 
     $("#txtIQAgentSetupFBPageID").blur(function () {
@@ -179,6 +186,7 @@ function ShowIQAgentSetupAddEditPopup(id) {
 
     if (id <= 0) {
 
+        // These sections should be display only, not editable
         $("#divTMSetup").hide();
         $("#divTMTabContent").hide();
         $("#divPMSetup").hide();
@@ -187,6 +195,10 @@ function ShowIQAgentSetupAddEditPopup(id) {
         $("#divTWTabContent").hide();
         $("#divIGSetup").hide();
         $("#divIGTabContent").hide();
+
+        // Can only edit Twitter, TVEyes rules on existing agents
+        $("#imgEditTwitterRule").addClass("displayNone");
+        $("#imgEditTVEyesRule").addClass("displayNone");
         
         $("#divIQAgentSetupPopupTitle").html("Create IQAgent");
         $("#divIQAgentSetupAddEditPopup").modal({
@@ -196,6 +208,9 @@ function ShowIQAgentSetupAddEditPopup(id) {
         });
     }
     else {
+        $("#divTMSetup").show();
+        $("#divPMSetup").show();
+        $("#divTWSetup").show();
 
         var jsonPostData = { p_ID: id }
         $("#divIQAgentSetupPopupTitle").html("Update IQAgent");
@@ -229,25 +244,61 @@ function ShowIQAgentSetupAddEditPopup(id) {
         });
     }
 }
+
+function CloseIQAgentSetupPopup() {
+    if (_HasUnsavedTVEyesRule || _HasUnsavedTwitterRule) {
+        var pendingSections = "";
+        var trackGuid = null;
+        var tvEyesSettingsKey = null;
+        if (_HasUnsavedTVEyesRule) {
+            pendingSections = "Radio";
+            tvEyesSettingsKey = $("#hdnIQAgentSetupTVEyesSettingsKey").val();
+        }
+        if (_HasUnsavedTwitterRule) {
+            pendingSections += (pendingSections.length == 0 ? "" : ", ") + "Twitter";
+            trackGuid = $("#txtIQAgentSetupGnipTag_TW").val();
+        }
+
+        getConfirm("Confirm Cancel", "There are newly created search rules for these sections: " + pendingSections + ". If you close the agent, they will be lost. Do you want to continue?", "Continue", "Cancel", function (res) {
+            if (res == true) {
+                var jsonPostData = {
+                    searchRequestID: $("#hdnIQAgentSetupAddEditKey").val(),
+                    trackGuid: trackGuid,
+                    tvEyesSettingsKey: tvEyesSettingsKey
+                }
+
+                $.ajax({
+                    url: _urlSetupAgentDeleteExternalRules,
+                    contentType: "application/json; charset=utf-8",
+                    type: "post",
+                    dataType: "json",
+                    data: JSON.stringify(jsonPostData),
+                    success: function (result) {
+                        if (result.isSuccess) {
+                            CancelIQAgentPopup('divIQAgentSetupAddEditPopup');
+                        }
+                        else {
+                            ShowNotification(_msgErrorOccured);
+                        }
+                    },
+                    error: function (a, b, c) {
+                        ShowNotification(_msgErrorOccured);
+                    }
+                });
+            }
+        });
+    }
+    else {
+        CancelIQAgentPopup('divIQAgentSetupAddEditPopup');
+    }
+}
+
 function CancelIQAgentPopup(divModalPopupID) {
     $("#" + divModalPopupID).css({ "display": "none" });
     $("#" + divModalPopupID).modal("hide");
 }
 
-function ClearIQAgentSearchRequestInfo() {
-
-
-    
-    $("#divTVSetup").show();
-    $("#divNMSetup").show();
-    $("#divSMSetup").show();
-    $("#divFBSetup").show();
-    $("#divIGSetup").show();
-    $("#divTWSetup").show();
-    $("#divTMSetup").show();
-    $("#divPMSetup").show();
-    $("#divPQSetup").show();
-    
+function ClearIQAgentSearchRequestInfo() {    
 
     $("#btnSubmitIQAgentSetupAddEditForm").show();
     $("#frmIQAgentSetupAddEdit span").html("").hide();
@@ -255,9 +306,8 @@ function ClearIQAgentSearchRequestInfo() {
     $("#hdnIQAgentSetupAddEditKey").val(CONST_ZERO);
     ShowHideTabdiv(0,true);
 
-    
-
-
+    _HasUnsavedTVEyesRule = false;
+    _HasUnsavedTwitterRule = false;
 
     $("#chkIQAgentSetup_TV").prop("checked", true);
     $("#chkIQAgentSetup_NM").prop("checked", true);
@@ -268,6 +318,9 @@ function ClearIQAgentSearchRequestInfo() {
     $("#chkIQAgentSetup_TM").prop("checked", false);
     $("#chkIQAgentSetup_PM").prop("checked", false);
     $("#chkIQAgentSetup_PQ").prop("checked", true);
+    $("#chkIQAgentSetup_FO").prop("checked", true);
+    $("#chkIQAgentSetup_BL").prop("checked", true);
+    $("#chkIQAgentSetup_LN").prop("checked", true);
 
     $("#txtIQAgentSetupSearchTerm").val("");
     $("#txtIQAgentSetupTitle").val("");
@@ -277,6 +330,7 @@ function ClearIQAgentSearchRequestInfo() {
     $("#txtIQAgentSetupAppearing").val("");
     $("#txtIQAgentSetupSearchTerm_TV").val("");
     $("#txtIQAgentSetupZipCodes").val("");
+    $("#txtIQAgentSetupExcludeZipCodes").val("");
     $("#chkIQAgentSetupUserMasterSearchTerm_TV").prop("checked", true);
 
     $("#ddlIQAgentSetupCategory_TV").val(CONST_ZERO).trigger("chosen:updated");
@@ -285,11 +339,11 @@ function ClearIQAgentSearchRequestInfo() {
     $("#ddlIQAgentSetupAffiliate_TV").val(CONST_ZERO).trigger("chosen:updated");
     $("#ddlIQAgentSetupRegion_TV").val(CONST_ZERO).trigger("chosen:updated");
     $("#ddlIQAgentSetupCountry_TV").val(CONST_ZERO).trigger("chosen:updated");
+    $("#ddlIQAgentSetupExcludeDMA_TV").val(CONST_ZERO).trigger("chosen:updated");
 
     SetZipCodeEnabled();
 
     // NM fields
-
     $("#txtIQAgentSetupPublication_NM").val("");
     $("#txtIQAgentSetupSearchTerm_NM").val("");
     $("#chkIQAgentSetupUserMasterSearchTerm_NM").prop("checked", true);
@@ -302,16 +356,29 @@ function ClearIQAgentSearchRequestInfo() {
     $("#ddlIQAgentSetupCountry_NM").val(CONST_ZERO).trigger("chosen:updated");
 
     // SM fields
-
     $("#txtIQAgentSetupSource_SM").val("");
     $("#txtIQAgentSetupAuthor_SM").val("");
     $("#txtIQAgentSetupTitle_SM").val("");
     $("#txtIQAgentSetupSearchTerm_SM").val("");
     $("#chkIQAgentSetupUserMasterSearchTerm_SM").prop("checked", true);
 
-    //$("#ddlIQAgentSetupSourceCategory_SM").val(CONST_ZERO).trigger("chosen:updated");
     $("#ddlIQAgentSetupSourceType_SM").val(CONST_ZERO).trigger("chosen:updated");
-    //$("#ddlIQAgentSetupSourceRank_SM").val(CONST_ZERO).trigger("chosen:updated");
+
+    // BL fields
+    $("#txtIQAgentSetupSource_BL").val("");
+    $("#txtIQAgentSetupAuthor_BL").val("");
+    $("#txtIQAgentSetupTitle_BL").val("");
+    $("#txtIQAgentSetupSearchTerm_BL").val("");
+    $("#chkIQAgentSetupUserMasterSearchTerm_BL").prop("checked", true);
+
+    // FO fields
+    $("#txtIQAgentSetupSource_FO").val("");
+    $("#txtIQAgentSetupAuthor_FO").val("");
+    $("#txtIQAgentSetupTitle_FO").val("");
+    $("#txtIQAgentSetupSearchTerm_FO").val("");
+    $("#chkIQAgentSetupUserMasterSearchTerm_FO").prop("checked", true);
+
+    $("#ddlIQAgentSetupSourceType_FO").val(CONST_ZERO).trigger("chosen:updated");
 
     // FB fields
     $("#txtIQAgentSetupSearchTerm_FB").val("");
@@ -329,24 +396,11 @@ function ClearIQAgentSearchRequestInfo() {
     $("#txtIQAgentSetupIGTag").val("");
 
     // TW fields
-
-    $("#txtIQAgentSetupActor_TW").val("");
     $("#txtIQAgentSetupGnipTag_TW").val("");
-    $("#txtIQAgentSetupFollowersCount_From_TW").val("");
-    $("#txtIQAgentSetupFollowersCount_To_TW").val("");
-    $("#txtIQAgentSetupFriendsCount_From_TW").val("");
-    $("#txtIQAgentSetupFriendsCount_To_TW").val("");
-    $("#txtIQAgentSetupKloutScore_From_TW").val("");
-    $("#txtIQAgentSetupKloutScore_To_TW").val("");
-    $("#txtIQAgentSetupSearchTerm_TW").val("");
-    $("#chkIQAgentSetupUserMasterSearchTerm_TW").prop("checked", true);
 
     // TM fields
+    $("#hdnIQAgentSetupTVEyesSettingsKey").val("0");
     $("#txtIQAgentSetupTVEyesSearchGUID_TM").val("");
-
-    $("#txtIQAgentSetupExcludeDomains_NM").val("");
-    $("#txtIQAgentSetupExcludeDomains_SM").val("");
-    $("#txtIQAgentSetupExcludeHandles_TW").val("");
 
     // PM fields
     $("#txtIQAgentSetupBLPMIXXml_PM").val("");
@@ -357,6 +411,25 @@ function ClearIQAgentSearchRequestInfo() {
     $("#ddlIQAgentSetupLanguage_PQ").val("English").trigger("chosen:updated");
     $("#txtIQAgentSetupSearchTerm_PQ").val("");
     $("#chkIQAgentSetupUserMasterSearchTerm_PQ").prop("checked", true);
+
+    // LN fields
+    $("#txtIQAgentSetupPublication_LN").val("");
+    $("#txtIQAgentSetupSearchTerm_LN").val("");
+    $("#chkIQAgentSetupUserMasterSearchTerm_LN").prop("checked", true);
+
+    $("#ddlIQAgentSetupCategory_LN").val(CONST_ZERO).trigger("chosen:updated");
+    $("#ddlIQAgentSetupPublicationCategory_LN").val(CONST_ZERO).trigger("chosen:updated");
+    $("#ddlIQAgentSetupGenere_LN").val(CONST_ZERO).trigger("chosen:updated");
+    $("#ddlIQAgentSetupRegion_LN").val(CONST_ZERO).trigger("chosen:updated");
+    $("#ddlIQAgentSetupLanguage_LN").val("English").trigger("chosen:updated");
+    $("#ddlIQAgentSetupCountry_LN").val(CONST_ZERO).trigger("chosen:updated");
+
+    // Exclude Domain fields
+    $("#txtIQAgentSetupExcludeDomains_NM").val("");
+    $("#txtIQAgentSetupExcludeDomains_SM").val("");
+    $("#txtIQAgentSetupExcludeDomains_LN").val("");
+    $("#txtIQAgentSetupExcludeDomains_BL").val("");
+    $("#txtIQAgentSetupExcludeDomains_FO").val("");
 }
 
 function FillIQAgentMediaInformation(queryName, searchRequestObject) {
@@ -366,12 +439,15 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
         $("#chkIQAgentSetup_TV").prop("checked", searchRequestObject.TVSpecified);
         $("#chkIQAgentSetup_NM").prop("checked", searchRequestObject.NewsSpecified);
         $("#chkIQAgentSetup_SM").prop("checked", searchRequestObject.SocialMediaSpecified);
+        $("#chkIQAgentSetup_BL").prop("checked", searchRequestObject.BlogSpecified);
+        $("#chkIQAgentSetup_FO").prop("checked", searchRequestObject.ForumSpecified);
         $("#chkIQAgentSetup_FB").prop("checked", searchRequestObject.FacebookSpecified);
         $("#chkIQAgentSetup_IG").prop("checked", searchRequestObject.InstagramSpecified);
         $("#chkIQAgentSetup_TW").prop("checked", searchRequestObject.TwitterSpecified);
         $("#chkIQAgentSetup_TM").prop("checked", searchRequestObject.TMSpecified);
         $("#chkIQAgentSetup_PM").prop("checked", searchRequestObject.PMSpecified);
         $("#chkIQAgentSetup_PQ").prop("checked", searchRequestObject.PQSpecified);
+        $("#chkIQAgentSetup_LN").prop("checked", searchRequestObject.LexisNexisSpecified);
         $("#chkIQAgentSetup_LR").prop("checked", searchRequestObject.LRSpecified);
 
         // Fill "Title(Query Name)"
@@ -385,29 +461,26 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
             $("#txtIQAgentSetupSearchTerm").val(searchRequestObject.SearchTerm);
         }
 
-
+        if ($("#divTMSetup").length) {
+            // Unnecessary if the section doesn't exist
+            ShowHideEditTVEyesRule();
+        }
         if (searchRequestObject.TMSpecified) {
-            $("#divTMSetup").show();
-            $("#divTMTabContent").show();
-            ShowHideTabdiv(4,true);
-
             // radio
             if (searchRequestObject.TM != null && searchRequestObject.TMSpecified == true) {
-
-                if (searchRequestObject.TM.SearchTerm != null) {
-                    $("#txtIQAgentSetupSearchTerm_TM").val(searchRequestObject.TM.SearchTerm.SearchTerm);
-                    $("#chkIQAgentSetupUserMasterSearchTerm_TM").prop("checked", searchRequestObject.TM.SearchTerm.IsUserMaster);
+                if (searchRequestObject.TM.TVEyesSettingsKey != null) {
+                    $("#hdnIQAgentSetupTVEyesSettingsKey").val(searchRequestObject.TM.TVEyesSettingsKey);
                 }
-                
-                $("#txtIQAgentSetupTVEyesSearchGUID_TM").val(searchRequestObject.TM.TVEyesSearchGUID);
 
+                if (searchRequestObject.TM.TVEyesSearchGUID != null && searchRequestObject.TM.TVEyesSearchGUID != "") {
+                    $("#txtIQAgentSetupTVEyesSearchGUID_TM").val(searchRequestObject.TM.TVEyesSearchGUID);
+                }
+                else if (searchRequestObject.TM.TVEyesSettingsKey > 0) {
+                    $("#txtIQAgentSetupTVEyesSearchGUID_TM").val("Generating...");
+                }
             }
         }
         if (searchRequestObject.PMSpecified) {
-            $("#divPMSetup").show();
-            $("#divPMTabContent").show();
-            ShowHideTabdiv(5,true);
-
             // pm
             if (searchRequestObject.PM != null) {
 
@@ -420,10 +493,6 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
             }
         }
         if (searchRequestObject.PQSpecified) {
-            $("#divPQSetup").show();
-            $("#divPQTabContent").show();
-            ShowHideTabdiv(6, true);
-
             if (searchRequestObject.PQ != null) {
                 if (searchRequestObject.PQ.SearchTerm != null) {
                     $("#txtIQAgentSetupSearchTerm_PQ").val(searchRequestObject.PQ.SearchTerm.SearchTerm);
@@ -564,16 +633,40 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
                     }
                 }
 
+                // Exclude_IQ_Dma_Set
+                if (searchRequestObject.TV.Exclude_IQ_Dma_Set != null && searchRequestObject.TV.Exclude_IQ_Dma_Set.Exclude_IQ_Dma != null && searchRequestObject.TV.Exclude_IQ_Dma_Set.Exclude_IQ_Dma.length > 0) {
+                    var arr_TV_ExcludeDMA = [];
+                    $.each(searchRequestObject.TV.Exclude_IQ_Dma_Set.Exclude_IQ_Dma, function (index, obj) {
+                        arr_TV_ExcludeDMA.push(obj.name);
+                    });
+                    $("#ddlIQAgentSetupExcludeDMA_TV").val(arr_TV_ExcludeDMA).trigger("chosen:updated");
+                }
+                else {
+                    $("#ddlIQAgentSetupExcludeDMA_TV").val(CONST_ZERO).trigger("chosen:updated");
+                }
+
                 // Zip Codes
                 if (searchRequestObject.TV.ZipCodes != null) {
                     var output = $.map(searchRequestObject.TV.ZipCodes, function (obj, index) { return obj; }).join('; ');
                     $("#txtIQAgentSetupZipCodes").val(output);
 
                     // Populate _PreviousZipCodes so that removing zip codes will correctly remove the corresponding DMA
-                    LookupDMAs(false);
+                    LookupDMAs(false, false);
                 }
                 else {
                     _PreviousZipCodes = [];
+                }
+
+                // Exclude Zip Codes
+                if (searchRequestObject.TV.ExcludeZipCodes != null) {
+                    var output = $.map(searchRequestObject.TV.ExcludeZipCodes, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupExcludeZipCodes").val(output);
+
+                    // Populate _PreviousExcludeZipCodes so that removing zip codes will correctly remove the corresponding DMA
+                    LookupDMAs(false, true);
+                }
+                else {
+                    _PreviousExcludeZipCodes = [];
                 }
             }
 
@@ -724,6 +817,78 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
                 }
             }
 
+            // Blog
+
+            if (searchRequestObject.Blog != null && searchRequestObject.BlogSpecified == true) {
+                $("#txtIQAgentSetupAuthor_BL").val(searchRequestObject.Blog.Author);
+                $("#txtIQAgentSetupTitle_BL").val(searchRequestObject.Blog.Title);
+
+                if (searchRequestObject.Blog.Sources != null) {
+                    var output = $.map(searchRequestObject.Blog.Sources, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupSource_BL").val(output);
+                }
+
+                if (searchRequestObject.Blog.SearchTerm != null) {
+                    $("#txtIQAgentSetupSearchTerm_BL").val(searchRequestObject.Blog.SearchTerm.SearchTerm);
+                    $("#chkIQAgentSetupUserMasterSearchTerm_BL").prop("checked", searchRequestObject.Blog.SearchTerm.IsUserMaster);
+                }
+
+                // SourceType_Set
+                if (searchRequestObject.Blog.SourceType_Set != null) {
+                    if (searchRequestObject.Blog.SourceType_Set.IsAllowAll == false) {
+                        var arr_BL_SourceType = [];
+                        $.each(searchRequestObject.Blog.SourceType_Set.SourceType, function (index, obj) {
+                            arr_BL_SourceType.push(obj);
+                        });
+                        $("#ddlIQAgentSetupSourceType_BL").val(arr_BL_SourceType).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupSourceType_BL").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                if (searchRequestObject.Blog.ExlcudeDomains != null) {
+                    var output = $.map(searchRequestObject.Blog.ExlcudeDomains, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupExcludeDomains_BL").val(output);
+                }
+            }
+
+            // Forum
+
+            if (searchRequestObject.Forum != null && searchRequestObject.ForumSpecified == true) {
+                $("#txtIQAgentSetupAuthor_FO").val(searchRequestObject.Forum.Author);
+                $("#txtIQAgentSetupTitle_FO").val(searchRequestObject.Forum.Title);
+
+                if (searchRequestObject.Forum.Sources != null) {
+                    var output = $.map(searchRequestObject.Forum.Sources, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupSource_FO").val(output);
+                }
+
+                if (searchRequestObject.Forum.SearchTerm != null) {
+                    $("#txtIQAgentSetupSearchTerm_FO").val(searchRequestObject.Forum.SearchTerm.SearchTerm);
+                    $("#chkIQAgentSetupUserMasterSearchTerm_FO").prop("checked", searchRequestObject.Forum.SearchTerm.IsUserMaster);
+                }
+
+                // SourceType_Set
+                if (searchRequestObject.Forum.SourceType_Set != null) {
+                    if (searchRequestObject.Forum.SourceType_Set.IsAllowAll == false) {
+                        var arr_FO_SourceType = [];
+                        $.each(searchRequestObject.Forum.SourceType_Set.SourceType, function (index, obj) {
+                            arr_FO_SourceType.push(obj);
+                        });
+                        $("#ddlIQAgentSetupSourceType_FO").val(arr_FO_SourceType).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupSourceType_FO").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                if (searchRequestObject.Forum.ExlcudeDomains != null) {
+                    var output = $.map(searchRequestObject.Forum.ExlcudeDomains, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupExcludeDomains_FO").val(output);
+                }
+            }
+
             // Facebook
 
             if (searchRequestObject.Facebook != null && searchRequestObject.FacebookSpecified == true) {
@@ -765,36 +930,124 @@ function FillIQAgentMediaInformation(queryName, searchRequestObject) {
 
             // Twitter
 
+            if ($("#divTWSetup").length) {
+                // Unnecessary if the section doesn't exist
+                ShowHideEditTwitterRule();
+            }
             if (searchRequestObject.Twitter != null && searchRequestObject.TwitterSpecified == true) {
-
-                $("#txtIQAgentSetupActor_TW").val(searchRequestObject.Twitter.Actor);
-
-                if (searchRequestObject.Twitter.SearchTerm != null) {
-                    $("#txtIQAgentSetupSearchTerm_TW").val(searchRequestObject.Twitter.SearchTerm.SearchTerm);
-                    $("#chkIQAgentSetupUserMasterSearchTerm_TW").prop("checked", searchRequestObject.Twitter.SearchTerm.IsUserMaster);
-                }
-
                 var output = $.map(searchRequestObject.Twitter.GnipTagList, function (obj, index) { return obj; }).join('; ');
                 $("#txtIQAgentSetupGnipTag_TW").val(output);
+            }
 
-                if (searchRequestObject.Twitter.ActorFriendsRange != null) {
-                    $("#txtIQAgentSetupFriendsCount_From_TW").val(searchRequestObject.Twitter.ActorFriendsRange.From);
-                    $("#txtIQAgentSetupFriendsCount_To_TW").val(searchRequestObject.Twitter.ActorFriendsRange.To);
-                }
-                if (searchRequestObject.Twitter.ActorFollowersRange != null) {
-                    $("#txtIQAgentSetupFollowersCount_From_TW").val(searchRequestObject.Twitter.ActorFollowersRange.From);
-                    $("#txtIQAgentSetupFollowersCount_To_TW").val(searchRequestObject.Twitter.ActorFollowersRange.To);
-                }
-                if (searchRequestObject.Twitter.KloutScoreRange != null) {
-                    $("#txtIQAgentSetupKloutScore_From_TW").val(searchRequestObject.Twitter.KloutScoreRange.From);
-                    $("#txtIQAgentSetupKloutScore_To_TW").val(searchRequestObject.Twitter.KloutScoreRange.To);
+            // LexisNexis
+
+            if (searchRequestObject.LexisNexis != null && searchRequestObject.LexisNexisSpecified == true) {
+
+                if (searchRequestObject.LexisNexis.Publications != null) {
+                    var output = $.map(searchRequestObject.LexisNexis.Publications, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupPublication_LN").val(output);
                 }
 
-                if (searchRequestObject.Twitter.ExclusionHandles != null) {
-                    var output = $.map(searchRequestObject.Twitter.ExclusionHandles, function (obj, index) { return "@" + obj; }).join('; ');
-                    $("#txtIQAgentSetupExcludeHandles_TW").val(output);
+                if (searchRequestObject.LexisNexis.SearchTerm != null) {
+                    $("#txtIQAgentSetupSearchTerm_LN").val(searchRequestObject.LexisNexis.SearchTerm.SearchTerm);
+                    $("#chkIQAgentSetupUserMasterSearchTerm_LN").prop("checked", searchRequestObject.LexisNexis.SearchTerm.IsUserMaster);
                 }
-            }    
+
+                // NewsCategory_Set
+                if (searchRequestObject.LexisNexis.NewsCategory_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.NewsCategory_Set.IsAllowAll == false) {
+                        var arr_LN_Category = [];
+                        $.each(searchRequestObject.LexisNexis.NewsCategory_Set.NewsCategory, function (index, obj) {
+                            arr_LN_Category.push(obj);
+                        });
+                        $("#ddlIQAgentSetupCategory_LN").val(arr_LN_Category).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupCategory_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                // PublicationCategory_Set
+                if (searchRequestObject.LexisNexis.PublicationCategory_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.PublicationCategory_Set.IsAllowAll == false) {
+                        var arr_LN_PubCategory = [];
+                        $.each(searchRequestObject.LexisNexis.PublicationCategory_Set.PublicationCategory, function (index, obj) {
+                            arr_LN_PubCategory.push(obj);
+                        });
+                        $("#ddlIQAgentSetupPublicationCategory_LN").val(arr_LN_PubCategory).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupPublicationCategory_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                // Genre_Set
+                if (searchRequestObject.LexisNexis.Genre_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.Genre_Set.IsAllowAll == false) {
+                        var arr_LN_Genre = [];
+                        $.each(searchRequestObject.LexisNexis.Genre_Set.Genre, function (index, obj) {
+                            arr_LN_Genre.push(obj);
+                        });
+                        $("#ddlIQAgentSetupGenere_LN").val(arr_LN_Genre).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupGenere_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                // Region_Set
+                if (searchRequestObject.LexisNexis.Region_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.Region_Set.IsAllowAll == false) {
+                        var arr_LN_Region = [];
+                        $.each(searchRequestObject.LexisNexis.Region_Set.Region, function (index, obj) {
+                            arr_LN_Region.push(obj);
+                        });
+                        $("#ddlIQAgentSetupRegion_LN").val(arr_LN_Region).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupRegion_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                // Language_Set
+                if (searchRequestObject.LexisNexis.Language_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.Language_Set.IsAllowAll == false) {
+                        var arr_LN_Language = [];
+                        $.each(searchRequestObject.LexisNexis.Language_Set.Language, function (index, obj) {
+                            arr_LN_Language.push(obj);
+                        });
+                        $("#ddlIQAgentSetupLanguage_LN").val(arr_LN_Language).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupLanguage_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                // Country_Set
+                if (searchRequestObject.LexisNexis.Country_Set != null) {
+
+                    if (searchRequestObject.LexisNexis.Country_Set.IsAllowAll == false) {
+                        var arr_LN_Country = [];
+                        $.each(searchRequestObject.LexisNexis.Country_Set.Country, function (index, obj) {
+                            arr_LN_Country.push(obj);
+                        });
+                        $("#ddlIQAgentSetupCountry_LN").val(arr_LN_Country).trigger("chosen:updated");
+                    }
+                    else {
+                        $("#ddlIQAgentSetupCountry_LN").val(CONST_ZERO).trigger("chosen:updated");
+                    }
+                }
+
+                if (searchRequestObject.LexisNexis.ExlcudeDomains != null) {
+                    var output = $.map(searchRequestObject.LexisNexis.ExlcudeDomains, function (obj, index) { return obj; }).join('; ');
+                    $("#txtIQAgentSetupExcludeDomains_LN").val(output);
+                }
+            }
     }
 }
 
@@ -821,24 +1074,39 @@ function SubmitIQAgentSetup() {
     flag = flag && ValidateSearchTerm('chkIQAgentSetup_TV', 'chkIQAgentSetupUserMasterSearchTerm_TV', 'txtIQAgentSetupSearchTerm_TV', 'spantxtIQAgentSetupSearchTerm_TV');
     flag = flag && ValidateSearchTerm('chkIQAgentSetup_NM', 'chkIQAgentSetupUserMasterSearchTerm_NM', 'txtIQAgentSetupSearchTerm_NM', 'spantxtIQAgentSetupSearchTerm_NM');
     flag = flag && ValidateSearchTerm('chkIQAgentSetup_SM', 'chkIQAgentSetupUserMasterSearchTerm_SM', 'txtIQAgentSetupSearchTerm_SM', 'spantxtIQAgentSetupSearchTerm_SM');
-    flag = flag && ValidateSearchTerm('chkIQAgentSetup_TW', 'chkIQAgentSetupUserMasterSearchTerm_TW', 'txtIQAgentSetupSearchTerm_TW', 'spantxtIQAgentSetupSearchTerm_TW');
     flag = flag && ValidateSearchTerm('chkIQAgentSetup_PQ', 'chkIQAgentSetupUserMasterSearchTerm_PQ', 'txtIQAgentSetupSearchTerm_PQ', 'spantxtIQAgentSetupSearchTerm_PQ');
     flag = flag && ValidateSearchTerm('chkIQAgentSetup_FB', 'chkIQAgentSetupUserMasterSearchTerm_FB', 'txtIQAgentSetupSearchTerm_FB', 'spantxtIQAgentSetupSearchTerm_FB');
-    flag = flag && ValidateSearchTerm('chkIQAgentSetup_IG', '', 'txtIQAgentSetupSearchTerm_IG', ''); 
+    flag = flag && ValidateSearchTerm('chkIQAgentSetup_IG', '', 'txtIQAgentSetupSearchTerm_IG', '');
+    flag = flag && ValidateSearchTerm('chkIQAgentSetup_LN', 'chkIQAgentSetupUserMasterSearchTerm_LN', 'txtIQAgentSetupSearchTerm_LN', 'spantxtIQAgentSetupSearchTerm_LN');
+    flag = flag && ValidateSearchTerm('chkIQAgentSetup_BL', 'chkIQAgentSetupUserMasterSearchTerm_BL', 'txtIQAgentSetupSearchTerm_BL', 'spantxtIQAgentSetupSearchTerm_BL');
+    flag = flag && ValidateSearchTerm('chkIQAgentSetup_FO', 'chkIQAgentSetupUserMasterSearchTerm_FO', 'txtIQAgentSetupSearchTerm_FO', 'spantxtIQAgentSetupSearchTerm_FO');
 
     if (SearchImageErrorMsg != null && SearchImageErrorMsg.length > 0) {
         $("#spantxtIQAgentSetupSearchImageId_LR").html(SearchImageErrorMsg).show();
         flag = false;
     }
-    
-    if ($('#chkIQAgentSetup_TV').length > 0 && $('#chkIQAgentSetup_TV').is(":checked") && $.trim($("#txtIQAgentSetupZipCodes").val()) != "") {
-        var zipCodes = $.trim($("#txtIQAgentSetupZipCodes").val()).split(';');
-        $.each(zipCodes, function (index, obj) {
-            if (!ValidateZipCode($.trim(obj))) {
-                $("#spantxtIQAgentSetupZipCodes").html(_msgInvalidZipCode + obj).show();
-                flag = false;
-            }
-        });
+
+    if ($('#chkIQAgentSetup_TV').length > 0 && $('#chkIQAgentSetup_TV').is(":checked")) {
+        var zipCodes;
+        if ($.trim($("#txtIQAgentSetupZipCodes").val()) != "") {
+            zipCodes = $.trim($("#txtIQAgentSetupZipCodes").val()).split(';');
+            $.each(zipCodes, function (index, obj) {
+                if (!ValidateZipCode($.trim(obj))) {
+                    $("#spantxtIQAgentSetupZipCodes").html(_msgInvalidZipCode + obj).show();
+                    flag = false;
+                }
+            });
+        }
+
+        if ($.trim($("#txtIQAgentSetupExcludeZipCodes").val()) != "") {
+            zipCodes = $.trim($("#txtIQAgentSetupExcludeZipCodes").val()).split(';');
+            $.each(zipCodes, function (index, obj) {
+                if (!ValidateZipCode($.trim(obj))) {
+                    $("#spantxtIQAgentSetupExcludeZipCodes").html(_msgInvalidZipCode + obj).show();
+                    flag = false;
+                }
+            });
+        }
     }
 
     if ($('#chkIQAgentSetup_NM').length > 0 && $('#chkIQAgentSetup_NM').is(":checked") && $.trim($("#txtIQAgentSetupExcludeDomains_NM").val()) != "") {
@@ -854,8 +1122,7 @@ function SubmitIQAgentSetup() {
                 $("#spanIQAgentSetupExcludeDomains_NM").html(_msgInvalidDomain + obj).show();
                 flag = false;
             }
-        });
-        
+        });        
     }
 
     if ($('#chkIQAgentSetup_SM').length > 0 && $('#chkIQAgentSetup_SM').is(":checked") && $.trim($("#txtIQAgentSetupExcludeDomains_SM").val()) != "") {
@@ -870,6 +1137,52 @@ function SubmitIQAgentSetup() {
                 $("#spanIQAgentSetupExcludeDomains_SM").html(_msgInvalidDomain+ obj).show();
                 flag = false;
             }    
+        });
+    }
+
+    if ($('#chkIQAgentSetup_BL').length > 0 && $('#chkIQAgentSetup_BL').is(":checked") && $.trim($("#txtIQAgentSetupExcludeDomains_BL").val()) != "") {
+        var domains = $.trim($("#txtIQAgentSetupExcludeDomains_BL").val()).split(';');
+        $.each(domains, function (index, obj) {
+            stringToTest = $.trim(obj);
+            if ((/^"/).test(stringToTest) && (/"$/).test(stringToTest)) {
+                stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+            }
+
+            if (!TestWildInput(stringToTest)) {
+                $("#spanIQAgentSetupExcludeDomains_BL").html(_msgInvalidDomain + obj).show();
+                flag = false;
+            }
+        });
+    }
+
+    if ($('#chkIQAgentSetup_FO').length > 0 && $('#chkIQAgentSetup_FO').is(":checked") && $.trim($("#txtIQAgentSetupExcludeDomains_FO").val()) != "") {
+        var domains = $.trim($("#txtIQAgentSetupExcludeDomains_FO").val()).split(';');
+        $.each(domains, function (index, obj) {
+            stringToTest = $.trim(obj);
+            if ((/^"/).test(stringToTest) && (/"$/).test(stringToTest)) {
+                stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+            }
+
+            if (!TestWildInput(stringToTest)) {
+                $("#spanIQAgentSetupExcludeDomains_FO").html(_msgInvalidDomain + obj).show();
+                flag = false;
+            }
+        });
+    }
+
+    if ($('#chkIQAgentSetup_LN').length > 0 && $('#chkIQAgentSetup_LN').is(":checked") && $.trim($("#txtIQAgentSetupExcludeDomains_LN").val()) != "") {
+        var domains = $.trim($("#txtIQAgentSetupExcludeDomains_LN").val()).split(';');
+        $.each(domains, function (index, obj) {
+            stringToTest = $.trim(obj);
+
+            if ((/^"/).test(stringToTest) && (/"$/).test(stringToTest)) {
+                stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+            }
+
+            if (!TestWildInput(stringToTest)) {
+                $("#spanIQAgentSetupExcludeDomains_LN").html(_msgInvalidDomain + obj).show();
+                flag = false;
+            }
         });
     }
 
@@ -899,6 +1212,20 @@ function SubmitIQAgentSetup() {
                     flag = false;
                 }
             });
+        }
+    }
+
+    if ($("#chkIQAgentSetup_TW").length > 0 && $("#chkIQAgentSetup_TW").is(":checked")) {
+        if ($.trim($("#txtIQAgentSetupGnipTag_TW").val()) == "") {
+            $("#spanIQAgentSetupGnipTag").html("Must create a search rule").show();
+            flag = false;
+        }
+    }
+
+    if ($("#chkIQAgentSetup_TM").length > 0 && $("#chkIQAgentSetup_TM").is(":checked")) {
+        if ($.trim($("#txtIQAgentSetupTVEyesSearchGUID_TM").val()) == "") {
+            $("#spanIQAgentSetupTVEyesSearchGUID").html("Must create a search rule").show();
+            flag = false;
         }
     }
 
@@ -991,6 +1318,18 @@ function ShowHideTabdiv(elementIndex,isClearOther) {
             EleID = 'divLRTabContent';
             HeaderID = 'divLRSetup';
             break;
+        case 10:
+            EleID = 'divLNTabContent';
+            HeaderID = 'divLNSetup';
+            break;
+        case 11:
+            EleID = 'divBLTabContent';
+            HeaderID = 'divBLSetup';
+            break;
+        case 12:
+            EleID = 'divFOTabContent';
+            HeaderID = 'divFOSetup';
+            break;
     }
 
     if ($("#" + EleID).is(':visible')) {
@@ -1003,7 +1342,7 @@ function ShowHideTabdiv(elementIndex,isClearOther) {
     }
 
     if (isClearOther == true) {
-        for (idx = 0; idx <= 6; idx++) {
+        for (idx = 0; idx <= 100; idx++) {
             if (idx != elementIndex) {
                 $("#divIQAgentSetupTabs").children().eq(idx * 2 + 1).hide();
                 $("#divIQAgentSetupTabs").children().eq(idx * 2).find('img').attr('src', '../images/show.png')
@@ -1245,22 +1584,40 @@ function SetZipCodeEnabled() {
     }
 }
 
-function LookupDMAs(setSelectedDMAs) {
-    $("#spantxtIQAgentSetupZipCodes").hide();
+function LookupDMAs(setSelectedDMAs, isExclude) {
+    var spanHelp;
+    var txtZipCodes;
+    var ddlDMAs;
+    var prevZipCodes;
+
+    if (isExclude) {
+        spanHelp = $("#spantxtIQAgentSetupExcludeZipCodes");
+        txtZipCodes = $("#txtIQAgentSetupExcludeZipCodes");
+        ddlDMAs = $("#ddlIQAgentSetupExcludeDMA_TV");
+        prevZipCodes = _PreviousExcludeZipCodes;
+    }
+    else {
+        spanHelp = $("#spantxtIQAgentSetupZipCodes");
+        txtZipCodes = $("#txtIQAgentSetupZipCodes");
+        ddlDMAs = $("#ddlIQAgentSetupDMA_TV");
+        prevZipCodes = _PreviousZipCodes;
+    }
+
+    spanHelp.hide();
     var currentZipCodes = [];
     var dmaPair;
-    var selectedDMAs = $("#ddlIQAgentSetupDMA_TV").chosen().val();
-    if (selectedDMAs == null) {
+    var selectedDMAs = ddlDMAs.chosen().val();
+    if (selectedDMAs == null || (selectedDMAs.length == 1 && selectedDMAs[0] == "0")) {
         selectedDMAs = [];
     }
     
-    if ($.trim($("#txtIQAgentSetupZipCodes").val()) != "") {
+    if ($.trim(txtZipCodes.val()) != "") {
         var flag = true;
-        var zipCodes = $.trim($("#txtIQAgentSetupZipCodes").val()).split(';');
+        var zipCodes = $.trim(txtZipCodes.val()).split(';');
         $.each(zipCodes, function (index, obj) {
             var zipCode = $.trim(obj);
             if (!ValidateZipCode(zipCode)) {
-                $("#spantxtIQAgentSetupZipCodes").html(_msgInvalidZipCode + zipCode).show();
+                spanHelp.html(_msgInvalidZipCode + zipCode).show();
                 flag = false;
             }
             else if ($.inArray(zipCode, currentZipCodes) == -1) {
@@ -1284,7 +1641,7 @@ function LookupDMAs(setSelectedDMAs) {
 
                         if (setSelectedDMAs) {
                             // For any zip codes that were deleted, unselect the corresponding DMAs
-                            $.each(_PreviousZipCodes, function (index, obj) {
+                            $.each(prevZipCodes, function (index, obj) {
                                 if ($.inArray(obj, currentZipCodes) == -1) {
                                     dmaPair = obj.split(':');
                                     selectedDMAs.splice($.inArray(dmaPair[1], selectedDMAs), 1);
@@ -1301,15 +1658,20 @@ function LookupDMAs(setSelectedDMAs) {
                                     }
                                 });
 
-                                $("#ddlIQAgentSetupDMA_TV").val(selectedDMAs).trigger("chosen:updated");
+                                ddlDMAs.val(selectedDMAs).trigger("chosen:updated");
                             }
 
                             if (result.invalidZipCodeMsg != "") {
-                                $("#spantxtIQAgentSetupZipCodes").html(_msgInvalidZipCode + result.invalidZipCodeMsg).show();
+                                spanHelp.html(_msgInvalidZipCode + result.invalidZipCodeMsg).show();
                             }
                         }
 
-                        _PreviousZipCodes = currentZipCodes;
+                        if (isExclude) {
+                            _PreviousExcludeZipCodes = currentZipCodes;
+                        }
+                        else {
+                            _PreviousZipCodes = currentZipCodes;
+                        }
                     }
                     else {
                         ShowNotification(_msgErrorOccured);
@@ -1321,16 +1683,21 @@ function LookupDMAs(setSelectedDMAs) {
             });
         }
     }
-    else if (_PreviousZipCodes.length > 0) {
-        $.each(_PreviousZipCodes, function (index, obj) {
+    else if (prevZipCodes.length > 0) {
+        $.each(prevZipCodes, function (index, obj) {
             if ($.inArray(obj, currentZipCodes) == -1) {
                 dmaPair = obj.split(':');
                 selectedDMAs.splice($.inArray(dmaPair[1], selectedDMAs), 1);
             }
         });
 
-        $("#ddlIQAgentSetupDMA_TV").val(selectedDMAs).trigger("chosen:updated");
-        _PreviousZipCodes = [];
+        ddlDMAs.val(selectedDMAs).trigger("chosen:updated");
+        if (isExclude) {
+            _PreviousExcludeZipCodes = [];
+        }
+        else {
+            _PreviousZipCodes = [];
+        }
     }
 }
 
@@ -1635,4 +2002,333 @@ function ValidateSearchTerm(chkMediumID, chkSearchTermID, txtSearchTermID, spanE
     }
 
     return true;
+}
+
+///////// Twitter Rule Edit /////////
+
+function ShowHideEditTwitterRule() {
+    if ($("#chkIQAgentSetup_TW").is(":checked")) {
+        $("#imgEditTwitterRule").removeClass("displayNone");
+    }
+    else {
+        if ($("#txtIQAgentSetupGnipTag_TW").val() != "") {
+            getConfirm("Confirm Disable", "Disabling this section will delete the search rule. If the section is reenabled in the future, it will have to be recreated. Do you want to continue?", "Continue", "Cancel", function (res) {
+                if (res == true) {
+                    $("#imgEditTwitterRule").addClass("displayNone");
+                }
+                else {
+                    $("#chkIQAgentSetup_TW").prop("checked", true);
+                }
+            });
+        }
+        else {
+            $("#imgEditTwitterRule").addClass("displayNone");
+        }
+    }
+}
+
+function ShowEditTwitterRulePopup(isEditable) {
+    var ruleTag = $("#txtIQAgentSetupGnipTag_TW").val();
+    var container = $("#divTwitterRules");
+    var textAreaHTML = '<textarea rows="2" cols="40" class="twitterRuleTxt" ' + (isEditable ? '' : 'readonly="readonly"') + '/>';
+
+    container.empty();
+    $("#divTwitterRuleMsg").html('');
+    $('input[name="chkTwitterRuleOption"]').prop("checked", false);
+
+    if (ruleTag != "") {
+        $("#txtTwitterRuleTag").val(ruleTag);
+
+        var jsonPostData = {
+            trackGuid: ruleTag
+        };
+
+        $.ajax({
+            url: _urlSetupAgentGetTwitterRule,
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(jsonPostData),
+            success: function (result) {
+                if (result.isSuccess) {
+                    if (result.rules.length > 0) {
+                        $.each(result.rules, function (index, rule) {
+                            var textArea = $(textAreaHTML);
+
+                            // Don't include the options in the user-editable text
+                            var ruleText = rule.replace(_twitterEnglishRule + " ", "");
+                            ruleText = ruleText.replace(_twitterFollowingRule + " ", "");
+                            ruleText = ruleText.replace(_twitterFollowersRule + " ", "");
+                            ruleText = ruleText.replace(_twitterTimeZonesRule + " ", "");
+
+                            // Remove the outer parentheses
+                            ruleText = ruleText.substring(1, ruleText.length - 1);
+
+                            textArea.text(ruleText);
+                            container.append(textArea);
+                        });
+
+                        if (result.rules[0].indexOf(_twitterEnglishRule) != -1) {
+                            $("#chkEnglish").prop("checked", true);
+                        }
+                        if (result.rules[0].indexOf(_twitterFollowingRule) != -1) {
+                            $("#chkFollowing").prop("checked", true);
+                        }
+                        if (result.rules[0].indexOf(_twitterFollowersRule) != -1) {
+                            $("#chkFollowers").prop("checked", true);
+                        }
+                        if (result.rules[0].indexOf(_twitterTimeZonesRule) != -1) {
+                            $("#chkTimeZones").prop("checked", true);
+                        }
+                    }
+                    else {
+                        var textArea = $(textAreaHTML);
+                        container.append(textArea);
+                    }
+
+                    $("#divEditTwitterRulePopup").modal({
+                        backdrop: "static",
+                        keyboard: true,
+                        dynamic: true
+                    });
+                }
+                else {
+                    ShowNotification(_msgErrorOccured);
+                }
+            },
+            error: function (a, b, c) {
+                console.error("GetTwitterRule error - " + c);
+                ShowNotification(_msgErrorOccured);
+            }
+        });
+    }
+    else {
+        $("#txtTwitterRuleTag").val("N/A");
+
+        var textArea = $(textAreaHTML);
+        container.append(textArea);
+
+        $("#divEditTwitterRulePopup").modal({
+            backdrop: "static",
+            keyboard: true,
+            dynamic: true
+        });
+    }
+}
+
+function SaveTwitterRules() {
+    var rules = [];
+    var isTooLong = false;
+    var optionText = "";
+    var hasValue = false;
+    var hasAsterisk = false;
+
+    if ($("#chkEnglish").is(":checked")) {
+        optionText += _twitterEnglishRule + " ";
+    }
+    if ($("#chkFollowers").is(":checked")) {
+        optionText += _twitterFollowersRule + " ";
+    }
+    if ($("#chkFollowing").is(":checked")) {
+        optionText += _twitterFollowingRule + " ";
+    }
+    if ($("#chkTimeZones").is(":checked")) {
+        optionText += _twitterTimeZonesRule + " ";
+    }
+
+    $.each($("#divTwitterRules textArea"), function (index, obj) {
+        var text = $(obj).val();
+        if (text != "") {
+            hasValue = true;
+
+            if (text.indexOf("*") != -1) {
+                hasAsterisk = true;
+                $(obj).addClass("twitterRuleError");
+            }
+            else if (text.length > 700) {
+                isTooLong = true;
+                $(obj).addClass("twitterRuleError");
+            }
+            else {
+                $(obj).removeClass("twitterRuleError");
+                rules.push(optionText + "(" + text + ")");
+            }
+        }
+    });
+
+    if (!hasValue) {
+        $("#divTwitterRuleMsg").html(_msgIQAgentSetupTwitterRuleRequiredField);
+    }
+    else if (hasAsterisk) {
+        $("#divTwitterRuleMsg").html(_msgIQAgentSetupTwitterRuleNoAsterisks);
+    }
+    else if (isTooLong) {
+        $("#divTwitterRuleMsg").html(_msgIQAgentSetupTwitterRuleTooLong);
+    }
+    else {
+        var jsonPostData = {
+            trackGuid: $("#txtIQAgentSetupGnipTag_TW").val(),
+            twitterRules: rules,
+            agentName: $("#txtIQAgentSetupTitle").val(),
+            searchRequestID: $("#hdnIQAgentSetupAddEditKey").val()
+        }
+
+        $.ajax({
+            url: _urlSetupAgentSaveTwitterRule,
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(jsonPostData),
+            success: function (result) {
+                if (result.isSuccess) {
+                    if (result.isInsert) {
+                        _HasUnsavedTwitterRule = true;
+                        $("#txtIQAgentSetupGnipTag_TW").val(result.trackGuid);
+                    }
+
+                    CancelIQAgentPopup("divEditTwitterRulePopup");
+                    ShowNotification("Rule saved successfully.");
+                }
+                else {
+                    ShowNotification(_msgErrorOccured);
+                }
+            },
+            error: function (a, b, c) {
+                console.error("SaveTwitterRule error - " + c);
+                ShowNotification(_msgErrorOccured);
+            }
+        });
+    }
+}
+
+function AddTwitterRuleSection() {
+    var textArea = $('<textarea rows="2" cols="40" class="twitterRuleTxt" />');
+    $("#divTwitterRules").append(textArea);
+}
+
+///////// TVEyes Rule Edit /////////
+
+function ShowHideEditTVEyesRule() {
+    if ($("#chkIQAgentSetup_TM").is(":checked")) {
+        $("#imgEditTVEyesRule").removeClass("displayNone");
+    }
+    else {
+        if ($("#hdnIQAgentSetupTVEyesSettingsKey").val() != "0") {
+            getConfirm("Confirm Disable", "Disabling this section will delete the search term. If the section is reenabled in the future, it will have to be recreated. Do you want to continue?", "Continue", "Cancel", function (res) {
+                if (res == true) {
+                    $("#imgEditTVEyesRule").addClass("displayNone");
+                }
+                else {
+                    $("#chkIQAgentSetup_TM").prop("checked", true);
+                }
+            });
+        }
+        else {
+            $("#imgEditTVEyesRule").addClass("displayNone");
+        }
+    }
+}
+
+function ShowEditTVEyesRulePopup() {
+    var searchGuid = $("#txtIQAgentSetupTVEyesSearchGUID_TM").val();
+    var tvEyesSettingsKey = $("#hdnIQAgentSetupTVEyesSettingsKey").val();
+
+    $("#divTVEyesRuleMsg").html('');
+    $("#txtTVEyesSearchTerm").val('');
+
+    if (searchGuid != "") {
+        $("#txtTVEyesSearchGuid").val(searchGuid);
+    }
+    else {
+        $("#txtTVEyesSearchGuid").val("N/A");
+    }
+
+    if (tvEyesSettingsKey == "0") {
+        $("#divEditTVEyesRulePopup").modal({
+            backdrop: "static",
+            keyboard: true,
+            dynamic: true
+        });
+    }
+    else {
+        var jsonPostData = {
+            tvEyesSettingsKey: tvEyesSettingsKey
+        };
+
+        $.ajax({
+            url: _urlSetupAgentGetTVEyesRule,
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(jsonPostData),
+            success: function (result) {
+                if (result.isSuccess) {
+                    // Remove global rule section, since it will be readded on save
+                    $("#txtTVEyesSearchTerm").val(result.ruleText.replace(_tvEyesGlobalRule, ""));
+
+                    $("#divEditTVEyesRulePopup").modal({
+                        backdrop: "static",
+                        keyboard: true,
+                        dynamic: true
+                    });
+                }
+                else {
+                    ShowNotification(_msgErrorOccured);
+                }
+            },
+            error: function (a, b, c) {
+                console.error("GetTVEyesRule error - " + c);
+                ShowNotification(_msgErrorOccured);
+            }
+        });
+    }
+}
+
+function SaveTVEyesRule() {
+    var searchTerm = $("#txtTVEyesSearchTerm").val();
+
+    if (searchTerm == "") {
+        $("#divTVEyesRuleMsg").html(_msgIQAgentSetupTVEyesRuleRequiredField);
+    }
+    else if (searchTerm.indexOf("*") != -1) {
+        $("#divTVEyesRuleMsg").html(_msgIQAgentSetupTVEyesRuleNoAsterisks);
+    }
+    else if (searchTerm.length > 30000) {
+        $("#divTVEyesRuleMsg").html(_msgIQAgentSetupTVEyesRuleTooLong.replace("{0}", searchTerm.length));
+    }
+    else {
+        var jsonPostData = {
+            ruleID: $("#hdnIQAgentSetupTVEyesSettingsKey").val(),
+            searchTerm: searchTerm + " " + _tvEyesGlobalRule,
+            agentName: $("#txtIQAgentSetupTitle").val(),
+            searchRequestID: $("#hdnIQAgentSetupAddEditKey").val()
+        }
+
+        $.ajax({
+            url: _urlSetupAgentSaveTVEyesRule,
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(jsonPostData),
+            success: function (result) {
+                if (result.isSuccess) {
+                    if (result.isInsert) {
+                        _HasUnsavedTVEyesRule = true;
+                        $("#hdnIQAgentSetupTVEyesSettingsKey").val(result.ruleID)
+                        $("#txtIQAgentSetupTVEyesSearchGUID_TM").val("Generating...");
+                    }
+
+                    CancelIQAgentPopup("divEditTVEyesRulePopup");
+                    ShowNotification("Rule saved successfully.");
+                }
+                else {
+                    ShowNotification(_msgErrorOccured);
+                }
+            },
+            error: function (a, b, c) {
+                console.error("SaveTVEyesRule error - " + c);
+                ShowNotification(_msgErrorOccured);
+            }
+        });
+    }
 }

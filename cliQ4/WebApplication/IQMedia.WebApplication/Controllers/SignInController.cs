@@ -12,6 +12,7 @@ using System.Configuration;
 using IQMedia.WebApplication.Config;
 using IQMedia.Common.Util;
 using System.Security.Authentication;
+using System.Security.Principal;
 
 namespace IQMedia.WebApplication.Controllers
 {
@@ -42,6 +43,16 @@ namespace IQMedia.WebApplication.Controllers
                     {
                         return RedirectToDefaultPage(user.DefaultPage);
                     }
+                }
+                else
+                {
+                    if (Authentication.IsAuthenticated)
+                    {
+                        Authentication.Logout();
+                        HttpContext.User = new GenericPrincipal(new GenericIdentity(string.Empty), null);
+                    }
+
+                    Session.Timeout = 1;
                 }
             }
             catch (Exception exception)
@@ -186,8 +197,17 @@ namespace IQMedia.WebApplication.Controllers
                                         sessionInformation.Isv4Google = customerValue.Isv4Google;
                                         sessionInformation.IsTimeshiftFacet = customerValue.IsTimeshiftFacet;
                                         sessionInformation.IsShareTV = customerValue.IsShareTV;
+                                        sessionInformation.IsSMOther = customerValue.IsSMOther;
+                                        sessionInformation.IsFB = customerValue.IsFB;
+                                        sessionInformation.IsIG = customerValue.IsIG;
+                                        sessionInformation.IsBL = customerValue.IsBL;
+                                        sessionInformation.IsFO = customerValue.IsFO;
+                                        sessionInformation.IsPR = customerValue.IsPR;
+                                        sessionInformation.IsLN = customerValue.IsLN;
                                         sessionInformation.IsThirdPartyData = customerValue.IsThirdPartyData;
                                         sessionInformation.IsClientSpecificData = customerValue.IsClientSpecificData;
+                                        sessionInformation.IsConnectAccess = customerValue.IsConnectAccess;
+                                        sessionInformation.IsExternalRuleEditor = customerValue.IsExternalRuleEditor;
 
                                         IQMedia.WebApplication.Utility.ActiveUserMgr.AddUserIntoCache(sessionInformation);
 

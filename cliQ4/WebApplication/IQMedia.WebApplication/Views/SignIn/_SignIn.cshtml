@@ -56,29 +56,27 @@
     </div>*@   
     
     <div class="form-group">
-        <label class="control-label col-sm-4 col-lg-5" for="inputEmail">
+        <label class="control-label col-lg-5 col-sm-4" style="width:47%;" for="inputEmail">
             Email</label>
-        <div class="col-sm-8 col-lg-4">
+        <div class="col-lg-4 col-sm-8" style="width:200px;">
             @Html.TextBoxFor(model => model.LoginID, new { style = "", @class = "form-control" })
             @Html.ValidationMessageFor(model => model.LoginID, null, new { @class = "field-validation-error" })
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-sm-4 col-lg-5" for="inputPassword">
+        <label class="control-label col-lg-5 col-sm-4" style="width:47%;" for="inputPassword">
             Password</label>
-        <div class="col-sm-8 col-lg-4">
+        <div class="col-lg-4 col-sm-8" style="width:200px;">
             @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Password, null, new { @class = "field-validation-error" })
         </div>
     </div>
     <div class="form-group">
-        <div class="controls">
-            <div class="col-sm-8 col-sm-offset-4 col-lg-8 col-lg-offset-5" style="text-align:left;">
-                <button type="submit" class="btn signinbtn" id="btnLogin" style="background:transparent; border-color:#fff;" onclick="CheckForm();">
-                    Sign in</button>                
+        <div class="controls" style="text-align:left; padding-left:47%; margin-left:15px;">            
+                <button type="submit" class="btn signinbtn" id="btnLogin" style="background:#fff; color:#430089" onclick="CheckForm();">
+                    SIGN IN</button>                
                 <img alt="" id="imgLogInLoading" class="marginLeft10 displayNone" src="../../Images/Loading_1.gif" />
-                <a href="~/Account/ResetPwd" style="font-size:16px;text-decoration:none;display:block;margin-top:5px;color:#fff;">Reset Password</a>
-            </div>
+                <a href="~/Account/ResetPwd" style="font-size:16px;text-decoration:none;display:block;margin-top:15px;color:#fff;">Reset Password</a>
         </div>
     </div>
     <div style="color: #A50000; font-size:15px; padding-bottom: 5px; line-height:0px;" class="controls">@ViewBag.Message</div>

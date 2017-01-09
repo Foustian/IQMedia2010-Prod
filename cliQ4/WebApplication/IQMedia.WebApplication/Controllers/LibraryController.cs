@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 using HiQPdf;
+using IQCommon.Model;
 
 
 
@@ -52,7 +53,6 @@ namespace IQMedia.WebApplication.Controllers
         string PATH_DashboardTopOnlineNewsDMA = "~/Views/Dashboard/_TopOnlineNewsDMA.cshtml";
         string PATH_DashboardTopOnlineNewsSites = "~/Views/Dashboard/_TopOnlineNewsSites.cshtml";
         string PATH_MCMediaResultsPartialView = "~/Views/Library/_MCMediaResults.cshtml";
-        string PATH_MCMediaEmailPartialView = "~/Views/Library/_MCMediaEmail.cshtml";
 
         public string ClientGUID
         {
@@ -726,7 +726,7 @@ namespace IQMedia.WebApplication.Controllers
                 IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
 
                 IQArchive_EditModel editModel = iQArchieveLogic.GetIQArchiveByIDForEdit(ClientGUID, ID);
-                editModel.UseDisplayDescription = GetIQCustomSettings().LibraryTextType != Shared.Utility.CommonFunctions.LibraryTextTypes.Description && editModel.MediaType != "MS";
+                editModel.UseDisplayDescription = GetIQCustomSettings().LibraryTextType != Shared.Utility.CommonFunctions.LibraryTextTypes.Description && editModel.SubMediaType != Shared.Utility.CommonFunctions.CategoryType.MS;
                 string editHTML = string.Empty;
 
                 if (editModel != null)
@@ -1465,7 +1465,7 @@ namespace IQMedia.WebApplication.Controllers
 
                     IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
                     IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveLogic.GetIQArchieveResultsForLibraryReport(temp, Request.ServerVariables["HTTP_HOST"], new Guid(ClientGUID), sessionInformation.Isv4TM,
-                                                                                                                                    sessionInformation.IsNielsenData, sessionInformation.IsCompeteData);
+                                                                                                                                    sessionInformation.IsNielsenData, sessionInformation.IsCompeteData, sessionInformation.MediaTypes);
                     if (objDisplayLibraryReport != null & objDisplayLibraryReport.ArchiveResults != null)
                     {
                         foreach (IQArchive_GroupTier1Model groupTier1Result in objDisplayLibraryReport.GroupTier1Results)
@@ -1800,7 +1800,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
                 IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveLogic.GetIQArchieveResultsForLibraryReport(p_ReportID, Request.ServerVariables["HTTP_HOST"], new Guid(ClientGUID), sessionInformation.Isv4TM,
-                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData);
+                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData, sessionInformation.MediaTypes);
                 if (objDisplayLibraryReport != null & objDisplayLibraryReport.ArchiveResults != null)
                 {
                     foreach (IQArchive_GroupTier1Model groupTier1Result in objDisplayLibraryReport.GroupTier1Results)
@@ -1849,17 +1849,17 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
+                sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+
                 string MediaIDXml = "<list><item id=\"" + p_ReportId + "\"/></list>";
 
                 DashboardLogic dashboardLogic = (DashboardLogic)LogicFactory.GetLogic(LogicType.Dashboard);
-                IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetAdhocSummaryData(MediaIDXml, "Report", p_Medium);
+                IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetAdhocSummaryData(MediaIDXml, "Report", p_Medium, sessionInformation.ClientGUID, sessionInformation.MediaTypes);
 
                 dynamic jsonResult;
 
                 if (iQAgent_DashBoardModel.ListOfIQAgentSummary.Count > 0)
                 {
-                    sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
-
                     DateTime p_FromDate = iQAgent_DashBoardModel.ListOfIQAgentSummary.Min(x => x.DayDate);
                     DateTime p_ToDate = iQAgent_DashBoardModel.ListOfIQAgentSummary.Max(x => x.DayDate);
                     Int16 searchType;
@@ -1879,6 +1879,8 @@ namespace IQMedia.WebApplication.Controllers
                         }
                     }
 
+                    var user = ActiveUserMgr.GetActiveUser();
+
                     if (p_Medium.ToLower() == "overview")
                     {
                         List<SummaryReportModel> lstSummaryReport = iQAgent_DashBoardModel.ListOfIQAgentSummary.Select(s => new SummaryReportModel()
@@ -1891,11 +1893,12 @@ namespace IQMedia.WebApplication.Controllers
                             Number_Docs = s.NoOfDocs,
                             Number_Of_Hits = s.NoOfHits,
                             SearchRequestID = s.SearchRequestID,
-                            Query_Name = s.Query_Name
+                            Query_Name = s.Query_Name,                            
+                            DefaultMediaType = sessionInformation.MediaTypes.Where(mt => string.Compare(mt.MediaType, s.MediaType, true) == 0).Count() > 0 ? true : false
 
-                        }).ToList();
+                        }).ToList();                        
 
-                        Dictionary<string, object> dictResults = CommonController.GetDashboardAdhocResults(lstSummaryReport, p_FromDate, p_ToDate, searchType, null, sessionInformation.Isv4UGCAccess);
+                        Dictionary<string, object> dictResults = CommonController.GetDashboardAdhocResults(lstSummaryReport, p_FromDate, p_ToDate, searchType, null, sessionInformation.Isv4UGCAccess, user);
                         DashboardOverviewResults dashboardOverviewResults = (DashboardOverviewResults)dictResults["OverviewResults"];
                         jsonResult = (ExpandoObject)dictResults["JsonResult"];
 
@@ -1905,7 +1908,14 @@ namespace IQMedia.WebApplication.Controllers
                     }
                     else
                     {
-                        Dictionary<string, object> dictResults = CommonController.GetDashboardMediumResults(p_Medium, iQAgent_DashBoardModel, p_FromDate, p_ToDate, searchType, null, false);
+                        if (user.MediaTypes.Where(mt=> mt.TypeLevel == 1 && mt.MediaType == "MS").Count() == 0)
+                        {
+                            user.MediaTypes.Add(new IQ_MediaTypeModel() { MediaType = "MS", TypeLevel = 1, HasAccess = user.Isv4UGCAccess, DisplayName = "Miscellaneous", DashboardData = new DashboardData() { ArchiveDataLists = new List<DataList>(), ChartTypes = new List<DataChart>()} });
+                        }
+
+                        var mediaType = user.MediaTypes.Where(mt => mt.TypeLevel == 1 && string.Compare(p_Medium, mt.MediaType, true) == 0).Single();
+
+                        Dictionary<string, object> dictResults = CommonController.GetDashboardMediumResults(mediaType, iQAgent_DashBoardModel, p_FromDate, p_ToDate, searchType, null, false,user);
                         DashboardMediaResults dashboardMediaResults = (DashboardMediaResults)dictResults["MediaResults"];
                         jsonResult = (ExpandoObject)dictResults["JsonResult"];
 
@@ -1915,6 +1925,68 @@ namespace IQMedia.WebApplication.Controllers
                         var TopOnlineNewsSitesHTML = string.Empty;
                         var TopPrintPublicationsHTML = string.Empty;
                         var topPrintAuthorsHTML = string.Empty;
+
+                        Func<DataList, List<DashboardTopResultsModel>, string> RenderDataList = (dl, data) =>
+                        {
+                            var templateHTML = "";
+
+                            Dictionary<string, object> dictTopPubs = new Dictionary<string, object>();
+                            dictTopPubs.Add("Results", data);
+                            dictTopPubs.Add("Medium", mediaType);
+                            dictTopPubs.Add("TitleGrid", dl.Title);
+                            dictTopPubs.Add("TitleColumn", dl.TitleColumn);
+                            dictTopPubs.Add("DataType", dl.DataType);
+                            dictTopPubs.Add("CompeteAccess", sessionInformation.IsCompeteData);
+                            dictTopPubs.Add("NielsenAccess", sessionInformation.IsNielsenData);
+                            dictTopPubs.Add("OnClickEnable", false);
+
+                            switch (dl.TemplateType)
+                            {
+                                case TemplateTypes.TVDMA:
+                                    templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastDMA, dictTopPubs);
+                                    break;
+                                case TemplateTypes.TVStation:
+                                    templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastStation, dictTopPubs);
+                                    break;
+                                /*case TemplateTypes.TVCountry:
+                                    templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastCountries, dictTopPubs);
+                                    break;*/
+                                case TemplateTypes.NMDMA:
+                                    templateHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsDMA, dictTopPubs);
+                                    break;
+                                case TemplateTypes.Common:                                   
+                                    templateHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsSites, dictTopPubs);
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            return templateHTML;
+                        };
+
+                        List<Tuple<string, string>> dataLists = new List<Tuple<string, string>>();
+                        var listHtml = "";
+
+                        foreach (DataList dl in mediaType.DashboardData.ArchiveDataLists)
+                        {
+                            switch (dl.ListType)
+                            {
+                                case ListTypes.Country:
+                                    listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopCountryBroadCast);
+                                    break;
+                                case ListTypes.DMA:
+                                    listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopDMABroadCast);
+                                    break;
+                                case ListTypes.Station:
+                                    listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopStationBroadCast);
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            dataLists.Add(Tuple.Create(dl.TemplateType.ToString(), listHtml));
+                        }
+                        /*
                         if (p_Medium == IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV.ToString())
                         {
                             TopDmasHTML = RenderPartialToString(PATH_DashboardTopBroadcastDMA, iQAgent_DashBoardModel.ListOfTopDMABroadCast);
@@ -1952,14 +2024,15 @@ namespace IQMedia.WebApplication.Controllers
                             dictTopAuthors.Add("DataType", "author");
                             topPrintAuthorsHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsSites, dictTopAuthors);
                         }
-
+                        */
                         jsonResult.HTML = RenderPartialToString(PATH_DashboardBroadCastPartialView, dashboardMediaResults);
-                        jsonResult.p_TopDmasHTML = TopDmasHTML;
+                        /*jsonResult.p_TopDmasHTML = TopDmasHTML;
                         jsonResult.p_TopStationsHTML = TopStationsHTML;
                         jsonResult.p_TopOnlineNewsDmasHTML = TopOnlineNewsDmasHTML;
                         jsonResult.p_TopOnlineNewsSitesHTML = TopOnlineNewsSitesHTML;
                         jsonResult.p_TopPrintPublicationsHTML = TopPrintPublicationsHTML;
-                        jsonResult.p_TopPrintAuthorsHTML = topPrintAuthorsHTML;
+                        jsonResult.p_TopPrintAuthorsHTML = topPrintAuthorsHTML;*/
+                        jsonResult.DataLists = dataLists;
                         jsonResult.hasData = true;
                         jsonResult.isSuccess = true;
                     }
@@ -2013,7 +2086,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
                 IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveLogic.GetIQArchieveResultsForLibraryReport(reportID, Request.ServerVariables["HTTP_HOST"], new Guid(ClientGUID), sessionInformation.Isv4TM,
-                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData);
+                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData, sessionInformation.MediaTypes);
 
                 // Reports larger than 1000 items can have problems processing in the ReportPDFExport service, so require customers to go through support for them (as indicated by an admin login ID)
                 string matchPattern = "^admin.*@";
@@ -2066,6 +2139,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 if (chartData.Count > 0)
                 {
+                    bool isFirstChart = true;
                     foreach (var chartItem in chartData.Children())
                     {
                         var itemProperties = chartItem.Children<JProperty>();
@@ -2074,9 +2148,13 @@ namespace IQMedia.WebApplication.Controllers
 
                         var htmlElement = itemProperties.FirstOrDefault(x => x.Name == "html");
                         var html = htmlElement.Value;
-
-                        reportHTML = reportHTML.Replace("<div id=\"div" + medium + "\"></div>", html + "<div style='page-break-after:always; clear:both;'>&nbsp;</div>");
+                        var pageBreakDiv = isFirstChart ? "" : "<div style='margin-top:3px; page-break-before:always; clear:both;'>&nbsp;</div>";
+                        
+                        reportHTML = reportHTML.Replace("<div id=\"div" + medium + "\"></div>", pageBreakDiv + html);
+                        isFirstChart = false;
                     }
+
+                    reportHTML = reportHTML.Replace("<div id=\"divResultsPageBreak\"></div>", "<div style='margin-top:3px; page-break-before:always; clear:both;'>&nbsp;</div>");
 
                     strmReader = new StreamReader(Server.MapPath("~/css/Dashboard.css"));
                     cssData.Append(strmReader.ReadToEnd());
@@ -2138,7 +2216,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
                 IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveLogic.GetIQArchieveResultsForLibraryReport(p_ReportID, Request.ServerVariables["HTTP_HOST"], new Guid(ClientGUID), sessionInformation.Isv4TM,
-                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData);
+                                                                                                                                sessionInformation.IsNielsenData, sessionInformation.IsCompeteData, sessionInformation.MediaTypes);
 
                 string DateTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
@@ -2244,7 +2322,7 @@ namespace IQMedia.WebApplication.Controllers
 
                         IQArchieveLogic iQArchieveLogic = (IQArchieveLogic)LogicFactory.GetLogic(LogicType.IQArchieve);
                         IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveLogic.GetIQArchieveResultsForLibraryReport(ReportID, Request.ServerVariables["HTTP_HOST"], new Guid(ClientGUID), sessionInformation.Isv4TM,
-                                                                                                                                        sessionInformation.IsNielsenData, sessionInformation.IsCompeteData);
+                                                                                                                                        sessionInformation.IsNielsenData, sessionInformation.IsCompeteData, sessionInformation.MediaTypes);
 
                         if (objDisplayLibraryReport != null & objDisplayLibraryReport.ArchiveResults != null)
                         {
@@ -2370,7 +2448,7 @@ namespace IQMedia.WebApplication.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveReportWithSettings(long p_ReportID, List<string> p_ShowHideSettings, string p_SortSettings, Int64? p_ReportImageID, bool p_IsSaveAs, string p_ReportTile, string p_PrimaryGroup, string p_SecondaryGroup, bool p_ResetSort)
+        public JsonResult SaveReportWithSettings(long p_ReportID, List<string> p_ShowHideSettings, string p_SortSettings, Int64? p_ReportImageID, bool p_IsSaveAs, string p_ReportTile, string p_PrimaryGroup, string p_SecondaryGroup, bool p_ResetSort, List<string> p_ChartMediaTypes)
         {
             try
             {
@@ -2386,17 +2464,9 @@ namespace IQMedia.WebApplication.Controllers
                 iQ_ReportSettingsModel.ShowTotalNationalAudience = false;
                 iQ_ReportSettingsModel.ShowTotalNationalMediaValue = false;
                 iQ_ReportSettingsModel.ShowCoverageSources = false;
-                iQ_ReportSettingsModel.ShowOverviewChart = false;
-                iQ_ReportSettingsModel.ShowTVChart = false;
-                iQ_ReportSettingsModel.ShowNMChart = false;
-                iQ_ReportSettingsModel.ShowBlogChart = false;
-                iQ_ReportSettingsModel.ShowForumChart = false;
-                iQ_ReportSettingsModel.ShowSocialMediaChart = false;
-                iQ_ReportSettingsModel.ShowTwitterChart = false;
-                iQ_ReportSettingsModel.ShowPrintMediaChart = false;
-                iQ_ReportSettingsModel.ShowMiscChart = false;
                 iQ_ReportSettingsModel.PrimaryGroup = p_PrimaryGroup;
                 iQ_ReportSettingsModel.SecondaryGroup = p_SecondaryGroup;
+                iQ_ReportSettingsModel.ChartMediaTypes = p_ChartMediaTypes;
                 if (p_ShowHideSettings != null && p_ShowHideSettings.Count > 0)
                 {
                     foreach (string value in p_ShowHideSettings)
@@ -2430,33 +2500,6 @@ namespace IQMedia.WebApplication.Controllers
                                 break;
                             case Shared.Utility.CommonFunctions.LibraryReportSettings.CoverageSources :
                                 iQ_ReportSettingsModel.ShowCoverageSources = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.Overview :
-                                iQ_ReportSettingsModel.ShowOverviewChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.TV :
-                                iQ_ReportSettingsModel.ShowTVChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.NM :
-                                iQ_ReportSettingsModel.ShowNMChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.Blog :
-                                iQ_ReportSettingsModel.ShowBlogChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.Forum :
-                                iQ_ReportSettingsModel.ShowForumChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.SocialMedia :
-                                iQ_ReportSettingsModel.ShowSocialMediaChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.TW :
-                                iQ_ReportSettingsModel.ShowTwitterChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.PM :
-                                iQ_ReportSettingsModel.ShowPrintMediaChart = true;
-                                break;
-                            case Shared.Utility.CommonFunctions.LibraryReportSettings.MS:
-                                iQ_ReportSettingsModel.ShowMiscChart = true;
                                 break;
                         }
                     }
@@ -2689,60 +2732,25 @@ namespace IQMedia.WebApplication.Controllers
                 string DQ = "\"";
                 string hyperlinkFormat = "=HYPERLINK(\"{0}\")";
                 Shared.Utility.CommonFunctions.LibraryTextTypes textType = GetIQCustomSettings().LibraryTextType;
-                bool hasFacebook = objDisplayLibraryReport.ArchiveResults.Where(w => w.SubMediaType == Shared.Utility.CommonFunctions.CategoryType.FB || w.SubMediaType == Shared.Utility.CommonFunctions.CategoryType.IG).Count() > 0;
-
+                
                 StringBuilder sb = new StringBuilder();
-
                 sessionInformation = ActiveUserMgr.GetActiveUser();
 
                 objDisplayLibraryReport.ArchiveResults = CommonFunctions.SortAndConvertGMTandDSTTime(objDisplayLibraryReport.ArchiveResults, CommonFunctions.ResultType.Library);
 
+                // Determine if there are any results that use article stats (which only the SM data model uses), so that we know whether to include the corresponding columns
+                List<string> SMSubMediaTypes = sessionInformation.MediaTypes.Where(w => w.DataModelType == "SM" && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                List<IQArchive_ArchiveSMModel> SMArchiveItems = objDisplayLibraryReport.ArchiveResults.Where(w => SMSubMediaTypes.Contains(w.SubMediaType.ToString())).Select(s => (IQArchive_ArchiveSMModel)s.MediaData).ToList();
+                bool useArticleStats = SMArchiveItems.Count(c => c.ArticleStats != null) > 0;
+
                 // Build media item header
-                sb.Append("Media Date time,Time Zone,Source,Title,Outlet,DMA,URL,Category,Sub Category 1,Sub Category 2,Sub Category 3" + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience && (sessionInformation.IsNielsenData || sessionInformation.IsCompeteData) ? ",Audience,Audience Source" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowMediaValue && (sessionInformation.IsNielsenData || sessionInformation.IsCompeteData) ? ",Media Value ($)" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowNationalValues && (sessionInformation.IsNielsenData) ? ",National Audience,National Media Value ($)" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience ? ",Twitter Followers" : string.Empty) + ",Twitter Following,Twitter Klout Score" + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience ? ",Circulation" : string.Empty) + (hasFacebook ? ",Likes,Comments,Shares" : string.Empty) + ",Text");
+                sb.Append("Media Date time,Time Zone,Source,Title,Outlet,DMA,URL,Category,Sub Category 1,Sub Category 2,Sub Category 3" + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience && (sessionInformation.IsNielsenData || sessionInformation.IsCompeteData) ? ",Audience,Audience Source" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowMediaValue && (sessionInformation.IsNielsenData || sessionInformation.IsCompeteData) ? ",Media Value ($)" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowNationalValues && (sessionInformation.IsNielsenData) ? ",National Audience,National Media Value ($)" : string.Empty) + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience ? ",Twitter Followers" : string.Empty) + ",Twitter Following,Twitter Klout Score" + (objDisplayLibraryReport.ReportDetails.Settings.ShowAudience ? ",Circulation" : string.Empty) + (useArticleStats ? ",Likes,Comments,Shares" : string.Empty) + ",Text");
                 sb.Append(Environment.NewLine);
 
                 foreach (IQMedia.Model.IQArchive_MediaModel item in objDisplayLibraryReport.ArchiveResults)
                 {
-                    // Append Media Date
-                    switch (item.SubMediaType)
-                    {
-                        case Shared.Utility.CommonFunctions.CategoryType.TV:
-                            if ((item.MediaData as IQArchive_ArchiveClipModel).LocalDateTime != null)
-                            {
-                                sb.Append((item.MediaData as IQArchive_ArchiveClipModel).LocalDateTime);
-                            }
-                            else
-                            {
-                                sb.Append(string.Empty);
-                            }
-                            break;
-                        case Shared.Utility.CommonFunctions.CategoryType.Radio:
-                            if ((item.MediaData as IQArchive_ArchiveTVEyesModel).LocalDateTime != null)
-                            {
-                                sb.Append((item.MediaData as IQArchive_ArchiveTVEyesModel).LocalDateTime);
-                            }
-                            else
-                            {
-                                sb.Append(string.Empty);
-                            }
-                            break;
-                        case Shared.Utility.CommonFunctions.CategoryType.MS:
-                            sb.Append((item.MediaData as IQArchive_ArchiveMiscModel).CreateDT);
-                            break;
-                        default:
-                            if (item.MediaDate != null)
-                            {
-                                sb.Append(item.MediaDate.ToString());
-                            }
-                            else
-                            {
-                                sb.Append(string.Empty);
-                            }
-                            break;
-                    }
-
-                    sb.Append(",");
-
+                    IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
+                    
                     // Set the displayed text as either description or content for every item, and then override with highlighting text if necessary
                     bool displayDescription = item.DisplayDescription || textType == Shared.Utility.CommonFunctions.LibraryTextTypes.Description;
                     string displayText = displayDescription ? item.Description : item.Content;
@@ -2752,9 +2760,9 @@ namespace IQMedia.WebApplication.Controllers
                     }
                     displayText = ProcessCSVText(displayText, item.SubMediaType != Shared.Utility.CommonFunctions.CategoryType.TW);
 
-                    switch (item.SubMediaType)
+                    switch (objSubMediaType.DataModelType)
                     {
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV:
+                        case "TV":
 
                             IQArchive_ArchiveClipModel tvModel = item.MediaData as IQArchive_ArchiveClipModel;
 
@@ -2765,12 +2773,23 @@ namespace IQMedia.WebApplication.Controllers
                                 displayText = ProcessCSVText(displayText, true);
                             }
 
+                            // Append Media Date
+                            if (tvModel.LocalDateTime != null)
+                            {
+                                sb.Append((item.MediaData as IQArchive_ArchiveClipModel).LocalDateTime);
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
+
                             // Append TimeZone
                             sb.Append(tvModel.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -2870,7 +2889,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -2881,7 +2900,7 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.TW:
+                        case "TW":
 
                             IQArchive_ArchiveTweetsModel twitterModel = item.MediaData as IQArchive_ArchiveTweetsModel;
 
@@ -2892,12 +2911,23 @@ namespace IQMedia.WebApplication.Controllers
                                 displayText = displayText.Replace("\r\n", " ").Replace("\"", "\"\"");
                             }
 
+                            // Append Media Date
+                            if (item.MediaDate != null)
+                            {
+                                sb.Append(item.MediaDate.ToString());
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
+
                             // Append TimeZone
                             sb.Append(sessionInformation.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.TW));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -2976,7 +3006,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -2986,17 +3016,27 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM:
+                        case "PM":
 
                             IQArchive_ArchiveBLPMModel pmModel = item.MediaData as IQArchive_ArchiveBLPMModel;
+
+                            // Append Media Date
+                            if (item.MediaDate != null)
+                            {
+                                sb.Append(item.MediaDate.ToString());
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
 
                             // Append TimeZone
                             sb.Append(sessionInformation.TimeZone);
                             sb.Append(",");
 
-
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -3074,7 +3114,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(","); 
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -3084,7 +3124,7 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM:
+                        case "NM":
 
                             IQArchive_ArchiveNMModel newsModel = item.MediaData as IQArchive_ArchiveNMModel;
 
@@ -3094,6 +3134,17 @@ namespace IQMedia.WebApplication.Controllers
                                 displayText = string.Join(" ", newsModel.HighlightedOutput.Highlights.Select(c => c));
                                 displayText = ProcessCSVText(displayText, true);
                             }
+
+                            // Append Media Date
+                            if (item.MediaDate != null)
+                            {
+                                sb.Append(item.MediaDate.ToString());
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
 
                             // Append TimeZone
                             sb.Append(sessionInformation.TimeZone);
@@ -3106,7 +3157,7 @@ namespace IQMedia.WebApplication.Controllers
                             }
                             else
                             {
-                                sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM));
+                                sb.Append(objSubMediaType.DisplayName);
                             }
                             sb.Append(",");
 
@@ -3223,7 +3274,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -3234,11 +3285,7 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.SocialMedia:
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Forum:
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Blog:
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB:
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.IG:
+                        case "SM":
                             IQArchive_ArchiveSMModel socialModel = item.MediaData as IQArchive_ArchiveSMModel;
 
                             // If there is no highlighting text, display content
@@ -3248,12 +3295,23 @@ namespace IQMedia.WebApplication.Controllers
                                 displayText = ProcessCSVText(displayText, true);
                             }
 
+                            // Append Media Date
+                            if (item.MediaDate != null)
+                            {
+                                sb.Append(item.MediaDate.ToString());
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
+
                             // Append TimeZone
                             sb.Append(sessionInformation.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(item.SubMediaType));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -3366,7 +3424,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 if (socialModel.ArticleStats != null)
                                 {
@@ -3390,16 +3448,27 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Radio:
+                        case "TM":
 
                             IQArchive_ArchiveTVEyesModel tvEyesModel = item.MediaData as IQArchive_ArchiveTVEyesModel;
+
+                            // Append Media Date
+                            if (tvEyesModel.LocalDateTime != null)
+                            {
+                                sb.Append(tvEyesModel.LocalDateTime);
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
 
                             // Append TimeZone
                             sb.Append(tvEyesModel.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Radio));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -3479,7 +3548,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -3490,16 +3559,20 @@ namespace IQMedia.WebApplication.Controllers
 
                             break;
 
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.MS:
+                        case "MS":
 
                             IQArchive_ArchiveMiscModel miscModel = item.MediaData as IQArchive_ArchiveMiscModel;
+                            
+                            // Append Media Date
+                            sb.Append(miscModel.CreateDT);
+                            sb.Append(",");
 
                             // Append TimeZone
                             sb.Append(miscModel.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.MS));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -3583,7 +3656,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }
@@ -3592,7 +3665,7 @@ namespace IQMedia.WebApplication.Controllers
                             sb.Append(DQ + displayText + DQ);
 
                             break;
-                        case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PQ:
+                        case "PQ":
 
                             IQArchive_ArchivePQModel pqModel = item.MediaData as IQArchive_ArchivePQModel;
 
@@ -3602,13 +3675,24 @@ namespace IQMedia.WebApplication.Controllers
                                 displayText = string.Join(" ", pqModel.HighlightedOutput.Highlights.Select(c => c));
                                 displayText = ProcessCSVText(displayText, true);
                             }
+                            
+                            // Append Media Date
+                            if (item.MediaDate != null)
+                            {
+                                sb.Append(item.MediaDate.ToString());
+                            }
+                            else
+                            {
+                                sb.Append(string.Empty);
+                            }
+                            sb.Append(",");
 
                             // Append TimeZone
                             sb.Append(sessionInformation.TimeZone);
                             sb.Append(",");
 
                             // Append Source
-                            sb.Append(IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.PQ));
+                            sb.Append(objSubMediaType.DisplayName);
                             sb.Append(",");
 
                             // Append Title
@@ -3693,7 +3777,7 @@ namespace IQMedia.WebApplication.Controllers
                                 sb.Append(",");
                             }
 
-                            if (hasFacebook)
+                            if (useArticleStats)
                             {
                                 sb.Append(",,,");
                             }

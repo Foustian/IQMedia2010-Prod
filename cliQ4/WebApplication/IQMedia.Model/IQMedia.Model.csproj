@@ -50,6 +50,8 @@
     <Compile Include="AnalyticsMapSummaryModel.cs" />
     <Compile Include="AnalyticsModel.cs" />
     <Compile Include="AnalyticsSummaryModel.cs" />
+    <Compile Include="TadsFilterModel.cs" />
+    <Compile Include="Tads_SavedSearchModel.cs" />
     <Compile Include="VisibleLRIndustriesModel.cs" />
     <Compile Include="CustomerRsetPwdModel.cs" />
     <Compile Include="DashboardDMAChartSelectionModel.cs" />

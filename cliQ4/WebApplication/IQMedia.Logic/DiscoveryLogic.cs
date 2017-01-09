@@ -19,6 +19,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using IQCommon.Model;
 
 
 namespace IQMedia.Web.Logic
@@ -32,7 +33,7 @@ namespace IQMedia.Web.Logic
             return iQService_DiscoveryDA.GetSSPDataWithStationByClientGUID(ClientGuid);
         }
 
-        public DiscoverySearchResponse SearchTV(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, string medium,bool IsAllDmaAllowed, List<IQ_Dma> listDma,bool IsAllClassAllowed, List<IQ_Class> listClass,bool IsAllStationAllowed, List<IQ_Station> listStation, List<Station_Affil> listAffiliate, List<IQ_Region> listRegion, List<IQ_Country> listCountry, out List<String> tvMarketList, string pmgSearchUrl, List<int> TVRegions, TVAdvanceSearchSettings TVSearchSettings)
+        public DiscoverySearchResponse SearchTV(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, bool IsAllDmaAllowed, List<IQ_Dma> listDma,bool IsAllClassAllowed, List<IQ_Class> listClass,bool IsAllStationAllowed, List<IQ_Station> listStation, List<Station_Affil> listAffiliate, List<IQ_Region> listRegion, List<IQ_Country> listCountry, out List<String> tvMarketList, string pmgSearchUrl, List<int> TVRegions, IQ_MediaTypeModel objMediaType, TVAdvanceSearchSettings TVSearchSettings)
         {
             try
             {
@@ -44,8 +45,7 @@ namespace IQMedia.Web.Logic
                 discoverySearchResponse.SearchTerm = updatedSearchTerm;
                 discoverySearchResponse.SearchTermParent = searchTerm;
                 discoverySearchResponse.SearchName = searchTermName;
-                discoverySearchResponse.MediumType = CommonFunctions.CategoryType.TV.ToString();
-                //List<DiscoverySearchResponse> lstDiscoverySearchResponse = new List<DiscoverySearchResponse>();
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
 
                 Newtonsoft.Json.Linq.JObject jsonData = new Newtonsoft.Json.Linq.JObject();
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
@@ -279,20 +279,10 @@ namespace IQMedia.Web.Logic
                 }
                 #endregion
 //End Criteria
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    searchRequest.PageSize = 4;
-                }
-                else
-                {
-                    searchRequest.PageSize = 1;
-                }
+
+                searchRequest.PageSize = pageSize;
                 searchRequest.SortFields = "date-";
-                /*if (!string.IsNullOrWhiteSpace(tvMarket))
-                {
-                    searchRequest.IQDmaName = new List<string>();
-                    searchRequest.IQDmaName.Add(tvMarket);
-                }*/
+
                 if (fromDate == null || toDate == null)
                 {
                     searchRequest.FacetRangeStarts = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
@@ -303,7 +293,7 @@ namespace IQMedia.Web.Logic
                     searchRequest.FacetRangeStarts = fromDate;
                     searchRequest.FacetRangeEnds = toDate;
                 }
-                //searchRequest.FacetRangeEnds = searchRequest.FacetRangeEnds.Value.ToUniversalTime();
+
                 searchRequest.StartDate = searchRequest.FacetRangeStarts;
                 searchRequest.EndDate = searchRequest.FacetRangeEnds;
                 TimeSpan dateDiff = (TimeSpan)(searchRequest.FacetRangeEnds - searchRequest.FacetRangeStarts);
@@ -329,13 +319,11 @@ namespace IQMedia.Web.Logic
                 discoverySearchResponse.ListRecordData = new List<RecordData>();
                 for (int i = 0; i < facetData.Length; i = i + 2)
                 {
-
                     RecordData recorddata = new RecordData();
                     recorddata.Date = Convert.ToDateTime(facetData[i].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
                     recorddata.TotalRecord = Convert.ToString(facetData[i + 1].Trim().Replace("\"", string.Empty));
 
                     discoverySearchResponse.ListRecordData.Add(recorddata);
-
                 }
 
                 // Get Top Results
@@ -344,16 +332,13 @@ namespace IQMedia.Web.Logic
                 {
                     TopResults topResults = new TopResults();
                     topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title120"]).Replace("[", "").Replace("]", "");
-                    topResults.Logo = "../images/MediaIcon/network-icon.png";//ConfigurationManager.AppSettings["StationLogo"] + Convert.ToString(jsonData["response"]["docs"][i]["stationid"]) + ".jpg";
-                    topResults.Publisher = "<img src=\"" + ConfigurationManager.AppSettings["StationLogo"] + Convert.ToString(jsonData["response"]["docs"][i]["stationid"]) + ".jpg" + "\" alt=\"\" />";// ;
-                    //Convert.ToString(jsonData["response"]["docs"][i]["market"]);
+                    topResults.Logo = objMediaType.MediaIconPath;
+                    topResults.Publisher = "<img src=\"" + ConfigurationManager.AppSettings["StationLogo"] + Convert.ToString(jsonData["response"]["docs"][i]["stationid"]) + ".jpg" + "\" alt=\"\" />";
 
                     discoverySearchResponse.ListTopResults.Add(topResults);
                 }
 
                 string totalResultmarket = Convert.ToString(jsonData["facet_counts"]["facet_fields"]["market"]).Replace("\r\n", string.Empty).Replace("[", "").Replace("]", "");
-                //string[] facetDatamarket = totalResultmarket.Split(',');
-
                 string[] facetDatamarket = Regex.Split(totalResultmarket, "\"(.*?)\"");
 
                 List<String> tvMarketListtemp = new List<String>();
@@ -386,21 +371,20 @@ namespace IQMedia.Web.Logic
                 Log4NetLogger.Error("Error in TV : " + ex.ToString());
                 throw;
             }
-
         }
-        public DiscoverySearchResponse SearchNews(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, string medium, string p_fromRecordID, string pmgSearchUrl, List<Int16> lstOfIQLicense, NewsAdvanceSearchSettings NewsSearchSettings)
+
+        public DiscoverySearchResponse SearchNews(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, string p_fromRecordID, string pmgSearchUrl, List<Int16> lstOfIQLicense, IQ_MediaTypeModel objMediaType, NewsAdvanceSearchSettings NewsSearchSettings)
         {
             try
             {
                 string updatedSearchTerm = (NewsSearchSettings == null || string.IsNullOrWhiteSpace(NewsSearchSettings.SearchTerm)) ? searchTerm : NewsSearchSettings.SearchTerm.Trim();
 
                 Boolean isError = false;
-                //List<DiscoverySearchResponse> lstDiscoverySearchResponse = new List<DiscoverySearchResponse>();
                 DiscoverySearchResponse discoverySearchResponse = new DiscoverySearchResponse();
                 discoverySearchResponse.SearchTerm = updatedSearchTerm;
                 discoverySearchResponse.SearchTermParent = searchTerm;
                 discoverySearchResponse.SearchName = searchTermName;
-                discoverySearchResponse.MediumType = CommonFunctions.CategoryType.NM.ToString();
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
 
                 Newtonsoft.Json.Linq.JObject jsonData = new Newtonsoft.Json.Linq.JObject();
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
@@ -413,14 +397,7 @@ namespace IQMedia.Web.Logic
                 {
                     searchNewsRequest.IQLicense.Add(iqlicense);
                 }
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    searchNewsRequest.PageSize = 4;
-                }
-                else
-                {
-                    searchNewsRequest.PageSize = 1;
-                }
+                searchNewsRequest.PageSize = pageSize;
                 searchNewsRequest.SortFields = "date-";
                 if (!string.IsNullOrWhiteSpace(p_fromRecordID))
                 {
@@ -438,6 +415,7 @@ namespace IQMedia.Web.Logic
                 }
 //Criteria
                 searchNewsRequest.SearchTerm = updatedSearchTerm;
+                searchNewsRequest.SourceType = new List<int>() { (int)PMGSearch.SourceType.OnlineNews };
 
                 if (NewsSearchSettings != null)
                 {
@@ -452,7 +430,6 @@ namespace IQMedia.Web.Logic
                     searchNewsRequest.ExcludeDomains = NewsSearchSettings.ExcludeDomainList;
                 }
 //End Criteria
-                //searchNewsRequest.FacetRangeEnds = searchNewsRequest.FacetRangeEnds.Value.ToUniversalTime();
 
                 searchNewsRequest.StartDate = searchNewsRequest.FacetRangeStarts;
                 searchNewsRequest.EndDate = searchNewsRequest.FacetRangeEnds;
@@ -482,10 +459,8 @@ namespace IQMedia.Web.Logic
                 {
                     fromRecordID = Convert.ToString(jsonData["response"]["docs"][0]["iqseqid"]);
                 }
-                catch (Exception ex)
-                {
-
-                }
+                catch (Exception)
+                { }
                 
                 if (!string.IsNullOrWhiteSpace(fromRecordID))
                 {
@@ -495,13 +470,11 @@ namespace IQMedia.Web.Logic
                 discoverySearchResponse.ListRecordData = new List<RecordData>();
                 for (int i = 0; i < facetData.Length; i = i + 2)
                 {
-
                     RecordData recorddata = new RecordData();
                     recorddata.Date = Convert.ToDateTime(facetData[i].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
                     recorddata.TotalRecord = Convert.ToString(facetData[i + 1].Trim().Replace("\"", string.Empty));
 
                     discoverySearchResponse.ListRecordData.Add(recorddata);
-
                 }
 
                 // Get Top Results
@@ -510,52 +483,161 @@ namespace IQMedia.Web.Logic
                 {
                     TopResults topResults = new TopResults();
                     topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title"]);
-                    topResults.Logo = "../images/MediaIcon/News.png";
-                    //Uri aPublisherUri;
-                    topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["docurl"]).Replace("\n", "");
+                    topResults.Logo = objMediaType.MediaIconPath;
+                    topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["homeurl_domain"]).Replace("\n", "");
 
                     discoverySearchResponse.ListTopResults.Add(topResults);
                 }
 
-                //lstDiscoverySearchResponse.Add(discoverySearchResponse);
-                // }
                 discoverySearchResponse.TotalResult = Convert.ToInt64(jsonData["response"]["numFound"]);
                 return discoverySearchResponse;
-
-
             }
             catch (Exception ex)
             {
                 Log4NetLogger.Error("Error in News : " + ex.ToString());
                 throw;
             }
-
         }
-        public SocialMediaFacet SearchSocialMedia(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, string medium, string p_fromRecordID, string pmgSearchUrl, SociaMediaAdvanceSearchSettings SocialMediaSearchSettings)
+
+        public DiscoverySearchResponse SearchLexisNexis(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, string p_fromRecordID, string pmgSearchUrl, List<Int16> lstOfIQLicense, IQ_MediaTypeModel objMediaType, LexisNexisAdvanceSearchSettings lexisNexisSearchSettings)
         {
             try
             {
-                string updatedSearchTerm = (SocialMediaSearchSettings == null || string.IsNullOrWhiteSpace(SocialMediaSearchSettings.SearchTerm)) ? searchTerm : SocialMediaSearchSettings.SearchTerm.Trim();;
+                string updatedSearchTerm = (lexisNexisSearchSettings == null || string.IsNullOrWhiteSpace(lexisNexisSearchSettings.SearchTerm)) ? searchTerm : lexisNexisSearchSettings.SearchTerm.Trim();
 
                 Boolean isError = false;
-
-                SocialMediaFacet socialMediaFacet = new SocialMediaFacet();
-
                 DiscoverySearchResponse discoverySearchResponse = new DiscoverySearchResponse();
                 discoverySearchResponse.SearchTerm = updatedSearchTerm;
                 discoverySearchResponse.SearchTermParent = searchTerm;
                 discoverySearchResponse.SearchName = searchTermName;
-                discoverySearchResponse.MediumType = CommonFunctions.CategoryType.SocialMedia.ToString();
-
-                DiscoverySearchResponse discoverySearchResponseFeedClass = new DiscoverySearchResponse();
-                discoverySearchResponseFeedClass.SearchTerm = updatedSearchTerm;
-                discoverySearchResponseFeedClass.SearchTermParent = searchTerm;
-                discoverySearchResponseFeedClass.SearchName = searchTermName;
-                discoverySearchResponseFeedClass.MediumType = CommonFunctions.CategoryType.SocialMedia.ToString();
-
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
 
                 Newtonsoft.Json.Linq.JObject jsonData = new Newtonsoft.Json.Linq.JObject();
+                System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
+                SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
+                SearchNewsRequest searchNewsRequest = new SearchNewsRequest();
+                searchNewsRequest.IsTitleNContentSearch = true;
+                searchNewsRequest.Facet = true;
+                searchNewsRequest.FacetRangeOther = "all";
+                foreach (Int16 iqlicense in lstOfIQLicense)
+                {
+                    searchNewsRequest.IQLicense.Add(iqlicense);
+                }
+                searchNewsRequest.PageSize = pageSize;
+                searchNewsRequest.SortFields = "date-";
+                if (!string.IsNullOrWhiteSpace(p_fromRecordID))
+                {
+                    searchNewsRequest.FromRecordID = Convert.ToString(p_fromRecordID);
+                }
+                if (fromDate == null || toDate == null)
+                {
+                    searchNewsRequest.FacetRangeStarts = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
+                    searchNewsRequest.FacetRangeEnds = Convert.ToDateTime(DateTime.Now.ToShortDateString()).AddHours(23).AddMinutes(59);
+                }
+                else
+                {
+                    searchNewsRequest.FacetRangeStarts = fromDate;
+                    searchNewsRequest.FacetRangeEnds = toDate;
+                }
+                //Criteria
+                searchNewsRequest.SearchTerm = updatedSearchTerm;
+                searchNewsRequest.SourceType = new List<int>() { (int)PMGSearch.SourceType.Print };
 
+                if (lexisNexisSearchSettings != null)
+                {
+                    searchNewsRequest.Publications = lexisNexisSearchSettings.PublicationList;
+                    searchNewsRequest.NewsCategory = lexisNexisSearchSettings.CategoryList;
+                    searchNewsRequest.PublicationCategory = lexisNexisSearchSettings.PublicationCategoryList;
+                    searchNewsRequest.Genre = lexisNexisSearchSettings.GenreList;
+                    searchNewsRequest.NewsRegion = lexisNexisSearchSettings.RegionList;
+                    searchNewsRequest.Country = lexisNexisSearchSettings.CountryList;
+                    searchNewsRequest.Language = lexisNexisSearchSettings.LanguageList;
+                    searchNewsRequest.ExcludeDomains = lexisNexisSearchSettings.ExcludeDomainList;
+                }
+                //End Criteria
+
+                searchNewsRequest.StartDate = searchNewsRequest.FacetRangeStarts;
+                searchNewsRequest.EndDate = searchNewsRequest.FacetRangeEnds;
+
+                TimeSpan dateDiff = (TimeSpan)(searchNewsRequest.FacetRangeEnds - searchNewsRequest.FacetRangeStarts);
+                if (dateDiff.Days <= 1)
+                {
+                    searchNewsRequest.FacetRangeGap = RangeGap.HOUR;
+                }
+                else
+                {
+                    searchNewsRequest.FacetRangeGap = RangeGap.DAY;
+                }
+
+                searchNewsRequest.FacetRangeGapDuration = 1;
+                searchNewsRequest.FacetRange = "harvestdate_dt";
+                searchNewsRequest.wt = ReponseType.json;
+
+                string newsReponse = searchEngine.SearchNewsChart(searchNewsRequest, out isError, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
+                jsonData = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(newsReponse);
+
+                string totalResult = Convert.ToString(jsonData["facet_counts"]["facet_ranges"]["harvestdate_dt"]["counts"]).Replace("\r\n", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty);
+                string[] facetData = totalResult.Split(',');
+
+                string fromRecordID = string.Empty;
+                try
+                {
+                    fromRecordID = Convert.ToString(jsonData["response"]["docs"][0]["iqseqid"]);
+                }
+                catch (Exception)
+                { }
+
+                if (!string.IsNullOrWhiteSpace(fromRecordID))
+                {
+                    discoverySearchResponse.FromRecordID = fromRecordID;
+                }
+
+                discoverySearchResponse.ListRecordData = new List<RecordData>();
+                for (int i = 0; i < facetData.Length; i = i + 2)
+                {
+                    RecordData recorddata = new RecordData();
+                    recorddata.Date = Convert.ToDateTime(facetData[i].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
+                    recorddata.TotalRecord = Convert.ToString(facetData[i + 1].Trim().Replace("\"", string.Empty));
+
+                    discoverySearchResponse.ListRecordData.Add(recorddata);
+                }
+
+                // Get Top Results
+                discoverySearchResponse.ListTopResults = new List<TopResults>();
+                for (int i = 0; i < jsonData["response"]["docs"].Count(); i++)
+                {
+                    TopResults topResults = new TopResults();
+                    topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title"]);
+                    topResults.Logo = objMediaType.MediaIconPath;
+                    topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["homeurl_domain"]).Replace("\n", "");
+
+                    discoverySearchResponse.ListTopResults.Add(topResults);
+                }
+
+                discoverySearchResponse.TotalResult = Convert.ToInt64(jsonData["response"]["numFound"]);
+                return discoverySearchResponse;
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error("Error in LexisNexis : " + ex.ToString());
+                throw;
+            }
+        }
+
+        public DiscoverySearchResponse SearchBlog(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, string p_fromRecordID, string pmgSearchUrl, IQ_MediaTypeModel objMediaType, BlogAdvanceSearchSettings blogSearchSettings)
+        {
+            try
+            {
+                string updatedSearchTerm = (blogSearchSettings == null || string.IsNullOrWhiteSpace(blogSearchSettings.SearchTerm)) ? searchTerm : blogSearchSettings.SearchTerm.Trim(); ;
+
+                Boolean isError = false;
+                DiscoverySearchResponse discoverySearchResponse = new DiscoverySearchResponse();
+                discoverySearchResponse.SearchTerm = updatedSearchTerm;
+                discoverySearchResponse.SearchTermParent = searchTerm;
+                discoverySearchResponse.SearchName = searchTermName;
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
+
+                Newtonsoft.Json.Linq.JObject jsonData = new Newtonsoft.Json.Linq.JObject();
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
                 SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
                 
@@ -563,14 +645,7 @@ namespace IQMedia.Web.Logic
                 searchSMRequest.IsTitleNContentSearch = true;
                 searchSMRequest.Facet = true;
                 searchSMRequest.FacetRangeOther = "all";
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    searchSMRequest.PageSize = 4;
-                }
-                else
-                {
-                    searchSMRequest.PageSize = 1;
-                }
+                searchSMRequest.PageSize = pageSize;
                 searchSMRequest.SortFields = "date-";
                 if (!string.IsNullOrWhiteSpace(p_fromRecordID))
                 {
@@ -586,20 +661,18 @@ namespace IQMedia.Web.Logic
                     searchSMRequest.FacetRangeStarts = fromDate;
                     searchSMRequest.FacetRangeEnds = toDate;
                 }
-                //searchSMRequest.FacetRangeEnds = searchSMRequest.FacetRangeEnds.Value;
                 searchSMRequest.StartDate = searchSMRequest.FacetRangeStarts;
                 searchSMRequest.EndDate = searchSMRequest.FacetRangeEnds;
 
 //Criteria
                 searchSMRequest.SearchTerm = updatedSearchTerm;
 
-                if (SocialMediaSearchSettings != null)
+                if (blogSearchSettings != null)
                 {
-                    searchSMRequest.SocialMediaSources = SocialMediaSearchSettings.SourceList;
-                    searchSMRequest.Author = SocialMediaSearchSettings.Author;
-                    searchSMRequest.Title = SocialMediaSearchSettings.Title;
-                    searchSMRequest.SourceType = SocialMediaSearchSettings.SourceTypeList;
-                    searchSMRequest.ExcludeDomains = SocialMediaSearchSettings.ExcludeDomainList;
+                    searchSMRequest.SocialMediaSources = blogSearchSettings.SourceList;
+                    searchSMRequest.Author = blogSearchSettings.Author;
+                    searchSMRequest.Title = blogSearchSettings.Title;
+                    searchSMRequest.ExcludeDomains = blogSearchSettings.ExcludeDomainList;
                 }
 //End Criteria
 
@@ -615,47 +688,10 @@ namespace IQMedia.Web.Logic
 
                 searchSMRequest.FacetRangeGapDuration = 1;
                 searchSMRequest.FacetRange = "harvestdate_dt";
-                searchSMRequest.FacetField = "iqsubmediatype";
                 searchSMRequest.StartDate = searchSMRequest.FacetRangeStarts;
                 searchSMRequest.EndDate = searchSMRequest.FacetRangeEnds;
                 searchSMRequest.IsTaggingExcluded = true;
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    if (searchSMRequest.SourceType == null)
-                    {
-                        searchSMRequest.SourceType = new List<string>();
-                    }
-
-                    // If Advanced Search source types are selected, remove any that don't apply to the selected medium
-                    if (medium == CommonFunctions.CategoryType.Blog.ToString())
-                    {
-                        searchSMRequest.SourceType = new List<string>();
-                        searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog));
-                    }
-                    else if (medium == CommonFunctions.CategoryType.Forum.ToString())
-                    {
-                        searchSMRequest.SourceType.RemoveAll(r => r != CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) &&
-                            r != CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Review));
-
-                        if (searchSMRequest.SourceType.Count == 0)
-                        {
-                            searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum));
-                        }
-                    }
-                    else
-                    {
-                        searchSMRequest.SourceType.RemoveAll(r => r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Review) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Blog) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Comment));
-
-                        if (searchSMRequest.SourceType.Count == 0)
-                        {
-                            searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia));
-                        }
-                    }
-                }
-
+                searchSMRequest.SourceType = new List<string>() { CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Blog) };
                 searchSMRequest.wt = ReponseType.json;
 
                 string smReponse = searchEngine.SearchSocialMediaChart(searchSMRequest, out isError, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
@@ -667,17 +703,12 @@ namespace IQMedia.Web.Logic
                 discoverySearchResponse.ListRecordData = new List<RecordData>();
                 for (int i = 0; i < facetData.Length; i = i + 2)
                 {
-
                     RecordData recorddata = new RecordData();
                     recorddata.Date = Convert.ToDateTime(facetData[i].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
                     recorddata.TotalRecord = Convert.ToString(facetData[i + 1].Trim().Replace("\"", string.Empty));
 
                     discoverySearchResponse.ListRecordData.Add(recorddata);
                 }
-
-
-                string totalResultFeedClass = Convert.ToString(jsonData["facet_counts"]["facet_fields"]["iqsubmediatype"]).Replace("\r\n", string.Empty);
-                string[] facetDataFeedClass = totalResultFeedClass.Split(',');
                 
                 string fromRecordID = string.Empty;
                 try
@@ -685,102 +716,11 @@ namespace IQMedia.Web.Logic
                     fromRecordID = Convert.ToString(jsonData["response"]["docs"][0]["iqseqid"]);
                 }
                 catch (Exception)
-                {
-
-                }
+                { }
 
                 if (!string.IsNullOrWhiteSpace(fromRecordID))
                 {
                     discoverySearchResponse.FromRecordID = fromRecordID;
-                }
-
-                discoverySearchResponseFeedClass.ListRecordData = new List<RecordData>();
-
-                // Facet SM results by both iqsubmediatype and harvestdate_dt, in order to display individual media category counts by date
-                SearchSMRequest subMediaTypeRequest = searchSMRequest;
-                subMediaTypeRequest.PageSize = 0;
-                subMediaTypeRequest.FacetRange = null;
-                subMediaTypeRequest.FacetField = null;
-                subMediaTypeRequest.IsTaggingExcluded = false;
-                subMediaTypeRequest.SourceType = new List<string>();
-                subMediaTypeRequest.IsOutRequest = true;
-
-                // Get the list of each source type to subfacet by date
-                List<int> lstFacetedSourceTypes = new List<int>();
-                for (int i = 0; i < facetDataFeedClass.Length; i = i + 2)
-                {
-                    int sourceType = Convert.ToInt32(facetDataFeedClass[i].Trim().Replace("\"", string.Empty).Replace("[", string.Empty).Trim());
-                    int totalRecords = Convert.ToInt32(facetDataFeedClass[i + 1].Trim().Replace("\"", string.Empty).Replace("]", string.Empty));
-
-                    if (totalRecords > 0)
-                    {
-                        subMediaTypeRequest.SourceType.Add(CommonFunctions.GetEnumDescription((PMGSearch.SourceType)sourceType));
-                        lstFacetedSourceTypes.Add(sourceType);
-                    }
-                }
-
-                string subMediaTypeResponse = searchEngine.SearchSocialMediaChart(subMediaTypeRequest, out isError, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
-                Newtonsoft.Json.Linq.JObject jsonDataSubMediaType = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(subMediaTypeResponse);
-
-                // Build the results. Loop through every source type. Even if it has no results, it should be returned with a count of 0.
-                Dictionary<int, Dictionary<string, int>> dictSourceTypeCounts = new Dictionary<int, Dictionary<string, int>>();
-                for (int i = 0; i < facetDataFeedClass.Length; i = i + 2)
-                {
-                    int sourceType = Convert.ToInt32(facetDataFeedClass[i].Trim().Replace("\"", string.Empty).Replace("[", string.Empty).Trim());
-
-                    Dictionary<string, int> dictSourceType = new Dictionary<string, int>();
-                    dictSourceTypeCounts.Add(sourceType, dictSourceType);
-
-                    // Get the date counts for only the source types that were subfaceted
-                    if (lstFacetedSourceTypes.Contains(sourceType))
-                    {
-                        string totalResultSourceType = Convert.ToString(jsonDataSubMediaType["facet_counts"]["facet_ranges"][sourceType.ToString()]["counts"]).Replace("\r\n", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty);
-                        string[] facetDataSourceType = totalResultSourceType.Split(',');
-
-                        for (int j = 0; j < facetDataSourceType.Length; j += 2)
-                        {
-                            string date = Convert.ToDateTime(facetDataSourceType[j].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
-                            int totalRecords = Convert.ToInt32(facetDataSourceType[j + 1].Trim().Replace("\"", string.Empty));
-
-                            dictSourceType.Add(date, totalRecords);
-                        }
-                    }
-                }
-
-                // Create a result object for each date, for each source type
-                foreach (int key in dictSourceTypeCounts.Keys)
-                {
-                    Dictionary<string, int> dict = dictSourceTypeCounts[key];
-                    string feedClass = GetFeedClassFromInt(key);
-
-                    if (dict.Count > 0)
-                    {
-                        foreach (string date in dict.Keys)
-                        {
-                            RecordData recorddata = new RecordData();
-                            recorddata.FeedClass = feedClass;
-                            recorddata.Date = date;
-                            recorddata.TotalRecord = dict[date].ToString();
-
-                            if (String.IsNullOrWhiteSpace(medium) || medium == feedClass)
-                            {
-                                discoverySearchResponseFeedClass.ListRecordData.Add(recorddata);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // If there's no data for this source type, return an empty record
-                        RecordData recorddata = new RecordData();
-                        recorddata.FeedClass = feedClass;
-                        recorddata.Date = subMediaTypeRequest.FacetRangeStarts.Value.ToString("MM/dd/yyyy hh:mm tt"); // Not used, but will break things if empty
-                        recorddata.TotalRecord = "0";
-
-                        if (String.IsNullOrWhiteSpace(medium) || medium == feedClass)
-                        {
-                            discoverySearchResponseFeedClass.ListRecordData.Add(recorddata);
-                        }
-                    }
                 }
 
                 // Get Top Results
@@ -789,26 +729,148 @@ namespace IQMedia.Web.Logic
                 {
                     TopResults topResults = new TopResults();
                     topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title"]);
-                    topResults.Logo = "../images/MediaIcon/" + GetFeedClassFromInt(Convert.ToInt32(jsonData["response"]["docs"][i]["iqsubmediatype"])).Replace(" ", "-") + ".png";
-                    //Uri aPublisherUri;
+                    topResults.Logo = objMediaType.MediaIconPath;
                     topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["homeurl_domain"]);
 
                     discoverySearchResponse.ListTopResults.Add(topResults);
                 }
 
-                socialMediaFacet.DateData = discoverySearchResponse;
-                socialMediaFacet.FeedClassData = discoverySearchResponseFeedClass;
                 discoverySearchResponse.TotalResult = Convert.ToInt64(jsonData["response"]["numFound"]);
-                return socialMediaFacet;
+                return discoverySearchResponse;
             }
             catch (Exception ex)
             {
-                Log4NetLogger.Fatal("error occured ", ex);
+                Log4NetLogger.Fatal("Blog error occured ", ex);
+                throw;
+            }
+        }
+
+        public DiscoverySearchResponse SearchForum(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, string p_fromRecordID, string pmgSearchUrl, IQ_MediaTypeModel objMediaType, ForumAdvanceSearchSettings forumSearchSettings)
+        {
+            try
+            {
+                string updatedSearchTerm = (forumSearchSettings == null || string.IsNullOrWhiteSpace(forumSearchSettings.SearchTerm)) ? searchTerm : forumSearchSettings.SearchTerm.Trim(); ;
+
+                Boolean isError = false;
+                DiscoverySearchResponse discoverySearchResponse = new DiscoverySearchResponse();
+                discoverySearchResponse.SearchTerm = updatedSearchTerm;
+                discoverySearchResponse.SearchTermParent = searchTerm;
+                discoverySearchResponse.SearchName = searchTermName;
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
+
+                Newtonsoft.Json.Linq.JObject jsonData = new Newtonsoft.Json.Linq.JObject();
+                System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
+                SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
+
+                SearchSMRequest searchSMRequest = new SearchSMRequest();
+                searchSMRequest.IsTitleNContentSearch = true;
+                searchSMRequest.Facet = true;
+                searchSMRequest.FacetRangeOther = "all";
+                searchSMRequest.PageSize = pageSize;
+                searchSMRequest.SortFields = "date-";
+                if (!string.IsNullOrWhiteSpace(p_fromRecordID))
+                {
+                    searchSMRequest.FromRecordID = Convert.ToString(p_fromRecordID);
+                }
+                if (fromDate == null || toDate == null)
+                {
+                    searchSMRequest.FacetRangeStarts = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
+                    searchSMRequest.FacetRangeEnds = Convert.ToDateTime(DateTime.Now.ToShortDateString()).AddHours(23).AddMinutes(59);
+                }
+                else
+                {
+                    searchSMRequest.FacetRangeStarts = fromDate;
+                    searchSMRequest.FacetRangeEnds = toDate;
+                }
+                searchSMRequest.StartDate = searchSMRequest.FacetRangeStarts;
+                searchSMRequest.EndDate = searchSMRequest.FacetRangeEnds;
+
+                //Criteria
+                searchSMRequest.SearchTerm = updatedSearchTerm;
+
+                if (forumSearchSettings != null)
+                {
+                    searchSMRequest.SocialMediaSources = forumSearchSettings.SourceList;
+                    searchSMRequest.Author = forumSearchSettings.Author;
+                    searchSMRequest.Title = forumSearchSettings.Title;
+                    searchSMRequest.SourceType = forumSearchSettings.SourceTypeList;
+                    searchSMRequest.ExcludeDomains = forumSearchSettings.ExcludeDomainList;
+                }
+                //End Criteria
+
+                TimeSpan dateDiff = (TimeSpan)(searchSMRequest.FacetRangeEnds - searchSMRequest.FacetRangeStarts);
+                if (dateDiff.Days <= 1)
+                {
+                    searchSMRequest.FacetRangeGap = RangeGap.HOUR;
+                }
+                else
+                {
+                    searchSMRequest.FacetRangeGap = RangeGap.DAY;
+                }
+
+                searchSMRequest.FacetRangeGapDuration = 1;
+                searchSMRequest.FacetRange = "harvestdate_dt";
+                searchSMRequest.StartDate = searchSMRequest.FacetRangeStarts;
+                searchSMRequest.EndDate = searchSMRequest.FacetRangeEnds;
+                searchSMRequest.IsTaggingExcluded = true;
+                if (searchSMRequest.SourceType == null || searchSMRequest.SourceType.Count == 0)
+                {
+                    searchSMRequest.SourceType = new List<string>() { CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) };
+                }
+                searchSMRequest.wt = ReponseType.json;
+
+                string smReponse = searchEngine.SearchSocialMediaChart(searchSMRequest, out isError, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
+                jsonData = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(smReponse);
+
+                string totalResult = Convert.ToString(jsonData["facet_counts"]["facet_ranges"]["harvestdate_dt"]["counts"]).Replace("\r\n", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty);
+                string[] facetData = totalResult.Split(',');
+
+                discoverySearchResponse.ListRecordData = new List<RecordData>();
+                for (int i = 0; i < facetData.Length; i = i + 2)
+                {
+                    RecordData recorddata = new RecordData();
+                    recorddata.Date = Convert.ToDateTime(facetData[i].Trim().Replace("\"", string.Empty)).ToUniversalTime().ToString("MM/dd/yyyy hh:mm tt");
+                    recorddata.TotalRecord = Convert.ToString(facetData[i + 1].Trim().Replace("\"", string.Empty));
+
+                    discoverySearchResponse.ListRecordData.Add(recorddata);
+                }
+
+                string fromRecordID = string.Empty;
+                try
+                {
+                    fromRecordID = Convert.ToString(jsonData["response"]["docs"][0]["iqseqid"]);
+                }
+                catch (Exception)
+                { }
+
+                if (!string.IsNullOrWhiteSpace(fromRecordID))
+                {
+                    discoverySearchResponse.FromRecordID = fromRecordID;
+                }
+
+                // Get Top Results
+                discoverySearchResponse.ListTopResults = new List<TopResults>();
+                for (int i = 0; i < jsonData["response"]["docs"].Count(); i++)
+                {
+                    TopResults topResults = new TopResults();
+                    topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title"]);
+                    topResults.Logo = objMediaType.MediaIconPath;
+                    topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["homeurl_domain"]);
+
+                    discoverySearchResponse.ListTopResults.Add(topResults);
+                }
+
+                discoverySearchResponse.TotalResult = Convert.ToInt64(jsonData["response"]["numFound"]);
+                return discoverySearchResponse;
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Fatal("Forum error occured ", ex);
                 throw;
             }
         }
  
-        public DiscoverySearchResponse SearchProQuest(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, string medium, string p_fromRecordID, string pmgSearchUrl, ProQuestAdvanceSearchSettings ProQuestSearchSettings)
+        public DiscoverySearchResponse SearchProQuest(string searchTerm, string searchTermName, DateTime? fromDate, DateTime? toDate, int pageSize, string p_fromRecordID, string pmgSearchUrl, IQ_MediaTypeModel objMediaType, ProQuestAdvanceSearchSettings ProQuestSearchSettings)
         {
             try
             {
@@ -823,23 +885,14 @@ namespace IQMedia.Web.Logic
                 discoverySearchResponse.SearchTerm = updatedSearchTerm;
                 discoverySearchResponse.SearchTermParent = searchTerm;
                 discoverySearchResponse.SearchName = searchTermName;
-                discoverySearchResponse.MediumType = CommonFunctions.CategoryType.PQ.ToString();
+                discoverySearchResponse.MediumType = objMediaType.SubMediaType;
                 
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
                 SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
                 SearchProQuestRequest searchProQuestRequest = new SearchProQuestRequest();
                 searchProQuestRequest.Facet = true;
                 searchProQuestRequest.FacetRangeOther = "all";
-
-                // If only displaying ProQuest results, display 4 most relevant items. Else display single most relevant item. 
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    searchProQuestRequest.PageSize = 4;
-                }
-                else
-                {
-                    searchProQuestRequest.PageSize = 1;
-                }
+                searchProQuestRequest.PageSize = pageSize;
                 
                 if (!string.IsNullOrWhiteSpace(p_fromRecordID))
                 {
@@ -890,20 +943,6 @@ namespace IQMedia.Web.Logic
                 string totalResult = Convert.ToString(jsonData["facet_counts"]["facet_ranges"]["mediadatedt"]["counts"]).Replace("\r\n", string.Empty).Replace("[", string.Empty).Replace("]", string.Empty);
                 string[] facetData = totalResult.Split(',');
 
-                // TODO: Figure out FromRecordID
-                //string fromRecordID = string.Empty;
-                //try
-                //{
-                //    fromRecordID = Convert.ToString(jsonData["response"]["docs"][0]["iqseqid"]);
-                //}
-                //catch (Exception)
-                //{ }
-
-                //if (!string.IsNullOrWhiteSpace(fromRecordID))
-                //{
-                //    discoverySearchResponse.FromRecordID = fromRecordID;
-                //}
-
                 discoverySearchResponse.ListRecordData = new List<RecordData>();
                 for (int i = 0; i < facetData.Length; i = i + 2)
                 {
@@ -920,7 +959,7 @@ namespace IQMedia.Web.Logic
                 {
                     TopResults topResults = new TopResults();
                     topResults.Title = Convert.ToString(jsonData["response"]["docs"][i]["title"]);
-                    topResults.Logo = "../images/MediaIcon/print-media_t.png";
+                    topResults.Logo = objMediaType.MediaIconPath;
                     topResults.Publisher = Convert.ToString(jsonData["response"]["docs"][i]["publication"]);
 
                     discoverySearchResponse.ListTopResults.Add(topResults);
@@ -930,8 +969,9 @@ namespace IQMedia.Web.Logic
 
                 return discoverySearchResponse;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log4NetLogger.Fatal("ProQuest error occured ", ex);
                 throw;
             }
         }
@@ -1164,16 +1204,11 @@ namespace IQMedia.Web.Logic
                     useHTML = true
                 };
 
-
-
                 string jsonResult = CommonFunctions.SearializeJson(highColumnChartModel);
-                /*XDocument xdoc = new XDocument(new XElement("chart", new XAttribute("yAxisName", ""), new XAttribute("caption", "Average Report"),
-                                                  searchTermTotal.Select(s => new XElement("Set", new XAttribute("label", s.SearchTerm), new XAttribute("value", s.TotalRecord)))));*/
                 return jsonResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -1356,7 +1391,7 @@ namespace IQMedia.Web.Logic
                 throw;
             }
         }
-        public List<PieChartResponse> HighChartsLineChartByMedium(List<DiscoverySearchResponse> lstDiscoverySearchResponse, List<DiscoverySearchResponse> lstDiscoverySearchResponseFeedClass, string[] searchTerms, string medium, Boolean isHourData, decimal clientGmtOffset, decimal clientDstOffset, bool isv4TV, bool isv4NM, bool isv4SM, bool isv4PQ)
+        public List<PieChartResponse> HighChartsLineChartByMedium(List<DiscoverySearchResponse> lstDiscoverySearchResponse, string[] searchTerms, List<string> mediums, Boolean isHourData, decimal clientGmtOffset, decimal clientDstOffset, List<IQ_MediaTypeModel> lstMasterMediaTypes)
         {
             try
             {
@@ -1375,26 +1410,7 @@ namespace IQMedia.Web.Logic
                                                                       FeedClass = g.Key.MediumType,
                                                                       RecordDate = Convert.ToDateTime(g.Key.Date),
                                                                       TotalRecords = g.Sum(g1 => Convert.ToInt64(g1.dc.TotalRecord))
-                                                                  }).ToList();                
-
-                List<SearchTermTotalRecords> totalSMRecords = new List<SearchTermTotalRecords>();
-                if (lstDiscoverySearchResponseFeedClass != null)
-                {
-                    totalSMRecords = (List<SearchTermTotalRecords>)(from x in
-                                                                      (
-                                                                          from sr in lstDiscoverySearchResponseFeedClass
-                                                                          from dc in sr.ListRecordData
-                                                                          select new { sr.SearchTerm, dc }
-                                                                      )
-                                                                  group x by new { x.SearchTerm, x.dc.FeedClass, x.dc.Date } into g
-                                                                  select new SearchTermTotalRecords
-                                                                  {
-                                                                      SearchTerm = g.Key.SearchTerm,
-                                                                      FeedClass = g.Key.FeedClass == "Social Media" ? "SocialMedia" : g.Key.FeedClass,
-                                                                      RecordDate = Convert.ToDateTime(g.Key.Date),
-                                                                      TotalRecords = g.Sum(g1 => Convert.ToInt64(g1.dc.TotalRecord))
                                                                   }).ToList();
-                }
 
                 // multi line chart, one for each search term. 
                 HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
@@ -1502,94 +1518,21 @@ namespace IQMedia.Web.Logic
                     List<Series> lstSeries = new List<Series>();
                     Series series = null;
 
-                    // Get TV Data
-                    if (isv4TV && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.TV.ToString()))
+                    foreach (IQ_MediaTypeModel objMediaType in lstMasterMediaTypes.OrderBy(o => o.SortOrder))
                     {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV);
-                        series.data = totalRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.TV.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.TV.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
-                    }
-
-                    // Get News Data
-                    if (isv4NM && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.NM.ToString()))
-                    {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM);
-                        series.data = totalRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.NM.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.NM.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
-                    }
-
-                    // Get Social Media Data
-                    if (isv4SM && (string.IsNullOrWhiteSpace(medium) || medium == "Social Media"))
-                    {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia);
-                        series.data = totalSMRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.SocialMedia.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.SocialMedia.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
-                    }
-
-                    // Get Blog Data
-                    if (isv4SM && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.Blog.ToString()))
-                    {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog);
-                        series.data = totalSMRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.Blog.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.Blog.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
-                    }
-
-                    // Get Forum Data
-                    if (isv4SM && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.Forum.ToString()))
-                    {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum);
-                        series.data = totalSMRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.Forum.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.Forum.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
-                    }
-
-                    // Get ProQuest Data
-                    if (isv4PQ && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.PQ.ToString()))
-                    {
-                        series = new Series();
-                        series.name = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ);
-                        series.data = totalRecords.Where(w => w.FeedClass.Equals(CommonFunctions.CategoryType.PQ.ToString()) && w.SearchTerm.Equals(sTerm))
-                                                                    .Select(s => new HighChartDatum()
-                                                                    {
-                                                                        y = s.TotalRecords,
-                                                                        SearchTerm = sTerm,
-                                                                        Type = CommonFunctions.CategoryType.PQ.ToString()
-                                                                    }).ToList();
-                        lstSeries.Add(series);
+                        if (objMediaType.HasAccess && (mediums == null || mediums.Count == 0 || mediums.Contains(objMediaType.SubMediaType)))
+                        {
+                            series = new Series();
+                            series.name = objMediaType.DisplayName;
+                            series.data = totalRecords.Where(w => w.FeedClass.Equals(objMediaType.SubMediaType) && w.SearchTerm.Equals(sTerm))
+                                                                        .Select(s => new HighChartDatum()
+                                                                        {
+                                                                            y = s.TotalRecords,
+                                                                            SearchTerm = sTerm,
+                                                                            Type = objMediaType.SubMediaType
+                                                                        }).ToList();
+                            lstSeries.Add(series);
+                        }
                     }
 
                     highLineChartOutput.series = lstSeries;
@@ -1602,13 +1545,12 @@ namespace IQMedia.Web.Logic
 
                 return lstChartResponse;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-        public Dictionary<string, object> HighChartsPieChartBySearchTerm(List<DiscoverySearchResponse> lstDiscoverySearchResponse, List<DiscoverySearchResponse> lstDiscoverySearchResponseFeedClass, string[] searchTerm, string[] searchName, string medium, bool p_Isv4TV, bool p_Isv4NM, bool p_Isv4SM, bool p_Isv4PQ)
+        public Dictionary<string, object> HighChartsPieChartBySearchTerm(List<DiscoverySearchResponse> lstDiscoverySearchResponse, string[] searchTerm, string[] searchName, List<string> mediums, List<IQ_MediaTypeModel> lstMasterMediaTypes)
         {
             try
             {
@@ -1648,28 +1590,7 @@ namespace IQMedia.Web.Logic
                     verticalAlign = "bottom"
                 };
 
-                List<SearchTermTotalRecords> totalRecords = new List<SearchTermTotalRecords>();
-                if (lstDiscoverySearchResponseFeedClass != null)
-                {
-                    totalRecords = (List<SearchTermTotalRecords>)(from x in
-                                                                      (
-                                                                          from sr in lstDiscoverySearchResponseFeedClass
-                                                                          from dc in sr.ListRecordData
-                                                                          select new { sr.SearchTerm, sr.SearchName, dc }
-                                                                      )
-                                                                  group x by new { x.SearchTerm, x.SearchName, x.dc.Date, x.dc.FeedClass } into g
-                                                                  select new SearchTermTotalRecords
-                                                                  {
-                                                                      SearchName = g.Key.SearchName,
-                                                                      SearchTerm = g.Key.SearchTerm,
-                                                                      FeedClass = g.Key.FeedClass,
-                                                                      RecordDate = Convert.ToDateTime(g.Key.Date),
-                                                                      TotalRecords = g.Sum(g1 => Convert.ToInt64(g1.dc.TotalRecord))
-                                                                  }).ToList();
-                }
-
                 PSeries pSeries = new PSeries();
-
                 pSeries.type = "pie";
                 pSeries.name = "";
                 pSeries.data = new List<object>();
@@ -1684,53 +1605,25 @@ namespace IQMedia.Web.Logic
 
                     dictCounts.Add(sName, 0);
 
-                    // Get TV Data
-                    if (p_Isv4TV && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.TV.ToString()))
+                    foreach (IQ_MediaTypeModel objMediaType in lstMasterMediaTypes)
                     {
-                        dictCounts[sName] += lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.TV.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.SearchTerm)
-                                                                                .Select(s =>
-                                                                                    Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault();
-                    }
-
-                    // Get NEWS Data
-                    if (p_Isv4NM && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.NM.ToString()))
-                    {
-                        dictCounts[sName] += lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.NM.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.SearchTerm)
-                                                                                .Select(s =>
-                                                                                    Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault();
-                    }
-
-                    // Get Social Media Data
-                    if (p_Isv4SM && (string.IsNullOrWhiteSpace(medium) || medium == "Social Media" ||
-                            medium == CommonFunctions.CategoryType.Blog.ToString() ||
-                        medium == CommonFunctions.CategoryType.Forum.ToString()))
-                    {
-                        if (totalRecords != null && totalRecords.Count > 0)
+                        if (objMediaType.HasAccess && (mediums == null || mediums.Count == 0 || mediums.Contains(objMediaType.SubMediaType)))
                         {
-                            dictCounts[sName] += totalRecords.Where(w => w.SearchTerm.Equals(sTerm)).GroupBy(g => g.SearchTerm)
-                                                                    .Select(s =>
-                                                                        Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalRecords)))).FirstOrDefault();
+                            dictCounts[sName] += lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(objMediaType.SubMediaType) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.SearchTerm)
+                                                                                    .Select(s =>
+                                                                                        Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault();
                         }
-                    }
-
-                    // Get ProQuest Data
-                    if (p_Isv4PQ && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.PQ.ToString()))
-                    {
-                        dictCounts[sName] += lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.PQ.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.SearchTerm)
-                                                                                .Select(s =>
-                                                                                    Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault();
                     }
                 }
 
                 List<PieChartTotal> lstPieChartTotals = new List<PieChartTotal>();
-                foreach(DiscoverySearchResponse searchResponse in lstDiscoverySearchResponse.Where(w => !w.MediumType.Equals(CommonFunctions.CategoryType.SocialMedia.ToString())))
+                foreach(DiscoverySearchResponse searchResponse in lstDiscoverySearchResponse)
                 {
                     foreach(string sDate in searchResponse.ListRecordData.Select(x => x.Date).Distinct())
                     {
                         lstPieChartTotals.Add(new PieChartTotal() { date = (DateTime.Parse(sDate)).ToString("MM/dd/yy H:mm:ss"), searchTerm = searchResponse.SearchTerm, searchName = searchResponse.SearchName, medium = searchResponse.MediumType, totalResult = searchResponse.ListRecordData.Where(w => w.Date == sDate).Sum(s => Int64.Parse(s.TotalRecord)) });
                     }
                 }
-                lstPieChartTotals.AddRange(totalRecords.Select(s => new PieChartTotal() { date = s.RecordDate.ToString("MM/dd/yy H:mm:ss"), searchTerm = s.SearchTerm, searchName = s.SearchName, medium = (s.FeedClass == "Social Media" ? "SocialMedia" : s.FeedClass), totalResult = s.TotalRecords }).ToList());
 
                 pSeries.data = dictCounts.Select(s => new object[] { s.Key, s.Value }).ToList<Object>();
                 // set series for selected search term
@@ -1747,7 +1640,8 @@ namespace IQMedia.Web.Logic
                 throw;
             }
         }
-        public List<PieChartResponse> HighChartsPieChartByMedium(List<DiscoverySearchResponse> lstDiscoverySearchResponse, List<DiscoverySearchResponse> lstDiscoverySearchResponseFeedClass, string[] searchTerm, string[] searchName, string medium, bool p_Isv4TV, bool p_Isv4NM, bool p_Isv4SM, bool p_Isv4PQ)
+
+        public List<PieChartResponse> HighChartsPieChartByMedium(List<DiscoverySearchResponse> lstDiscoverySearchResponse, string[] searchTerm, string[] searchName, List<string> mediums, List<IQ_MediaTypeModel> lstMasterMediaTypes)
         {
             try
             {
@@ -1790,42 +1684,13 @@ namespace IQMedia.Web.Logic
                     verticalAlign = "bottom"
                 };
 
-                List<SearchTermTotalRecords> totalRecords = new List<SearchTermTotalRecords>();
-                if (lstDiscoverySearchResponseFeedClass != null)
-                {
-                    totalRecords = (List<SearchTermTotalRecords>)(from x in
-                                                                      (
-                                                                          from sr in lstDiscoverySearchResponseFeedClass
-                                                                          from dc in sr.ListRecordData
-                                                                          select new { sr.SearchTerm, sr.SearchName, dc }
-                                                                      )
-                                                                  group x by new { x.SearchTerm, x.SearchName, x.dc.FeedClass } into g
-                                                                  select new SearchTermTotalRecords
-                                                                  {
-                                                                      SearchName = g.Key.SearchName,
-                                                                      SearchTerm = g.Key.SearchTerm,
-                                                                      FeedClass = g.Key.FeedClass,
-                                                                      TotalRecords = g.Sum(g1 => Convert.ToInt64(g1.dc.TotalRecord))
-                                                                  }).ToList();
-                }
-
-
-                //Get Distinct Search Term and By Looping through it , Get Data of Feedclass and its total
-
-                //var distinctSearchTerm = totalRecords.Select(s => s.SearchTerm).Distinct().ToList();
-
                 PSeries pSeries = new PSeries();
-
                 pSeries.type = "pie";
                 pSeries.name = "";
-                //pSeries.data = new List<List<PSeriesData>>();
                 pSeries.data = new List<object>();
                 List<Object> lstObject = new List<object>();
                 List<PSeries> lstPseries = new List<PSeries>();
                 lstPseries.Add(pSeries);
-
-                Dictionary<string, double> dictPie = new Dictionary<string, double>();
-
 
                 // set pie chart series for each search term 
                 for (int i = 0; i < searchTerm.Length; i++ )
@@ -1835,57 +1700,16 @@ namespace IQMedia.Web.Logic
                     // create series with each medium type and its total records. 
                     lstObject = new List<object>();
                     pSeries.data = new List<object>();
-                    //List<List<PSeriesData>> lstoflstPSeriesData = new List<List<PSeriesData>>();
-                    // Get TV Data
-                    if (p_Isv4TV && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.TV.ToString()))
+
+                    foreach (IQ_MediaTypeModel objMediaType in lstMasterMediaTypes.OrderBy(o => o.SortOrder))
                     {
-
-
-                        lstObject.Add(new object[] { CommonFunctions.CategoryType.TV.ToString(), lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.TV.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.MediumType)
+                        if (objMediaType.HasAccess && (mediums == null || mediums.Count == 0 || mediums.Contains(objMediaType.SubMediaType)))
+                        {
+                            lstObject.Add(new object[] { objMediaType.DisplayName, lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(objMediaType.SubMediaType) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.MediumType)
                                                                                 .Select(s =>
                                                                                     Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault()});
-                    }
-
-                    // Get NEWS Data
-                    if (p_Isv4NM && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.NM.ToString()))
-                    {
-
-                        lstObject.Add(new object[] { CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM) ,
-                        
-                            lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.NM.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.MediumType)
-                                                                                .Select(s =>
-                                                                                    Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault()});
-
-                    }
-
-                    // Get Social Media Data
-                    if (p_Isv4SM && (string.IsNullOrWhiteSpace(medium) || medium == "Social Media" ||
-                            medium == CommonFunctions.CategoryType.Blog.ToString() ||
-                        medium == CommonFunctions.CategoryType.Forum.ToString()))
-                    {
-                        if (totalRecords == null || totalRecords.Count <= 0)
-                        {
-                            lstObject.Add(new object[] { "Social Media", 0 });
-                            lstObject.Add(new object[] { "Blog", 0 });
-                            lstObject.Add(new object[] { "Forum", 0 });
-                        }
-                        else
-                        {
-                            lstObject.AddRange(totalRecords.Where(w => w.SearchTerm.Equals(sTerm)).Select(s => new object[]
-                            {
-                                s.FeedClass,s.TotalRecords
-                            }).ToList());
                         }
                     }
-
-                    // Get ProQuest Data
-                    if (p_Isv4PQ && (string.IsNullOrWhiteSpace(medium) || medium == CommonFunctions.CategoryType.PQ.ToString()))
-                    {
-                        lstObject.Add(new object[] { CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ), lstDiscoverySearchResponse.Where(w => w.MediumType.Equals(CommonFunctions.CategoryType.PQ.ToString()) && w.SearchTerm.Equals(sTerm)).GroupBy(g => g.MediumType)
-                                                                                .Select(s =>
-                                                                                    Convert.ToInt64(s.Sum(s1 => Convert.ToInt64(s1.TotalResult)))).FirstOrDefault()});
-                    }
-
 
                     pSeries.data = lstObject;
                     // set series for selected search term
@@ -1897,8 +1721,6 @@ namespace IQMedia.Web.Logic
                     pieChartResponse.JsonResult = jsonResult;
                     pieChartResponse.SearchTerm = sTerm;
                     pieChartResponse.SearchName = sName;
-                        /*pieChartReponse.SearchTerm = sTerm;
-                        pieChartReponse.JsonResult = jsonResult;*/
                     lstPieChartResponse.Add(pieChartResponse);
                 }
 
@@ -1906,14 +1728,13 @@ namespace IQMedia.Web.Logic
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
         #endregion
 
         #region Result
-        public List<DiscoveryMediaResult> SearchTVResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string medium, bool isAsc, Guid clientGUID, bool IsAllDmaAllowed, List<IQ_Dma> listDma, bool IsAllClassAllowed, List<IQ_Class> listClass, bool IsAllStationAllowed, List<IQ_Station> listStation, List<Station_Affil> listAffiliate, List<IQ_Region> listRegion, List<IQ_Country> listCountry, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, out List<String> tvMarketList, string pmgSearchUrl, List<int> TVRegions, TVAdvanceSearchSettings TVSearchSettings) //, Int64 fromRecordID,
+        public List<DiscoveryMediaResult> SearchTVResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, Guid clientGUID, bool IsAllDmaAllowed, List<IQ_Dma> listDma, bool IsAllClassAllowed, List<IQ_Class> listClass, bool IsAllStationAllowed, List<IQ_Station> listStation, List<Station_Affil> listAffiliate, List<IQ_Region> listRegion, List<IQ_Country> listCountry, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, out List<String> tvMarketList, string pmgSearchUrl, List<int> TVRegions, TVAdvanceSearchSettings TVSearchSettings) 
         {
             string updatedSearchTerm = (TVSearchSettings == null || string.IsNullOrWhiteSpace(TVSearchSettings.SearchTerm)) ? searchTerm : TVSearchSettings.SearchTerm.Trim();
             List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<DiscoveryMediaResult>();
@@ -1928,7 +1749,7 @@ namespace IQMedia.Web.Logic
                 SearchRequest searchRequest = new SearchRequest();
                 searchRequest.IsTitleNContentSearch = true;
                 searchRequest.IncludeRegionsNum = TVRegions;
-                //searchRequest.Start = fromRecordID;
+
 //Criteria                
                 searchRequest.Terms = updatedSearchTerm;
 
@@ -2163,12 +1984,8 @@ namespace IQMedia.Web.Logic
                 {
                     searchRequest.SortFields = "date-";
                 }
-                searchRequest.PageSize = p_PageSize;// Convert.ToInt32(ConfigurationManager.AppSettings["DiscoveryPageSize"]);
-                /*if (!string.IsNullOrWhiteSpace(tvMarket))
-                {
-                    searchRequest.IQDmaName = new List<string>();
-                    searchRequest.IQDmaName.Add(tvMarket);
-                }*/
+                searchRequest.PageSize = p_PageSize;
+
                 if (fromDate == null || toDate == null)
                 {
                     searchRequest.StartDate = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
@@ -2179,8 +1996,7 @@ namespace IQMedia.Web.Logic
                     searchRequest.StartDate = fromDate;
                     searchRequest.EndDate = toDate;
                 }
-                //searchRequest.EndDate = searchRequest.EndDate.Value.ToUniversalTime();
-                //searchRequest.wt = ReponseType.json;
+
                 searchRequest.IsSentiment = true;
                 searchRequest.IsShowCC = true;
                 searchRequest.LowThreshold = p_IQClient_ThresholdValueModel.TVLowThreshold;
@@ -2242,7 +2058,7 @@ namespace IQMedia.Web.Logic
                         xDoc.Root.Add(new XElement("item", new XAttribute("iq_cc_key", hit.Iqcckey), new XAttribute("iq_dma", hit.IQDmaNum)));
                         DiscoveryMediaResult discoveryMediaResult = new DiscoveryMediaResult();
                         discoveryMediaResult.Date = hit.GmtDateTime;
-                        discoveryMediaResult.LocalDateTime = Convert.ToDateTime(hit.RLStationDateTime);//.ToUniversalTime();
+                        discoveryMediaResult.LocalDateTime = Convert.ToDateTime(hit.RLStationDateTime);
                         discoveryMediaResult.VideoGuid = new Guid(hit.Guid);
                         discoveryMediaResult.Title = hit.Title120;
                         discoveryMediaResult.PositiveSentiment = hit.Sentiments.PositiveSentiment;
@@ -2250,7 +2066,7 @@ namespace IQMedia.Web.Logic
                         discoveryMediaResult.IQ_CC_Key = hit.Iqcckey;
                         discoveryMediaResult.Body = string.Join(" ", hit.TermOccurrences.Select(s => s.SurroundingText).ToArray());
 
-                        discoveryMediaResult.MediumType = CommonFunctions.CategoryType.TV;
+                        discoveryMediaResult.MediumType = subMediaType;
                         discoveryMediaResult.SearchTerm = searchTerm;
                         discoveryMediaResult.TotalRecords = searchResult.TotalHitCount;
 
@@ -2272,20 +2088,19 @@ namespace IQMedia.Web.Logic
 
                 return lstDiscoveryMediaResult;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
         }
-        public List<DiscoveryMediaResult> SearchNewsResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string medium, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, List<Int16> lstOfIQLicense, NewsAdvanceSearchSettings NewsSearchSettings)// Int64 startRecordID, string fromRecordID,
+
+        public List<DiscoveryMediaResult> SearchNewsResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, List<Int16> lstOfIQLicense, NewsAdvanceSearchSettings NewsSearchSettings)
         {
             List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<DiscoveryMediaResult>();
             try
             {
                 string updatedSearchTerm = (NewsSearchSettings == null || string.IsNullOrWhiteSpace(NewsSearchSettings.SearchTerm)) ? searchTerm : NewsSearchSettings.SearchTerm.Trim();
 
-                //foreach (string sterm in searchTerm)
-                //{
                 Log4NetLogger.Debug("Task: SearchNewsResult -- searchTerm :" + updatedSearchTerm);
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
                 SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
@@ -2293,8 +2108,8 @@ namespace IQMedia.Web.Logic
                 searchNewsRequest.IsTitleNContentSearch = true;
                 searchNewsRequest.IsReturnHighlight = true;
                 searchNewsRequest.Facet = false;
-                searchNewsRequest.PageSize = p_PageSize;// Convert.ToInt32(ConfigurationManager.AppSettings["DiscoveryPageSize"]);
-                //searchNewsRequest.Start = startRecordID;
+                searchNewsRequest.PageSize = p_PageSize;
+                
                 if (isAsc)
                 {
                     searchNewsRequest.SortFields = "date";
@@ -2309,7 +2124,6 @@ namespace IQMedia.Web.Logic
                     searchNewsRequest.IQLicense.Add(iqlicense);
                 }
 
-
                 if (fromDate == null || toDate == null)
                 {
                     searchNewsRequest.StartDate = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
@@ -2323,6 +2137,7 @@ namespace IQMedia.Web.Logic
 
 //Criteria
                 searchNewsRequest.SearchTerm = updatedSearchTerm;
+                searchNewsRequest.SourceType = new List<int>() { (int)PMGSearch.SourceType.OnlineNews };
 
                 if (NewsSearchSettings != null)
                 {
@@ -2337,13 +2152,6 @@ namespace IQMedia.Web.Logic
                     searchNewsRequest.ExcludeDomains = NewsSearchSettings.ExcludeDomainList;
                 }
 //End Criteria
-
-                //searchNewsRequest.EndDate = searchNewsRequest.EndDate.Value.ToUniversalTime();
-
-                /*if (!string.IsNullOrWhiteSpace(fromRecordID))
-                {
-                    searchNewsRequest.FromRecordID = Convert.ToString(fromRecordID);
-                }*/
 
                 searchNewsRequest.IsSentiment = true;
 
@@ -2408,7 +2216,7 @@ namespace IQMedia.Web.Logic
                         discoveryMediaResult.Publication = newsResult.HomeurlDomain;
                         discoveryMediaResult.ArticleID = newsResult.IQSeqID;
 
-                        discoveryMediaResult.MediumType = CommonFunctions.CategoryType.NM;
+                        discoveryMediaResult.MediumType = subMediaType;
                         discoveryMediaResult.SearchTerm = searchTerm;
                         discoveryMediaResult.TotalRecords = searchNewsResults.TotalResults;
                         discoveryMediaResult.IsValid = true;
@@ -2420,7 +2228,6 @@ namespace IQMedia.Web.Logic
 
                     Log4NetLogger.Info("pmg results parsed as discovery result , search term : " + updatedSearchTerm + "");
 
-                    //Uri aPublicationUri;
                     var distinctDisplayUrl = searchNewsResults.newsResults.Select(a => a.HomeurlDomain).Distinct().ToList();
 
                     var displyUrlXml = new XElement("list",
@@ -2431,7 +2238,6 @@ namespace IQMedia.Web.Logic
                     List<IQCompeteAll> _ListOfIQ_CompeteAll = iqCompeteAllDA.GetArtileAdShareValueByClientGuidAndXml(clientGUID, Convert.ToString(displyUrlXml), CommonFunctions.CategoryType.NM.ToString());
                     foreach (DiscoveryMediaResult discoveryMediaResult in lstDiscoveryMediaResult)
                     {
-                        //Uri aUri;
                         string href = discoveryMediaResult.Publication;
                         IQCompeteAll _IQCompeteAll = _ListOfIQ_CompeteAll.Find(a => a.CompeteURL.Equals(href));
 
@@ -2441,7 +2247,6 @@ namespace IQMedia.Web.Logic
 
                         discoveryMediaResult.IQAdsharevalue = _IQCompeteAll != null && _IQCompeteAll.IQ_AdShare_Value.HasValue && _IQCompeteAll.IQ_AdShare_Value.Value > 0 ? _IQCompeteAll.IQ_AdShare_Value : null;
                     }
-
                 }
 
                 Log4NetLogger.Debug("Task: SearchNewsResult -- Result_Count :" + lstDiscoveryMediaResult.Count() + "_" + DateTime.Now);
@@ -2452,16 +2257,178 @@ namespace IQMedia.Web.Logic
                 Log4NetLogger.Error("search news result error, search term : " + searchTerm + "", ex);
                 throw;
             }
-
         }
-        public List<DiscoveryMediaResult> SearchSocialMediaResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string medium, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, SociaMediaAdvanceSearchSettings SocialMediaSearchSettings)//Int64 startRecordID, string fromRecordID,
+
+        public List<DiscoveryMediaResult> SearchLexisNexisResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, List<Int16> lstOfIQLicense, LexisNexisAdvanceSearchSettings LexisNexisSearchSettings)
         {
-            string updatedSearchTerm = (SocialMediaSearchSettings == null || string.IsNullOrWhiteSpace(SocialMediaSearchSettings.SearchTerm)) ? searchTerm : SocialMediaSearchSettings.SearchTerm.Trim();
             List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<DiscoveryMediaResult>();
             try
             {
-                Log4NetLogger.Debug("Task: SearchSocialMediaResult -- searchTerm :" + updatedSearchTerm);
-                bool isError = false;
+                string updatedSearchTerm = (LexisNexisSearchSettings == null || string.IsNullOrWhiteSpace(LexisNexisSearchSettings.SearchTerm)) ? searchTerm : LexisNexisSearchSettings.SearchTerm.Trim();
+
+                Log4NetLogger.Debug("Task: SearchLexisNexisResult -- searchTerm :" + updatedSearchTerm);
+                System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
+                SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
+                SearchNewsRequest searchNewsRequest = new SearchNewsRequest();
+                searchNewsRequest.IsTitleNContentSearch = true;
+                searchNewsRequest.IsReturnHighlight = true;
+                searchNewsRequest.Facet = false;
+                searchNewsRequest.PageSize = p_PageSize;
+
+                if (isAsc)
+                {
+                    searchNewsRequest.SortFields = "date";
+                }
+                else
+                {
+                    searchNewsRequest.SortFields = "date-";
+                }
+
+                foreach (Int16 iqlicense in lstOfIQLicense)
+                {
+                    searchNewsRequest.IQLicense.Add(iqlicense);
+                }
+
+                if (fromDate == null || toDate == null)
+                {
+                    searchNewsRequest.StartDate = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
+                    searchNewsRequest.EndDate = Convert.ToDateTime(DateTime.Now.ToShortDateString()).AddHours(23).AddMinutes(59);
+                }
+                else
+                {
+                    searchNewsRequest.StartDate = fromDate;
+                    searchNewsRequest.EndDate = toDate;
+                }
+
+                //Criteria
+                searchNewsRequest.SearchTerm = updatedSearchTerm;
+                searchNewsRequest.SourceType = new List<int>() { (int)PMGSearch.SourceType.Print };
+
+                if (LexisNexisSearchSettings != null)
+                {
+                    searchNewsRequest.Publications = LexisNexisSearchSettings.PublicationList;
+                    searchNewsRequest.NewsCategory = LexisNexisSearchSettings.CategoryList;
+                    searchNewsRequest.PublicationCategory = LexisNexisSearchSettings.PublicationCategoryList;
+                    searchNewsRequest.Genre = LexisNexisSearchSettings.GenreList;
+                    searchNewsRequest.NewsRegion = LexisNexisSearchSettings.RegionList;
+                    searchNewsRequest.Country = LexisNexisSearchSettings.CountryList;
+                    searchNewsRequest.Language = LexisNexisSearchSettings.LanguageList;
+                    searchNewsRequest.ExcludeDomains = LexisNexisSearchSettings.ExcludeDomainList;
+                }
+                //End Criteria
+
+                searchNewsRequest.IsSentiment = true;
+
+                searchNewsRequest.HighThreshold = p_IQClient_ThresholdValueModel.NMHighThreshold;
+                searchNewsRequest.LowThreshold = p_IQClient_ThresholdValueModel.NMLowThreshold;
+
+                SearchNewsResults searchNewsResults = searchEngine.SearchNews(searchNewsRequest, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
+
+                Log4NetLogger.Info("pmg results parsing in logic , search term : " + updatedSearchTerm + "");
+
+                #region insert pmg log
+                string _Responce = string.Empty;
+                XmlDocument _XmlDocument = new XmlDocument();
+
+                _XmlDocument.LoadXml(searchNewsResults.ResponseXml);
+
+                XmlNodeList _XmlNodeList = _XmlDocument.GetElementsByTagName("response");
+
+                if (_XmlNodeList.Count > 0)
+                {
+                    XmlAttributeCollection _XmlAttributeCollection = _XmlNodeList[0].Attributes;
+                    foreach (XmlAttribute item in _XmlAttributeCollection)
+                    {
+                        if (item.Name == "status")
+                        {
+                            _Responce = _XmlDocument.InnerXml;
+                            _Responce = _Responce.Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
+                        }
+                    }
+                }
+                else
+                {
+                    _Responce = null;
+                }
+
+                UtilityLogic.InsertPMGSearchLog(p_CustomerKey, searchNewsRequest.SearchTerm, string.Empty, string.Empty, string.Empty, string.Empty, searchNewsRequest.PageNumber, searchNewsRequest.PageSize, 0, searchNewsRequest.StartDate, searchNewsRequest.EndDate, IQMedia.Shared.Utility.CommonFunctions.SearchType.Discovery_LN.ToString(), _Responce);
+                
+                #endregion
+
+                int wordsBeforeSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsBeforeSpan"]);
+                int wordsAfterSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
+                string seprator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
+
+                if (searchNewsResults.newsResults != null)
+                {
+                    foreach (NewsResult newsResult in searchNewsResults.newsResults)
+                    {
+                        DiscoveryMediaResult discoveryMediaResult = new DiscoveryMediaResult();
+                        discoveryMediaResult.Date = Convert.ToDateTime(newsResult.date);
+                        discoveryMediaResult.Title = newsResult.Title;
+                        discoveryMediaResult.PositiveSentiment = newsResult.Sentiments.PositiveSentiment;
+                        discoveryMediaResult.NegativeSentiment = newsResult.Sentiments.NegativeSentiment;
+                        string body = string.Empty;
+                        if (newsResult.Highlights != null && newsResult.Highlights.Count > 0)
+                        {
+                            body = CommonFunctions.GetWordsAround(string.Join(" ", newsResult.Highlights), "span", wordsBeforeSpan, wordsAfterSpan + 4, seprator);
+                        }
+
+                        discoveryMediaResult.Body = body;
+                        discoveryMediaResult.ArticleURL = newsResult.Article;
+                        discoveryMediaResult.Publication = newsResult.HomeurlDomain;
+                        discoveryMediaResult.ArticleID = newsResult.IQSeqID;
+
+                        discoveryMediaResult.MediumType = subMediaType;
+                        discoveryMediaResult.SearchTerm = searchTerm;
+                        discoveryMediaResult.TotalRecords = searchNewsResults.TotalResults;
+                        discoveryMediaResult.IsValid = true;
+                        discoveryMediaResult.IncludeInResult = true;
+                        discoveryMediaResult.IQLicense = newsResult.IQLicense;
+                        lstDiscoveryMediaResult.Add(discoveryMediaResult);
+
+                    }
+
+                    Log4NetLogger.Info("pmg results parsed as discovery result , search term : " + updatedSearchTerm + "");
+
+                    var distinctDisplayUrl = searchNewsResults.newsResults.Select(a => a.HomeurlDomain).Distinct().ToList();
+
+                    var displyUrlXml = new XElement("list",
+                                            from string websiteurl in distinctDisplayUrl
+                                            select new XElement("item", new XAttribute("url", websiteurl)));
+
+                    IQCompeteAllDA iqCompeteAllDA = (IQCompeteAllDA)DataAccessFactory.GetDataAccess(DataAccessType.IQCompeteAll);
+                    List<IQCompeteAll> _ListOfIQ_CompeteAll = iqCompeteAllDA.GetArtileAdShareValueByClientGuidAndXml(clientGUID, Convert.ToString(displyUrlXml), CommonFunctions.CategoryType.NM.ToString());
+                    foreach (DiscoveryMediaResult discoveryMediaResult in lstDiscoveryMediaResult)
+                    {
+                        string href = discoveryMediaResult.Publication;
+                        IQCompeteAll _IQCompeteAll = _ListOfIQ_CompeteAll.Find(a => a.CompeteURL.Equals(href));
+
+                        discoveryMediaResult.Audience = _IQCompeteAll != null && _IQCompeteAll.c_uniq_visitor.HasValue && _IQCompeteAll.c_uniq_visitor.Value > 0 ? _IQCompeteAll.c_uniq_visitor : null;
+
+                        discoveryMediaResult.CompeteImage = (_IQCompeteAll.IsCompeteAll ? "<img src=\"../Images/compete.jpg\" style=\"width:14px\"  title=\"Powered by Compete\" />" : "");
+
+                        discoveryMediaResult.IQAdsharevalue = _IQCompeteAll != null && _IQCompeteAll.IQ_AdShare_Value.HasValue && _IQCompeteAll.IQ_AdShare_Value.Value > 0 ? _IQCompeteAll.IQ_AdShare_Value : null;
+                    }
+                }
+
+                Log4NetLogger.Debug("Task: SearchLexisNexisResult -- Result_Count :" + lstDiscoveryMediaResult.Count() + "_" + DateTime.Now);
+                return lstDiscoveryMediaResult;
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error("search LexisNexis result error, search term : " + searchTerm + "", ex);
+                throw;
+            }
+        }
+
+        public List<DiscoveryMediaResult> SearchBlogResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, BlogAdvanceSearchSettings blogSearchSettings)
+        {
+            string updatedSearchTerm = (blogSearchSettings == null || string.IsNullOrWhiteSpace(blogSearchSettings.SearchTerm)) ? searchTerm : blogSearchSettings.SearchTerm.Trim();
+            List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<DiscoveryMediaResult>();
+            try
+            {
+                Log4NetLogger.Debug("Task: SearchBlogResult -- searchTerm :" + updatedSearchTerm);
                 System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
                 SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
                 SearchSMRequest searchSMRequest = new SearchSMRequest();
@@ -2470,8 +2437,7 @@ namespace IQMedia.Web.Logic
                 searchSMRequest.Facet = true;
                 searchSMRequest.FacetRangeOther = "all";
 
-                //searchSMRequest.Start = startRecordID;
-                searchSMRequest.PageSize = p_PageSize; // Convert.ToInt32(ConfigurationManager.AppSettings["DiscoveryPageSize"]);
+                searchSMRequest.PageSize = p_PageSize;
                 if (isAsc)
                 {
                     searchSMRequest.SortFields = "date";
@@ -2492,64 +2458,20 @@ namespace IQMedia.Web.Logic
                     searchSMRequest.EndDate = toDate;
                 }
 
-//Criteria
+                //Criteria
                 searchSMRequest.SearchTerm = updatedSearchTerm;
 
-                if (SocialMediaSearchSettings != null)
+                if (blogSearchSettings != null)
                 {
-                    searchSMRequest.SocialMediaSources = SocialMediaSearchSettings.SourceList;
-                    searchSMRequest.Author = SocialMediaSearchSettings.Author;
-                    searchSMRequest.Title = SocialMediaSearchSettings.Title;
-                    searchSMRequest.SourceType = SocialMediaSearchSettings.SourceTypeList;
-                    searchSMRequest.ExcludeDomains = SocialMediaSearchSettings.ExcludeDomainList;
+                    searchSMRequest.SocialMediaSources = blogSearchSettings.SourceList;
+                    searchSMRequest.Author = blogSearchSettings.Author;
+                    searchSMRequest.Title = blogSearchSettings.Title;
+                    searchSMRequest.ExcludeDomains = blogSearchSettings.ExcludeDomainList;
                 }
-//End Criteria
-
-                //searchSMRequest.EndDate = searchSMRequest.EndDate.Value.ToUniversalTime();
+                //End Criteria
 
                 searchSMRequest.IsTaggingExcluded = true;
-                if (!string.IsNullOrWhiteSpace(medium))
-                {
-                    if (searchSMRequest.SourceType == null)
-                    {
-                        searchSMRequest.SourceType = new List<string>();
-                    }
-
-                    // If Advanced Search source types are selected, remove any that don't apply to the selected medium
-                    if (medium == CommonFunctions.CategoryType.Blog.ToString())
-                    {
-                        searchSMRequest.SourceType = new List<string>();
-                        searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog));
-                    }
-                    else if (medium == CommonFunctions.CategoryType.Forum.ToString())
-                    {
-                        searchSMRequest.SourceType.RemoveAll(r => r != CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) &&
-                            r != CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Review));
-
-                        if (searchSMRequest.SourceType.Count == 0)
-                        {
-                            searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum));
-                        }
-                    }
-                    else
-                    {
-                        searchSMRequest.SourceType.RemoveAll(r => r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Review) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Blog) ||
-                            r == CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Comment));
-
-                        if (searchSMRequest.SourceType.Count == 0)
-                        {
-                            searchSMRequest.SourceType.Add(CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia));
-                        }
-                    }
-                }
-
-                /*if (!string.IsNullOrWhiteSpace(fromRecordID))
-                {
-                    searchSMRequest.FromRecordID = Convert.ToString(fromRecordID);
-                }*/
-
+                searchSMRequest.SourceType = new List<string>() { CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Blog) };
                 searchSMRequest.IsSentiment = true;
 
                 searchSMRequest.HighThreshold = p_IQClient_ThresholdValueModel.SMHighThreshold;
@@ -2582,8 +2504,7 @@ namespace IQMedia.Web.Logic
                     _Responce = null;
                 }
 
-                UtilityLogic.InsertPMGSearchLog(p_CustomerKey, searchSMRequest.SearchTerm, string.Empty, string.Empty, string.Empty, string.Empty, searchSMRequest.PageNumber, searchSMRequest.PageSize, 0, searchSMRequest.StartDate, searchSMRequest.EndDate, IQMedia.Shared.Utility.CommonFunctions.SearchType.Discovery_SM.ToString(), _Responce);
-
+                UtilityLogic.InsertPMGSearchLog(p_CustomerKey, searchSMRequest.SearchTerm, string.Empty, string.Empty, string.Empty, string.Empty, searchSMRequest.PageNumber, searchSMRequest.PageSize, 0, searchSMRequest.StartDate, searchSMRequest.EndDate, IQMedia.Shared.Utility.CommonFunctions.SearchType.Discovery_BL.ToString(), _Responce);
 
                 #endregion
 
@@ -2591,7 +2512,6 @@ namespace IQMedia.Web.Logic
                 int wordsAfterSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
                 string seprator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
 
-                //Stopwatch sw1 = new Stopwatch();
                 if (searchSMResult != null && searchSMResult.smResults != null)
                 {
                     foreach (SMResult smResult in searchSMResult.smResults)
@@ -2604,16 +2524,10 @@ namespace IQMedia.Web.Logic
                         discoveryMediaResult.NegativeSentiment = smResult.Sentiments.NegativeSentiment;
 
                         string body = string.Empty;
-                        Log4NetLogger.Info("highlight string : " + string.Join(" ", smResult.Highlights));
-
-                        //sw1.Restart();
                         if (smResult.Highlights != null && smResult.Highlights.Count > 0)
                         {
                             body = CommonFunctions.GetWordsAround(string.Join(" ", smResult.Highlights), "span", wordsBeforeSpan, wordsAfterSpan + 4, seprator);
                         }
-
-                        //sw1.Stop();
-                        //Log4NetLogger.Info(string.Format("time taken to run regex is : Minutes :{0}\n Seconds :{1}\n Mili seconds :{2}", sw1.Elapsed.Minutes, sw1.Elapsed.Seconds, sw1.Elapsed.TotalMilliseconds));
 
                         discoveryMediaResult.Body = body;
                         discoveryMediaResult.ArticleURL = smResult.link;
@@ -2622,21 +2536,7 @@ namespace IQMedia.Web.Logic
                         discoveryMediaResult.TotalRecords = searchSMResult.TotalResults;
                         discoveryMediaResult.IsValid = true;
                         discoveryMediaResult.IncludeInResult = true;
-
-                        string mType = GetFeedClass(smResult.feedClass);
-                        if (mType == "Social Media")
-                        {
-                            discoveryMediaResult.MediumType = CommonFunctions.CategoryType.SocialMedia;
-                        }
-                        else if (mType == CommonFunctions.CategoryType.Blog.ToString())
-                        {
-                            discoveryMediaResult.MediumType = CommonFunctions.CategoryType.Blog;
-                        }
-                        else if (mType == CommonFunctions.CategoryType.Forum.ToString())
-                        {
-                            discoveryMediaResult.MediumType = CommonFunctions.CategoryType.Forum;
-                        }
-
+                        discoveryMediaResult.MediumType = subMediaType;
                         discoveryMediaResult.SearchTerm = searchTerm;
 
                         lstDiscoveryMediaResult.Add(discoveryMediaResult);
@@ -2644,14 +2544,12 @@ namespace IQMedia.Web.Logic
 
                     List<SMResult> lstSMResults = new List<SMResult>();
 
-                    //Uri aHomeLinkUri;
                     lstSMResults = searchSMResult.smResults.Select(a => new SMResult()
                     {
                         HomeurlDomain = a.HomeurlDomain,
                         feedClass = !string.IsNullOrWhiteSpace(a.feedClass) ? a.feedClass : string.Empty
-                    }
-                                                                                    ).GroupBy(h => h.HomeurlDomain)
-                                                                                        .Select(s => s.First()).ToList();
+                    }).GroupBy(h => h.HomeurlDomain)
+                        .Select(s => s.First()).ToList();
 
                     var displyUrlXml = new XElement("list",
                                             from SMResult smres in lstSMResults
@@ -2660,7 +2558,6 @@ namespace IQMedia.Web.Logic
                     List<IQCompeteAll> _ListOfIQ_CompeteAll = iqCompeteAllDA.GetArtileAdShareValueByClientGuidAndXml(clientGUID, Convert.ToString(displyUrlXml), CommonFunctions.MediaType.SM.ToString());
                     foreach (DiscoveryMediaResult discoveryMediaResult in lstDiscoveryMediaResult)
                     {
-                        //Uri aPublicationUri;
                         string href = discoveryMediaResult.Publication;
                         IQCompeteAll _IQCompeteAll = _ListOfIQ_CompeteAll.Find(a => a.CompeteURL.Equals(href));
 
@@ -2672,17 +2569,175 @@ namespace IQMedia.Web.Logic
                     }
                 }
 
-                Log4NetLogger.Debug("Task: SearchSocialMediaResult -- Result_Count :" + lstDiscoveryMediaResult.Count() + "_" + DateTime.Now);
+                Log4NetLogger.Debug("Task: SearchBlogResult -- Result_Count :" + lstDiscoveryMediaResult.Count() + "_" + DateTime.Now);
                 return lstDiscoveryMediaResult;
             }
             catch (Exception)
             {
                 throw;
             }
-
         }
 
-        public List<DiscoveryMediaResult> SearchProQuestResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string medium, bool isAsc, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, ProQuestAdvanceSearchSettings ProQuestSearchSettings)
+        public List<DiscoveryMediaResult> SearchForumResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, Guid clientGUID, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, ForumAdvanceSearchSettings forumSearchSettings)
+        {
+            string updatedSearchTerm = (forumSearchSettings == null || string.IsNullOrWhiteSpace(forumSearchSettings.SearchTerm)) ? searchTerm : forumSearchSettings.SearchTerm.Trim();
+            List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<DiscoveryMediaResult>();
+            try
+            {
+                Log4NetLogger.Debug("Task: SearchForumResult -- searchTerm :" + updatedSearchTerm);
+                System.Uri PMGSearchRequestUrl = new Uri(pmgSearchUrl);
+                SearchEngine searchEngine = new SearchEngine(PMGSearchRequestUrl);
+                SearchSMRequest searchSMRequest = new SearchSMRequest();
+                searchSMRequest.IsTitleNContentSearch = true;
+                searchSMRequest.IsReturnHighlight = true;
+                searchSMRequest.Facet = true;
+                searchSMRequest.FacetRangeOther = "all";
+
+                searchSMRequest.PageSize = p_PageSize;
+                if (isAsc)
+                {
+                    searchSMRequest.SortFields = "date";
+                }
+                else
+                {
+                    searchSMRequest.SortFields = "date-";
+                }
+
+                if (fromDate == null || toDate == null)
+                {
+                    searchSMRequest.StartDate = Convert.ToDateTime(DateTime.Now.AddMonths(-3).ToShortDateString());
+                    searchSMRequest.EndDate = Convert.ToDateTime(DateTime.Now.ToShortDateString()).AddHours(23).AddMinutes(59);
+                }
+                else
+                {
+                    searchSMRequest.StartDate = fromDate;
+                    searchSMRequest.EndDate = toDate;
+                }
+
+                //Criteria
+                searchSMRequest.SearchTerm = updatedSearchTerm;
+
+                if (forumSearchSettings != null)
+                {
+                    searchSMRequest.SocialMediaSources = forumSearchSettings.SourceList;
+                    searchSMRequest.Author = forumSearchSettings.Author;
+                    searchSMRequest.Title = forumSearchSettings.Title;
+                    searchSMRequest.SourceType = forumSearchSettings.SourceTypeList;
+                    searchSMRequest.ExcludeDomains = forumSearchSettings.ExcludeDomainList;
+                }
+                //End Criteria
+
+                searchSMRequest.IsTaggingExcluded = true;
+                if (searchSMRequest.SourceType == null || searchSMRequest.SourceType.Count == 0)
+                {
+                    searchSMRequest.SourceType = new List<string>() { CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) };
+                }
+                searchSMRequest.IsSentiment = true;
+
+                searchSMRequest.HighThreshold = p_IQClient_ThresholdValueModel.SMHighThreshold;
+                searchSMRequest.LowThreshold = p_IQClient_ThresholdValueModel.SMLowThreshold;
+
+                SearchSMResult searchSMResult = searchEngine.SearchSocialMedia(searchSMRequest, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
+
+                #region insert pmg log
+                string _Responce = string.Empty;
+                XmlDocument _XmlDocument = new XmlDocument();
+
+                _XmlDocument.LoadXml(searchSMResult.ResponseXml);
+
+                XmlNodeList _XmlNodeList = _XmlDocument.GetElementsByTagName("response");
+
+                if (_XmlNodeList.Count > 0)
+                {
+                    XmlAttributeCollection _XmlAttributeCollection = _XmlNodeList[0].Attributes;
+                    foreach (XmlAttribute item in _XmlAttributeCollection)
+                    {
+                        if (item.Name == "status")
+                        {
+                            _Responce = _XmlDocument.InnerXml;
+                            _Responce = _Responce.Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
+                        }
+                    }
+                }
+                else
+                {
+                    _Responce = null;
+                }
+
+                UtilityLogic.InsertPMGSearchLog(p_CustomerKey, searchSMRequest.SearchTerm, string.Empty, string.Empty, string.Empty, string.Empty, searchSMRequest.PageNumber, searchSMRequest.PageSize, 0, searchSMRequest.StartDate, searchSMRequest.EndDate, IQMedia.Shared.Utility.CommonFunctions.SearchType.Discovery_FO.ToString(), _Responce);
+
+                #endregion
+
+                int wordsBeforeSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsBeforeSpan"]);
+                int wordsAfterSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
+                string seprator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
+
+                if (searchSMResult != null && searchSMResult.smResults != null)
+                {
+                    foreach (SMResult smResult in searchSMResult.smResults)
+                    {
+                        DiscoveryMediaResult discoveryMediaResult = new DiscoveryMediaResult();
+                        discoveryMediaResult.Date = Convert.ToDateTime(smResult.itemHarvestDate_DT);
+                        discoveryMediaResult.Title = smResult.description;
+                        discoveryMediaResult.PositiveSentiment = smResult.Sentiments.PositiveSentiment;
+                        discoveryMediaResult.NegativeSentiment = smResult.Sentiments.NegativeSentiment;
+
+                        string body = string.Empty;
+                        if (smResult.Highlights != null && smResult.Highlights.Count > 0)
+                        {
+                            body = CommonFunctions.GetWordsAround(string.Join(" ", smResult.Highlights), "span", wordsBeforeSpan, wordsAfterSpan + 4, seprator);
+                        }
+
+                        discoveryMediaResult.Body = body;
+                        discoveryMediaResult.ArticleURL = smResult.link;
+                        discoveryMediaResult.Publication = smResult.HomeurlDomain;
+                        discoveryMediaResult.ArticleID = smResult.IQSeqID;
+                        discoveryMediaResult.TotalRecords = searchSMResult.TotalResults;
+                        discoveryMediaResult.IsValid = true;
+                        discoveryMediaResult.IncludeInResult = true;
+                        discoveryMediaResult.MediumType = subMediaType;
+                        discoveryMediaResult.SearchTerm = searchTerm;
+
+                        lstDiscoveryMediaResult.Add(discoveryMediaResult);
+                    }
+
+                    List<SMResult> lstSMResults = new List<SMResult>();
+
+                    lstSMResults = searchSMResult.smResults.Select(a => new SMResult()
+                    {
+                        HomeurlDomain = a.HomeurlDomain,
+                        feedClass = !string.IsNullOrWhiteSpace(a.feedClass) ? a.feedClass : string.Empty
+                    }).GroupBy(h => h.HomeurlDomain)
+                        .Select(s => s.First()).ToList();
+
+                    var displyUrlXml = new XElement("list",
+                                            from SMResult smres in lstSMResults
+                                            select new XElement("item", new XAttribute("url", smres.HomeurlDomain), new XAttribute("sourceCategory", GetFeedClass(smres.feedClass))));
+                    IQCompeteAllDA iqCompeteAllDA = (IQCompeteAllDA)DataAccessFactory.GetDataAccess(DataAccessType.IQCompeteAll);
+                    List<IQCompeteAll> _ListOfIQ_CompeteAll = iqCompeteAllDA.GetArtileAdShareValueByClientGuidAndXml(clientGUID, Convert.ToString(displyUrlXml), CommonFunctions.MediaType.SM.ToString());
+                    foreach (DiscoveryMediaResult discoveryMediaResult in lstDiscoveryMediaResult)
+                    {
+                        string href = discoveryMediaResult.Publication;
+                        IQCompeteAll _IQCompeteAll = _ListOfIQ_CompeteAll.Find(a => a.CompeteURL.Equals(href));
+
+                        discoveryMediaResult.Audience = _IQCompeteAll != null && _IQCompeteAll.c_uniq_visitor.HasValue && _IQCompeteAll.c_uniq_visitor.Value > 0 ? _IQCompeteAll.c_uniq_visitor : null;
+
+                        discoveryMediaResult.CompeteImage = (_IQCompeteAll.IsCompeteAll ? "<img src=\"../Images/compete.jpg\" style=\"width:14px\"  title=\"Powered by Compete\" />" : "");
+
+                        discoveryMediaResult.IQAdsharevalue = _IQCompeteAll != null && _IQCompeteAll.IQ_AdShare_Value.HasValue && _IQCompeteAll.IQ_AdShare_Value.Value > 0 ? _IQCompeteAll.IQ_AdShare_Value : null;
+                    }
+                }
+
+                Log4NetLogger.Debug("Task: SearchForumResult -- Result_Count :" + lstDiscoveryMediaResult.Count() + "_" + DateTime.Now);
+                return lstDiscoveryMediaResult;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<DiscoveryMediaResult> SearchProQuestResult(int p_CustomerKey, string searchTerm, DateTime? fromDate, DateTime? toDate, string subMediaType, bool isAsc, IQClient_ThresholdValueModel p_IQClient_ThresholdValueModel, Int32 p_PageSize, string pmgSearchUrl, ProQuestAdvanceSearchSettings ProQuestSearchSettings)
         {
             List<DiscoveryMediaResult> lstDiscoveryMediaResult = new List<Model.DiscoveryMediaResult>();
             try
@@ -2801,7 +2856,7 @@ namespace IQMedia.Web.Logic
                         discoveryMediaResult.NegativeSentiment = proQuestResult.Sentiments.NegativeSentiment;
                         discoveryMediaResult.TotalRecords = searchProQuestResult.TotalResults;
                         discoveryMediaResult.ArticleID = Convert.ToString(proQuestResult.IQSeqID);
-                        discoveryMediaResult.MediumType = CommonFunctions.CategoryType.PQ;
+                        discoveryMediaResult.MediumType = subMediaType;
                         discoveryMediaResult.SearchTerm = searchTerm;
                         discoveryMediaResult.IsValid = true;
                         discoveryMediaResult.IncludeInResult = true;
@@ -2963,7 +3018,7 @@ namespace IQMedia.Web.Logic
             }
             return dtr;
         }
-        public DiscoveryTopicsResponse GetSocialMediaTopics(string searchTerm, string medium, DateTime fromDate, DateTime toDate, string pmgSearchUrl, SociaMediaAdvanceSearchSettings smSettings, CancellationToken token, DiscoveryTopicsResponse dtr)
+        public DiscoveryTopicsResponse GetSocialMediaTopics(string searchTerm, string medium, DateTime fromDate, DateTime toDate, string pmgSearchUrl, ForumAdvanceSearchSettings smSettings, CancellationToken token, DiscoveryTopicsResponse dtr)
         {
             try
             {
@@ -3276,19 +3331,15 @@ namespace IQMedia.Web.Logic
                                               Date = Convert.ToDateTime(g.Key.Date).ToString("MM/dd/yyyy")
                                           }).Distinct().ToList();
 
-
-
-
                 return distinctDateFilter;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
 
-        public IEnumerable GetMediumFilter(List<DiscoverySearchResponse> lstDiscoverySearchResponse, List<DiscoverySearchResponse> lstDiscoveryFeedClass)
+        public IEnumerable GetMediumFilter(List<DiscoverySearchResponse> lstDiscoverySearchResponse, List<IQ_MediaTypeModel> lstMasterMediaTypes)
         {
             try
             {
@@ -3297,48 +3348,34 @@ namespace IQMedia.Web.Logic
                                                   from sr in lstDiscoverySearchResponse
                                                   from dc in sr.ListRecordData
                                                   select new { dc.TotalRecord, sr.MediumType }
-
                                               )
                                           where Convert.ToInt64(x.TotalRecord) > 0
-                                          && x.MediumType != "SocialMedia"
                                           group x by new { x.TotalRecord, x.MediumType } into g
                                           select new
                                           {
-                                              //Medium = CommonFunctions.GetEnumDescription(CommonFunctions.StringToEnum<CommonFunctions.CategoryType>(g.Key.MediumType)),
                                               Medium = g.Key.MediumType
                                           }).Distinct().ToList();
 
+                List<IQ_MediaTypeModel> lstSubMediaTypes = lstMasterMediaTypes.Where(w => distinctDateFilter.Exists(e => e.Medium.Equals(w.SubMediaType)) && w.TypeLevel == 2).ToList();
+                List<IQ_MediaTypeModel> lstMediaTypes = lstMasterMediaTypes.Where(w => lstSubMediaTypes.Exists(e => e.MediaType.Equals(w.MediaType)) && w.TypeLevel == 1).ToList();
 
-                if (lstDiscoveryFeedClass != null && lstDiscoveryFeedClass.Count > 0 && lstDiscoveryFeedClass.FirstOrDefault().ListRecordData.Count > 0)
+                List<MediaTypeFilterData> lstFilterData = lstMediaTypes.Select(s => new MediaTypeFilterData()
                 {
-                    var distinctFeedClass = (from x in
-                                                 (
-                                                     from sr in lstDiscoveryFeedClass
-                                                     from dc in sr.ListRecordData
-                                                     select new { dc.TotalRecord, dc.FeedClass }
+                    MediaType = s.MediaType,
+                    MediaTypeName = s.DisplayName,
+                    SortOrder = s.SortOrder,
+                    SubMediaTypeFilterData = !s.HasSubMediaTypes ? null : lstSubMediaTypes.Where(w => w.MediaType.Equals(s.MediaType)).Select(s1 => new SubMediaTypeFilterData()
+                    {
+                        SubMediaType = s1.SubMediaType,
+                        SubMediaTypeName = s1.DisplayName,
+                        SortOrder = s.SortOrder
+                    }).OrderBy(o => o.SortOrder).ToList()
+                }).OrderBy(o => o.SortOrder).ToList();
 
-                                                 )
-                                             where Convert.ToInt64(x.TotalRecord) > 0
-                                             group x by new { x.TotalRecord, x.FeedClass } into g
-                                             select new
-                                             {
-                                                 //Medium = GetFeedClass(g.Key.FeedClass),
-                                                 Medium = GetFeedClass(g.Key.FeedClass)
-                                             }).Distinct().ToList();
-
-                    distinctDateFilter.AddRange(distinctFeedClass);
-                }
-                //distinctDateFilter = distinctDateFilter.Distinct().ToList();
-                List<MediumFilterData> lstMediumFilterData = distinctDateFilter.Select(s => new MediumFilterData()
-                {
-                    Medium = s.Medium,
-                    MediumValue = CommonFunctions.GetEnumDescription(CommonFunctions.StringToEnum<CommonFunctions.CategoryType>(s.Medium.Replace(" ", string.Empty)))
-                }).ToList();
-                return lstMediumFilterData;
+                return lstFilterData;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

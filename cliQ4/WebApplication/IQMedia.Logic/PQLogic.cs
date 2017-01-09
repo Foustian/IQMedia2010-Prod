@@ -11,10 +11,10 @@ namespace IQMedia.Web.Logic
 {
     public class PQLogic : IQMedia.Web.Logic.Base.ILogic
     {
-        public string InsertArchivePQ(IQAgent_PQResultsModel iQAgent_PQResultsModel, Guid customerGUID, Guid clientGUID, Guid categoryGUID, string p_Keywords, string p_Description, Int64? mediaID = null)
+        public string InsertArchivePQ(IQAgent_PQResultsModel iQAgent_PQResultsModel, Guid customerGUID, Guid clientGUID, Guid categoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? mediaID = null)
         {
             PQDA pqDA = (PQDA)DataAccessFactory.GetDataAccess(DataAccessType.PQ);
-            return pqDA.InsertArchivePQ(iQAgent_PQResultsModel, customerGUID, clientGUID, categoryGUID, p_Keywords, p_Description, mediaID);
+            return pqDA.InsertArchivePQ(iQAgent_PQResultsModel, customerGUID, clientGUID, categoryGUID, p_Keywords, p_Description, p_MediaType, p_SubMediaType, mediaID);
         }
 
         public IQAgent_PQResultsModel SearchProQuestByArticleID(string articleID, string pmgurl, string searchTem = "", IQClient_ThresholdValueModel iQClient_ThresholdValueModel = null)

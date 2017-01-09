@@ -129,15 +129,20 @@
 @{
     
     IQMedia.Model.ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+    List<IQCommon.Model.IQ_MediaTypeModel> MasterMediaTypes = new List<IQCommon.Model.IQ_MediaTypeModel>();
+    if (Model != null && Model["MasterMediaTypes"] != null)
+    {
+        MasterMediaTypes = ((List<IQCommon.Model.IQ_MediaTypeModel>)Model["MasterMediaTypes"]).Where(w => w.TypeLevel == 2 && w.IsActiveDiscovery && w.HasAccess).ToList();
+    }
 }
 @*<script src="../../Scripts/Col2D1.js?v=1.0" type="text/javascript"></script>*@
 <script src="~/Scripts/highcharts.js?v=1.1" type="text/javascript"></script>
 <script src="~/Scripts/Discovery.js?v=4.7" type="text/javascript"></script>
-<script src="~/Scripts/ArticleScript.js?v=1.3" type="text/javascript"></script>
-<script type="text/javascript" src="~/Scripts/VideoPlayer.js?v=1.20"></script>
+<script src="~/Scripts/ArticleScript.js?v=1.4" type="text/javascript"></script>
+<script type="text/javascript" src="~/Scripts/VideoPlayer.js?v=1.23"></script>
 <link href="~/Css/video-player.css?v=1.3" rel="stylesheet" type="text/css" />
 <script src="~/Scripts/enscroll.js?v=1.0" type="text/javascript"></script>
-<script src="~/Scripts/chosen.jquery.js?v=1.0" type="text/javascript"></script>
+<script src="~/Scripts/chosen.jquery.js?v=1.1" type="text/javascript"></script>
 <link rel="stylesheet" href="~/Css/Chosen/chosen.css" />
 <link rel="Stylesheet" href="~/Css/Timeshift.css" />
 <style type="text/css">
@@ -192,10 +197,16 @@
             border-bottom:1px solid white;
         }
 </style>
+@if (ViewBag.IsSuccess)
+{
+    <script type="text/javascript">                
+        _MasterMediaTypes = [@Html.Raw(string.Join(", ", MasterMediaTypes.Select(s => "['" + s.MediaType + "','" + s.SubMediaType + "','" + s.DisplayName + "']").ToArray()))];
+    </script>
+}
 <div class="container container_custom">
     <div class="row-fluid" id="divRowFluid">
         @if (ViewBag.IsSuccess)
-        {
+        {            
             <div class="span3 minheight500 borderRight" id="divQuickFeedFinder">
                 <div class="well sidebar-nav">
                     <h5>
@@ -274,30 +285,10 @@
                                         </div>
                                 </ul>
                             </li>
-                            <li class="dropdown nmedium"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
-                                id="A1" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
-                                <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMedium">
-                                    @{                                
-                    List<IQMedia.Model.Category> listCategory = new List<IQMedia.Model.Category>();
-
-                    if (Model != null && Model.ContainsKey("FeedFilter") && Model["FeedFilter"] != null && Model["FeedFilter"].FilterListCategory != null)
-                    {
-
-                        listCategory = (List<IQMedia.Model.Category>)(Model["FeedFilter"].FilterListCategory);
-                    }
-                    if (listCategory != null && listCategory.Count > 0)
-                    {
-                        foreach (IQMedia.Model.Category item in listCategory)
-                        {
-                                                <li onclick="SetMedium('@item.Value');" role="presentation"><a href="#" tabindex="-1"
-                                                    role="menuitem">@item.Key</a></li>
-                        }
-                    }
-                    else
-                    {
-                                            <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
-                    }
-                                    }
+                            <li class="dropdown nmedium">
+                                <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="A1" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
+                                <ul aria-labelledby="drop2" role="menu" class="dropdown-menu multi-level sideMenu" id="ulMedium" style="overflow-y:visible;">
+                                    <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown custom-settings" onclick="OpenAdvanceSearchPopup()"><a data-toggle="dropdown"
@@ -364,23 +355,11 @@
                             </div>
                             <div id="divPieChartChks" class="float-left pieChartChks">
                                 <ul>
-                                    @if (sessionInformation.Isv4TV)
-                                    {
-                                        <li><input type="checkbox" id="chkTV" name="chkPieChartMedium" value="TV" checked="checked" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV)</li>
-                                    }
-                                    @if (sessionInformation.Isv4NM)
-                                    {
-                                        <li><input type="checkbox" id="chkNM" name="chkPieChartMedium" value="NM" checked="checked" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM)</li>
-                                    }
-                                    @if (sessionInformation.Isv4SM)
-                                    {
-                                        <li><input type="checkbox" id="chkBlog" name="chkPieChartMedium" value="Blog" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Blog)</li>
-                                        <li><input type="checkbox" id="chkForum" name="chkPieChartMedium" value="Forum" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Forum)</li>
-                                        <li><input type="checkbox" id="chkSocialMedia" name="chkPieChartMedium" value="SocialMedia" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.SocialMedia)</li>
-                                    }
-                                    @if (sessionInformation.Isv4PQ)
-                                    {
-                                        <li><input type="checkbox" id="chkPQ" name="chkPieChartMedium" value="PQ" checked="checked" />@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.PQ)</li>
+                                    @{
+                                        foreach (IQCommon.Model.IQ_MediaTypeModel objSubMediaType in MasterMediaTypes.OrderBy(o => o.SortOrder))
+                                        {
+                                            <li><input type="checkbox" id="chk@(objSubMediaType.SubMediaType)" name="chkPieChartMedium" value="@objSubMediaType.SubMediaType" checked="checked" />@objSubMediaType.DisplayName</li>
+                                        }
                                     }
                                 </ul>
                             </div>
@@ -462,27 +441,31 @@
                         <div id='divAdvanceSearchScrollContent'>
                             <div id="AdvancedSearchTabNote" class="AdvancedSearchTabNote"></div>
                             @{
-                                IQMedia.Model.DiscoveryAdvanceSearch_DropDown discoveryAdvanceSearch_DropDown = (IQMedia.Model.DiscoveryAdvanceSearch_DropDown)Model["AdvaceSearchDropDowns"];
+                            IQMedia.Model.DiscoveryAdvanceSearch_DropDown discoveryAdvanceSearch_DropDown = (IQMedia.Model.DiscoveryAdvanceSearch_DropDown)Model["AdvaceSearchDropDowns"];
 
-                                <!-- Only NM and PQ sections have Language filters, so this is only needed if those roles are active -->
-                                if (sessionInformation.Isv4NM || sessionInformation.Isv4PQ)
-                                {
+                                <!-- Only certain sections have Language filters, so this is only needed if those roles are active -->
+                            if (sessionInformation.Isv4NM || sessionInformation.Isv4PQ || sessionInformation.IsLN)
+                            {
                                     <div style="float:right; padding:20px 10px 10px;">
                                         <a href="javascript:void(0)" onclick="SetAdvancedSearchLanguage('English');">Click here</a>&nbsp; to set Language filters to English
                                     </div>
-                                }
+                            }
                             }
                             <div id="divAdvanceSearchTabs" style="clear: both;">
-	                            @{
-                            if (sessionInformation.Isv4TV)
-                            {                 
+                            @foreach (IQCommon.Model.IQ_MediaTypeModel objMediaType in sessionInformation.MediaTypes.Where(w => w.IsActiveDiscovery && w.TypeLevel == 2))
+                            {
+                                if (objMediaType.HasAccess)
+                                {
+                                    switch (objMediaType.SubMediaType)
+                                    {
+                                        case "TV":             
 			                            <div id="divTVSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(0);" style="margin-top: 15px;">
 				                            <div class="float-left">
 					                            <img alt="" id="imgShowHide" src="~/images/show.png">
-					                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.TV)
+					                            @objMediaType.DisplayName
 				                            </div>
 			                            </div>    
-			                            <div id="divTVTabContent" class="margin10" style="display: none;">
+			                            <div id="divTVTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
                                         	<div class="control-group" name="searchTermDIV">
 					                            <label class="control-label" for="txtSearchTerm_TV">Search Term</label>
 					                            <div class="controls">
@@ -593,18 +576,15 @@
 					                            </div>
 				                            </div>
 			                            </div>
-                            }
-	                            }
-	                            @{
-                            if (sessionInformation.Isv4NM)
-                            {
+                                  break;
+                                        case "NM":
 			                            <div id="divNMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(1);" style="margin-top: 15px;">
 				                            <div class="float-left">
 					                            <img alt="" id="imgShowHide" src="~/images/show.png">
-                                                @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.NM)
+                                                @objMediaType.DisplayName
 				                            </div>
 			                            </div> 
-			                            <div id="divOnlineNewsTabContent" class="margin10" style="display: none;">
+			                            <div id="divOnlineNewsTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
                                             <div class="control-group" name="searchTermDIV">
 					                            <label class="control-label" for="txtSearchTerm_NM">Search Term</label>
 					                            <div class="controls">
@@ -730,50 +710,88 @@
 					                            </div>
 				                            </div>
 			                            </div>      
-                            }
-	                            }
-	                            @{
-                            if (sessionInformation.Isv4SM)
-                            {
-			                            <div id="divSMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(2);" style="margin-top: 15px;">
+                                  break;
+                                        case "Blog":
+			                            <div id="divBLSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(2);" style="margin-top: 15px;">
 				                            <div class="float-left">
 					                            <img alt="" id="imgShowHide" src="~/images/show.png">
-					                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.SM)
+					                            @objMediaType.DisplayName
 				                            </div>
 			                            </div> 
-			                            <div id="divSocialMediaTabContent" class="margin10" style="display: none;">
+			                            <div id="divBLTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
 				                            <div class="control-group" name="searchTermDIV">
-					                            <label class="control-label" for="txtSearchTerm_SM">Search Term</label>
+					                            <label class="control-label" for="txtSearchTerm_BL">Search Term</label>
 					                            <div class="controls">
-						                            <input type="text" id="txtSearchTerm_SM" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Search Term" />
+						                            <input type="text" id="txtSearchTerm_BL" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Search Term" />
 					                            </div>
 				                            </div>
                                             <div class="control-group">
-					                            <label class="control-label" for="txtSource_SM">Source</label>
+					                            <label class="control-label" for="txtSource_BL">Source</label>
 					                            <div class="controls">
-						                            <input type="text" id="txtSource_SM" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Source (separate multiple sources with semicolon)" />
+						                            <input type="text" id="txtSource_BL" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Source (separate multiple sources with semicolon)" />
 					                            </div>
 				                            </div>
 				                            <div class="control-group">
-					                            <label class="control-label" for="txtAuthor_SM">Author</label>
+					                            <label class="control-label" for="txtAuthor_BL">Author</label>
 					                            <div class="controls">
-						                            <input type="text" id="txtAuthor_SM" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Author" />
+						                            <input type="text" id="txtAuthor_BL" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Author" />
 					                            </div>
 				                            </div>
 				                            <div class="control-group">
-					                            <label class="control-label" for="txtTitle_SM">Title</label>
+					                            <label class="control-label" for="txtTitle_BL">Title</label>
 					                            <div class="controls">
-						                            <input type="text" id="txtTitle_SM" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Title" />
+						                            <input type="text" id="txtTitle_BL" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Title" />
 					                            </div>
 				                            </div>
 				                            <div class="control-group">
-					                            <label class="control-label" for="ddlSourceType_SM">Source Type</label>
+					                            <label class="control-label" for="txtExcludeDomains_BL">Exclude Domains</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtExcludeDomains_BL" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+						                            <span class="help-inline" id="spanExcludeDomains_BL" style="color: #FF0000; display: none; vertical-align: top"></span>
+					                            </div>
+				                            </div>
+			                            </div>
+                            break;
+                                        case "Forum":
+			                            <div id="divFOSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(3);" style="margin-top: 15px;">
+				                            <div class="float-left">
+					                            <img alt="" id="imgShowHide" src="~/images/show.png">
+					                            @objMediaType.DisplayName
+				                            </div>
+			                            </div> 
+			                            <div id="divFOTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
+				                            <div class="control-group" name="searchTermDIV">
+					                            <label class="control-label" for="txtSearchTerm_FO">Search Term</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtSearchTerm_FO" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Search Term" />
+					                            </div>
+				                            </div>
+                                            <div class="control-group">
+					                            <label class="control-label" for="txtSource_FO">Source</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtSource_FO" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Source (separate multiple sources with semicolon)" />
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="txtAuthor_FO">Author</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtAuthor_FO" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Author" />
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="txtTitle_FO">Title</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtTitle_FO" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Title" />
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="ddlSourceType_FO">Source Type</label>
 					                            <div class="controls">
 						                            @if (discoveryAdvanceSearch_DropDown.SM_SourceTypeList != null)
                                   {
-							                            <select id="ddlSourceType_SM" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Source Type">
+							                            <select id="ddlSourceType_FO" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Source Type">
 								                            <option value="0" selected="selected">All</option>
-								                            @foreach (IQMedia.Model.IQAgentDropDown_SM_SourceType item in discoveryAdvanceSearch_DropDown.SM_SourceTypeList)
+								                            @foreach (IQMedia.Model.IQAgentDropDown_SM_SourceType item in discoveryAdvanceSearch_DropDown.SM_SourceTypeList.Where(w => w.Label == IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Forum) || w.Label == IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(PMGSearch.SourceType.Review)))
                                     {
 									                            <option value="@item.Label">@item.Label</option>
                                     }
@@ -782,24 +800,22 @@
 					                            </div>
 				                            </div>
 				                            <div class="control-group">
-					                            <label class="control-label" for="txtExcludeDomains_SM">Exclude Domains</label>
+					                            <label class="control-label" for="txtExcludeDomains_FO">Exclude Domains</label>
 					                            <div class="controls">
-						                            <input type="text" id="txtExcludeDomains_SM" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
-						                            <span class="help-inline" id="spanExcludeDomains_SM" style="color: #FF0000; display: none; vertical-align: top"></span>
+						                            <input type="text" id="txtExcludeDomains_FO" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+						                            <span class="help-inline" id="spanExcludeDomains_FO" style="color: #FF0000; display: none; vertical-align: top"></span>
 					                            </div>
 				                            </div>
 			                            </div>
-                            }
-	                            }
-	                            @{if (sessionInformation.Isv4PQ)
-                               {
+                                  break;
+                                        case "PQ":
 		                            <div id="divPQSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(4);" style="margin-top: 15px;">
 			                            <div class="float-left">
 				                            <img alt="" id="imgShowHide" src="~/images/show.png">
-				                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.PQ)
+				                            @objMediaType.DisplayName
 			                            </div>
 		                            </div> 
-		                            <div id="divProQuestTabContent" class="margin10" style="display: none;">
+		                            <div id="divProQuestTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
                                         <div class="control-group" name="searchTermDIV">
 					                        <label class="control-label" for="txtSearchTerm_PQ">Search Term</label>
 					                        <div class="controls">
@@ -834,8 +850,129 @@
 				                            </div>
 			                            </div>
 		                            </div>      
-                               }
-	                            }
+                                 break;
+                                        case "LN":
+			                            <div id="divLNSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(5);" style="margin-top: 15px;">
+				                            <div class="float-left">
+					                            <img alt="" id="imgShowHide" src="~/images/show.png">
+                                                @objMediaType.DisplayName
+				                            </div>
+			                            </div> 
+			                            <div id="divLNTabContent" name="advSearchTabContent" class="margin10" style="display: none;">
+                                            <div class="control-group" name="searchTermDIV">
+					                            <label class="control-label" for="txtSearchTerm_LN">Search Term</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtSearchTerm_LN" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Search Term" />
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="txtPublication_LN">Publication</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtPublication_LN" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Publication (separate multiple publications with semicolon)" />
+					                            </div>
+				                            </div>
+                                            <div class="control-group">
+					                            <label class="control-label" for="ddlCategory_LN">Category</label>
+					                            <div class="controls">
+                                                    @if (discoveryAdvanceSearch_DropDown.NM_CategoryList != null)
+                                                    {
+                                                        <select id="ddlCategory_LN" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Category">
+                                                            <option value="0" selected="selected">All</option>
+                                                            @foreach (IQMedia.Model.IQAgentDropDown_NM_Category item in discoveryAdvanceSearch_DropDown.NM_CategoryList)
+                                                            {
+                                                                <option value="@item.Label">@item.Label</option>
+                                                            }
+                                                        </select>
+                                                    }
+					                            </div>
+				                            </div>
+                                            <div class="control-group">
+					                            <label class="control-label" for="ddlPublicationCategory_LN">Publication Category</label>
+					                            <div class="controls">
+                                                    @if (discoveryAdvanceSearch_DropDown.NM_PublicationCategoryList != null)
+                                                    {
+                                                        <select id="ddlPublicationCategory_LN" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Publication Category">
+                                                            <option value="0" selected="selected">All</option>
+                                                            @foreach (IQMedia.Model.IQAgentDropDown_NM_PublicationCategory item in discoveryAdvanceSearch_DropDown.NM_PublicationCategoryList)
+                                                            {
+                                                                <option value="@item.ID">@item.Label</option>
+                                                            }
+                                                        </select>
+                                                    }
+					                            </div>
+				                            </div>
+                                            <div class="control-group">
+					                            <label class="control-label" for="ddlGenre_LN">Genre</label>
+					                            <div class="controls">
+                                                    @if (discoveryAdvanceSearch_DropDown.NM_GenreList != null)
+                                                    {
+                                                        <select id="ddlGenre_LN" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Genre">
+                                                            <option value="0" selected="selected">All</option>
+                                                            @foreach (IQMedia.Model.IQAgentDropDown_NM_Genere item in discoveryAdvanceSearch_DropDown.NM_GenreList)
+                                                            {
+                                                                <option value="@item.Label">@item.Label</option>
+                                                            }
+                                                        </select>
+                                                    }
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="ddlRegion_LN">Region</label>
+					                            <div class="controls">
+						                            @if (discoveryAdvanceSearch_DropDown.NM_RegionList != null)
+                                  {
+							                            <select id="ddlRegion_LN" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Region">
+								                            <option value="0" selected="selected">All</option>
+								                            @foreach (IQMedia.Model.IQAgentDropDown_NM_Region item in discoveryAdvanceSearch_DropDown.NM_RegionList)
+                                    {
+									                            <option value="@item.Label">@item.Label</option>
+                                    }
+							                            </select>
+                                  }
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="ddlCountry_LN">Country</label>
+					                            <div class="controls">
+						                            @if (discoveryAdvanceSearch_DropDown.CountryList != null)
+                                  {
+							                            <select id="ddlCountry_LN" name="ddlClearAdvSearch" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Country">
+								                            <option value="0" selected="selected">All</option>
+								                            @foreach (var item in discoveryAdvanceSearch_DropDown.CountryList)
+                                    {
+									                            <option value="@item.Value">@item.Key</option>
+                                    }
+							                            </select>
+                                  }
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="ddlLanguage_LN">Language</label>
+					                            <div class="controls">
+						                            @if (discoveryAdvanceSearch_DropDown.LanguageList != null)
+                                  {
+							                            <select id="ddlLanguage_LN" name="ddlAdvSearchLanguage" class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Language">
+								                            <option value="0" selected="selected">All</option>
+								                            @foreach (var item in discoveryAdvanceSearch_DropDown.LanguageList)
+                                    {
+									                            <option value="@item">@item</option>
+                                    }
+							                            </select>
+                                  }
+					                            </div>
+				                            </div>
+				                            <div class="control-group">
+					                            <label class="control-label" for="txtExcludeDomains_LN">Exclude Domains</label>
+					                            <div class="controls">
+						                            <input type="text" id="txtExcludeDomains_LN" name="txtClearAdvSearch" class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+						                            <span class="help-inline" id="spanExcludeDomains_LN" style="color: #FF0000; display: none; vertical-align: top"></span>
+					                            </div>
+				                            </div>
+			                            </div>      
+                                  break;
+                                    }
+                                }
+                            }
                             </div>
                         </div>
                     </div>

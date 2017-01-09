@@ -12,10 +12,10 @@ function SetSearchTermHits(result) {
     }
 }
 
-function SetPlayerChartContent(result) {
+function SetPlayerChartContent(result, type) {
     if (result.hasTAdsResults && result.tAdsResultsJson.length > 0) {
         $('.ads-chart-content').html('');
-        $('.ads-chart-content').append('<div class="float-left" id="ads-results" style="width:100%; padding-right:20px; padding-left:20px; background-color: #FFFFFF""></div>');
+
         numOfVisibleLogos = result.yAxisCompanies.length;
         yAxisInfoList = [];
         $.each(result.yAxisCompanies, function (index, value) {
@@ -29,6 +29,13 @@ function SetPlayerChartContent(result) {
             yAxisInfoList.push(yAxisInfo);
         });
         tAdsResultsJson = result.tAdsResultsJson;
+
+        var paddingLeft = type == "Feeds" ? 138 : 163;
+        var height = (numOfVisibleLogos * 30) + 90;
+        var chartWidth = $(".video-player-row-one").width() - 163;
+
+        $('.ads-chart-content').append('<div class="float-left" id="ads-results-container" style="width:' + chartWidth + 'px; padding-left:' + paddingLeft + 'px; background-color: #FFFFFF;"></div>');
+        $("#ads-results-container").append('<div id="ads-results" style="width:100%; height:' + height + 'px; margin:0 auto;"></div>');
 
         RenderHighCharts(result.tAdsResultsJson, 'ads-results');
     }
@@ -91,14 +98,14 @@ function FormatLRBrandLabel() {
             if (company.trim().substring(0, 9) == "IQ_CC_Key") {
                 display = "Ads";
             }
-            else if (company.trim().length > 12) {
-                display = company.trim().substring(0, 12) + "...";
+            else if (company.trim().length > 30) {
+                display = company.trim().substring(0, 30) + "...";
             }
             else {
                 display = company;
             }
 
-            label = '<div title="' + tooltip + '" style="width:100px; height:15px; font-size:12px; float:left;"><span style="font-weight:600; float:right; text-align:right; height:100%; width:100%;">' + display + '</span></div>';
+            label = '<div title="' + tooltip + '" style="width:200px; height:15px; font-size:12px; float:left;"><span style="font-weight:600; float:right; text-align:right; height:100%; width:100%;">' + display + '</span></div>';
         }
         else {
             label = '<div style="width:100px; height:15px;"></div>'

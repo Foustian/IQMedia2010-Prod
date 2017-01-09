@@ -1,7 +1,7 @@
 ﻿var globalMediaResultID = ''
 var msg = ''
 var inProgress = false;
-var globalMediaType = '';
+var globalSubMediaType = '';
 var globalSearchTerm = '';
 
 
@@ -420,7 +420,7 @@ function SaveArticleDiscovery() {
 
             categoryGuid: $('#ddlPCategory').val(),
             articleID: globalMediaResultID,
-            mediaType: globalMediaType,
+            subMediaType: globalSubMediaType,
             searchTem: globalSearchTerm,
             keywords: $('#txtPKeywords').val(),
             description: $('#txtPDescription').val()
@@ -542,14 +542,14 @@ function ShowSaveArticle(mediaResultID, elementID) {
     }
 }
 
-function ShowSaveArticleDiscovery(mediaResultID, elementID, mediaType, searchTerm) {
+function ShowSaveArticleDiscovery(mediaResultID, elementID, subMediaType, searchTerm) {
 
     if (inProgress) {
         //$('.saveMedia').tooltip('show');
     }
     else {
         globalMediaResultID = mediaResultID;
-        globalMediaType = mediaType;
+        globalSubMediaType = subMediaType;
         globalSearchTerm = searchTerm;
 
         var categoryOptions = '<option value="0">Select Category</option>';

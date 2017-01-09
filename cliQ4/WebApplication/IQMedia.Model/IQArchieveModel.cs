@@ -64,8 +64,13 @@ namespace IQMedia.Model
 
         public bool DisplayDescription { get; set; }
 
+        public string DataModelType { get; set; }
+
         // Holds the formatted text that is displayed for the item. Can be Description, Content, or HighlightingText.
         public string DisplayText { get; set; }
+
+        // USed to group items by submedia type
+        public string SubMediaTypeDesc { get; set; }
 
         // Used to group items by search agent
         public string AgentName { get; set; }
@@ -90,6 +95,10 @@ namespace IQMedia.Model
             get { return _Audience; }
             set { _Audience = value; }
         } long _Audience = -1;
+
+        // Store these at this level so they can be accessed in a generic manner
+        public Int64? National_Nielsen_Audience { get; set; }
+        public decimal? National_IQAdShareValue { get; set; }
 
         // Sorting reports by audience requires a secondary field
         public string SecondarySortField { get; set; }
@@ -223,12 +232,6 @@ namespace IQMedia.Model
     public class IQArchive_Filter
     {
         [DataMember]
-        public string SubMediaType { get; set; }
-
-        [DataMember]
-        public string SubMediaTypeDescription { get; set; }
-
-        [DataMember]
         public string CategoryGUID { get; set; }
 
         [DataMember]
@@ -258,10 +261,65 @@ namespace IQMedia.Model
     }
 
     [Serializable, DataContract]
+    public class IQArchive_MediaTypeFilter
+    {
+        [DataMember]
+        public string MediaType { get; set; }
+
+        [DataMember]
+        public string MediaTypeDesc { get; set; }
+
+        [DataMember]
+        public List<IQArchive_SubMediaTypeFilter> SubMediaTypes { get; set; }
+
+        [DataMember]
+        public long RecordCount { get; set; }
+
+        /// <summary>
+        /// Just returned formatted record count. i.e. 12,345 instead of 12345.
+        /// </summary>
+        [DataMember]
+        public string RecordCountFormatted
+        {
+            set { RecordCountFormatted = value; }
+            get
+            {
+                return string.Format("{0:n0}", RecordCount);
+            }
+        }
+    }
+
+    [Serializable, DataContract]
+    public class IQArchive_SubMediaTypeFilter
+    {
+        [DataMember]
+        public string SubMediaType { get; set; }
+
+        [DataMember]
+        public string SubMediaTypeDesc { get; set; }
+
+        [DataMember]
+        public long RecordCount { get; set; }
+
+        /// <summary>
+        /// Just returned formatted record count. i.e. 12,345 instead of 12345.
+        /// </summary>
+        [DataMember]
+        public string RecordCountFormatted
+        {
+            set { RecordCountFormatted = value; }
+            get
+            {
+                return string.Format("{0:n0}", RecordCount);
+            }
+        }
+    }
+
+    [Serializable, DataContract]
     public class IQArchive_FilterModel
     {
         [DataMember]
-        public List<IQArchive_Filter> SubMediaTypes { get; set; }
+        public List<IQArchive_MediaTypeFilter> MediaTypes { get; set; }
 
         [DataMember]
         public List<IQArchive_Filter> Customers { get; set; }

@@ -12,11 +12,9 @@ namespace IQMedia.Model
         public string Title { get; set; }
         public string SearchID { get; set; }
         public string SearchTerm { get; set; }
-        //public string SearchDate { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
-        public string Medium { get; set; }
-        public string MediumDesc { get; set; }
+        public List<string> Mediums { get; set; }
         public string TVMarket { get; set; }
         public string[] SearchTermArray { get; set; }
         public string[] SearchIDArray { get; set; }

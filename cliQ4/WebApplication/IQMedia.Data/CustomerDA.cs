@@ -596,6 +596,11 @@ namespace IQMedia.Data
                         objCustomerModel.CustomerKey = Convert.ToInt32(dr["CustomerKey"]);
                     }
 
+                    if (dataSet.Tables[0].Columns.Contains("AnewstipUserID") && !dr["AnewstipUserID"].Equals(DBNull.Value))
+                    {
+                        objCustomerModel.AnewstipUserID = Convert.ToString(dr["AnewstipUserID"]);
+                    }
+
                     if (dataSet.Tables[0].Columns.Contains("FirstName") && !dr["FirstName"].Equals(DBNull.Value))
                     {
                         objCustomerModel.FirstName = Convert.ToString(dr["FirstName"]);
@@ -614,7 +619,7 @@ namespace IQMedia.Data
                     if (dataSet.Tables[0].Columns.Contains("ContactNo") && !dr["ContactNo"].Equals(DBNull.Value))
                     {
                         objCustomerModel.ContactNo = Convert.ToString(dr["ContactNo"]);
-                    }                    
+                    }
 
                     if (dataSet.Tables[0].Columns.Contains("CustomerComment") && !dr["CustomerComment"].Equals(DBNull.Value))
                     {
@@ -664,7 +669,7 @@ namespace IQMedia.Data
                     objCustomerModel.CustomerRoles = new Dictionary<string, bool>();
                     foreach (DataColumn dc in dataSet.Tables[0].Columns)
                     {
-                        if (dc.ColumnName != "CustomerKey" && dc.ColumnName != "FirstName" && dc.ColumnName != "LastName"
+                        if (dc.ColumnName != "CustomerKey" && dc.ColumnName != "AnewstipUserID" && dc.ColumnName != "FirstName" && dc.ColumnName != "LastName"
                                && dc.ColumnName != "Email" && dc.ColumnName != "ContactNo" && dc.ColumnName != "IsActive"
                                && dc.ColumnName != "CustomerPassword" && dc.ColumnName != "CustomerComment" && dc.ColumnName != "ClientID"
                                && dc.ColumnName != "MultiLogin" && dc.ColumnName != "DefaultPage" && dc.ColumnName != "MasterCustomerID"
@@ -687,21 +692,21 @@ namespace IQMedia.Data
             dataTypeList.Add(new DataType("@LoginID", DbType.String, p_LoginID, ParameterDirection.Input));
 
             IDataReader reader = DataAccess.GetDataReader("usp_v4_Customer_SelectForAuthentication", dataTypeList);
-            
-            CustomerModel customer =null;
+
+            CustomerModel customer = null;
 
             while (reader.Read())
             {
                 customer = new CustomerModel();
 
-                customer.PasswordAttempts = reader["PasswordAttempts"]!=DBNull.Value?Convert.ToInt32(reader["PasswordAttempts"]):0;
+                customer.PasswordAttempts = reader["PasswordAttempts"] != DBNull.Value ? Convert.ToInt32(reader["PasswordAttempts"]) : 0;
                 customer.Password = Convert.ToString(reader["CustomerPassword"]);
             }
 
             return customer;
         }
 
-        public void UpdatePasswordAttempts(string p_LoginID,bool p_ResetPasswordAttempts)
+        public void UpdatePasswordAttempts(string p_LoginID, bool p_ResetPasswordAttempts)
         {
             List<DataType> dataTypeList = new List<DataType>();
             dataTypeList.Add(new DataType("@LoginID", DbType.String, p_LoginID, ParameterDirection.Input));
@@ -772,11 +777,11 @@ namespace IQMedia.Data
             List<DataType> dataTypeList = new List<DataType>();
             dataTypeList.Add(new DataType("@LoginID", DbType.String, p_LoginID, ParameterDirection.Input));
 
-             var ds=DataAccess.GetDataSet("usp_v4_Customer_ValidateLoginID_RsetPwd", dataTypeList);
+            var ds = DataAccess.GetDataSet("usp_v4_Customer_ValidateLoginID_RsetPwd", dataTypeList);
 
-             isValid = Convert.ToBoolean(ds.Tables[0].Rows[0]["ISValid"]);
-             rsetPwdEmailCount = Convert.ToInt16(ds.Tables[0].Rows[0]["RsetPwdEmailCount"]);
-             email = Convert.ToString(ds.Tables[0].Rows[0]["Email"]);
+            isValid = Convert.ToBoolean(ds.Tables[0].Rows[0]["ISValid"]);
+            rsetPwdEmailCount = Convert.ToInt16(ds.Tables[0].Rows[0]["RsetPwdEmailCount"]);
+            email = Convert.ToString(ds.Tables[0].Rows[0]["Email"]);
 
             return isValid;
         }
@@ -803,13 +808,13 @@ namespace IQMedia.Data
 
         public CustomerRsetPwdModel GetRsetPwd(string p_LoginID)
         {
-            CustomerRsetPwdModel custRsetPwd=null;
+            CustomerRsetPwdModel custRsetPwd = null;
 
             List<DataType> dataTypeList = new List<DataType>();
 
             dataTypeList.Add(new DataType("@LoginID", DbType.String, p_LoginID, ParameterDirection.Input));
 
-            var ds=DataAccess.GetDataSet("usp_v4_IQCustomer_RsetPwd_SelectByLoginID", dataTypeList);
+            var ds = DataAccess.GetDataSet("usp_v4_IQCustomer_RsetPwd_SelectByLoginID", dataTypeList);
 
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
@@ -843,6 +848,75 @@ namespace IQMedia.Data
             List<DataType> dataTypeList = new List<DataType>();
             dataTypeList.Add(new DataType("@CustomerKey", DbType.Int64, p_CustomerKey, ParameterDirection.Input));
             return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_Customer_ResetPasswordAttempts", dataTypeList));
+        }
+
+        public bool GroupAddSubCustomer(Int64 p_GrpID, Int64 p_MCID, Int64 p_SCID, Int64 p_MasterCustomerID, Int64 p_SubCustomerID, Guid p_CustomerGUID)
+        {
+            var output = false;
+
+            List<DataType> dtL = new List<DataType>();
+
+            dtL.Add(new DataType("@GroupID", DbType.Int64, p_GrpID, ParameterDirection.Input));
+            dtL.Add(new DataType("@MCID", DbType.Int64, p_MCID, ParameterDirection.Input));
+            dtL.Add(new DataType("@MasterCustomerID", DbType.Int64, p_MasterCustomerID, ParameterDirection.Input));
+            dtL.Add(new DataType("@SCID", DbType.Int64, p_SCID, ParameterDirection.Input));
+            dtL.Add(new DataType("@SubCustomerID", DbType.Int64, p_SubCustomerID, ParameterDirection.Input));
+            dtL.Add(new DataType("@CustomerGUID", DbType.Guid, p_CustomerGUID, ParameterDirection.Input));
+            dtL.Add(new DataType("@Output", DbType.Boolean, output, ParameterDirection.Output));
+
+            output = Convert.ToBoolean(DataAccess.ExecuteNonQuery("usp_V5_Group_Customer_AddSubCustomer", dtL));
+
+            return output;
+        }
+
+        public List<CustomerModel> GroupGetSubCustomerByCustomer(Int64 p_MasterCustomerID)
+        {
+            List<DataType> dtL = new List<DataType>();            
+
+            dtL.Add(new DataType("@MasterCustomerID", DbType.Int64, p_MasterCustomerID, ParameterDirection.Input));            
+
+            var ds = DataAccess.GetDataSet("usp_V5_Group_Customer_SelectSubCustomer", dtL);
+
+            List<CustomerModel> custList = new List<CustomerModel>();
+
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    CustomerModel cust = new CustomerModel();
+
+                    cust.CustomerKey = Convert.ToInt32(dr["CustomerKey"]);
+                    cust.FirstName = Convert.ToString(dr["FirstName"]);
+                    cust.LastName = Convert.ToString(dr["LastName"]);
+                    cust.ClientID = Convert.ToInt32(dr["ClientID"]);
+                    cust.LoginID = Convert.ToString(dr["LoginID"]);
+
+                    custList.Add(cust);
+                }
+            }
+
+            return custList;
+        }
+
+        public bool GroupRemoveSubCustomer(Int64 p_MasterCustomerID, Int64 p_SubCustomerID, Guid p_CustomerGUID)
+        {
+            List<DataType> dtL = new List<DataType>();
+
+            dtL.Add(new DataType("@MasterCustomerID", DbType.Int64, p_MasterCustomerID, ParameterDirection.Input));
+            dtL.Add(new DataType("@SubCustomerID", DbType.Int64, p_SubCustomerID, ParameterDirection.Input));
+            dtL.Add(new DataType("@CustomerGUID", DbType.Guid, p_CustomerGUID, ParameterDirection.Input));
+
+            var output = DataAccess.ExecuteNonQuery("usp_V5_Group_Customer_RemoveSubCustomer", dtL);
+
+            return true;
+        }
+
+        public void AddCustomerToAnewstip(long customerKey, string AnewstipUserID)
+        {
+            List<DataType> dataTypeList = new List<DataType>();
+            dataTypeList.Add(new DataType("@CustomerKey", DbType.Int64, customerKey, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@AnewstipUserID", DbType.String, AnewstipUserID, ParameterDirection.Input));
+            DataAccess.ExecuteNonQuery("usp_v5_Customer_AddToAnewstip", dataTypeList);
         }
     }
 }

@@ -57,12 +57,7 @@ namespace IQMedia.Web.Logic
             }
             else
             {
-                XDocument xdoc = new XDocument(new XElement("MediaTypeList",
-                                             from ele in Enum.GetValues(typeof(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType)).Cast<IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType>()
-                                             select new XElement("MediaType", ele)
-                                                     ));
-                strMediumTypeList = xdoc.ToString();
-
+                throw new ArgumentException("MediaTypeList cannot be empty.");
             }
 
             IQNotificationSettingsDA iQNotificationSettingsDA = (IQNotificationSettingsDA)DataAccessFactory.GetDataAccess(DataAccessType.IQNotification);
@@ -89,12 +84,7 @@ namespace IQMedia.Web.Logic
             }
             else
             {
-                XDocument xdoc = new XDocument(new XElement("MediaTypeList",
-                                             from ele in Enum.GetValues(typeof(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType)).Cast<IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType>()
-                                             select new XElement("MediaType", ele)
-                                                     ));
-                strMediumTypeList = xdoc.ToString();
-
+                throw new ArgumentException("MediaTypeList cannot be empty.");
             }
 
             IQNotificationSettingsDA iQNotificationSettingsDA = (IQNotificationSettingsDA)DataAccessFactory.GetDataAccess(DataAccessType.IQNotification);

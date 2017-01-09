@@ -64,7 +64,7 @@ namespace IQMedia.Data
                 //check if all industries are selected. If so insert specified string
                 string visibleIndustriesXML = "";
                 if (p_Client.visibleLRIndustries.Industries.Any(industry => industry.ID == "0")) { visibleIndustriesXML = "<VisibleLRIndustries IsAllowAll='true'></VisibleLRIndustries>"; }
-                else { visibleIndustriesXML = CommonFunctions.SerializeToXml(p_Client.visibleLRIndustries);}
+                else { visibleIndustriesXML = CommonFunctions.SerializeToXml(p_Client.visibleLRIndustries); }
 
                 _ListOfDataType.Add(new DataType("@visibleLRIndustries", DbType.String, visibleIndustriesXML, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@v4MaxDiscoveryReportItems", DbType.Int32, p_Client.v4MaxDiscoveryReportItems, ParameterDirection.Input));
@@ -130,11 +130,11 @@ namespace IQMedia.Data
                 p_NotificationStatus = 0;
                 p_IQAgentStatus = 0;
                 string _Result = string.Empty;
-                
+
                 string license = string.Join<Int16>(",", p_Client.IQLicense);
 
                 List<DataType> _ListOfDataType = new List<DataType>();
-                
+
                 _ListOfDataType.Add(new DataType("@ClientName", DbType.String, p_Client.ClientName, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@Active", DbType.Boolean, p_Client.IsActive, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@PricingCodeID", DbType.Int64, p_Client.PricingCodeID, ParameterDirection.Input));
@@ -737,6 +737,11 @@ namespace IQMedia.Data
                         objClientModel.ClientKey = Convert.ToInt64(dr["ClientKey"]);
                     }
 
+                    if (dataSet.Tables[0].Columns.Contains("AnewstipClientID") && !dr["AnewstipClientID"].Equals(DBNull.Value))
+                    {
+                        objClientModel.AnewstipClientID = Convert.ToInt64(dr["AnewstipClientID"]);
+                    }
+
                     if (dataSet.Tables[0].Columns.Contains("ClientName") && !dr["ClientName"].Equals(DBNull.Value))
                     {
                         objClientModel.ClientName = Convert.ToString(dr["ClientName"]);
@@ -875,7 +880,7 @@ namespace IQMedia.Data
                     {
                         objClientModel.visibleLRIndustries = new VisibleLRIndustries();
                         objClientModel.visibleLRIndustries.Industries = new List<IQ_Industry>();
-                        XDocument xDoc = XDocument.Parse((string)dr["visibleLRIndustries"]);     
+                        XDocument xDoc = XDocument.Parse((string)dr["visibleLRIndustries"]);
                         //check for attribute IsAllowAll and insert new industry of 'All'
                         if (xDoc.Element("VisibleLRIndustries").Attribute("IsAllowAll") != null && xDoc.Element("VisibleLRIndustries").Attribute("IsAllowAll").Value == "true")
                         {
@@ -886,12 +891,12 @@ namespace IQMedia.Data
                         }
                         else
                         {
-                            objClientModel.visibleLRIndustries = (VisibleLRIndustries)CommonFunctions.DeserialiazeXml((string)dr["visibleLRIndustries"], objClientModel.visibleLRIndustries);                                           
+                            objClientModel.visibleLRIndustries = (VisibleLRIndustries)CommonFunctions.DeserialiazeXml((string)dr["visibleLRIndustries"], objClientModel.visibleLRIndustries);
                         }
                     }
                     if (dataSet.Tables[0].Columns.Contains("v4MaxDiscoveryHistory") && !dr["v4MaxDiscoveryHistory"].Equals(DBNull.Value))
                     {
-                        objClientModel.v4MaxDiscoveryHistory = Convert.ToInt32(dr["v4MaxDiscoveryHistory"]);                                                                 
+                        objClientModel.v4MaxDiscoveryHistory = Convert.ToInt32(dr["v4MaxDiscoveryHistory"]);
                     }
 
                     if (dataSet.Tables[0].Columns.Contains("v4MaxFeedsExportItems") && !dr["v4MaxFeedsExportItems"].Equals(DBNull.Value))
@@ -1068,7 +1073,7 @@ namespace IQMedia.Data
                     objClientModel.ClientRoles = new Dictionary<string, bool>();
                     foreach (DataColumn dc in dataSet.Tables[0].Columns)
                     {
-                        if (dc.ColumnName != "ClientKey" && dc.ColumnName != "ClientName" && dc.ColumnName != "IsActive"
+                        if (dc.ColumnName != "ClientKey" && dc.ColumnName != "AnewstipClientID" && dc.ColumnName != "ClientName" && dc.ColumnName != "IsActive"
                             && dc.ColumnName != "Address1" && dc.ColumnName != "Address2" && dc.ColumnName != "Attention"
                             && dc.ColumnName != "City" && dc.ColumnName != "MasterClient" && dc.ColumnName != "MCID"
                             && dc.ColumnName != "NoOfUser" && dc.ColumnName != "Phone" && dc.ColumnName != "Zip"
@@ -1083,11 +1088,11 @@ namespace IQMedia.Data
                             && dc.ColumnName != "v4MaxLibraryReportItems" && dc.ColumnName != "TVHighThreshold" && dc.ColumnName != "TVLowThreshold"
                             && dc.ColumnName != "NMHighThreshold" && dc.ColumnName != "NMLowThreshold" && dc.ColumnName != "SMHighThreshold"
                             && dc.ColumnName != "SMLowThreshold" && dc.ColumnName != "TwitterHighThreshold" && dc.ColumnName != "TwitterLowThreshold"
-                            && dc.ColumnName != "PQHighThreshold" && dc.ColumnName != "PQLowThreshold" 
+                            && dc.ColumnName != "PQHighThreshold" && dc.ColumnName != "PQLowThreshold"
                             && dc.ColumnName != "IsFliq" && dc.ColumnName != "IQLicense" && dc.ColumnName != "v4MaxDiscoveryExportItems" && dc.ColumnName != "ForceCategorySelection"
                             && dc.ColumnName != "UseProminence" && dc.ColumnName != "MCMediaPublishedTemplateID" && dc.ColumnName != "MCMediaDefaultEmailTemplateID"
                             && dc.ColumnName != "IQRawMediaExpiration" && dc.ColumnName != "LibraryTextType" && dc.ColumnName != "DefaultFeedsPageSize"
-                            && dc.ColumnName != "DefaultDiscoveryPageSize" && dc.ColumnName != "DefaultArchivePageSize" && dc.ColumnName != "ClipEmbedAutoPlay" 
+                            && dc.ColumnName != "DefaultDiscoveryPageSize" && dc.ColumnName != "DefaultArchivePageSize" && dc.ColumnName != "ClipEmbedAutoPlay"
                             && dc.ColumnName != "DefaultFeedsShowUnread" && dc.ColumnName != "UseCustomerEmailDefault" && dc.ColumnName != "visibleLRIndustries" && dc.ColumnName != "v4MaxDiscoveryHistory"
                             )
                         {
@@ -1532,16 +1537,16 @@ namespace IQMedia.Data
                 if (dataSet != null && dataSet.Tables.Count > 10)
                 {
                     List<IQ_Industry> lstIQIndustry = new List<IQ_Industry>();
-                    foreach(DataRow dr in dataSet.Tables[10].Rows)
+                    foreach (DataRow dr in dataSet.Tables[10].Rows)
                     {
                         IQ_Industry industry = new IQ_Industry();
                         if (!dr["Name"].Equals(DBNull.Value))
                         {
                             industry.Name = Convert.ToString(dr["Name"]);
                         }
-                        if(!dr["ID"].Equals(DBNull.Value))
+                        if (!dr["ID"].Equals(DBNull.Value))
                         {
-                        industry.ID = Convert.ToString(dr["ID"]);
+                            industry.ID = Convert.ToString(dr["ID"]);
                         }
                         lstIQIndustry.Add(industry);
                     }
@@ -1612,7 +1617,7 @@ namespace IQMedia.Data
                                 break;
 
                             case "visibleLRIndustries":
-                            
+
                                 List<IQ_Industry> visibleLRIndustries = new List<IQ_Industry>();
                                 XDocument xDoc = XDocument.Parse(value);
                                 //check for attribute IsAllowAll and insert new industry of 'All'
@@ -1644,7 +1649,8 @@ namespace IQMedia.Data
                                 {
                                     objClientSettings.v4MaxDiscoveryHistory = Convert.ToInt32(value);
                                 }
-                                else {
+                                else
+                                {
                                     objDefaultSettings.v4MaxDiscoveryHistory = Convert.ToInt32(value);
                                 }
                                 break;
@@ -2100,6 +2106,7 @@ namespace IQMedia.Data
 
                 IQClient_UGCMapDropDowns objIQClient_UGCMapDropDowns = new IQClient_UGCMapDropDowns();
                 objIQClient_UGCMapDropDowns.Client_DropDown = new List<ClientModel>();
+                objIQClient_UGCMapDropDowns.TimeZone_DropDown = new List<IQTimeZone>();
 
                 if (dataSet != null && dataSet.Tables.Count > 0 && dataSet.Tables[0].Rows.Count > 0)
                 {
@@ -2118,10 +2125,24 @@ namespace IQMedia.Data
 
                         objIQClient_UGCMapDropDowns.Client_DropDown.Add(objClientModel);
                     }
+                    foreach (DataRow dr in dataSet.Tables[1].Rows)
+                    {
+                        IQTimeZone timezone = new IQTimeZone();
+                        if(dataSet.Tables[1].Columns.Contains("ID") && !dr["ID"].Equals(DBNull.Value))
+                        {
+                            timezone.ID = Convert.ToInt32(dr["ID"]);
+                        }
+                        if (dataSet.Tables[1].Columns.Contains("Code") && !dr["Code"].Equals(DBNull.Value))
+                        {
+                            timezone.Code = Convert.ToString(dr["Code"]);
+                        }
+                        if (dataSet.Tables[1].Columns.Contains("Name") && !dr["Name"].Equals(DBNull.Value))
+                        {
+                            timezone.Name = Convert.ToString(dr["Name"]);
+                        }
+                        objIQClient_UGCMapDropDowns.TimeZone_DropDown.Add(timezone);
+                    }
                 }
-
-
-
                 return objIQClient_UGCMapDropDowns;
             }
             catch (Exception ex)
@@ -2166,12 +2187,11 @@ namespace IQMedia.Data
                 List<DataType> _ListOfDataType = new List<DataType>();
 
                 _ListOfDataType.Add(new DataType("@ClientGuid", DbType.Guid, p_IQClient_UGCMapModel.ClientGuid, ParameterDirection.Input));
+                _ListOfDataType.Add(new DataType("@TimeZoneID", DbType.Int32, p_IQClient_UGCMapModel.TimeZoneID, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@AutoClip_Status", DbType.Boolean, p_IQClient_UGCMapModel.AutoClip_Status, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@SourceID", DbType.String, p_IQClient_UGCMapModel.SourceID, ParameterDirection.Input));
-                _ListOfDataType.Add(new DataType("@BroadcastLocation", DbType.String, p_IQClient_UGCMapModel.BroadcastLocation, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@BroadcastType", DbType.String, p_IQClient_UGCMapModel.BroadcastType, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@Logo", DbType.String, p_IQClient_UGCMapModel.Logo, ParameterDirection.Input));
-                _ListOfDataType.Add(new DataType("@RetentionDays", DbType.Int32, p_IQClient_UGCMapModel.RetentionDays, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@URL", DbType.String, p_IQClient_UGCMapModel.URL, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@Title", DbType.String, p_IQClient_UGCMapModel.Title, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@IQClient_UGCMapKey", DbType.Int64, 0, ParameterDirection.Output));
@@ -2199,13 +2219,12 @@ namespace IQMedia.Data
                 List<DataType> _ListOfDataType = new List<DataType>();
 
                 _ListOfDataType.Add(new DataType("@ClientGuid", DbType.Guid, p_IQClient_UGCMapModel.ClientGuid, ParameterDirection.Input));
+                _ListOfDataType.Add(new DataType("@TimeZoneID", DbType.Int32, p_IQClient_UGCMapModel.TimeZoneID, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@AutoClip_Status", DbType.Boolean, p_IQClient_UGCMapModel.AutoClip_Status, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@SourceID", DbType.String, p_IQClient_UGCMapModel.SourceID, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@SourceGuid", DbType.Guid, p_IQClient_UGCMapModel.SourceGUID, ParameterDirection.Input));
-                _ListOfDataType.Add(new DataType("@BroadcastLocation", DbType.String, p_IQClient_UGCMapModel.BroadcastLocation, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@BroadcastType", DbType.String, p_IQClient_UGCMapModel.BroadcastType, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@Logo", DbType.String, p_IQClient_UGCMapModel.Logo, ParameterDirection.Input));
-                _ListOfDataType.Add(new DataType("@RetentionDays", DbType.Int32, p_IQClient_UGCMapModel.RetentionDays, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@Title", DbType.String, p_IQClient_UGCMapModel.Title, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@URL", DbType.String, p_IQClient_UGCMapModel.URL, ParameterDirection.Input));
                 _ListOfDataType.Add(new DataType("@IQClient_UGCMapKey", DbType.Int64, p_IQClient_UGCMapModel.IQClient_UGCMapKey, ParameterDirection.Input));
@@ -2234,6 +2253,11 @@ namespace IQMedia.Data
                     if (dataSet.Tables[0].Columns.Contains("IQClient_UGCMapKey") && !dr["IQClient_UGCMapKey"].Equals(DBNull.Value))
                     {
                         objIQClient_UGCMapModel.IQClient_UGCMapKey = Convert.ToInt64(dr["IQClient_UGCMapKey"]);
+                    }
+
+                    if (dataSet.Tables[0].Columns.Contains("_TimezoneID") && !dr["_TimezoneID"].Equals(DBNull.Value))
+                    {
+                        objIQClient_UGCMapModel.TimeZoneID = Convert.ToInt32(dr["_TimezoneID"]);
                     }
 
                     if (dataSet.Tables[0].Columns.Contains("AutoClip_Status") && !dr["AutoClip_Status"].Equals(DBNull.Value))
@@ -2328,5 +2352,77 @@ namespace IQMedia.Data
             return result;
         }
 
+        public List<ClientModel> SelectAllActive()
+        {
+            List<DataType> dataTypeList = new List<DataType>();
+
+            DataSet dataset = DataAccess.GetDataSet("usp_v5_Client_SelectAllActive", dataTypeList);
+
+            List<ClientModel> lstClientModel = FillClientWithRole(dataset);
+
+            return lstClientModel;
+        }
+
+        public bool GroupAddSubClient(Int64 p_MCID, string p_SCXml, Guid p_CustomerGUID)
+        {
+            List<DataType> dtL = new List<DataType>();
+
+            dtL.Add(new DataType("@MCID", DbType.Int64, p_MCID, ParameterDirection.Input));
+            dtL.Add(new DataType("@SCXml", DbType.String, p_SCXml, ParameterDirection.Input));
+            dtL.Add(new DataType("@CustomerGUID", DbType.Guid, p_CustomerGUID, ParameterDirection.Input));
+
+            var output = DataAccess.ExecuteNonQuery("usp_V5_Group_Client_AddSubClient", dtL);            
+
+            return true;
+        }
+
+        public bool GroupRemoveSubClient(Int64 p_MCID, Int64 p_SCID, Guid p_CustomerGUID)
+        {
+            List<DataType> dtL = new List<DataType>();
+
+            dtL.Add(new DataType("@MCID", DbType.Int64, p_MCID, ParameterDirection.Input));
+            dtL.Add(new DataType("@SCID", DbType.Int64, p_SCID, ParameterDirection.Input));
+            dtL.Add(new DataType("@CustomerGUID", DbType.Guid, p_CustomerGUID, ParameterDirection.Input));
+
+            var output = DataAccess.ExecuteNonQuery("usp_V5_Group_Client_RemoveSubClient", dtL);
+
+            return true;
+        }
+
+        public List<CustomerModel> GroupGetCustomerByClient(Int64 p_ClientID, Int64? p_CustomerID)
+        {
+            List<DataType> dtL = new List<DataType>();
+
+            dtL.Add(new DataType("@CID", DbType.Int64, p_ClientID, ParameterDirection.Input));
+            dtL.Add(new DataType("@CustID", DbType.Int64, p_CustomerID, ParameterDirection.Input));
+
+            var ds = DataAccess.GetDataSet("usp_V5_Group_Customer_SelectByClient", dtL);
+
+            List<CustomerModel> custList = new List<CustomerModel>();
+
+            if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+            {
+                foreach (DataRow dr in ds.Tables[0].Rows)
+                {
+                    CustomerModel cust = new CustomerModel();
+
+                    cust.CustomerKey = Convert.ToInt32(dr["CustomerKey"]);
+                    cust.FirstName = Convert.ToString(dr["FirstName"]);
+                    cust.LastName = Convert.ToString(dr["LastName"]);
+
+                    custList.Add(cust);
+                }
+            }
+
+            return custList;
+        }
+
+        public void AddClientToAnewstip(long clientKey, long AnewstipClientID)
+        {
+            List<DataType> dataTypeList = new List<DataType>();
+            dataTypeList.Add(new DataType("@ClientKey", DbType.Int64, clientKey, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@AnewstipClientID", DbType.Int64, AnewstipClientID, ParameterDirection.Input));
+            DataAccess.ExecuteNonQuery("usp_v5_Client_AddToAnewstip", dataTypeList);
+        }
     }
 }

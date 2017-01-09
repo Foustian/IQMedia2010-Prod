@@ -14,7 +14,7 @@ namespace IQMedia.Web.Logic
         public Dictionary<string, object> GetSSPDataByClientGUID(Guid p_ClientGUID, out bool p_IsAllDmaAllowed, out bool p_IsAllClassAllowed, out bool p_IsAllStationAllowed, List<int> p_TVRegions, bool isTAds = false)
         {
             SSPDA ssPDA = new SSPDA();
-            
+
             List<string> listOfTAdsIQStationID = new List<string>();
             if (isTAds)
             {
@@ -23,7 +23,7 @@ namespace IQMedia.Web.Logic
             }
 
             Dictionary<string, object> dicSSP = ssPDA.GetSSPDataByClientGUID(p_ClientGUID, out p_IsAllDmaAllowed, out  p_IsAllClassAllowed, out p_IsAllStationAllowed, p_TVRegions, isTAds, listOfTAdsIQStationID);
-
+            dicSSP.Add("stations", listOfTAdsIQStationID);
 
             return dicSSP;
         }
@@ -60,12 +60,12 @@ namespace IQMedia.Web.Logic
             return dictResult;
         }
 
-        public Boolean GetSharing(string p_ClipID,HttpCookie p_AuthCookie=null)
+        public Boolean GetSharing(string p_ClipID, HttpCookie p_AuthCookie = null)
         {
             try
             {
                 Boolean IsSharing = false;
-                string url = ConfigurationManager.AppSettings["GetStationSharing"]+p_ClipID;
+                string url = ConfigurationManager.AppSettings["GetStationSharing"] + p_ClipID;
 
                 string respone = string.Empty;
                 if (p_AuthCookie != null)

@@ -67,7 +67,7 @@
 
 .f-signin
 {
-    width: 50%; background: #5A8EA1; height: 100%; float: left;    
+    width: 100%; background: #430089; height: 100%; float: left;    
 }
 
 .f-ressite
@@ -170,4 +170,31 @@
         padding-top:25px !important;
         padding-bottom:20px !important;
     }
+}
+.bottom-nav-soc li {
+    display: inline-block;
+    padding-right: 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.bottom-nav li {
+    display: inline-block;
+    padding-right: 35px;
+    font-size: 14px;
+    font-weight: 600;
+}
+a         
+{
+position: relative;    
+}
+a:hover
+{
+    color:#b2d235 !important;
+    }
+.bottom-nav a 
+{
+    font-family:'lato-regular';
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
 }

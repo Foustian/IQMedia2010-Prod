@@ -255,11 +255,7 @@ namespace IQMedia.Data
                     {
                         MediaTypeList lstOfMediaTypes = new MediaTypeList();
                         lstOfMediaTypes = (MediaTypeList)Shared.Utility.CommonFunctions.DeserialiazeXml(Convert.ToString(dr["MediaType"]), lstOfMediaTypes);
-                        objIQNotifationSettingsModel.MediaTypeList = lstOfMediaTypes.MediaType;
-                        if (Enum.GetValues(typeof(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType)).Cast<IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType>().Select(a => a.ToString()).ToList().Except(objIQNotifationSettingsModel.MediaTypeList).Count() <= 0)
-                        {
-                            objIQNotifationSettingsModel.MediaTypeList = null;
-                        }
+                        objIQNotifationSettingsModel.MediaTypeList = lstOfMediaTypes.MediaType;                        
                     }
 
                     if (dataset.Tables[0].Columns.Contains("IQAgentNames") && !dr["IQAgentNames"].Equals(DBNull.Value) && !string.IsNullOrWhiteSpace(Convert.ToString(dr["IQAgentNames"])))

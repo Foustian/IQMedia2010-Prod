@@ -1,5 +1,6 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 <div style="padding: 10px 0px 10px 0px;">
     @if (Model != null && Model["Report"] != null && Model["Report"].ReportDetails != null && Model["Report"].ArchiveResults != null)
     {
@@ -37,81 +38,66 @@
             }
         </style>
         ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
-        string mediaIconFormat = "../images/MediaIcon/{0}?v=1.3";
+        List<string> lstNielsenAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstNielsenMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstCompeteAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstCompeteMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstOtherAudienceTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstOtherMediaValueTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        
+        string logoVersion = "?v=1.3";
+        string mediaIconFormat = "../images/MediaIcon/{0}" + logoVersion;
         string Logo = System.Configuration.ConfigurationManager.AppSettings["UrlReportHeader"];
         Logo += sessionInformation.ClientGUID + "/" + report.ReportDetails._ReportImage;
-        string logoVersion = "?v=1.3";
-        List<IQArchive_ArchiveClipModel> lstIQArchive_ArchiveClipModel = (List<IQArchive_ArchiveClipModel>)report.ArchiveResults.Where(w => string.Compare(w.MediaType, "TV", true) == 0).Select(s => new IQArchive_ArchiveClipModel()
+
+        Int64 totalAudience = 0;
+        decimal totalMediaValue = 0;
+        Int64 totalNationalAudience = 0;
+        decimal totalNationalMediaValue = 0;
+        List<IQArchive_MediaModel> lstMediaResults;
+        
+        if (sessionInformation.IsNielsenData)
         {
-            ClipID = s.MediaData.ClipID,
-            ClosedCaption = s.MediaData.ClosedCaption,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Market = s.MediaData.Market,
-            Nielsen_Audience = s.MediaData.Nielsen_Audience == null ? 0 : s.MediaData.Nielsen_Audience,
-            Nielsen_Result = s.MediaData.Nielsen_Result,
-            StationLogo = s.MediaData.StationLogo,
-            National_Nielsen_Audience = s.MediaData.National_Nielsen_Audience,
-            National_IQAdShareValue = s.MediaData.National_IQAdShareValue
-        }).ToList();
+            lstMediaResults = report.ArchiveResults.Where(w => lstNielsenAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                totalNationalAudience += lstMediaResults.Sum(s => s.National_Nielsen_Audience.HasValue && s.National_Nielsen_Audience > 0 ? s.National_Nielsen_Audience.Value : 0);
+            }
 
-        List<IQArchive_ArchiveNMModel> lstIQArchive_ArchiveNMModel = (List<IQArchive_ArchiveNMModel>)report.ArchiveResults.Where(w => string.Compare(w.MediaType, "NM", true) == 0).Select(s => new IQArchive_ArchiveNMModel()
+            lstMediaResults = report.ArchiveResults.Where(w => lstNielsenMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+                totalNationalMediaValue += lstMediaResults.Sum(s => s.National_IQAdShareValue.HasValue && s.National_IQAdShareValue > 0 ? s.National_IQAdShareValue.Value : 0);
+            }
+        }
+        if (sessionInformation.IsCompeteData)
         {
-            Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-            Compete_Result = s.MediaData.Compete_Result,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Publication = s.MediaData.Publication,
-            Url = s.MediaData.Url
-        }).ToList();
+            lstMediaResults = report.ArchiveResults.Where(w => lstCompeteAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+            }
 
-        List<IQArchive_ArchiveSMModel> lstIQArchive_ArchiveSMModel = (List<IQArchive_ArchiveSMModel>)report.ArchiveResults.Where(w => string.Compare(w.SubMediaType.ToString(), "Blog", true) == 0).Select(s => new IQArchive_ArchiveSMModel()
+            lstMediaResults = report.ArchiveResults.Where(w => lstCompeteMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+            }
+        }
+
+        lstMediaResults = report.ArchiveResults.Where(w => lstOtherAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+        if (lstMediaResults.Count > 0)
         {
-            Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-            Compete_Result = s.MediaData.Compete_Result,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Publication = s.MediaData.Publication,
-            Url = s.MediaData.Url
-        }).ToList();
+            totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+        }
 
-        List<IQArchive_ArchiveTweetsModel> lstIQArchive_ArchiveTweetsModel = (List<IQArchive_ArchiveTweetsModel>)report.ArchiveResults.Where(w => string.Compare(w.MediaType, "TW", true) == 0).Select(s => new IQArchive_ArchiveTweetsModel()
+        lstMediaResults = report.ArchiveResults.Where(w => lstOtherMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+        if (lstMediaResults.Count > 0)
         {
-            ActorDisplayname = s.MediaData.ActorDisplayname,
-            ActorImage = s.MediaData.ActorImage,
-            FollowersCount = s.MediaData.FollowersCount,
-            FreiendsCount = s.MediaData.FreiendsCount,
-            KloutScore = s.MediaData.KloutScore,
-            PreferredUserName = s.MediaData.PreferredUserName
-        }).ToList();
-
-        List<IQArchive_ArchiveBLPMModel> lstIQArchive_ArchiveBLPMModel = (List<IQArchive_ArchiveBLPMModel>)report.ArchiveResults.Where(w => string.Compare(w.MediaType, "PM", true) == 0).Select(s => new IQArchive_ArchiveBLPMModel()
-        {
-            Circulation = s.MediaData.Circulation
-        }).ToList();
-
-        long TVNationalAudience = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_Nielsen_Audience.HasValue && sm.National_Nielsen_Audience > 0 ? Convert.ToInt64(sm.National_Nielsen_Audience.Value) : 0);
-        long TVAudience = lstIQArchive_ArchiveClipModel.Sum(sm => Convert.ToInt64(sm.Nielsen_Audience.Value));
-        long NMAudience = lstIQArchive_ArchiveNMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-        long SMAudience = lstIQArchive_ArchiveSMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-        long TWAudience = lstIQArchive_ArchiveTweetsModel.Sum(sm => Convert.ToInt64(sm.FollowersCount));
-        long PMAudience = lstIQArchive_ArchiveBLPMModel.Sum(sm => Convert.ToInt64(sm.Circulation));
-
-        decimal TVNationalValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_IQAdShareValue.HasValue && sm.National_IQAdShareValue > 0 ? sm.National_IQAdShareValue.Value : 0);
-        decimal TVValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.IQAdShareValue.Value);
-        decimal NMValue = lstIQArchive_ArchiveNMModel.Sum(sm => sm.IQAdShareValue.Value);
-        decimal SMValue = lstIQArchive_ArchiveSMModel.Sum(sm => sm.IQAdShareValue.Value);
-
-
-
-        Int64 totalAudience = (TVAudience < 0 || !sessionInformation.IsNielsenData ? 0 : TVAudience) +
-            (NMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : NMAudience) +
-            (SMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : SMAudience) +
-            (TWAudience < 0 ? 0 : TWAudience) +
-            (PMAudience < 0 ? 0 : PMAudience);
-
-
-        decimal totalMediaValue = (TVValue < 0 || !sessionInformation.IsNielsenData ? 0 : TVValue) +
-            (NMValue < 0 || !sessionInformation.IsCompeteData ? 0 : NMValue) +
-                (SMValue < 0 || !sessionInformation.IsCompeteData ? 0 : SMValue);
-        <!-- Generate Logo -->
+            totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+        }
         
         <input type="hidden" id="hdnReportID" value="@report.ReportDetails.ID" />
         
@@ -131,13 +117,13 @@
                 {
                     <div>
                         Total National Audience :
-                        @string.Format("{0:N0}", TVNationalAudience)
+                        @string.Format("{0:N0}", totalNationalAudience)
                     </div>
                 }
                 @if (report.ReportDetails.Settings.ShowTotalNationalMediaValue)
                 {
                     <div>
-                        National Media Value : $ @string.Format("{0:N2}", TVNationalValue)
+                        National Media Value : $ @string.Format("{0:N2}", totalNationalMediaValue)
                     </div>
                 }
                 @if (report.ReportDetails.Settings.ShowTotalAudience)
@@ -167,70 +153,17 @@
                     </div>
                     <div id="divOverviewChart"></div>
                 </div>
-                <div id="divTV" class="clear paddingtop15 displayNone">
+                @foreach (IQ_MediaTypeModel mediaType in sessionInformation.MediaTypes.Where(w => w.TypeLevel == 1))
+                {
+                    <div id="div@(mediaType.MediaType)" class="clear paddingtop15 displayNone">
                     <div class="dashboardHeaderMainDiv">
                         <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.TV)
+                            @mediaType.DisplayName
                         </div>
                     </div>
-                    <div id="divTVChart"></div>
+                    <div id="div@(mediaType.MediaType)Chart"></div>
                 </div>
-                <div id="divNM" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.NM)
-                        </div>
-                    </div>
-                    <div id="divNMChart"></div>
-                </div>
-                <div id="divBlog" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.Blog)
-                        </div>
-                    </div>
-                    <div id="divBlogChart"></div>
-                </div>
-                <div id="divForum" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.Forum)
-                        </div>
-                    </div>
-                    <div id="divForumChart"></div>
-                </div>
-                <div id="divSocialMedia" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.SocialMedia)
-                        </div>
-                    </div>
-                    <div id="divSocialMediaChart"></div>
-                </div>
-                <div id="divTW" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.TW)
-                        </div>
-                    </div>
-                    <div id="divTWChart"></div>
-                </div>
-                <div id="divPM" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.PM)
-                        </div>
-                    </div>
-                    <div id="divPMChart"></div>
-                </div>
-                <div id="divMS" class="clear paddingtop15 displayNone">
-                    <div class="dashboardHeaderMainDiv">
-                        <div class="pull-left dashboardHeader">
-                            @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.MS)
-                        </div>
-                    </div>
-                    <div id="divMSChart"></div>
-                </div>
+                }
             </div>
             @if (report.ReportDetails.Settings.ShowCoverageSources)
             {
@@ -320,6 +253,8 @@
                     
                                 @foreach (IQMedia.Model.IQArchive_MediaModel item in groupTier2.ArchiveResults)
                                 {
+                                    IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
+                                    
                                     string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
                                     string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
                                     string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
@@ -360,12 +295,6 @@
                                     if (!string.IsNullOrWhiteSpace(item.DisplayText))
                                     {
                                         displayText = item.DisplayText.Trim();
-
-                                        /*if (displayText.Length > 300)
-                                        {
-                                            displayText = displayText.Substring(0, 300);
-                                            displayText = System.Text.RegularExpressions.Regex.Replace(displayText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
-                                        }*/
                                     }
                                                                         
                                     switch (item.SubMediaType)
@@ -483,7 +412,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@TVModel.StationLogo" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" />
+                    <img src="@TVModel.StationLogo" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right FeedsVideoSpacer">
                     <div class="FeedsVideo positionRelative float-left">
@@ -675,7 +604,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportTW_@item.ID" value="@item.ID" style="display:none" />
@@ -765,6 +694,7 @@
 
                                             break;
                                         case CommonFunctions.CategoryType.NM:
+                                        case CommonFunctions.CategoryType.LN:
                                             IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
 
                                             if (newsMediaModel.Compete_Audience.HasValue && newsMediaModel.Compete_Audience > 0)
@@ -836,7 +766,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25onlinenews.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportNM_@item.ID" value="@item.ID" style="display:none"  />
@@ -977,7 +907,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25x25_publicationScanned.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportPM_@item.ID" value="@item.ID" style="display:none" />
@@ -1062,7 +992,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25social.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportSM_@item.ID" value="@item.ID"  style="display:none" />
@@ -1158,7 +1088,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25forum.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportForum_@item.ID" value="@item.ID" style="display:none" />
@@ -1298,7 +1228,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25blog.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportBlog_@item.ID" value="@item.ID" style="display:none" />
@@ -1394,8 +1324,6 @@
                                         case CommonFunctions.CategoryType.FB:
                                         case CommonFunctions.CategoryType.IG:
                                             IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
-                                            string imgName = item.SubMediaType == CommonFunctions.CategoryType.FB ? "25facebook.png" : "instagram.png";
-                                            string imgTooltip = item.SubMediaType == CommonFunctions.CategoryType.FB ? CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB) : CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.IG);
                                             string contentClass = item.SubMediaType == CommonFunctions.CategoryType.IG ? "ReportContentVideo" : "ReportContentNone";
                                             string videoSpacer = item.SubMediaType == CommonFunctions.CategoryType.IG ? "FeedsVideoSpacer" : string.Empty;
 
@@ -1472,7 +1400,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="~/images/MediaIcon/@imgName" title="@imgTooltip" alt="" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right @videoSpacer">
                     @if (item.SubMediaType == CommonFunctions.CategoryType.IG)
@@ -1602,7 +1530,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@string.Format(mediaIconFormat, "25x25_radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right FeedsVideoSpacer">
                     <div class="float-left FeedsVideo positionRelative">
@@ -1816,7 +1744,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25x25_publicationText.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right">
                     <input type="checkbox" id="chkReportPQ_@item.ID" value="@item.ID" style="display:none" />

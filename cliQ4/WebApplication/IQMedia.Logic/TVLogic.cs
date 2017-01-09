@@ -58,7 +58,7 @@ namespace IQMedia.Web.Logic
 
                     if (regNum != null)
                     {
-                        tvRequest.IncludeRegionsNum=new List<int>{regNum.Num};
+                        tvRequest.IncludeRegionsNum = new List<int> { regNum.Num };
                         isRegionValid = true;
                     }
                     else
@@ -85,7 +85,7 @@ namespace IQMedia.Web.Logic
 
                     if (couNum != null)
                     {
-                        tvRequest.CountryNums=new List<int>{p_CountryNum.Value};
+                        tvRequest.CountryNums = new List<int> { p_CountryNum.Value };
                         isCountryValid = true;
                     }
                     else
@@ -177,7 +177,7 @@ namespace IQMedia.Web.Logic
                 }
                 else if (!isallStationAllowed && dicSSP["IQ_Station"] != null && ((List<IQ_Station>)dicSSP["IQ_Station"]).ToList().Count > 0)
                 {
-                    tvRequest.Stations = ((List<IQ_Station>)dicSSP["IQ_Station"]).Select(s=>s.IQ_Station_ID).ToList();
+                    tvRequest.Stations = ((List<IQ_Station>)dicSSP["IQ_Station"]).Select(s => s.IQ_Station_ID).ToList();
                     isStationValid = true;
                 }
 
@@ -1167,12 +1167,18 @@ namespace IQMedia.Web.Logic
 
                 p_TotalResults = tvResult.TotalHitCount;
                 var listOfTVResult = new List<IQAgent_TVFullResultsModel>();
-                var logos = new List<string>();
-                var brands = new List<string>();
-                var companies = new List<string>();
-                var industries = new List<string>();
+
+                //begin creating facet/filter objects
+                var logos = new List<TadsLogo>();
+                var brands = new List<TadsBrand>();
+                var industries = new List<TadsIndustry>();
+
+                TadsFilterModel filters = new TadsFilterModel();
+                
                 var returnObject = new Dictionary<string, object>();
 
+
+                
                 if (tvResult != null && tvResult.TotalHitCount > 0)
                 {
                     XDocument xDoc = new XDocument(new XElement("list"));
@@ -1195,9 +1201,9 @@ namespace IQMedia.Web.Logic
 
                         //new TV fields
                         iqagent.AdStatus = hit.AdStatus;
-                        iqagent.LogoStatus = hit.LogoStatus; 
+                        iqagent.LogoStatus = hit.LogoStatus;
                         iqagent.PEStatus = hit.PEStatus;
-                        
+
                         iqagent.Ads = hit.Ads != null ? hit.Ads : new List<string>();
                         iqagent.Logos = hit.Logos != null ? hit.Logos : new List<string>();
 
@@ -1220,8 +1226,11 @@ namespace IQMedia.Web.Logic
                         }
                     }
 
+                    //rollup paid and earned
                     if (tvResult.Facets != null)
                     {
+
+                        filters = mapFacets(tvResult.Facets);
                         foreach (var facet in tvResult.Facets)
                         {
                             switch (p_PaidEarned.ToLower())
@@ -1229,51 +1238,241 @@ namespace IQMedia.Web.Logic
                                 case "paid":
                                     if (facet.Value != null && facet.Value.Any())
                                     {
-                                        if (facet.Key == "logospaid") logos.AddRange(facet.Value);
-                                        if (facet.Key == "brandspaid") brands.AddRange(facet.Value);
-                                        if (facet.Key == "companiespaid") companies.AddRange(facet.Value);
-                                        if (facet.Key == "industriespaid") industries.AddRange(facet.Value);
+                                        filters.TadsPaidEarned.Earned.Counts = 0;
+                                        if (facet.Key == "logospaid") logos.AddRange(filters.LogosPaid);
+                                        if (facet.Key == "brandspaid") brands.AddRange(filters.BrandsPaid);
+                                        if (facet.Key == "industriespaid") industries.AddRange(filters.IndustriesPaid);
                                     }
                                     break;
                                 case "earned":
                                     if (facet.Value != null && facet.Value.Any())
                                     {
-                                        if (facet.Key == "logosearned") logos.AddRange(facet.Value);
-                                        if (facet.Key == "brandsearned") brands.AddRange(facet.Value);
-                                        if (facet.Key == "companiesearned") companies.AddRange(facet.Value);
-                                        if (facet.Key == "industriesearned") industries.AddRange(facet.Value);
+                                        filters.TadsPaidEarned.Paid.Counts = 0;
+                                        if (facet.Key == "logosearned") logos.AddRange(filters.LogosEarned);
+                                        if (facet.Key == "brandsearned") brands.AddRange(filters.BrandsEarned);
+                                        if (facet.Key == "industriesearned") industries.AddRange(filters.IndustriesEarned);
                                     }
                                     break;
                                 default:
                                     if (facet.Value != null && facet.Value.Any())
                                     {
-                                        if (facet.Key == "logosearned" || facet.Key == "logospaid") logos.AddRange(facet.Value);
-                                        if (facet.Key == "brandsearned" || facet.Key == "brandspaid") brands.AddRange(facet.Value);
-                                        if (facet.Key == "companiesearned" || facet.Key == "companiespaid") companies.AddRange(facet.Value);
-                                        if (facet.Key == "industriesearned" || facet.Key == "industriespaid") industries.AddRange(facet.Value);
+                                        if (facet.Key == "logos") logos = filters.AllLogos;
+                                        if (facet.Key == "brandsearned") brands.AddRange(filters.BrandsEarned);
+                                        if (facet.Key == "brandspaid") brands.AddRange(filters.BrandsPaid);
+                                        if (facet.Key == "industriesearned")  industries.AddRange(filters.IndustriesEarned);
+                                        if (facet.Key == "industriespaid") industries.AddRange(filters.IndustriesPaid);
                                     }
                                     break;
                             }
                         }
+                      filters.AllLogos = logos;
+                      filters.AllBrands = brands.GroupBy(b => b.ID).Select(g => g.First()).ToList();
+                      filters.AllIndustries = industries.GroupBy(i => i.ID).Select(g => g.First()).ToList();
                     }
                 }
 
                 returnObject.Add("result", listOfTVResult);
-                returnObject.Add("logos", logos.Distinct());
-                returnObject.Add("brands", brands.Distinct());
-                returnObject.Add("companies", companies.Distinct());
-                returnObject.Add("industries", industries.Distinct());
+
+                returnObject.Add("filters", filters);
 
                 return returnObject;
             }
             catch (IQMedia.Shared.Utility.CustomException ex)
             {
+                Log4NetLogger.Error(ex);
                 throw ex;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+
+        public TadsFilterModel mapFacets(Dictionary<string, Dictionary<string,string>> facets) 
+        {
+            TadsFilterModel model = new TadsFilterModel();
+
+            List<TadsDma> dmaList = new List<TadsDma>();
+            List<TadsAffiliate> affiliateList = new List<TadsAffiliate>();
+            List<TadsCountry> countryList = new List<TadsCountry>();
+            List<TadsRegion> regionList = new List<TadsRegion>();
+            List<TadsStation> stationList = new List<TadsStation>();
+            List<TadsClass> classList = new List<TadsClass>();
+            List<TadsIndustry> indPaidList = new List<TadsIndustry>();
+            List<TadsIndustry> indEarnList = new List<TadsIndustry>();
+            List<TadsBrand> brandPaidList = new List<TadsBrand>();
+            List<TadsBrand> brandEarnList = new List<TadsBrand>();
+            List<TadsLogo> logoPaidList = new List<TadsLogo>();
+            List<TadsLogo> logoEarnList = new List<TadsLogo>();
+            List<TadsLogo> allLogoList = new List<TadsLogo>();
+            //all paid earned 
+            model.TadsPaidEarned = new PaidEarnedContainer();
+            model.TadsPaidEarned.Paid = new PaidEarnedObject();
+            model.TadsPaidEarned.Earned = new PaidEarnedObject();
+           
+                foreach (var hit in facets) 
+                {
+                    switch(hit.Key)
+                    {
+                        case "market":
+                            TadsDma nationalDma = new TadsDma();
+                            foreach (var element in hit.Value)
+                            {
+                                TadsDma tadsDma = new TadsDma();
+                                tadsDma.Name = element.Key;
+                                tadsDma.Counts = Convert.ToInt32(element.Value);
+                                dmaList.Add(tadsDma);
+                                if (tadsDma.Name == "National")
+                                {
+                                    nationalDma = tadsDma;
+                                }
+                            }
+                            if (nationalDma.Name != null)
+                            {
+                                dmaList.Remove(nationalDma);
+                                dmaList.Insert(0, nationalDma);
+                            }
+                                  
+                            break;
+                        case "affiliate":
+                            foreach(var element in hit.Value){
+                            TadsAffiliate tadsAffiliate = new TadsAffiliate();
+                            tadsAffiliate.Name = element.Key;
+                            tadsAffiliate.Counts = Convert.ToInt32(element.Value);
+                            affiliateList.Add(tadsAffiliate);
+                            }
+                            break;
+                        case "country_num":
+                            foreach(var element in hit.Value){
+                            TadsCountry tadsCountry = new TadsCountry();
+                            tadsCountry.ID = Convert.ToInt32(element.Key);
+                            tadsCountry.Counts = Convert.ToInt32(element.Value);
+                            countryList.Add(tadsCountry);
+                            }
+                            break;
+                        case "region_num":
+                            foreach(var element in hit.Value){
+                            TadsRegion tadsRegion = new TadsRegion();
+                            tadsRegion.ID = Convert.ToInt32(element.Key);
+                            tadsRegion.Counts = Convert.ToInt32(element.Value);
+                            regionList.Add(tadsRegion);
+                            }
+                            break;
+                        case "stationid":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsStation tadsStation = new TadsStation();
+                                tadsStation.ID = element.Key;
+                                tadsStation.Counts = Convert.ToInt32(element.Value);
+                                stationList.Add(tadsStation);
+                            }
+                            break;
+                        case "iq_class":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsClass tadsClass = new TadsClass();
+                                tadsClass.Name = element.Key;
+                                tadsClass.Counts = Convert.ToInt32(element.Value);
+                                classList.Add(tadsClass);
+                            }
+                            break;
+                        case "industriespaid":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsIndustry industriesPaid = new TadsIndustry();
+                                industriesPaid.ID = Convert.ToInt32(element.Key);
+                                industriesPaid.Counts = Convert.ToInt32(element.Value);
+                                indPaidList.Add(industriesPaid);
+                            }
+                            break;
+                        case "industriesearned":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsIndustry industriesEarned = new TadsIndustry();
+                                industriesEarned.ID = Convert.ToInt32(element.Key);
+                                industriesEarned.Counts = Convert.ToInt32(element.Value);
+                                indEarnList.Add(industriesEarned);
+                            }
+                            break;
+                        case "logospaid":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsLogo logoPaid = new TadsLogo();
+                                logoPaid.ID = Convert.ToInt32(element.Key);
+                                logoPaid.Counts = Convert.ToInt32(element.Value);
+                                logoPaidList.Add(logoPaid);
+                            }
+                            break;
+                        case "logosearned":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsLogo logoEarned = new TadsLogo();
+                                logoEarned.ID = Convert.ToInt32(element.Key);
+                                logoEarned.Counts = Convert.ToInt32(element.Value);
+                                logoEarnList.Add(logoEarned);
+                            }
+                            break;
+                        case "brandspaid":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsBrand brandPaid = new TadsBrand();
+                                brandPaid.ID = Convert.ToInt32(element.Key);
+                                brandPaid.Counts = Convert.ToInt32(element.Value);
+                                brandPaidList.Add(brandPaid);
+                            }
+                            break;
+                        case "brandsearned":
+                            foreach (var element in hit.Value)
+                            {
+                                TadsBrand brandEarned = new TadsBrand();
+                                brandEarned.ID = Convert.ToInt32(element.Key);
+                                brandEarned.Counts = Convert.ToInt32(element.Value);
+                                brandEarnList.Add(brandEarned);
+                            }
+                            break;
+                        case "logospaid:[* TO *]":
+                            foreach (var element in hit.Value)
+                            {
+                                model.TadsPaidEarned.Paid.Counts = Convert.ToInt32(element.Value);
+                            }
+                            break;
+                        case "logosearned:[* TO *]":
+                            foreach (var element in hit.Value)
+                            {
+                                model.TadsPaidEarned.Earned.Counts = Convert.ToInt32(element.Value);
+                            }
+                            break;
+                        case "logos":
+                            foreach(var element in hit.Value)
+                            {
+                                TadsLogo allLogos = new TadsLogo();
+                                allLogos.ID = Convert.ToInt32(element.Key);
+                                allLogos.Counts = Convert.ToInt32(element.Value);
+                                allLogoList.Add(allLogos);
+                            }
+                            break;
+                        default:
+                            break;
+                    }                   
+            }
+
+            model.TadsDmas = dmaList;
+            model.TadsAffiliates = affiliateList;
+            model.TadsCountries = countryList;
+            model.TadsRegions = regionList;
+            model.TadsStations = stationList;
+            model.TadsClasses = classList;
+            model.IndustriesPaid = indPaidList;
+            model.IndustriesEarned = indEarnList;
+            model.LogosPaid = logoPaidList;
+            model.LogosEarned = logoEarnList;
+            model.BrandsPaid = brandPaidList;
+            model.BrandsEarned = brandEarnList;
+            model.AllLogos = allLogoList;
+            
+
+            return model;
         }
 
         public IQAgent_TVFullResultsModel GetTadsResultByIQCCKey(string IQ_CC_Key, string pmgurl)
@@ -1418,7 +1617,7 @@ namespace IQMedia.Web.Logic
                         series.name = tuple.Item1;
                         series.data = yAxisData;
 
-                        lstSeriesTemp.Add(new Tuple<int, Series> (startHit, series));
+                        lstSeriesTemp.Add(new Tuple<int, Series>(startHit, series));
 
                         yAxis++;
                     }
@@ -1427,7 +1626,7 @@ namespace IQMedia.Web.Logic
                 if (sortByHitStart)
                 {
                     lstSeriesTemp.Sort((x, y) => y.Item1.CompareTo(x.Item1));
-                    
+
                     decimal? counterY = 1;
                     foreach (var entry in lstSeriesTemp.Select(x => x.Item2))
                     {
@@ -1435,7 +1634,7 @@ namespace IQMedia.Web.Logic
                         counterY++;
                     }
                 }
-                
+
                 lstSeries = lstSeriesTemp.Select(x => x.Item2).ToList();
                 yAxisCompanies = lstSeries.Select(x => x.name).ToList();
 
@@ -1560,6 +1759,24 @@ namespace IQMedia.Web.Logic
 
                 }
 
+                // There is a problem in some browsers where, if there is only 1 series, calling reflow() will cause the FormatLRBrandLabel function to skip that series, thus removing its y-axis label.
+                // The simplest solution was to create this additional series that will always be included. It displays a seek point at every second to enable skipping to any part of the video from the chart. 
+                // Only add this series if there is at least 1 other series.
+                if (lstSeries != null && lstSeries.Count > 0)
+                {
+                    yAxisData = Enumerable.Range(0, 3600).Select(s => new HighChartDatum() { y = yAxis, SearchName = "Time" }).ToList();
+                    yAxisCompanies.Add("Time");
+
+                    Series series4 = new Series();
+                    series4.name = "Time";
+                    series4.data = yAxisData;
+                    series4.color = "#f3f3f3";
+
+                    lstSeries.Add(series4);
+                    yAxis++;
+                }
+                
+
                 //Populate XAxis Data
                 for (int x = 0; x < numOfTicks; x++)
                 {
@@ -1583,7 +1800,7 @@ namespace IQMedia.Web.Logic
                 // set chart title and title style
                 highLineChartOutput.title = new Title()
                 {
-                    text = "Combined Data",
+                    text = "",
                     x = 0,
                     y = 10,
                     align = "left",
@@ -1611,7 +1828,7 @@ namespace IQMedia.Web.Logic
                         gridLineWidth = 0,
                         minorGridLineWidth = 0,
                         tickInterval = 1,
-                        max = yAxis
+                        max = yAxis - 1
                     }
                 };
 
@@ -1650,7 +1867,7 @@ namespace IQMedia.Web.Logic
 
                 // set chart with height and width
                 int numOfYAxisEntres = yAxis--;
-                highLineChartOutput.hChart = new HChart() { height = (numOfYAxisEntres * 30) + 90, zoomType = "x", width = 980, marginRight = 45 };
+                highLineChartOutput.hChart = new HChart() { zoomType = "x", marginRight = 84 };
 
                 // set plot options and click event for series points (which will again assigned in JS as this is string value)
                 // legendItemClick event to show / hide column chart series on line legend click

@@ -937,12 +937,5 @@ namespace IQMedia.Web.Logic
                 throw _Exception;
             }
         }
-
-        // When calling FeedsSearch, used to filter out IQAgents and individual Feeds records that have been queued for deletion but not yet processed in solr
-        public static Dictionary<string, List<string>> GetQueuedDeleteMediaResults(Guid clientGuid)
-        {
-            UtilityDA utilityDA = (UtilityDA)DataAccessFactory.GetDataAccess(DataAccessType.Utility);
-            return utilityDA.GetQueuedDeleteMediaResults(clientGuid);
-        }
     }
 }

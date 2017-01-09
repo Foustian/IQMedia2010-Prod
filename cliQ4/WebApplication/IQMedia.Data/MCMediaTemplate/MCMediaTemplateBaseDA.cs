@@ -55,9 +55,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -143,7 +151,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchiveClipModel.Dma_Num = Convert.ToString(dr["Dma_Num"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "TV";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveClipModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -180,9 +187,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -230,7 +245,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchiveBLPMModel.Pub_Name = Convert.ToString(dr["Pub_Name"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "PM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveBLPMModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -267,9 +281,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -348,7 +370,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchiveSMModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["ArticleStats"]), statsModel);
                 }
 
-                objIQArchive_MediaModel.MediaType = "SM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveSMModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -385,9 +406,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -462,7 +491,6 @@ namespace IQMedia.Data.MCMediaTemplate
                 }
 
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveNMModel;
-                objIQArchive_MediaModel.MediaType = "NM";
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
 
@@ -498,9 +526,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -582,7 +618,6 @@ namespace IQMedia.Data.MCMediaTemplate
                 }
 
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTweetsModel;
-                objIQArchive_MediaModel.MediaType = "TW";
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
 
@@ -618,9 +653,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -683,7 +726,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchiveTVEyesModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "TM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTVEyesModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -720,9 +762,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -769,7 +819,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchiveMiscModel.MediaUrl = Convert.ToString(dr["MediaUrl"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "MS";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveMiscModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -806,9 +855,17 @@ namespace IQMedia.Data.MCMediaTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
+                }
+                if (!dr["TableType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.DataModelType = Convert.ToString(dr["TableType"]);
                 }
                 if (!dr["Description"].Equals(DBNull.Value))
                 {
@@ -868,7 +925,6 @@ namespace IQMedia.Data.MCMediaTemplate
                     objIQArchive_ArchivePQModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "PQ";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchivePQModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -876,31 +932,71 @@ namespace IQMedia.Data.MCMediaTemplate
             return lstMediaResults;
         }
 
-        protected List<MCMediaReport_Filter> GetFilterResults(DataTable dt, string tableType)
+        protected void GetFilterResults(DataTable dt, string tableType, MCMediaReport_FilterModel filterModel)
         {
-            List<MCMediaReport_Filter> lstFilterResults = new List<MCMediaReport_Filter>();
-
             switch (tableType)
             {
                 case "SubMediaTypeFilter":
+                    filterModel.MediaTypes = new List<MCMediaReport_MediaTypeFilter>();
+                    Dictionary<string, MCMediaReport_MediaTypeFilter> dictMediaTypes = new Dictionary<string, MCMediaReport_MediaTypeFilter>();
                     foreach (DataRow dr in dt.Rows)
                     {
-                        MCMediaReport_Filter subMediaFilter = new MCMediaReport_Filter();
+                        string mediaType = String.Empty;
+                        string mediaTypeDesc = String.Empty;
+                        bool hasSubMediaTypes = false;
+                        string subMediaType = String.Empty;
+                        string subMediaTypeDesc = String.Empty;
+                        long subMediaTypeCount = 0;
 
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            mediaType = Convert.ToString(dr["MediaType"]);
+                        }
+                        if (!dr["MediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            mediaTypeDesc = Convert.ToString(dr["MediaTypeDesc"]);
+                        }
+                        if (!dr["HasSubMediaTypes"].Equals(DBNull.Value))
+                        {
+                            hasSubMediaTypes = Convert.ToBoolean(dr["HasSubMediaTypes"]);
+                        }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
-                            subMediaFilter.SubMediaType = Convert.ToString(dr["SubMediaType"]);
-                            subMediaFilter.SubMediaTypeDescription = CommonFunctions.GetEnumDescription((CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), subMediaFilter.SubMediaType));
+                            subMediaType = Convert.ToString(dr["SubMediaType"]);
                         }
-                        if (!dr["NumResults"].Equals(DBNull.Value))
+                        if (!dr["SubMediaTypeDesc"].Equals(DBNull.Value))
                         {
-                            subMediaFilter.RecordCount = Convert.ToInt64(dr["NumResults"]);
+                            subMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+                        if (!dr["SubMediaTypeCount"].Equals(DBNull.Value))
+                        {
+                            subMediaTypeCount = Convert.ToInt64(dr["SubMediaTypeCount"]);
                         }
 
-                        lstFilterResults.Add(subMediaFilter);
+                        if (!dictMediaTypes.ContainsKey(mediaType))
+                        {
+                            MCMediaReport_MediaTypeFilter newFilter = new MCMediaReport_MediaTypeFilter();
+                            newFilter.MediaType = mediaType;
+                            newFilter.MediaTypeDesc = mediaTypeDesc;
+                            newFilter.SubMediaTypes = new List<MCMediaReport_SubMediaTypeFilter>();
+
+                            dictMediaTypes.Add(mediaType, newFilter);
+                        }
+
+                        MCMediaReport_MediaTypeFilter mediaTypeFilter = dictMediaTypes[mediaType];
+                        mediaTypeFilter.RecordCount += subMediaTypeCount;
+                        mediaTypeFilter.SubMediaTypes.Add(new MCMediaReport_SubMediaTypeFilter()
+                        {
+                            SubMediaType = subMediaType,
+                            SubMediaTypeDesc = subMediaTypeDesc,
+                            RecordCount = subMediaTypeCount
+                        });
                     }
+
+                    filterModel.MediaTypes.AddRange(dictMediaTypes.Values);
                     break;
                 case "ClientFilter":
+                    filterModel.Clients = new List<MCMediaReport_Filter>();
                     foreach (DataRow dr in dt.Rows)
                     {
                         MCMediaReport_Filter clientFilter = new MCMediaReport_Filter();
@@ -918,10 +1014,11 @@ namespace IQMedia.Data.MCMediaTemplate
                             clientFilter.RecordCount = Convert.ToInt64(dr["NumResults"]);
                         }
 
-                        lstFilterResults.Add(clientFilter);
+                        filterModel.Clients.Add(clientFilter);
                     }
                     break;
                 case "CategoryFilter":
+                    filterModel.Categories = new List<MCMediaReport_Filter>();
                     foreach (DataRow dr in dt.Rows)
                     {
                         MCMediaReport_Filter categoryFilter = new MCMediaReport_Filter();
@@ -935,12 +1032,10 @@ namespace IQMedia.Data.MCMediaTemplate
                             categoryFilter.RecordCount = Convert.ToInt64(dr["NumResults"]);
                         }
 
-                        lstFilterResults.Add(categoryFilter);
+                        filterModel.Categories.Add(categoryFilter);
                     }
                     break;
             }
-
-            return lstFilterResults;
         }
 
         protected string GetClosedCaptionText(string string_XML)

@@ -34,6 +34,40 @@ namespace IQMedia.Data
             return radioStationList;
         }
 
+        public Dictionary<string,object> SelectRadioStationFilters()
+        {
+            List<DataType> dataTypeList = new List<DataType>();
+            DataSet dataSet = DataAccess.GetDataSet("usp_v4_IQ_Station_SelectRadioFilters", dataTypeList);
+
+            Dictionary<string,object> radioStationFilters = new Dictionary<string,object>();
+
+            if (dataSet != null && dataSet.Tables.Count > 1)
+            {
+                List<TadsDma> marketList = new List<TadsDma>();
+                List<TadsStation> stationList = new List<TadsStation>();
+                foreach (DataRow dr in dataSet.Tables[0].Rows)
+                {
+                    TadsDma dma = new TadsDma();
+
+                    dma.Name = Convert.ToString(dr["MarketName"]);
+                    dma.ID = Convert.ToString(dr["MarketId"]);
+                    marketList.Add(dma);
+                }
+                radioStationFilters.Add("Market", marketList);
+            
+                foreach (DataRow dr in dataSet.Tables[1].Rows)
+                {
+                     TadsStation stat = new TadsStation();
+
+                    stat.ID = Convert.ToString(dr["StationId"]);
+                    stat.Name = Convert.ToString(dr["StationName"]);
+                    stationList.Add(stat);
+                }
+                radioStationFilters.Add("Station", stationList);
+            }
+            return radioStationFilters;
+        }
+
         public List<RadioModel> SelectRadioResults(DateTime? FromDate, DateTime? ToDate, string Market, bool IsAsc, int PageNo, int PageSize, ref long SinceID, out long TotalResults)
         {
             try

@@ -99,7 +99,7 @@ namespace IQMedia.Data
             }
         }
 
-        public string InsertArchiveTVEyes(long mediaID, Guid customerGUID, Guid clientGUID, Guid categoryGUID, IQAgent_TVEyesResultsModel iqAgent_TVEyesResultsModel, string keywords, string description)
+        public string InsertArchiveTVEyes(long mediaID, Guid customerGUID, Guid clientGUID, Guid categoryGUID, IQAgent_TVEyesResultsModel iqAgent_TVEyesResultsModel, string keywords, string description, string p_MediaType, string p_SubMediaType)
         {
             try
             {
@@ -123,9 +123,11 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@TimeZone", DbType.String, iqAgent_TVEyesResultsModel.TimeZone, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Keywords", DbType.String, keywords, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Description", DbType.String, description, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaType", DbType.String, p_MediaType, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SubMediaType", DbType.String, p_SubMediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveKey, ParameterDirection.Output));
 
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_ArchiveTVEyes_Insert", dataTypeList);
+                string _Result = DataAccess.ExecuteNonQuery("usp_v5_ArchiveTVEyes_Insert", dataTypeList);
                 return _Result;
             }
             catch (Exception ex)

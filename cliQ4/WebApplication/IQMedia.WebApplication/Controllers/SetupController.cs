@@ -370,6 +370,9 @@ namespace IQMedia.WebApplication.Controllers
                 List<FBPageModel> lstFBPageModel = facebookLogic.GetFBPages().Distinct(new FBPageModelComparer()).ToList();
 
                 setupTempData = GetTempData();
+                if (setupTempData == null)
+                    setupTempData = new SetupTempData();
+
                 setupTempData.lstIQAgent_SearchRequestModel = lstIQAgentSearchRequest;
                 setupTempData.lstFBPageModel = lstFBPageModel;
                 SetTempData(setupTempData);
@@ -589,6 +592,9 @@ namespace IQMedia.WebApplication.Controllers
                     _SearchRequest.PMSpecified = (_SearchRequest.PM != null);
                     _SearchRequest.PQSpecified = (_SearchRequest.PQ != null);
                     _SearchRequest.LRSpecified = (_SearchRequest.LR != null);
+                    _SearchRequest.LexisNexisSpecified = (_SearchRequest.LexisNexis != null);
+                    _SearchRequest.BlogSpecified = (_SearchRequest.Blog != null);
+                    _SearchRequest.ForumSpecified = (_SearchRequest.Forum != null);
                 }
 
                 return Json(new
@@ -620,17 +626,15 @@ namespace IQMedia.WebApplication.Controllers
             {
                 string Message = string.Empty, IQAgentSearchRequestKey = string.Empty;
 
-                IQMedia.Model.IQAgentXML.SearchRequest _v5SearchRequest;
-                IQMedia.Model.IQAgentXML.SearchRequest _SearchRequest = FillSearchXML(objIQAgentSearchRequestPost, out _v5SearchRequest);
+                IQMedia.Model.IQAgentXML.SearchRequest _SearchRequest = FillSearchXML(objIQAgentSearchRequestPost);
                 string strIQAgentXML = IQMedia.Shared.Utility.CommonFunctions.SerializeToXml(_SearchRequest);
-                string strV5IQAgentXML = IQMedia.Shared.Utility.CommonFunctions.SerializeToXml(_v5SearchRequest);
 
                 IQAgentLogic iqAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
                 string result = string.Empty;
 
                 if (objIQAgentSearchRequestPost.hdnIQAgentSetupAddEditKey == 0)
                 {
-                    result = iqAgentLogic.InsertIQAgentSearchRequest(ClientGUID, objIQAgentSearchRequestPost.txtIQAgentSetupTitle.Trim(), strIQAgentXML, strV5IQAgentXML);
+                    result = iqAgentLogic.InsertIQAgentSearchRequest(ClientGUID, objIQAgentSearchRequestPost.txtIQAgentSetupTitle.Trim(), strIQAgentXML);
 
                     if (!string.IsNullOrWhiteSpace(result) && Convert.ToInt64(result) < 0)
                     {
@@ -653,7 +657,7 @@ namespace IQMedia.WebApplication.Controllers
                 }
                 else
                 {
-                    result = iqAgentLogic.UpdateIQAgentSearchRequest(ClientGUID, objIQAgentSearchRequestPost.hdnIQAgentSetupAddEditKey, objIQAgentSearchRequestPost.txtIQAgentSetupTitle.Trim(), strIQAgentXML, strV5IQAgentXML);
+                    result = iqAgentLogic.UpdateIQAgentSearchRequest(ClientGUID, objIQAgentSearchRequestPost.hdnIQAgentSetupAddEditKey, objIQAgentSearchRequestPost.txtIQAgentSetupTitle.Trim(), strIQAgentXML);
                     if (!string.IsNullOrWhiteSpace(result) && Convert.ToInt64(result) < 0)
                         Message = Config.ConfigSettings.Settings.IAgentQueryNameExist;
                     else
@@ -966,7 +970,7 @@ namespace IQMedia.WebApplication.Controllers
             finally { TempData.Keep(); }
         }
 
-        private Model.IQAgentXML.SearchRequest FillSearchXML(IQAgentSearchRequestPost objIQAgentSearchRequestPost, out IQMedia.Model.IQAgentXML.SearchRequest _v5SearchRequest)
+        private Model.IQAgentXML.SearchRequest FillSearchXML(IQAgentSearchRequestPost objIQAgentSearchRequestPost)
         {
             try
             {
@@ -978,32 +982,20 @@ namespace IQMedia.WebApplication.Controllers
                     IQAgentLogic iqAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
 
                     IQMedia.Model.IQAgentXML.SearchRequest _SearchRequest = new Model.IQAgentXML.SearchRequest();
-                    _SearchRequest.TV = new IQMedia.Model.IQAgentXML.TV();
+                    _SearchRequest.TV = new Model.IQAgentXML.TV();
                     _SearchRequest.News = new IQMedia.Model.IQAgentXML.News();
                     _SearchRequest.SocialMedia = new IQMedia.Model.IQAgentXML.SocialMedia();
+                    _SearchRequest.Blog = new Model.IQAgentXML.Blog();
+                    _SearchRequest.Forum = new Model.IQAgentXML.Forum();
                     _SearchRequest.Facebook = new Model.IQAgentXML.Facebook();
                     _SearchRequest.Instagram = new Model.IQAgentXML.Instagram();
                     _SearchRequest.Twitter = new IQMedia.Model.IQAgentXML.Twitter();
                     _SearchRequest.TM = new IQMedia.Model.IQAgentXML.TM();
                     _SearchRequest.PM = new Model.IQAgentXML.PM();
                     _SearchRequest.PQ = new Model.IQAgentXML.PQ();
+                    _SearchRequest.LexisNexis = new Model.IQAgentXML.LexisNexis();
                     _SearchRequest.LR = new Model.IQAgentXML.LR();
-
-                    // Create v5 agent xml to live side-by-side with v4 until v5 goes live
-                    _v5SearchRequest = new Model.IQAgentXML.SearchRequest();
-                    _v5SearchRequest.TV = new Model.IQAgentXML.TV();
-                    _v5SearchRequest.News = new IQMedia.Model.IQAgentXML.News();
-                    _v5SearchRequest.SocialMedia = new IQMedia.Model.IQAgentXML.SocialMedia();
-                    _v5SearchRequest.Blog = new Model.IQAgentXML.Blog();
-                    _v5SearchRequest.Forum = new Model.IQAgentXML.Forum();
-                    _v5SearchRequest.Facebook = new Model.IQAgentXML.Facebook();
-                    _v5SearchRequest.Instagram = new Model.IQAgentXML.Instagram();
-                    _v5SearchRequest.Twitter = new IQMedia.Model.IQAgentXML.Twitter();
-                    _v5SearchRequest.TM = new IQMedia.Model.IQAgentXML.TM();
-                    _v5SearchRequest.PM = new Model.IQAgentXML.PM();
-                    _v5SearchRequest.PQ = new Model.IQAgentXML.PQ();
-                    _v5SearchRequest.LexisNexis = new Model.IQAgentXML.LexisNexis();
-                    _v5SearchRequest.LR = new Model.IQAgentXML.LR();
+                    _SearchRequest.TM = new Model.IQAgentXML.TM();
 
                     // We need to query database for the all the dropdown values. To generate XML for few fields, we required "TextField" as well "ValueField".
                     // From Web page we will get only "ValueField" so we will fetch "TextField" from this request.
@@ -1012,7 +1004,6 @@ namespace IQMedia.WebApplication.Controllers
 
 
                     _SearchRequest.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm.Trim();
-                    _v5SearchRequest.SearchTerm = _SearchRequest.SearchTerm;
 
                     #region TV
 
@@ -1203,13 +1194,34 @@ namespace IQMedia.WebApplication.Controllers
                         }
                         #endregion
 
-                        _v5SearchRequest.TVSpecified = true;
-                        _v5SearchRequest.TV = _SearchRequest.TV;
+                        #region Exclude_IQ_Dma_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupExcludeDMA_TV != null && !(objIQAgentSearchRequestPost.ddlIQAgentSetupExcludeDMA_TV.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupExcludeDMA_TV[0].Trim(), ZERO, true) == 0))
+                        {
+                            _SearchRequest.TV.Exclude_IQ_Dma_Set.SelectionMethod = IQ_DMA_SET_REGION_ATTR;
+
+                            foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupExcludeDMA_TV)
+                            {
+                                IQ_Dma tvDMA = allDropDown.TV_DMAList.Where(dma => dma.Name == str).FirstOrDefault();
+                                if (tvDMA != null)
+                                {
+                                    _SearchRequest.TV.Exclude_IQ_Dma_Set.Exclude_IQ_Dma.Add(new Model.IQAgentXML.IQ_Dma() { num = tvDMA.Num, name = tvDMA.Name });
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region Exclude Zip Codes
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupExcludeZipCodes))
+                        {
+                            _SearchRequest.TV.ExcludeZipCodes = objIQAgentSearchRequestPost.txtIQAgentSetupExcludeZipCodes.Split(';').Select(a => a.Trim()).ToList();
+                        }
+                        #endregion
                     }
                     else
                     {
                         _SearchRequest.TVSpecified = false;
-                        _v5SearchRequest.TVSpecified = false;
                     }
                     #endregion
 
@@ -1388,26 +1400,10 @@ namespace IQMedia.WebApplication.Controllers
                         }
 
                         #endregion
-
-                        _v5SearchRequest.NewsSpecified = true;
-                        _v5SearchRequest.News = _SearchRequest.News;
-
-                        _v5SearchRequest.LexisNexisSpecified = true;
-                        _v5SearchRequest.LexisNexis.Publications = _SearchRequest.News.Publications;
-                        _v5SearchRequest.LexisNexis.SearchTerm = _SearchRequest.News.SearchTerm;
-                        _v5SearchRequest.LexisNexis.NewsCategory_Set = _SearchRequest.News.NewsCategory_Set;
-                        _v5SearchRequest.LexisNexis.PublicationCategory_Set = _SearchRequest.News.PublicationCategory_Set;
-                        _v5SearchRequest.LexisNexis.Genre_Set = _SearchRequest.News.Genre_Set;
-                        _v5SearchRequest.LexisNexis.Region_Set = _SearchRequest.News.Region_Set;
-                        _v5SearchRequest.LexisNexis.Language_Set = _SearchRequest.News.Language_Set;
-                        _v5SearchRequest.LexisNexis.Country_Set = _SearchRequest.News.Country_Set;
-                        _v5SearchRequest.LexisNexis.ExlcudeDomains = _SearchRequest.News.ExlcudeDomains;
                     }
                     else
                     {
                         _SearchRequest.NewsSpecified = false;
-                        _v5SearchRequest.NewsSpecified = false;
-                        _v5SearchRequest.LexisNexisSpecified = false;
                     }
 
                     #endregion
@@ -1470,31 +1466,10 @@ namespace IQMedia.WebApplication.Controllers
                         }
 
                         #endregion
-
-                        _v5SearchRequest.SocialMediaSpecified = true;
-                        _v5SearchRequest.SocialMedia = _SearchRequest.SocialMedia;
-
-                        _v5SearchRequest.BlogSpecified = true;
-                        _v5SearchRequest.Blog.Author = _SearchRequest.SocialMedia.Author;
-                        _v5SearchRequest.Blog.Title = _SearchRequest.SocialMedia.Title;
-                        _v5SearchRequest.Blog.Sources = _SearchRequest.SocialMedia.Sources;
-                        _v5SearchRequest.Blog.SearchTerm = _SearchRequest.SocialMedia.SearchTerm;
-                        _v5SearchRequest.Blog.ExlcudeDomains = _SearchRequest.SocialMedia.ExlcudeDomains;
-
-                        _v5SearchRequest.ForumSpecified = true;
-                        _v5SearchRequest.Forum.Author = _SearchRequest.SocialMedia.Author;
-                        _v5SearchRequest.Forum.Title = _SearchRequest.SocialMedia.Title;
-                        _v5SearchRequest.Forum.Sources = _SearchRequest.SocialMedia.Sources;
-                        _v5SearchRequest.Forum.SearchTerm = _SearchRequest.SocialMedia.SearchTerm;
-                        _v5SearchRequest.Forum.SourceType_Set = _SearchRequest.SocialMedia.SourceType_Set;
-                        _v5SearchRequest.Forum.ExlcudeDomains = _SearchRequest.SocialMedia.ExlcudeDomains;
                     }
                     else
                     {
                         _SearchRequest.SocialMediaSpecified = false;
-                        _v5SearchRequest.SocialMediaSpecified = false;
-                        _v5SearchRequest.BlogSpecified = false;
-                        _v5SearchRequest.ForumSpecified = false;
                     }
                     #endregion
 
@@ -1542,14 +1517,10 @@ namespace IQMedia.WebApplication.Controllers
                         {
                             _SearchRequest.Facebook.SearchTerm.IsUserMaster = false;
                         }
-
-                        _v5SearchRequest.FacebookSpecified = true;
-                        _v5SearchRequest.Facebook = _SearchRequest.Facebook;
                     }
                     else
                     {
                         _SearchRequest.FacebookSpecified = false;
-                        _v5SearchRequest.FacebookSpecified = false;
                     }
 
                     #endregion
@@ -1568,14 +1539,10 @@ namespace IQMedia.WebApplication.Controllers
                         _SearchRequest.Instagram.SearchTerm = new Model.IQAgentXML.MediumSearchTerm();
                         _SearchRequest.Instagram.SearchTerm.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_IG != null ? objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_IG.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_IG;
                         _SearchRequest.Instagram.SearchTerm.IsUserMaster = objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_IG != null && objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_IG == true;
-
-                        _v5SearchRequest.InstagramSpecified = true;
-                        _v5SearchRequest.Instagram = _SearchRequest.Instagram;
                     }
                     else
                     {
                         _SearchRequest.InstagramSpecified = false;
-                        _v5SearchRequest.InstagramSpecified = false;
                     }
 
                     #endregion
@@ -1586,49 +1553,14 @@ namespace IQMedia.WebApplication.Controllers
                     {
                         _SearchRequest.TwitterSpecified = true;
 
-                        _SearchRequest.Twitter.Actor = objIQAgentSearchRequestPost.txtIQAgentSetupActor_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupActor_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupActor_TW;
-
                         if (!string.IsNullOrWhiteSpace(objIQAgentSearchRequestPost.txtIQAgentSetupGnipTag_TW))
                         {
                             _SearchRequest.Twitter.GnipTagList = objIQAgentSearchRequestPost.txtIQAgentSetupGnipTag_TW.Trim().Split(';').Select(a => new Guid(a.Trim())).ToList();
                         }
-
-                        _SearchRequest.Twitter.SearchTerm = new Model.IQAgentXML.MediumSearchTerm();
-                        _SearchRequest.Twitter.SearchTerm.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_TW;
-                        if (objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_TW != null && objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_TW == true)
-                        {
-                            _SearchRequest.Twitter.SearchTerm.IsUserMaster = true;
-                        }
-                        else
-                        {
-                            _SearchRequest.Twitter.SearchTerm.IsUserMaster = false;
-                        }
-
-                        _SearchRequest.Twitter.ActorFollowersRange.From = objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_From_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_From_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_From_TW;
-                        _SearchRequest.Twitter.ActorFollowersRange.To = objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_To_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_To_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupFollowersCount_To_TW;
-
-                        _SearchRequest.Twitter.ActorFriendsRange.From = objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_From_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_From_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_From_TW;
-                        _SearchRequest.Twitter.ActorFriendsRange.To = objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_To_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_To_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupFriendsCount_To_TW;
-
-                        _SearchRequest.Twitter.KloutScoreRange.From = objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_From_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_From_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_From_TW;
-                        _SearchRequest.Twitter.KloutScoreRange.To = objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_To_TW != null ? objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_To_TW.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupKloutScore_To_TW;
-
-                        #region Exclude Handles
-
-                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupExcludeHandles_TW))
-                        {
-                            _SearchRequest.Twitter.ExclusionHandles = objIQAgentSearchRequestPost.txtIQAgentSetupExcludeHandles_TW.Split(';').Select(a => (a.Trim().IndexOf('@') == 0) ? a.Trim().Substring(1) : a.Trim()).ToList();
-                        }
-
-                        #endregion
-
-                        _v5SearchRequest.TwitterSpecified = true;
-                        _v5SearchRequest.Twitter = _SearchRequest.Twitter;
                     }
                     else
                     {
                         _SearchRequest.TwitterSpecified = false;
-                        _v5SearchRequest.TwitterSpecified = false;
                     }
                     #endregion
 
@@ -1681,13 +1613,9 @@ namespace IQMedia.WebApplication.Controllers
                         }
 
                         #endregion
-
-                        _v5SearchRequest.PQSpecified = true;
-                        _v5SearchRequest.PQ = _SearchRequest.PQ;
                     }
                     else
                     {
-                        _SearchRequest.PQSpecified = false;
                         _SearchRequest.PQSpecified = false;
                     }
                     #endregion
@@ -1699,23 +1627,332 @@ namespace IQMedia.WebApplication.Controllers
                         {
                             _SearchRequest.LRSpecified = true;
                             _SearchRequest.LR.SearchIDs = objIQAgentSearchRequestPost.txtIQAgentSetupSearchImageId_LR.Split(';').Select(a => a.Trim()).ToList();
-
-                            _v5SearchRequest.LRSpecified = true;
-                            _v5SearchRequest.LR = _SearchRequest.LR;
                         }
                         else
                         {
                             _SearchRequest.LRSpecified = false;
-                            _v5SearchRequest.LRSpecified = false;
                         }
                     }
+                    #endregion
+
+                    #region LexisNexis
+
+                    if (sessionInformation.IsLN && !string.IsNullOrEmpty(objIQAgentSearchRequestPost.chkIQAgentSetup_LN))
+                    {
+                        _SearchRequest.LexisNexisSpecified = true;
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupPublication_LN))
+                        {
+                            _SearchRequest.LexisNexis.Publications = objIQAgentSearchRequestPost.txtIQAgentSetupPublication_LN.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        _SearchRequest.LexisNexis.SearchTerm = new Model.IQAgentXML.MediumSearchTerm();
+
+                        _SearchRequest.LexisNexis.SearchTerm.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_LN != null ? objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_LN.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_LN;
+                        if (objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_LN != null && objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_LN == true)
+                        {
+                            _SearchRequest.LexisNexis.SearchTerm.IsUserMaster = true;
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.SearchTerm.IsUserMaster = false;
+                        }
+
+                        #region NewsCategory_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupCategory_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupCategory_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupCategory_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.NewsCategory_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.NewsCategory_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupCategory_LN)
+                                {
+                                    _SearchRequest.LexisNexis.NewsCategory_Set.NewsCategory.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.NewsCategory_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region PublicationCategory_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupPublicationCategory_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupPublicationCategory_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupPublicationCategory_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.PublicationCategory_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.PublicationCategory_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupPublicationCategory_LN)
+                                {
+                                    _SearchRequest.LexisNexis.PublicationCategory_Set.PublicationCategory.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.PublicationCategory_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Genre_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupGenere_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupGenere_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupGenere_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.Genre_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.Genre_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupGenere_LN)
+                                {
+                                    _SearchRequest.LexisNexis.Genre_Set.Genre.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.Genre_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Region_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupRegion_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupRegion_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupRegion_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.Region_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.Region_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupRegion_LN)
+                                {
+                                    _SearchRequest.LexisNexis.Region_Set.Region.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.Region_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Language_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupLanguage_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupLanguage_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupLanguage_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.Language_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.Language_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupLanguage_LN)
+                                {
+                                    _SearchRequest.LexisNexis.Language_Set.Language.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.Language_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Country_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupCountry_LN != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupCountry_LN.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupCountry_LN[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.LexisNexis.Country_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.LexisNexis.Country_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupCountry_LN)
+                                {
+                                    _SearchRequest.LexisNexis.Country_Set.Country.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.LexisNexis.Country_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Exclude Domains
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_LN))
+                        {
+                            _SearchRequest.LexisNexis.ExlcudeDomains = objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_LN.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        #endregion
+                    }
+                    else
+                    {
+                        _SearchRequest.LexisNexisSpecified = false;
+                    }
+
+                    #endregion
+
+                    #region Blog
+
+                    if (sessionInformation.IsFO && !string.IsNullOrEmpty(objIQAgentSearchRequestPost.chkIQAgentSetup_BL))
+                    {
+                        _SearchRequest.BlogSpecified = true;
+
+                        _SearchRequest.Blog.Author = objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_BL != null ? objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_BL.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_BL;
+                        _SearchRequest.Blog.Title = objIQAgentSearchRequestPost.txtIQAgentSetupTitle_BL != null ? objIQAgentSearchRequestPost.txtIQAgentSetupTitle_BL.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupTitle_BL;
+
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupSource_BL))
+                        {
+                            _SearchRequest.Blog.Sources = objIQAgentSearchRequestPost.txtIQAgentSetupSource_BL.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        _SearchRequest.Blog.SearchTerm = new Model.IQAgentXML.MediumSearchTerm();
+                        _SearchRequest.Blog.SearchTerm.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_BL != null ? objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_BL.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_BL;
+                        if (objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_BL != null && objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_BL == true)
+                        {
+                            _SearchRequest.Blog.SearchTerm.IsUserMaster = true;
+                        }
+                        else
+                        {
+                            _SearchRequest.Blog.SearchTerm.IsUserMaster = false;
+                        }
+
+                        #region Exclude Domains
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_BL))
+                        {
+                            _SearchRequest.Blog.ExlcudeDomains = objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_BL.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        #endregion
+                    }
+                    else
+                    {
+                        _SearchRequest.BlogSpecified = false;
+                    }
+                    #endregion
+
+                    #region Forum
+
+                    if (sessionInformation.IsFO && !string.IsNullOrEmpty(objIQAgentSearchRequestPost.chkIQAgentSetup_FO))
+                    {
+                        _SearchRequest.ForumSpecified = true;
+
+                        _SearchRequest.Forum.Author = objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_FO != null ? objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_FO.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupAuthor_FO;
+                        _SearchRequest.Forum.Title = objIQAgentSearchRequestPost.txtIQAgentSetupTitle_FO != null ? objIQAgentSearchRequestPost.txtIQAgentSetupTitle_FO.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupTitle_FO;
+
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupSource_FO))
+                        {
+                            _SearchRequest.Forum.Sources = objIQAgentSearchRequestPost.txtIQAgentSetupSource_FO.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        _SearchRequest.Forum.SearchTerm = new Model.IQAgentXML.MediumSearchTerm();
+                        _SearchRequest.Forum.SearchTerm.SearchTerm = objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_FO != null ? objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_FO.Trim() : objIQAgentSearchRequestPost.txtIQAgentSetupSearchTerm_FO;
+                        if (objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_FO != null && objIQAgentSearchRequestPost.chkIQAgentSetupUserMasterSearchTerm_FO == true)
+                        {
+                            _SearchRequest.Forum.SearchTerm.IsUserMaster = true;
+                        }
+                        else
+                        {
+                            _SearchRequest.Forum.SearchTerm.IsUserMaster = false;
+                        }
+
+                        #region SourceType_Set
+
+                        if (objIQAgentSearchRequestPost.ddlIQAgentSetupSourceType_FO != null)
+                        {
+                            if (objIQAgentSearchRequestPost.ddlIQAgentSetupSourceType_FO.Count == 1 && string.Compare(objIQAgentSearchRequestPost.ddlIQAgentSetupSourceType_FO[0], ZERO, true) == 0)
+                            {
+                                _SearchRequest.Forum.SourceType_Set.IsAllowAll = true;
+                            }
+                            else
+                            {
+                                _SearchRequest.Forum.SourceType_Set.IsAllowAll = false;
+                                foreach (string str in objIQAgentSearchRequestPost.ddlIQAgentSetupSourceType_FO)
+                                {
+                                    _SearchRequest.Forum.SourceType_Set.SourceType.Add(str);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _SearchRequest.Forum.SourceType_Set.IsAllowAll = true;
+                        }
+
+                        #endregion
+
+                        #region Exclude Domains
+
+                        if (!string.IsNullOrEmpty(objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_FO))
+                        {
+                            _SearchRequest.Forum.ExlcudeDomains = objIQAgentSearchRequestPost.txtIQAgentSetupExcludeDomains_FO.Split(';').Select(a => a.Trim()).ToList();
+                        }
+
+                        #endregion
+                    }
+                    else
+                    {
+                        _SearchRequest.ForumSpecified = false;
+                    }
+                    #endregion
+
+                    #region TVEyes Radio
+
+                    if (sessionInformation.Isv4TM && !string.IsNullOrEmpty(objIQAgentSearchRequestPost.chkIQAgentSetup_TM))
+                    {
+                        _SearchRequest.TMSpecified = true;
+
+                        if (objIQAgentSearchRequestPost.hdnIQAgentSetupTVEyesSettingsKey != "0")
+                        {
+                            _SearchRequest.TM.TVEyesSettingsKey = objIQAgentSearchRequestPost.hdnIQAgentSetupTVEyesSettingsKey;
+                        }
+
+                        Guid tempGuid;
+                        _SearchRequest.TM.TVEyesSearchGUID = ""; // Create node even if it's empty
+                        if (!string.IsNullOrWhiteSpace(objIQAgentSearchRequestPost.txtIQAgentSetupTVEyesSearchGUID_TM) && Guid.TryParse(objIQAgentSearchRequestPost.txtIQAgentSetupTVEyesSearchGUID_TM, out tempGuid))
+                        {
+                            _SearchRequest.TM.TVEyesSearchGUID = objIQAgentSearchRequestPost.txtIQAgentSetupTVEyesSearchGUID_TM;
+                        }
+                    }
+                    else
+                    {
+                        _SearchRequest.TMSpecified = false;
+                    }
+
                     #endregion
 
                     return _SearchRequest;
                 }
                 else
                 {
-                    _v5SearchRequest = null;
                     return null;
                 }
             }
@@ -1952,6 +2189,8 @@ namespace IQMedia.WebApplication.Controllers
 
                 ActiveUser sessionInformation = ActiveUserMgr.GetActiveUser();
                 setupTempData = GetTempData();
+                if (setupTempData == null)
+                    setupTempData = new SetupTempData();
 
                 if (p_IsNext != null)
                 {
@@ -2734,6 +2973,190 @@ namespace IQMedia.WebApplication.Controllers
                 TempData.Keep();
             }
         }
+
+        #endregion
+
+        #region External Rule Setup
+
+        [HttpPost]
+        public JsonResult DeleteExternalRules(long searchRequestID, Guid? trackGuid, long? tvEyesSettingsKey)
+        {
+            try
+            {
+                int success = 1;
+                IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+
+                if (trackGuid.HasValue)
+                {
+                    success = iQAgentLogic.DeleteTwitterRule(trackGuid.Value);
+                }
+                if (success == 1 && tvEyesSettingsKey.HasValue)
+                {
+                    success = iQAgentLogic.DeleteTVEyesRule(tvEyesSettingsKey.Value);
+                }
+
+                return Json(new
+                {
+                    isSuccess = success == 1
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+
+        #region Twitter
+
+        [HttpPost]
+        public JsonResult GetTwitterRule(Guid trackGuid)
+        {
+            try
+            {
+                IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+                string twitterRule = iQAgentLogic.GetTwitterRuleByTrackGUID(trackGuid);
+
+                List<string> lstRules = new List<string>();
+                if (!String.IsNullOrEmpty(twitterRule))
+                {
+                    XDocument xDoc = XDocument.Parse(twitterRule);
+                    lstRules = xDoc.Descendants("value").Select(s => s.Value).ToList();
+                }
+
+                return Json(new
+                {
+                    isSuccess = true,
+                    rules = lstRules
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveTwitterRule(Guid? trackGuid, List<string> twitterRules, string agentName, long searchRequestID)
+        {
+            try
+            {
+                ActiveUser sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
+                IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+
+                int success = 0;
+                bool isInsert = false;
+                if (trackGuid.HasValue)
+                {
+                    success = iQAgentLogic.UpdateTwitterRule(trackGuid.Value, twitterRules, agentName);
+                }
+                else
+                {
+                    isInsert = true;
+                    trackGuid = Guid.NewGuid();
+                    success = iQAgentLogic.InsertTwitterRule(sessionInformation.ClientGUID, trackGuid.Value, twitterRules, agentName, searchRequestID);
+                }
+
+                if (success == 1)
+                {
+                    iQAgentLogic.InsertTwitterRuleJob(sessionInformation.ClientGUID, sessionInformation.CustomerGUID, searchRequestID);
+                }
+
+                return Json(new
+                {
+                    isSuccess = success == 1,
+                    trackGuid = trackGuid,
+                    isInsert = isInsert
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+
+        #endregion
+
+        #region TVEyes
+
+        [HttpPost]
+        public JsonResult GetTVEyesRule(long tvEyesSettingsKey)
+        {
+            try
+            {
+                IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+                string tvEyesRule = iQAgentLogic.GetTVEyesRuleByID(tvEyesSettingsKey);
+
+                return Json(new
+                {
+                    isSuccess = true,
+                    ruleText = tvEyesRule
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SaveTVEyesRule(long ruleID, string searchTerm, string agentName, long searchRequestID)
+        {
+            try
+            {
+                ActiveUser sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
+                IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+
+                int result = 0;
+                bool isInsert = false;
+                if (ruleID > 0)
+                {
+                    result = iQAgentLogic.UpdateTVEyesRule(ruleID, searchTerm, agentName);
+                }
+                else
+                {
+                    isInsert = true;
+                    result = iQAgentLogic.InsertTVEyesRule(sessionInformation.ClientGUID, searchRequestID, searchTerm, agentName);
+                }
+
+                if (result > 0)
+                {
+                    iQAgentLogic.InsertTVEyesRuleJob(sessionInformation.ClientGUID, sessionInformation.CustomerGUID, searchRequestID);
+                }
+
+                return Json(new
+                {
+                    isSuccess = result > 0,
+                    ruleID = result, // insert only
+                    isInsert = isInsert
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+
+        #endregion
 
         #endregion
     }

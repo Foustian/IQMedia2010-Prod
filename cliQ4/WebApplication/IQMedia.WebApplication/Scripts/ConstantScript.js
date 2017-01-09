@@ -126,6 +126,12 @@ var _msgSentimentOutOfRange = "Sentiment values must be between 0 and 255";
 
 var _msgIQAgentSetupTitleRequiredField = "Title is required";
 var _msgIQAgentSetupSearchTermRequiredField = "Search term is required";
+var _msgIQAgentSetupTwitterRuleTooLong = "The highlighted sections are too long. Each section must be no more than 700 characters.";
+var _msgIQAgentSetupTwitterRuleNoAsterisks = "* characters are not allowed.";
+var _msgIQAgentSetupTwitterRuleRequiredField = "Cannot save an empty rule.";
+var _msgIQAgentSetupTVEyesRuleTooLong = "The rule must be less than 30000 characters. Current length is {0}.";
+var _msgIQAgentSetupTVEyesRuleNoAsterisks = "* characters are not allowed.";
+var _msgIQAgentSetupTVEyesRuleRequiredField = "Cannot save an empty rule.";
 
 var _msgClientRegistrationClientNameRequiredField = "Client Name is required";
 var _msgClientRegistrationAddress1RequiredField = "Address is required";
@@ -180,6 +186,7 @@ var _msgClientDeleted = "Client deleted successfully";
 var _msgClientUpdated = "Client updated successfully";
 var _msgClientAdded = "Client added successfully";
 
+var _msgCustomerRegistrationTimeZoneRequiredField = "Timezone is required";
 var _msgCustomerRegistrationClientRequiredField = "Client is required";
 var _msgCustomerRegistrationFirstNameRequiredField = "First Name is required";
 var _msgCustomerRegistrationFirstNameInValid = "Invalid First Name";
@@ -226,6 +233,7 @@ var _msgDiscoveryLiteChartLoadSavedSearch = "This feature is not available";
 
 var _msgClipCreationSuccess = "Clip Created Successfully.";
 var _msgClipCreationFail = "Error during creating clip, please try again.";
+var _msgClipCreationQuotesInTitle = "Please remove quotes from the title before saving a clip.";
 var _msgSelectAll = "Select All";
 var _msgSelectAllWithDupes = "Select All With Dupes"
 var _msgFolderMoved = "Folder Moved Successfully."
@@ -409,6 +417,8 @@ var _urlGlobalAdminGetDeleteClient = "/GlobalAdmin/DeleteClient/";
 var _urlGlobalAdminGetActiveUsersFromCache = "/GlobalAdmin/GetActiveUsersFromCache/"
 var _urlGlobalAdminResetPasswordAttempts = "/GlobalAdmin/ResetPasswordAttempts/";
 var _urlGlobalAdminSetRolesFromClient = "/GlobalAdmin/SetRolesFromClient/";
+var _urlGlobalAdminAddClientToAnewstip = "/GlobalAdmin/AddClientToAnewstip/";
+var _urlGlobalAdminAddCustomerToAnewstip = "/GlobalAdmin/AddCustomerToAnewstip/";
 
 var _urlGlobalAdminGetCustomersRegistation = "/GlobalAdmin/GetCustomerRegistration/";
 var _urlGlobalAdminDeleteCustomer = "/GlobalAdmin/DeleteCustomer/";
@@ -476,6 +486,7 @@ var _urlCommonLoadPlayerByGuidnSearchTerm = "/Common/LoadPlayerByGuidnSearchTerm
 var _urlCommonLoadBasicPlayerByGuidnSearchTerm = "/Common/LoadBasicPlayerByGuidnSearchTerm/";
 var _urlCommonGetDMAsByZipCode = "/Common/GetDMAsByZipCode/";
 var _urlCommonBindCategoryDropDown = "/Common/BindCategoryDropDown/";
+var _urlCommonGetMTChart = "/Common/GetMTChart/";
 
 var _urlSetupSelectCustomCategories = "/Setup/SelectCustomCategories/";
 var _urlSetupGetAddEditCustomCategory = "/Setup/GetAddEditCustomCategory/";
@@ -506,13 +517,18 @@ var _urlTimeshiftGetIsTimeshiftFacet = "/Timeshift/GetIsTimeshiftFacet/";
 var _urlTimeshiftSelectAllRadioStations = "/Timeshift/SelectAllRadioStations/";
 var _urlTimeshiftSelectRadioStationResults = "/Timeshift/SelectRadioStationResults/";
 
-var _urlTAdsGetChart = "/TAds/GetChart/";
 var _urlTAdsGetFilters = "/TAds/GetFilters/";
 var _urlTAdsGetRawData = "/TAds/GetRawData/";
 var _urlTAdsGetRawDataXML = "/TAds/GetRawDataXML/";
 var _urlTAdsGetRawDataTGZ = "/TAds/GetRawDataTGZ/";
 var _urlTAdsSearchResults = "/TAds/TAdsSearchResults/";
 var _urlTAdsSearchResultsPaging = "/TAds/TAdsSearchResultsPaging/";
+var _urlTAdsSelectRadioStationResults = "/TAds/SelectRadioStationResults/";
+var _urlTAdsGetSaveSearch = "/TAds/GetSaveSearch/";
+var _urlTadsSaveSearch = "/TAds/SaveSearch/";
+var _urlTadsDeleteSavedSearchByID = "/TAds/DeleteSavedSearchByID/";
+var _urlTadsLoadSavedSearch = "/TAds/LoadSavedSearch/";
+var _urlTadsUpdateSavedSearch = "/TAds/UpdateSavedSearch/";
 
 var _urlImagiQSearchResults = "/ImagiQ/ImagiQSearchResults/";
 var _urlImagiQSearchResultsPaging = "/ImagiQ/ImagiQSearchResultsPaging/";
@@ -549,6 +565,11 @@ var _urlSetupIQAgentDeleteIQAgent = "/Setup/DeleteIQAgent/";
 var _urlSetupAgentSuspendAgent = "/Setup/SuspendAgent/";
 var _urlSetupAgentResumeSuspendedAgent = "/Setup/ResumeSuspendedAgent/";
 var _urlSetupDisplayCustomSettings = "/Setup/DisplayCustomSettings/";
+var _urlSetupAgentGetTwitterRule = "/Setup/GetTwitterRule/";
+var _urlSetupAgentSaveTwitterRule = "/Setup/SaveTwitterRule/";
+var _urlSetupAgentGetTVEyesRule = "/Setup/GetTVEyesRule/";
+var _urlSetupAgentSaveTVEyesRule = "/Setup/SaveTVEyesRule/";
+var _urlSetupAgentDeleteExternalRules = "/Setup/DeleteExternalRules/";
 
 var _urlSetupLoadReportFolder = "/Setup/LoadReportFolder/";
 var _urlSetupRenameReportFolder = "/Setup/RenameReportFolder/";
@@ -646,6 +667,15 @@ var _constTVContentMinDate = '2010/11/01';
 var _constTWContentMinDate = '01/01/2013';
 var _constNMContentMinDate = '06/01/2012';
 var _constSMContentMinDate = '06/01/2012';
+var _constPQContentMinDate = '01/01/2013';
+var _constLNContentMinDate = '09/01/2015';
 
 var _captionDelay = 20;
 var _GalleryID = 0;
+
+var _twitterEnglishRule = "lang:en";
+var _twitterFollowersRule = "followers_count:15000";
+var _twitterFollowingRule = "friends_count:100";
+var _twitterTimeZonesRule = '(time_zone:"Eastern Time (US & Canada)" OR time_zone:"Central Time (US & Canada)" OR time_zone:"Pacific Time (US & Canada)" OR time_zone:"Mountain Time (US & Canada)" OR time_zone:"Indiana (East)" OR time_zone:"Hawaii" OR time_zone:"Arizona" OR time_zone:"Alaska")';
+
+var _tvEyesGlobalRule = "+Page.BroadcastMetadata.Market.Country:US +Page.BroadcastMetadata.Station.MediaType:000000000002";

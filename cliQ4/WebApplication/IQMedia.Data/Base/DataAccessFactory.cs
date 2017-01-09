@@ -62,6 +62,8 @@ namespace IQMedia.Logic.Base
                     return new IQ_SMSCampaignDA();
                 case DataAccessType.Timeshift_SavedSearch :
                     return new IQTimeshift_SavedSearchDA();
+                case DataAccessType.Tads_SavedSearch:
+                    return new IQTads_SavedSearchDA();
                 case DataAccessType.TVEyes:
                     return new TVEyesDA();
                 case DataAccessType.IQClient_CustomImage:
@@ -116,6 +118,8 @@ namespace IQMedia.Logic.Base
                     return new MCMediaTemplateTrivagoDA();
                 case DataAccessType.Instagram:
                     return new InstagramDA();
+                case DataAccessType.IQService_Feeds:
+                    return new IQService_FeedsDA();
                 case DataAccessType.Analytics:
                     return new AnalyticsDA();
                 case DataAccessType.ThirdParty:
@@ -151,6 +155,7 @@ namespace IQMedia.Logic.Base
         IQNews,
         IQ_SMSCampaign,
         Timeshift_SavedSearch,
+        Tads_SavedSearch,
         TVEyes,
         IQClient_CustomImage,
         IQTrack_LicenseClick,
@@ -178,6 +183,7 @@ namespace IQMedia.Logic.Base
         Session,
         MCMediaTemplateTrivago,
         Instagram,
+        IQService_Feeds,
         Analytics,
         ThirdParty,
         DataImport

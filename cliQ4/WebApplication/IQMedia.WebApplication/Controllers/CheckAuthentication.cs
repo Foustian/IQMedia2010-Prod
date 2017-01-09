@@ -22,6 +22,7 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
+                ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
 
                 if (ConfigurationManager.AppSettings["IsMaintenance"] == "true")
                 {
@@ -77,8 +78,6 @@ namespace IQMedia.WebApplication.Controllers
 
                     //var parameters = filterContext.ActionDescriptor.GetParameters();
                     //var values = string.Join("&", parameters.Select(s => s.ParameterName + "=" + filterContext.Controller.ValueProvider.GetValue(s.ParameterName).AttemptedValue));
-
-                    ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
 
                     bool IsValidSession = false;
 
@@ -145,7 +144,7 @@ namespace IQMedia.WebApplication.Controllers
                         {
                             IQMedia.WebApplication.Utility.ActiveUserMgr.UpdateUserIntoCache();
 
-                            if ((controllerName != "TAds" || actionName != "GetChart") && !CheckForAuthorization(controllerName))
+                            if (!CheckForAuthorization(controllerName))
                             {
                                 filterContext.Result = new RedirectResult("~/Error/Unauthorized");
                             }

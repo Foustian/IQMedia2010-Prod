@@ -13,6 +13,11 @@ namespace IQMedia.Model
         /// </summary>
         public int CustomerKey { get; set; }
 
+        /// <summary>
+        /// Represents the ID of the corresponding user in the Anewstip system
+        /// </summary>
+        public string AnewstipUserID { get; set; }
+
         public Guid CustomerGUID { get; set; }
         /// <summary>
         /// Represents First Name of Customer
@@ -203,8 +208,17 @@ namespace IQMedia.Model
         public bool Isv4Google { get; set; }
         public bool IsTimeshiftFacet { get; set; }
         public bool IsShareTV { get; set; }
+        public bool IsSMOther { get; set; }
+        public bool IsFB { get; set; }
+        public bool IsIG { get; set; }
+        public bool IsBL { get; set; }
+        public bool IsFO { get; set; }
+        public bool IsPR { get; set; }
+        public bool IsLN { get; set; }
         public bool IsThirdPartyData { get; set; }
         public bool IsClientSpecificData { get; set; }
+        public bool IsConnectAccess { get; set; }
+        public bool IsExternalRuleEditor { get; set; }
 
         public String TimeZone { get; set; }
         public decimal gmt { get; set; }

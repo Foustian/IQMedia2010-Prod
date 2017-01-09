@@ -7,6 +7,7 @@ using IQMedia.Model;
 using System.Xml.Linq;
 using IQMedia.Shared.Utility;
 using System.Globalization;
+using IQCommon.Model;
 
 namespace IQMedia.Web.Logic
 {
@@ -15,29 +16,41 @@ namespace IQMedia.Web.Logic
 
         #region Get Data
 
-        public IQAgent_DashBoardModel GetDaySummaryDataDayWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetDaySummaryDataDayWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, List<IQCommon.Model.IQ_MediaTypeModel> p_MediaTypeList)
         {
+            var mediaTypeXml = GetXmlOfMediaType(p_MediaTypeList);
+
+            var listSPName = GetListSPNameOfMediaType(p_MediaTypeList, p_Medium);
+
             DashboardDA dashboardDA = new DashboardDA();
 
-            IQAgent_DashBoardModel lstIQAgent_DaySummaryModel = dashboardDA.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_IsRadioAccess, p_SearchRequestXml, p_Isv4NMAccess, p_Isv4SMAccess, p_Isv4TWAccess, p_Isv4TVAccess, p_Isv4BLPMAccess, p_Isv4PQAccess);
+            IQAgent_DashBoardModel lstIQAgent_DaySummaryModel = dashboardDA.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, mediaTypeXml, listSPName);
 
             return lstIQAgent_DaySummaryModel;
-        }
+        }        
 
-        public IQAgent_DashBoardModel GetDaySummaryDataMonthWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetDaySummaryDataMonthWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, List<IQCommon.Model.IQ_MediaTypeModel> p_MediaTypeList)
         {
+            var mediaTypeXml = GetXmlOfMediaType(p_MediaTypeList);
+
+            var listSPName = GetListSPNameOfMediaType(p_MediaTypeList, p_Medium);
+
             DashboardDA dashboardDA = new DashboardDA();
 
-            IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardDA.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_IsRadioAccess, p_SearchRequestXml, p_Isv4NMAccess, p_Isv4SMAccess, p_Isv4TWAccess, p_Isv4TVAccess, p_Isv4BLPMAccess, p_Isv4PQAccess);
+            IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardDA.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, mediaTypeXml, listSPName);
 
             return iQAgent_DashBoardModel;
         }
 
-        public IQAgent_DashBoardModel GetHourSummaryDataHourWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetHourSummaryDataHourWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, List<IQCommon.Model.IQ_MediaTypeModel> p_MediaTypeList)
         {
+            var mediaTypeXml = GetXmlOfMediaType(p_MediaTypeList);
+
+            var listSPName = GetListSPNameOfMediaType(p_MediaTypeList, p_Medium);
+
             DashboardDA dashboardDA = new DashboardDA();
 
-            IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardDA.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_IsRadioAccess, p_SearchRequestXml, p_Isv4NMAccess, p_Isv4SMAccess, p_Isv4TWAccess, p_Isv4TVAccess, p_Isv4BLPMAccess, p_Isv4PQAccess);
+            IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardDA.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, mediaTypeXml, listSPName);
 
             return iQAgent_DashBoardModel;
         }
@@ -97,11 +110,68 @@ namespace IQMedia.Web.Logic
             return lstIQAgent_DaySummaryModel;
         }
 
-        public IQAgent_DashBoardModel GetAdhocSummaryData(string p_MediaIDXml, string p_Source, string p_Medium)
+        public IQAgent_DashBoardModel GetAdhocSummaryData(string p_MediaIDXml, string p_Source, string p_Medium, Guid p_ClientGUID, List<IQCommon.Model.IQ_MediaTypeModel> p_MediaTypeList)
         {
             DashboardDA dashboardDA = new DashboardDA();
 
-            IQAgent_DashBoardModel lstIQAgent_DaySummaryModel = dashboardDA.GetAdhocSummaryData(p_MediaIDXml, p_Source, p_Medium);
+            var listSPName = "";
+            /*
+            switch (p_Medium)
+            {
+                case "PM":
+                    p_Medium = "PR";
+                    break;
+                case "PQ":
+                    p_Medium = "PR";
+                    break;
+                case "Blog":
+                    p_Medium = "BL";
+                    break;
+                case "Forum":
+                    p_Medium = "FO";
+                    break;
+                case "TW":
+                    p_Medium = "SM";
+                    break;
+            }*/
+
+            if (!string.IsNullOrEmpty(p_Medium))
+            {
+                // Medium can be "Overview" and "MS". So Single() cannot be used.
+                var mediatype = p_MediaTypeList.Where(mt => string.Compare(mt.MediaType, p_Medium, true) == 0 && mt.TypeLevel == 1).FirstOrDefault();
+
+                if (mediatype != null)
+                {
+                    listSPName = mediatype.DashboardData.ArchiveListSPName;    
+                }                
+            }
+
+            string xmlMediaTypes = GetXmlOfMediaType(p_MediaTypeList);
+
+            IQAgent_DashBoardModel lstIQAgent_DaySummaryModel = dashboardDA.GetAdhocSummaryData(p_MediaIDXml, p_Source, p_Medium, p_ClientGUID, listSPName, xmlMediaTypes);
+
+            // Remove when mediatypes properly set
+            /*lstIQAgent_DaySummaryModel.ListOfIQAgentSummary.ForEach(delegate(IQAgent_DaySummaryModel dsm) {
+
+                switch (dsm.SubMediaType)
+                {
+                    case "PM":
+                        dsm.MediaType = "PR";
+                        break;
+                    case "PQ":
+                        dsm.MediaType = "PR";
+                        break;
+                    case "Blog":
+                        dsm.MediaType = "BL";
+                        break;
+                    case "Forum":
+                        dsm.MediaType = "FO";
+                        break;     
+                    case "TW":
+                        dsm.MediaType = "SM";
+                        break;
+                }
+            });*/
 
             return lstIQAgent_DaySummaryModel;
         }
@@ -123,6 +193,8 @@ namespace IQMedia.Web.Logic
 
         #region DayWise Chart
 
+        /*
+
         public SummaryReportMulti LineChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, List<string> p_SearchRequestIDs, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
             bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_NielsenAccess, bool p_CompeteDataAccess)
         {
@@ -138,10 +210,10 @@ namespace IQMedia.Web.Logic
                 SummaryReportMulti lstSummaryReportMulti = new SummaryReportMulti();
 
 
-                /*var mediaRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = tr.Key.GMT_DateTime, Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var audienceRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Audience = tr.Sum(r => r.Audience) });
-                var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, IQMediaValue = tr.Sum(r => r.IQMediaValue) });*/
+                //var mediaRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = tr.Key.GMT_DateTime, Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var audienceRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Audience = tr.Sum(r => r.Audience) });
+                //var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, IQMediaValue = tr.Sum(r => r.IQMediaValue) });
 
                 // this is chART FOR SUMMARY REPORT BY IQAGENT REQUESTS.
                 Chart chart = new Chart();
@@ -204,8 +276,8 @@ namespace IQMedia.Web.Logic
                 //multiChart.lineColor = "#4493D6";
 
 
-                /*LineChartOutput multiLineChartOutput = new LineChartOutput();
-                multiLineChartOutput.chart = multiChart;*/
+                //LineChartOutput multiLineChartOutput = new LineChartOutput();
+                //multiLineChartOutput.chart = multiChart;
                 //
 
                 //Media Records
@@ -262,8 +334,8 @@ namespace IQMedia.Web.Logic
 
                             multiSeriesData.seriesname = SearchRequest.Query_Name;
                             multiSeriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (var item in dateRange)
                             {
@@ -310,8 +382,8 @@ namespace IQMedia.Web.Logic
 
                     //seriesData.drawAnchors = "1";
                     //seriesData.anchorRadius = "10";
-                    /*seriesData.anchorBorderColor = "#DCDCDC";
-                    seriesData.anchorBgColor = "#DCDCDC";*/
+                    //seriesData.anchorBorderColor = "#DCDCDC";
+                    //seriesData.anchorBgColor = "#DCDCDC";
                     //seriesData.anchorAlpha = "100";
 
                     foreach (var item in dateRange)
@@ -411,16 +483,16 @@ namespace IQMedia.Web.Logic
                         //multiChart.caption = enumDesc;
                         seriesData.seriesname = enumDesc;
                         seriesData.color = "";
-                        /*seriesData.anchorBorderColor = "";
-                        seriesData.anchorBgColor = "";*/
+                        //seriesData.anchorBorderColor = "";
+                        //seriesData.anchorBgColor = "";
 
                         SeriesData multiSeriesData = new SeriesData();
                         multiSeriesData.data = new List<Datum>();
 
                         multiSeriesData.seriesname = "";
                         multiSeriesData.color = "";
-                        /*multiSeriesData.anchorBorderColor = "";
-                        multiSeriesData.anchorBgColor = "";*/
+                        //multiSeriesData.anchorBorderColor = "";
+                        //multiSeriesData.anchorBgColor = "";
 
 
                         //Multi Line Charts
@@ -433,7 +505,7 @@ namespace IQMedia.Web.Logic
 
                             Datum datum = new Datum();
                             datum.value = Convert.ToString(daywiseSum != null ? daywiseSum : 0);
-                            datum.link = "javascript:OpenFeed('" + item.ToShortDateString() + "','" + subMedia.ToString() + "','" + CommonFunctions.GetEnumDescription(subMedia) + "','" + searchRequestIds + "','" + searchRequestNames.Replace("\'","\\\'") + "')";
+                            datum.link = "javascript:OpenFeed('" + item.ToShortDateString() + "','" + subMedia.ToString() + "','" + CommonFunctions.GetEnumDescription(subMedia) + "','" + searchRequestIds + "','" + searchRequestNames.Replace("\'", "\\\'") + "')";
 
 
                             seriesData.data.Add(datum);
@@ -452,13 +524,13 @@ namespace IQMedia.Web.Logic
 
                         //Multi Line Charts
                         multiLstSeriesData.Add(multiSeriesData);
-                        /*multiLineChartOutput.categories = lstallCategory;
-                        multiLineChartOutput.dataset = multiLstSeriesData;*/
+                        //multiLineChartOutput.categories = lstallCategory;
+                        //multiLineChartOutput.dataset = multiLstSeriesData;
                         if (string.Compare(subMedia.ToString(), CommonFunctions.CategoryType.TV.ToString(), true) == 0)
                         {
                             lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(sparkChartOutputMediaWise);
                             lstSummaryReportMulti.TVRecordsSum = (multiSeriesData.data.Sum(s => Convert.ToInt64(s.value)));
-                            lstSummaryReportMulti.TVPrevRecordsSum =  p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a=>a.SubMediaType == CommonFunctions.CategoryType.TV.ToString()).Sum(s=>s.NoOfDocs) : 0;
+                            lstSummaryReportMulti.TVPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.CategoryType.TV.ToString()).Sum(s => s.NoOfDocs) : 0;
                         }
                         else if (string.Compare(subMedia.ToString(), CommonFunctions.CategoryType.NM.ToString(), true) == 0)
                         {
@@ -605,7 +677,7 @@ namespace IQMedia.Web.Logic
                                         ((p_Isv4TVAccess || smr.SubMediaType != CommonFunctions.CategoryType.TV.ToString() && p_NielsenAccess) &&
                                         (p_Isv4BLPMAccess || smr.SubMediaType != CommonFunctions.CategoryType.PM.ToString()))).Sum(a => a.IQMediaValue) : 0;
 
-                
+
                     //Audience
                     sparkChartOutput = new SparkChartOutput();
                     //sparkChart.caption = "Views";
@@ -657,6 +729,10 @@ namespace IQMedia.Web.Logic
                 throw;
             }
         }
+
+        */
+
+        /*
         public string PieChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_NielsenAccess, bool p_CompeteDataAccess)
         {
             try
@@ -739,10 +815,10 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
-        }
+        }*/
 
 
-        public string HighChartPieChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4UGCAccess, bool p_IsV4PQAccess, bool p_NielsenAccess, bool p_CompeteDataAccess)
+        public string HighChartPieChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
@@ -750,16 +826,13 @@ namespace IQMedia.Web.Logic
 
                 // pie chart used for share of records of each medium type
                 HighPieChartModel highPieChartModel = new HighPieChartModel();
-                
+
                 // set height and width of pie chart
-                highPieChartModel.chart = new PChart() { 
-                    height = 400, 
-                    width = 300 
-                };
-                
+                highPieChartModel.chart = new PChart() { height = 400, width = 300 };
+
                 // title for pie chart
-                highPieChartModel.title = new PTitle() 
-                { 
+                highPieChartModel.title = new PTitle()
+                {
                     text = "Sources",
                     style = new HStyle
                     {
@@ -767,9 +840,9 @@ namespace IQMedia.Web.Logic
                         fontFamily = "Verdana",
                         fontSize = "13px",
                         fontWeight = "bold"
-                    } 
+                    }
                 };
-                
+
                 // set tooltip format for pie chart
                 highPieChartModel.tooltip = new PTooltip() { 
                     pointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>" 
@@ -792,20 +865,15 @@ namespace IQMedia.Web.Logic
                 // set legend width and layout
                 highPieChartModel.legend = new Legend()
                 {
-                    align ="center",
-                    width =200,
-                    layout ="vertical",
+                    align = "center",
+                    width = 200,
+                    layout = "vertical",
                     verticalAlign = "bottom",
-                    borderWidth ="0"
+                    borderWidth = "0"
                 };
 
 
-                var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { 
-                    sr.SubMediaType 
-                }).Select(tr => new SummaryReportModel { 
-                    SubMediaType = tr.Key.SubMediaType, 
-                    Number_Docs = tr.Sum(r => r.Number_Docs) 
-                });
+                var mediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.MediaType }).Select(tr => new SummaryReportModel { MediaType = tr.Key.MediaType, Number_Docs = tr.Sum(r => r.Number_Docs) });
 
                 PSeries pSeries = new PSeries();
 
@@ -820,35 +888,20 @@ namespace IQMedia.Web.Logic
 
                 Dictionary<string, double> dictPie = new Dictionary<string, double>();
 
-
-                List<CommonFunctions.DashBoardMediumType> lstMediaCategories = Enum.GetValues(typeof(CommonFunctions.DashBoardMediumType)).Cast<CommonFunctions.DashBoardMediumType>().ToList();
-                
                 lstObject = new List<object>();
                 // set list of data for pie series
-                foreach (var subMedia in lstMediaCategories)
+                foreach (var mt in p_MediaTypeList.Where(m => m.TypeLevel == 1 && m.HasAccess == true).OrderBy(om => om.SortOrder))
                 {
-                    if (
-                        (p_Isv4TMAccess && subMedia == CommonFunctions.DashBoardMediumType.Radio) ||
-                        (p_Isv4NMAccess && subMedia == CommonFunctions.DashBoardMediumType.NM) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.SocialMedia) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Forum) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Blog) ||
-                        (p_Isv4TWAccess && subMedia == CommonFunctions.DashBoardMediumType.TW) ||
-                        (p_Isv4TVAccess && subMedia == CommonFunctions.DashBoardMediumType.TV) ||
-                        (p_Isv4UGCAccess && subMedia == CommonFunctions.DashBoardMediumType.MS) ||
-                        ((p_Isv4BLPMAccess || p_IsV4PQAccess) && subMedia == CommonFunctions.DashBoardMediumType.PM)) // BLPM and ProQuest data is combined
-                    {
-                        // add total records and medium type to list
+                    /* Uncomment below statement and comment its following to check submediatype has access or not in individual records.  */
+                    //var numOfDocs = mediaRecords.Where(smr => (String.Compare(smr.MediaType, mt.MediaType.ToString(), true) == 0) && 
+                    //      (p_MediaTypeList.Where(sm=> (string.Compare(mt.MediaType,sm.MediaType,true) == 0) && sm.TypeLevel == 2 && sm.HasAccess == true).Select(smsm=>smsm.SubMediaType.ToUpper()).Contains(smr.SubMediaType.ToUpper()))).Select(tr => tr.Number_Docs).SingleOrDefault();
 
-                        var numOfDocs = subMediaRecords.Where(smr => String.Compare(smr.SubMediaType, subMedia.ToString(), true) == 0).Select(tr => tr.Number_Docs).SingleOrDefault();
-                        //CommonFunctions.
-                        string enumDesc = CommonFunctions.GetEnumDescription(subMedia);
-                        Int64 sumNumDocs = numOfDocs != null ? numOfDocs : 0;
-                        lstObject.Add(new object[] { 
-                            enumDesc + " " + sumNumDocs.ToString("N0"), 
-                            Convert.ToInt64(numOfDocs != null ? numOfDocs : 0)
-                        });
-                    }
+                    /* Assumed that recordlist contains data of only submediatypes for which has access. Read above. */
+
+                    var numOfDocs = mediaRecords.Where(smr => (String.Compare(smr.MediaType, mt.MediaType.ToString(), true) == 0)).Select(tr => tr.Number_Docs).SingleOrDefault();
+
+                    Int64 sumNumDocs = numOfDocs != null ? numOfDocs : 0;
+                    lstObject.Add(new object[] { mt.DisplayName + " " + sumNumDocs.ToString("N0"), Convert.ToInt64(numOfDocs) });
                 }
 
                 pSeries.data = lstObject;
@@ -859,12 +912,11 @@ namespace IQMedia.Web.Logic
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
-
+        /*
         public List<string> MultiLinechart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate)
         {
             try
@@ -1023,10 +1075,10 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
-        }
+        }*/
 
-        public SummaryReportMulti HighChartsLineChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int? chartWidth, bool p_Isv4TMAccess, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
-            List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4UGCAccess, bool p_Isv4PQAccess, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess)
+        public SummaryReportMulti HighChartsLineChart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int? chartWidth, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
+            List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
@@ -1041,7 +1093,6 @@ namespace IQMedia.Web.Logic
 
                 SummaryReportMulti lstSummaryReportMulti = new SummaryReportMulti();
 
-
                 List<string> categories = new List<string>();
 
                 foreach (var date in dateRange)
@@ -1049,15 +1100,13 @@ namespace IQMedia.Web.Logic
                     categories.Add(date.ToShortDateString());
                 }
 
-
-
                 // this signle line medium chart, with out applying any medium filter.... 
                 // if one or more request request applid, then it will show multi line chart, one for each request request. 
                 HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, title = new Title2() }};
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -1068,8 +1117,8 @@ namespace IQMedia.Web.Logic
                 /* tickmarkPlacement = off  to force chart to show last value of category in x-axis, otherwise it may show values as per tickinterval */
                 highLineChartOutput.xAxis = new XAxis()
                 {
-                    tickInterval = Convert.ToInt32(Math.Floor(Convert.ToDouble(categories.Count()) / 7)), 
-                    tickmarkPlacement = "off", 
+                    tickInterval = Convert.ToInt32(Math.Floor(Convert.ToDouble(categories.Count()) / 7)),
+                    tickmarkPlacement = "off",
                     tickWidth = 2,
                     categories = categories, // all x-axis values 
                     labels = new labels()
@@ -1079,14 +1128,14 @@ namespace IQMedia.Web.Logic
                 highLineChartOutput.tooltip = new Tooltip() { valueSuffix = "" };
 
                 // show legend in center (as no other property is applied, it will take default values of it) , with borderWidth  = 0
-                highLineChartOutput.legend = new Legend() { borderWidth = "0", width=750};
-                
+                highLineChartOutput.legend = new Legend() { borderWidth = "0", width = 750 };
+
                 // set chart with height = 300 px and width = 100 % (as not applied it will take default to 100%)
                 highLineChartOutput.hChart = new HChart() { height = 300, type = "spline" };
-                
+
                 // start to set series of data for medium chart (or multi line search request chart)
                 List<Series> lstSeries = new List<Series>();
-                
+
                 // if one or more search request is applied, then will set multiple seareis , each series for each request request
                 // with total no. of records for that search request on perticular date (value of category)
                 if (p_SearchRequests != null && p_SearchRequests.Count > 0)
@@ -1128,15 +1177,9 @@ namespace IQMedia.Web.Logic
                         foreach (var item in dateRange)
                         {
                             var daywiseSum = listOfSummaryReportData.Where(smr => smr.SearchRequestID == searchRequest.Key && smr.GMT_DateTime.Equals(item)
+                                    && smr.DefaultMediaType
                                     && (
-                                        (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                        (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
+                                        CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
                                       )
                                 ).Sum(s => s.Number_Docs);
 
@@ -1199,17 +1242,10 @@ namespace IQMedia.Web.Logic
                     foreach (var item in dateRange)
                     {
 
-                        var sumOfDocs = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
+                        var sumOfDocs = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item) 
+                            && smr.DefaultMediaType
                             && (
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
+                                    CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
                                 )
                             ).Sum(s => s.Number_Docs);
 
@@ -1239,7 +1275,7 @@ namespace IQMedia.Web.Logic
                 highLineChartSubMediaOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSubMediaOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -1291,7 +1327,7 @@ namespace IQMedia.Web.Logic
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                
+
                 // set min = 0 , to force chart to start from 0 , and show line in bottom, 
                 // gridLineWidth = 0 , to hide grid lines on y axis. 
                 highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
@@ -1317,15 +1353,15 @@ namespace IQMedia.Web.Logic
                 };
 
                 // add event on chart click , to load medium type summary of selected medium chart. 
-                highLineChartSingleMediaChartOutput.hChart = new HChart() 
-                { 
+                highLineChartSingleMediaChartOutput.hChart = new HChart()
+                {
                     events = new PlotEvents()
                     {
                         click = "ChangeMediumType"
                     },
-                    height = 100, 
-                    width = 120, 
-                    type = "spline" 
+                    height = 100,
+                    width = 120,
+                    type = "spline"
                 };
                 highLineChartSingleMediaChartOutput.tooltip = new Tooltip() { valueSuffix = "" };
 
@@ -1352,80 +1388,71 @@ namespace IQMedia.Web.Logic
                 };
                 highLineChartSingleMediaChartOutput.legend = new Legend() { enabled = false };                
 
-                List<CommonFunctions.DashBoardMediumType> lstMediaCategories = Enum.GetValues(typeof(CommonFunctions.DashBoardMediumType)).Cast<CommonFunctions.DashBoardMediumType>().ToList();
                 Int64 totNumOfHits = listOfSummaryReportData.Where(smr =>
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
+                    smr.DefaultMediaType
+                    && CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
+
                                 ).Sum(s => s.Number_Docs);
                 lstSummaryReportMulti.TotalNumOfHits = totNumOfHits.ToString("N0");
 
                 // start to set series of data for  multi line medium chart
                 List<Series> lstSeriesSubMediaType = new List<Series>();
+                lstSummaryReportMulti.SummaryReportMedium = new List<SummaryReportMedium>();
 
-                foreach (var subMedia in lstMediaCategories)
+                foreach (var media in p_MediaTypeList.Where(m => m.TypeLevel == 1 && m.HasAccess && p_MediaTypeList.Where(sm=>string.Compare(m.MediaType, sm.MediaType, true) == 0 && sm.TypeLevel == 2 && sm.HasAccess).Count() > 0).OrderBy(om => om.SortOrder))
                 {
-                    if (
-                        (p_Isv4TMAccess && subMedia == CommonFunctions.DashBoardMediumType.Radio) ||
-                        (p_Isv4NMAccess && subMedia == CommonFunctions.DashBoardMediumType.NM) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.SocialMedia) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Forum) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Blog) ||
-                        (p_Isv4TWAccess && subMedia == CommonFunctions.DashBoardMediumType.TW) ||
-                        (p_Isv4TVAccess && subMedia == CommonFunctions.DashBoardMediumType.TV) ||
-                        (p_Isv4UGCAccess && subMedia == CommonFunctions.DashBoardMediumType.MS) ||
-                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && subMedia == CommonFunctions.DashBoardMediumType.PM)) // BLPM and ProQuest data is combined
+                    // set sereies name of multiline medium chart as display name, will shown in legent and tooltip.
+                    Series series = new Series();
+                    series.data = new List<HighChartDatum>();
+                    series.name = media.DisplayName;
+
+                    // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
+                    Series seriesSingleMedia = new Series();
+                    seriesSingleMedia.data = new List<HighChartDatum>();
+                    seriesSingleMedia.name = media.DisplayName;
+
+                    // loop for each date to create list of data for selected medium type
+                    foreach (var item in dateRange)
                     {
+                        var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.MediaType, media.MediaType, true) == 0 && smr.GMT_DateTime.Equals(item) && CheckSubMediaTypeAccess(p_MediaTypeList,smr.SubMediaType)).Sum(s => s.Number_Docs);
 
-                        // set sereies name of multiline medium chart as medium description, will shown in legent and tooltip.
-                        string enumDesc = CommonFunctions.GetEnumDescription(subMedia);
-                        Series series = new Series();
-                        series.data = new List<HighChartDatum>();
-                        series.name = enumDesc;
+                        // set data point of current series 
+                        /*
+                            *  y = y series value of current point === total no. of records for current medium type at perticular date 
+                            *  SearchTerm = medium description  , used in chart drill down click event
+                            *  Value = medium tpye  , used in chart drill down click event
+                            *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
+                        */
+                        HighChartDatum highChartDatum = new HighChartDatum();
+                        highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
+                        highChartDatum.SearchTerm = media.DisplayName;
+                        highChartDatum.Value = media.MediaType;
+                        highChartDatum.Type = "SubMedia";
+                        series.data.Add(highChartDatum);
 
-                        // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
-                        Series seriesSingleMedia = new Series();
-                        seriesSingleMedia.data = new List<HighChartDatum>();
-                        seriesSingleMedia.name = enumDesc;
+                        seriesSingleMedia.data.Add(highChartDatum);
+                    }
 
-                        // loop for each date to create list of data for selected medium type
-                        foreach (var item in dateRange)
-                        {
-                            var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.SubMediaType, subMedia.ToString(), true) == 0 && smr.GMT_DateTime.Equals(item)).Sum(s => s.Number_Docs);
-
-                            // set data point of current series 
-                            /*
-                                *  y = y series value of current point === total no. of records for current medium type at perticular date 
-                                *  SearchTerm = medium description  , used in chart drill down click event
-                                *  Value = medium tpye  , used in chart drill down click event
-                                *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
-                            */
-                            HighChartDatum highChartDatum = new HighChartDatum();
-                            highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
-                            highChartDatum.SearchTerm = enumDesc;
-                            highChartDatum.Value = subMedia.ToString();
-                            highChartDatum.Type = "SubMedia";
-                            series.data.Add(highChartDatum);
-
-                            seriesSingleMedia.data.Add(highChartDatum);
-                        }
-
-                        lstSeriesSubMediaType.Add(series);
+                    lstSeriesSubMediaType.Add(series);
 
 
-                        // set signle series for spark chart of current medium type, and assign list of data for that series.
-                        List<Series> lstSeriesSingleMediaType = new List<Series>();
-                        lstSeriesSingleMediaType.Add(seriesSingleMedia);
-                        highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
-                        
+                    // set signle series for spark chart of current medium type, and assign list of data for that series.
+                    List<Series> lstSeriesSingleMediaType = new List<Series>();
+                    lstSeriesSingleMediaType.Add(seriesSingleMedia);
+                    highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
 
-                        // set json chart for spark chart based on medium type
+                    // set json chart for spark chart based on medium type                    
+
+                    lstSummaryReportMulti.SummaryReportMedium.Add(new SummaryReportMedium()
+                    {
+                        MediaTypeModel = media,
+                        PrevRecordsSum = (p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType != null && string.Compare(media.MediaType, a.MediaType, true) == 0 && CheckSubMediaTypeAccess(p_MediaTypeList,a.SubMediaType)).Sum(s => s.NoOfDocs) : 0),
+                        Records = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput),
+                        RecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)))
+
+                    });
+
+                    /*
                         if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TV.ToString(), true) == 0)
                         {
                             lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
@@ -1478,8 +1505,8 @@ namespace IQMedia.Web.Logic
                         {
                             lstSummaryReportMulti.MSRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
                             lstSummaryReportMulti.MSRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                        }
-                    }
+                        }*/
+
                 }
 
                 // Create series for third party data
@@ -1499,7 +1526,7 @@ namespace IQMedia.Web.Logic
 
                 
                 // create spark chart for audience and media value
-                if (p_Isv4TMAccess || p_Isv4NMAccess || p_Isv4SMAccess || p_Isv4TWAccess || p_Isv4TVAccess || p_Isv4BLPMAccess || p_Isv4PQAccess)
+                if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && (m.UseAudience == true || m.UseMediaValue == true)).Count() > 0)
                 {
                     //Single Media Chart 
                     HighLineChartOutput highLineChartAudienceMediaValue = new HighLineChartOutput();
@@ -1507,7 +1534,7 @@ namespace IQMedia.Web.Logic
                     highLineChartAudienceMediaValue.subtitle = new Subtitle() { text = "", x = -20 };
                     //highLineChartAudienceMediaValue.Colors = new List<string>();
 
-                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                     highLineChartAudienceMediaValue.xAxis = new XAxis()
                     {
@@ -1521,7 +1548,7 @@ namespace IQMedia.Web.Logic
                     };
 
 
-                    highLineChartAudienceMediaValue.hChart = new HChart() { height = 100, width = 120,type="spline" };
+                    highLineChartAudienceMediaValue.hChart = new HChart() { height = 100, width = 120, type = "spline" };
                     highLineChartAudienceMediaValue.plotOption = new PlotOptions()
                     {
                         spline = new PlotSeries()
@@ -1529,93 +1556,93 @@ namespace IQMedia.Web.Logic
                             marker = new PlotMarker()
                             {
                                 enabled = false,
-                                lineWidth =0
+                                lineWidth = 0
                             }
                         }
                     };
-                    highLineChartAudienceMediaValue.tooltip = new Tooltip() 
-                    { 
+                    highLineChartAudienceMediaValue.tooltip = new Tooltip()
+                    {
                         valueSuffix = ""
                     };
                     highLineChartAudienceMediaValue.legend = new Legend() { enabled = false };
 
-                    List<Series> lstSeriesMediaValue = new List<Series>();
-                    
-                    Series series = new Series();
-                    series.data = new List<HighChartDatum>();
-                    series.name = "Media Value";
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseMediaValue == true).Count() > 0)
                     {
+                        List<Series> lstSeriesMediaValue = new List<Series>();
 
-                        var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                               )
-                          ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+                        Series series = new Series();
+                        series.data = new List<HighChartDatum>();
+                        series.name = "Media Value";
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
-                        series.data.Add(highChartDatum);
+                        foreach (var item in dateRange)
+                        {
+
+                            var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
+                                && smr.DefaultMediaType
+                                && (
+                                             p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m,smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess,p_NielsenAccess,m.RequireCompeteAccess,p_CompeteDataAccess)).Count() > 0
+                                   )
+                              ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
+                            series.data.Add(highChartDatum);
+                        }
+
+                        lstSeriesMediaValue.Add(series);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
+
+                        lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+
+                        //lstSummaryReportMulti.IQMediaValueRecords = temp;
+                        lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
+                        lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+                             p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess,p_NielsenAccess,m.RequireCompeteAccess,p_CompeteDataAccess)).Count() > 0
+
+                                     ).Sum(a => a.IQMediaValue) : 0;
                     }
 
-                    lstSeriesMediaValue.Add(series);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
-
-                    lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
 
 
-                    //lstSummaryReportMulti.IQMediaValueRecords = temp;
-                    lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
-                    lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                                 ).Sum(a => a.IQMediaValue) : 0;
-
-
-
-                    List<Series> lstSeriesAudience = new List<Series>();
-                    Series seriesAudience = new Series();
-                    seriesAudience.name = "Audience";
-                    seriesAudience.data = new List<HighChartDatum>();
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseAudience == true).Count() > 0)
                     {
+                        List<Series> lstSeriesAudience = new List<Series>();
+                        Series seriesAudience = new Series();
+                        seriesAudience.name = "Audience";
+                        seriesAudience.data = new List<HighChartDatum>();
 
-                        var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())
-                                )
-                        ).Sum(s => s.Audience);// SingleOrDefault();
+                        foreach (var item in dateRange)
+                        {
+                            var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
+                                && smr.DefaultMediaType
+                                && (
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess,p_NielsenAccess,m.RequireCompeteAccess,p_CompeteDataAccess)).Count() > 0
+                                    )
+                            ).Sum(s => s.Audience);// SingleOrDefault();
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = singleAudienceRec;
-                        seriesAudience.data.Add(highChartDatum);
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = singleAudienceRec;
+                            seriesAudience.data.Add(highChartDatum);
+                        }
 
+                        lstSeriesAudience.Add(seriesAudience);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesAudience;
+
+                        lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+                        lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+
+                                            ).Sum(a => a.Audience) : 0;
                     }
-
-                    lstSeriesAudience.Add(seriesAudience);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesAudience;
-
-                    lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
-
-                    lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
-                    lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())).Sum(a => a.Audience) : 0;
                 }
 
                 return lstSummaryReportMulti;
@@ -1643,6 +1670,7 @@ namespace IQMedia.Web.Logic
         #endregion
 
         #region Monthly Chart
+        /*
 
         public SummaryReportMulti LineChartMonth(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, List<string> p_SearchRequestIDs, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
             bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_NielsenAccess, bool p_CompeteDataAccess)
@@ -1660,10 +1688,10 @@ namespace IQMedia.Web.Logic
                 SummaryReportMulti lstSummaryReportMulti = new SummaryReportMulti();
 
 
-                /*var mediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var audienceRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Audience = tr.Sum(r => r.Audience) });
-                var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), IQMediaValue = tr.Sum(r => r.IQMediaValue) });*/
+                //var mediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var audienceRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), Audience = tr.Sum(r => r.Audience) });
+                //var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => new { sr.GMT_DateTime.Month, sr.GMT_DateTime.Year }).Select(tr => new SummaryReportModel { GMT_DateTime = new DateTime(tr.Key.Year, tr.Key.Month, 1), IQMediaValue = tr.Sum(r => r.IQMediaValue) });
 
 
                 Chart chart = new Chart();
@@ -1778,8 +1806,8 @@ namespace IQMedia.Web.Logic
 
                             multiSeriesData.seriesname = SearchRequest.Query_Name;
                             multiSeriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (var item in dateRange)
                             {
@@ -1920,16 +1948,16 @@ namespace IQMedia.Web.Logic
                         //multiChart.caption = enumDesc;
                         seriesData.seriesname = enumDesc;
                         seriesData.color = "";
-                        /*seriesData.anchorBorderColor = "";
-                        seriesData.anchorBgColor = "";*/
+                        //seriesData.anchorBorderColor = "";
+                        //seriesData.anchorBgColor = "";
 
                         SeriesData multiSeriesData = new SeriesData();
                         multiSeriesData.data = new List<Datum>();
 
                         multiSeriesData.seriesname = "";
                         multiSeriesData.color = "";
-                        /*multiSeriesData.anchorBorderColor = "";
-                        multiSeriesData.anchorBgColor = "";*/
+                        //multiSeriesData.anchorBorderColor = "";
+                        //multiSeriesData.anchorBgColor = "";
 
 
                         //Multi Line Charts
@@ -1958,7 +1986,7 @@ namespace IQMedia.Web.Logic
 
                         //Multi Line Charts
                         multiLstSeriesData.Add(multiSeriesData);
-                        
+
                         if (string.Compare(subMedia.ToString(), CommonFunctions.CategoryType.TV.ToString(), true) == 0)
                         {
                             lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(sparkChartOutputMediaWise);
@@ -2135,13 +2163,15 @@ namespace IQMedia.Web.Logic
             }
         }
 
+        */
 
-        public SummaryReportMulti HighChartsLineChartMonth(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
-            List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4UGCAccess, bool p_Isv4PQAccess, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess)
+        public SummaryReportMulti HighChartsLineChartMonth(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
+            List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
                 Dictionary<long, string> dictSeriesColors = new Dictionary<long, string>();
+
                 var dateRange = new List<DateTime>();
 
                 for (var dt = p_FromDate; dt <= p_ToDate; dt = dt.AddMonths(1))
@@ -2159,14 +2189,14 @@ namespace IQMedia.Web.Logic
                     categories.Add(date.ToShortDateString());
                 }
 
-                
+
                 // this signle line medium chart, with out applying any medium filter.... 
                 // if one or more request request applid, then it will show multi line chart, one for each request request. 
                 HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, title = new Title2() }};
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -2241,19 +2271,11 @@ namespace IQMedia.Web.Logic
                         // loop for each date to create list of data for selected search request series. 
                         foreach (var item in dateRange)
                         {
-                            var daywiseSum = listOfSummaryReportData.Where(smr => smr.SearchRequestID == searchRequest.Key && smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
-                                    && (
-                                        (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                        (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                        (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())) // BLPM and ProQuest data is combined
-                                ).Sum(s => s.Number_Docs);
-
+                                var daywiseSum = listOfSummaryReportData.Where(smr => smr.SearchRequestID == searchRequest.Key && smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
+                                        && smr.DefaultMediaType
+                                        && (
+                                            CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType))
+                                    ).Sum(s => s.Number_Docs);
 
                             // set data point of current series 
                             /*
@@ -2314,16 +2336,9 @@ namespace IQMedia.Web.Logic
                     {
                         //var singleSubMediaRec =
                         var sumOfDocs = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
+                            && smr.DefaultMediaType
                             && (
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
+                                    CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
                                 )
                             ).Sum(s => s.Number_Docs);
 
@@ -2352,7 +2367,7 @@ namespace IQMedia.Web.Logic
                 highLineChartSubMediaOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSubMediaOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
@@ -2411,7 +2426,7 @@ namespace IQMedia.Web.Logic
 
                 // set min = 0 , to force chart to start from 0 , and show line in bottom, 
                 // gridLineWidth = 0 , to hide grid lines on y axis. 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 // not to show x axis labels for spark charts 
                 // we have set default value for TickWidth to 0 in XAxis class defination, to not to show line below x-axis for ticks.
@@ -2459,133 +2474,125 @@ namespace IQMedia.Web.Logic
                 };
                 highLineChartSingleMediaChartOutput.legend = new Legend() { enabled = false };
 
-                List<CommonFunctions.DashBoardMediumType> lstMediaCategories = Enum.GetValues(typeof(CommonFunctions.DashBoardMediumType)).Cast<CommonFunctions.DashBoardMediumType>().ToList();
                 Int64 totNumOfHits = listOfSummaryReportData.Where(smr =>
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
+                                    smr.DefaultMediaType
+                                 && CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
                                 ).Sum(s => s.Number_Docs);
                 lstSummaryReportMulti.TotalNumOfHits = totNumOfHits.ToString("N0");
 
                 // start to set series of data for  multi line medium chart
                 List<Series> lstSeriesSubMediaType = new List<Series>();
-                
-                foreach (var subMedia in lstMediaCategories)
+                lstSummaryReportMulti.SummaryReportMedium = new List<SummaryReportMedium>();
+
+                foreach (var media in p_MediaTypeList.Where(m => m.TypeLevel == 1 && m.HasAccess && p_MediaTypeList.Where(sm=>string.Compare(m.MediaType, sm.MediaType, true) == 0 && sm.TypeLevel == 2 && sm.HasAccess).Count() > 0))
                 {
-                    if (
-                        (p_Isv4TMAccess && subMedia == CommonFunctions.DashBoardMediumType.Radio) ||
-                        (p_Isv4NMAccess && subMedia == CommonFunctions.DashBoardMediumType.NM) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.SocialMedia) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Forum) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Blog) ||
-                        (p_Isv4TWAccess && subMedia == CommonFunctions.DashBoardMediumType.TW) ||
-                        (p_Isv4TVAccess && subMedia == CommonFunctions.DashBoardMediumType.TV) ||
-                        (p_Isv4UGCAccess && subMedia == CommonFunctions.DashBoardMediumType.MS) ||
-                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && subMedia == CommonFunctions.DashBoardMediumType.PM)) // BLPM and ProQuest data is combined
+
+                    // set sereies name of multiline medium chart as display name, will shown in legent and tooltip.
+                    Series series = new Series();
+                    series.data = new List<HighChartDatum>();
+                    series.name = media.DisplayName;
+
+                    // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
+                    Series seriesSingleMedia = new Series();
+                    seriesSingleMedia.data = new List<HighChartDatum>();
+                    seriesSingleMedia.name = "";
+
+                    // loop for each date to create list of data for selected medium type
+                    foreach (var item in dateRange)
                     {
-                        
-                        // set sereies name of multiline medium chart as medium description, will shown in legent and tooltip.
-                        string enumDesc = CommonFunctions.GetEnumDescription(subMedia);
-                        Series series = new Series();
-                        series.data = new List<HighChartDatum>();
-                        series.name = enumDesc;
+                        //var singleSubMediaRec =
+                        var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.MediaType, media.MediaType, true) == 0 &&  CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType) && smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)).Sum(s => s.Number_Docs);
 
-                        // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
-                        Series seriesSingleMedia = new Series();
-                        seriesSingleMedia.data = new List<HighChartDatum>();
-                        seriesSingleMedia.name = "";
+                        // set data point of current series 
+                        /*
+                            *  y = y series value of current point === total no. of records for current medium type at perticular date 
+                            *  SearchTerm = medium description  , used in chart drill down click event
+                            *  Value = medium tpye  , used in chart drill down click event
+                            *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
+                        */
+                        HighChartDatum highChartDatum = new HighChartDatum();
+                        highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
+                        highChartDatum.SearchTerm = media.DisplayName;
+                        highChartDatum.Value = media.MediaType;
+                        highChartDatum.Type = "SubMedia";
+                        series.data.Add(highChartDatum);
 
-                        // loop for each date to create list of data for selected medium type
-                        foreach (var item in dateRange)
-                        {
-                            //var singleSubMediaRec =
-                            var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.SubMediaType, subMedia.ToString(), true) == 0 && smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)).Sum(s => s.Number_Docs);
-
-                            // set data point of current series 
-                            /*
-                                *  y = y series value of current point === total no. of records for current medium type at perticular date 
-                                *  SearchTerm = medium description  , used in chart drill down click event
-                                *  Value = medium tpye  , used in chart drill down click event
-                                *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
-                            */
-                            HighChartDatum highChartDatum = new HighChartDatum();
-                            highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
-                            highChartDatum.SearchTerm = enumDesc;
-                            highChartDatum.Value = subMedia.ToString();
-                            highChartDatum.Type = "SubMedia";
-                            series.data.Add(highChartDatum);
-
-                            seriesSingleMedia.data.Add(highChartDatum);
-                        }
-
-                        lstSeriesSubMediaType.Add(series);
-
-                        // set signle series for spark chart of current medium type, and assign list of data for that series.
-                        List<Series> lstSeriesSingleMediaType = new List<Series>();
-                        lstSeriesSingleMediaType.Add(seriesSingleMedia);
-                        highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
-
-                        // set json chart for spark chart based on medium type
-                        if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TV.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TVRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TVPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.NM.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.NMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.NMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.NMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TW.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TWRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TWRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TWPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Forum.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.ForumRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.ForumRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.ForumPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.SocialMedia.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.SocialMediaRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.SocialMediaRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.SocialMediaPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Blog.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.BlogRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.BlogRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.BlogPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.PM.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.PMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.PMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.PMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Radio.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.MS.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.MSRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.MSRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                        }
+                        seriesSingleMedia.data.Add(highChartDatum);
                     }
+
+                    lstSeriesSubMediaType.Add(series);
+
+                    // set signle series for spark chart of current medium type, and assign list of data for that series.
+                    List<Series> lstSeriesSingleMediaType = new List<Series>();
+                    lstSeriesSingleMediaType.Add(seriesSingleMedia);
+                    highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
+
+                    // set json chart for spark chart based on medium type                    
+
+                    lstSummaryReportMulti.SummaryReportMedium.Add(new SummaryReportMedium()
+                    {
+                        MediaTypeModel = media,
+                        PrevRecordsSum = (p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType != null && string.Compare(media.MediaType, a.MediaType, true) == 0 && CheckSubMediaTypeAccess(p_MediaTypeList, a.SubMediaType)).Sum(s => s.NoOfDocs) : 0),
+                        Records = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput),
+                        RecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)))
+
+                    });
+
+                    /*
+                    if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TV.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.TVRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.TVPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.NM.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.NMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.NMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.NMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TW.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.TWRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.TWRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.TWPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Forum.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.ForumRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.ForumRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.ForumPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.SocialMedia.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.SocialMediaRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.SocialMediaRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.SocialMediaPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Blog.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.BlogRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.BlogRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.BlogPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.PM.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.PMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.PMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.PMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Radio.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.TMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.TMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.TMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()).Sum(s => s.NoOfDocs) : 0;
+                    }
+                    else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.MS.ToString(), true) == 0)
+                    {
+                        lstSummaryReportMulti.MSRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
+                        lstSummaryReportMulti.MSRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
+                    }*/
+
                 }
 
                 // Create series for third party data
@@ -2605,7 +2612,7 @@ namespace IQMedia.Web.Logic
 
                 
                 // create spark chart for audience and media value
-                if (p_Isv4TMAccess || p_Isv4NMAccess || p_Isv4SMAccess || p_Isv4TWAccess || p_Isv4TVAccess || p_Isv4BLPMAccess || p_Isv4PQAccess)
+                if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && (m.UseAudience == true || m.UseMediaValue == true)).Count() > 0)
                 {
                     //Single Media Chart 
                     HighLineChartOutput highLineChartAudienceMediaValue = new HighLineChartOutput();
@@ -2613,7 +2620,7 @@ namespace IQMedia.Web.Logic
                     highLineChartAudienceMediaValue.subtitle = new Subtitle() { text = "", x = -20 };
                     //highLineChartAudienceMediaValue.Colors = new List<string>();
 
-                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                     highLineChartAudienceMediaValue.xAxis = new XAxis()
                     {
@@ -2642,82 +2649,87 @@ namespace IQMedia.Web.Logic
                     highLineChartAudienceMediaValue.tooltip = new Tooltip() { valueSuffix = "" };
                     highLineChartAudienceMediaValue.legend = new Legend() { enabled = false };
 
-                    List<Series> lstSeriesMediaValue = new List<Series>();
-
-                    Series series = new Series();
-                    series.data = new List<HighChartDatum>();
-                    series.name = "Media Value";
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseMediaValue == true).Count() > 0)
                     {
+                        List<Series> lstSeriesMediaValue = new List<Series>();
 
-                        var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                               )
-                          ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+                        Series series = new Series();
+                        series.data = new List<HighChartDatum>();
+                        series.name = "Media Value";
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
-                        series.data.Add(highChartDatum);
+                        foreach (var item in dateRange)
+                        {
+
+                            var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
+                                && smr.DefaultMediaType
+                                && (
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+                                   )
+                              ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
+                            series.data.Add(highChartDatum);
+                        }
+
+                        lstSeriesMediaValue.Add(series);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
+
+                        lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+
+                        //lstSummaryReportMulti.IQMediaValueRecords = temp;
+                        lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
+                        lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+
+                                        p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+
+                                          ).Sum(a => a.IQMediaValue) : 0;
                     }
 
-                    lstSeriesMediaValue.Add(series);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
-
-                    lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
 
 
-                    //lstSummaryReportMulti.IQMediaValueRecords = temp;
-                    lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
-                    lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                                      ).Sum(a => a.IQMediaValue) : 0;
-
-
-
-                    List<Series> lstSeriesAudience = new List<Series>();
-                    Series seriesAudience = new Series();
-                    seriesAudience.name = "Audience";
-                    seriesAudience.data = new List<HighChartDatum>();
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseAudience == true).Count() > 0)
                     {
+                        List<Series> lstSeriesAudience = new List<Series>();
+                        Series seriesAudience = new Series();
+                        seriesAudience.name = "Audience";
+                        seriesAudience.data = new List<HighChartDatum>();
 
-                        var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                )
-                        ).Sum(s => s.Audience);// SingleOrDefault();
+                        foreach (var item in dateRange)
+                        {
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = singleAudienceRec;
-                        seriesAudience.data.Add(highChartDatum);
+                            var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Month.Equals(item.Month) && smr.GMT_DateTime.Year.Equals(item.Year)
+                                && smr.DefaultMediaType
+                                && (
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+                                    )
+                            ).Sum(s => s.Audience);// SingleOrDefault();
 
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = singleAudienceRec;
+                            seriesAudience.data.Add(highChartDatum);
+
+                        }
+
+                        lstSeriesAudience.Add(seriesAudience);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesAudience;
+
+                        lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+                        lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+
+                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType)
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+
+                                            ).Sum(a => a.Audience) : 0;
                     }
-
-                    lstSeriesAudience.Add(seriesAudience);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesAudience;
-
-                    lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
-
-                    lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
-                    lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())).Sum(a => a.Audience) : 0;
                 }
 
                 return lstSummaryReportMulti;
@@ -2732,6 +2744,9 @@ namespace IQMedia.Web.Logic
         #endregion
 
         #region Hourly Chart
+
+        /*
+
         public SummaryReportMulti LineChartHour(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, bool p_Isv4TMAccess, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, List<string> p_SearchRequestIDs, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
             bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_NielsenAccess, bool p_CompeteDataAccess)
         {
@@ -2748,10 +2763,10 @@ namespace IQMedia.Web.Logic
                 SummaryReportMulti lstSummaryReportMulti = new SummaryReportMulti();
 
 
-                /*var mediaRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = tr.Key.GMT_DateTime, Number_Docs = tr.Sum(r => r.Number_Docs) });
-                var audienceRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Audience = tr.Sum(r => r.Audience) });
-                var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, IQMediaValue = tr.Sum(r => r.IQMediaValue) });*/
+                //var mediaRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var subMediaRecords = listOfSummaryReportData.GroupBy(sr => new { sr.SubMediaType, sr.GMT_DateTime }).Select(tr => new SummaryReportModel { SubMediaType = tr.Key.SubMediaType, GMT_DateTime = tr.Key.GMT_DateTime, Number_Docs = tr.Sum(r => r.Number_Docs) });
+                //var audienceRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, Audience = tr.Sum(r => r.Audience) });
+                //var iqMediaValueRecords = listOfSummaryReportData.GroupBy(sr => sr.GMT_DateTime).Select(tr => new SummaryReportModel { GMT_DateTime = tr.Key, IQMediaValue = tr.Sum(r => r.IQMediaValue) });
 
 
                 Chart chart = new Chart();
@@ -2872,8 +2887,8 @@ namespace IQMedia.Web.Logic
 
                             multiSeriesData.seriesname = SearchRequest.Query_Name;
                             multiSeriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (var item in dateRange)
                             {
@@ -2918,8 +2933,8 @@ namespace IQMedia.Web.Logic
 
                     seriesData.seriesname = "Media";
                     seriesData.color = "";
-                    /*seriesData.anchorBorderColor = "";
-                    seriesData.anchorBgColor = "";*/
+                    //seriesData.anchorBorderColor = "";
+                    //seriesData.anchorBgColor = "";
 
                     foreach (var item in dateRange)
                     {
@@ -3018,16 +3033,16 @@ namespace IQMedia.Web.Logic
                         //multiChart.caption = enumDesc;
                         seriesData.seriesname = enumDesc;
                         seriesData.color = "";
-                        /*seriesData.anchorBorderColor = "";
-                        seriesData.anchorBgColor = "";*/
+                        //seriesData.anchorBorderColor = "";
+                        //seriesData.anchorBgColor = "";
 
                         SeriesData multiSeriesData = new SeriesData();
                         multiSeriesData.data = new List<Datum>();
 
                         multiSeriesData.seriesname = "";
                         multiSeriesData.color = "";
-                        /*multiSeriesData.anchorBorderColor = "";
-                        multiSeriesData.anchorBgColor = "";*/
+                        //multiSeriesData.anchorBorderColor = "";
+                        //multiSeriesData.anchorBgColor = "";
 
 
                         //Multi Line Charts
@@ -3231,12 +3246,14 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public SummaryReportMulti HighChartsLineChartHour(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int? chartWidth, bool p_Isv4TMAccess, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues,
-            List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4UGCAccess, bool p_Isv4PQAccess, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess)
+        */
+
+        public SummaryReportMulti HighChartsLineChartHour(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int? chartWidth, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, Dictionary<long, string> p_SearchRequests, List<IQAgent_ComparisionValues> p_ListOfIQAgent_ComparisionValues, List<ThirdPartyDataTypeModel> p_ThirdPartyDataTypes, bool p_NielsenAccess, bool p_CompeteDataAccess, bool p_IsThirdPartyAccess, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
                 Dictionary<long, string> dictSeriesColors = new Dictionary<long, string>();
+
                 var dateRange = new List<DateTime>();
 
                 for (var dt = p_FromDate; dt <= p_ToDate; dt = dt.AddHours(1))
@@ -3258,17 +3275,17 @@ namespace IQMedia.Web.Logic
                     else
                     {
                         categories.Add(date.AddHours((Convert.ToDouble(p_ClientGmtOffset))).ToString());
-                    }                    
+                    }
                 }
 
                 // this signle line medium chart, with out applying any medium filter.... 
                 // if one or more request request applid, then it will show multi line chart, one for each request request. 
-                
+
                 HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, title = new Title2() }};
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -3302,7 +3319,7 @@ namespace IQMedia.Web.Logic
                 // with total no. of records for that search request on perticular date (value of category)
                 if (p_SearchRequests != null && p_SearchRequests.Count > 0)
                 {
-                    
+
                     // set plot options and click event for series points (which will again assigned in JS as this is string value)
                     highLineChartOutput.plotOption = new PlotOptions()
                     {
@@ -3340,16 +3357,8 @@ namespace IQMedia.Web.Logic
                         foreach (var item in dateRange)
                         {
                             var daywiseSum = listOfSummaryReportData.Where(smr => smr.SearchRequestID == searchRequest.Key && smr.GMT_DateTime.Equals(item)
-                                    && (
-                                        (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                        (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                        (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())) // BLPM and ProQuest data is combined
+                                    && smr.DefaultMediaType
+                                    && CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)
                                 ).Sum(s => s.Number_Docs);
 
                             // set data point of current series 
@@ -3366,6 +3375,8 @@ namespace IQMedia.Web.Logic
                             highChartDatum.Type = "Media";
                             series.data.Add(highChartDatum);
                         }
+
+                        lstSeries.Add(series);
 
                         // Keep track of the association between agent and series color so that third party data can match colors by agent
                         dictSeriesColors.Add(searchRequest.Key, series.color);
@@ -3408,20 +3419,10 @@ namespace IQMedia.Web.Logic
                     // loop for each date to create list of data for media series
                     foreach (var item in dateRange)
                     {
-                        //var singleSubMediaRec =
+
                         var sumOfDocs = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
-                            && (
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                )
-                            ).Sum(s => s.Number_Docs);
+                            && smr.DefaultMediaType
+                            && CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)).Sum(s => s.Number_Docs);
 
                         // set data point of current series 
                         /*
@@ -3448,7 +3449,7 @@ namespace IQMedia.Web.Logic
                 highLineChartSubMediaOutput.subtitle = new Subtitle() { text = "", x = -20 };
                 //highLineChartSubMediaOutput.Colors = new List<string>() { "#15335D", "#448FF2", "#7A045C", "#FFB451", "#E14A02", "#394900", "#005E8F", "#A7B1B3" };
 
-                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartSubMediaOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -3502,7 +3503,7 @@ namespace IQMedia.Web.Logic
 
                 // set min = 0 , to force chart to start from 0 , and show line in bottom, 
                 // gridLineWidth = 0 , to hide grid lines on y axis. 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 // not to show x axis labels for spark charts 
                 // we have set default value for TickWidth to 0 in XAxis class defination, to not to show line below x-axis for ticks.
@@ -3550,18 +3551,9 @@ namespace IQMedia.Web.Logic
                 };
                 highLineChartSingleMediaChartOutput.legend = new Legend() { enabled = false };
 
-                List<CommonFunctions.DashBoardMediumType> lstMediaCategories = Enum.GetValues(typeof(CommonFunctions.DashBoardMediumType)).Cast<CommonFunctions.DashBoardMediumType>().ToList();
-                Int64 totNumOfHits = listOfSummaryReportData.Where(smr =>
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    (p_Isv4UGCAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.MS.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                ).Sum(s => s.Number_Docs);
+                Int64 totNumOfHits = listOfSummaryReportData.Where(smr => smr.DefaultMediaType
+                                        && CheckSubMediaTypeAccess(p_MediaTypeList, smr.SubMediaType)).Sum(s => s.Number_Docs);
+
                 lstSummaryReportMulti.TotalNumOfHits = totNumOfHits.ToString("N0");
 
                 // start to set series of data for  multi line medium chart
@@ -3576,117 +3568,61 @@ namespace IQMedia.Web.Logic
                     searchRequestNames = Newtonsoft.Json.JsonConvert.SerializeObject(listOfSummaryReportData.Select(a => a.Query_Name).Distinct());
                 }
 
-                foreach (var subMedia in lstMediaCategories)
+                lstSummaryReportMulti.SummaryReportMedium = new List<SummaryReportMedium>();
+
+                foreach (var media in p_MediaTypeList.Where(m => m.TypeLevel == 1 && m.HasAccess == true && p_MediaTypeList.Where(sm=>string.Compare(m.MediaType, sm.MediaType, true) == 0 && sm.TypeLevel == 2 && sm.HasAccess).Count() > 0))
                 {
-                    if (
-                        (p_Isv4TMAccess && subMedia == CommonFunctions.DashBoardMediumType.Radio) ||
-                        (p_Isv4NMAccess && subMedia == CommonFunctions.DashBoardMediumType.NM) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.SocialMedia) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Forum) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Blog) ||
-                        (p_Isv4TWAccess && subMedia == CommonFunctions.DashBoardMediumType.TW) ||
-                        (p_Isv4TVAccess && subMedia == CommonFunctions.DashBoardMediumType.TV) ||
-                        (p_Isv4UGCAccess && subMedia == CommonFunctions.DashBoardMediumType.MS) ||
-                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && subMedia == CommonFunctions.DashBoardMediumType.PM)) // BLPM and ProQuest data is combined
+
+                    // set sereies name of multiline medium chart as media display name, will shown in legent and tooltip.
+                    Series series = new Series();
+                    series.data = new List<HighChartDatum>();
+                    series.name = media.DisplayName;
+
+                    // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
+                    Series seriesSingleMedia = new Series();
+                    seriesSingleMedia.data = new List<HighChartDatum>();
+                    seriesSingleMedia.name = "";
+
+                    // loop for each date to create list of data for selected medium type
+                    foreach (var item in dateRange)
                     {
+                        var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.MediaType, media.MediaType.ToString(), true) == 0 && smr.GMT_DateTime.Equals(item) && CheckSubMediaTypeAccess(p_MediaTypeList,smr.SubMediaType)).Sum(s => s.Number_Docs);
 
-                        // set sereies name of multiline medium chart as medium description, will shown in legent and tooltip.
-                        string enumDesc = CommonFunctions.GetEnumDescription(subMedia);
-                        Series series = new Series();
-                        series.data = new List<HighChartDatum>();
-                        series.name = enumDesc;
+                        // set data point of current series 
+                        /*
+                            *  y = y series value of current point === total no. of records for current medium type at perticular date 
+                            *  SearchTerm = medium description  , used in chart drill down click event
+                            *  Value = medium tpye  , used in chart drill down click event
+                            *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
+                        */
+                        HighChartDatum highChartDatum = new HighChartDatum();
+                        highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
+                        highChartDatum.SearchTerm = media.DisplayName;
+                        highChartDatum.Value = media.MediaType;
+                        highChartDatum.Type = "SubMedia";
+                        series.data.Add(highChartDatum);
 
-                        // set sereies name of signle line spark medium chart  as medium description, will shown in legent and tooltip.
-                        Series seriesSingleMedia = new Series();
-                        seriesSingleMedia.data = new List<HighChartDatum>();
-                        seriesSingleMedia.name = "";
-
-                        // loop for each date to create list of data for selected medium type
-                        foreach (var item in dateRange)
-                        {
-                            //var singleSubMediaRec =
-                            var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.SubMediaType, subMedia.ToString(), true) == 0 && smr.GMT_DateTime.Equals(item)).Sum(s => s.Number_Docs);
-
-                            // set data point of current series 
-                            /*
-                                *  y = y series value of current point === total no. of records for current medium type at perticular date 
-                                *  SearchTerm = medium description  , used in chart drill down click event
-                                *  Value = medium tpye  , used in chart drill down click event
-                                *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
-                            */
-                            HighChartDatum highChartDatum = new HighChartDatum();
-                            highChartDatum.y = daywiseSum != null ? daywiseSum : 0;
-                            highChartDatum.SearchTerm = enumDesc;
-                            highChartDatum.Value = subMedia.ToString();
-                            highChartDatum.Type = "SubMedia";
-                            series.data.Add(highChartDatum);
-
-                            seriesSingleMedia.data.Add(highChartDatum);
-                        }
-
-                        lstSeriesSubMediaType.Add(series);
-
-                        // set signle series for spark chart of current medium type, and assign list of data for that series.
-                        List<Series> lstSeriesSingleMediaType = new List<Series>();
-                        lstSeriesSingleMediaType.Add(seriesSingleMedia);
-                        highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
-
-
-                        // set json chart for spark chart based on medium type
-                        if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TV.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TVRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TVRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TVPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.NM.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.NMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.NMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.NMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.TW.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TWRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TWRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TWPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Forum.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.ForumRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.ForumRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.ForumPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.SocialMedia.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.SocialMediaRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.SocialMediaRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.SocialMediaPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Blog.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.BlogRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.BlogRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.BlogPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.PM.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.PMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.PMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.PMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.Radio.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.TMRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.TMRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                            lstSummaryReportMulti.TMPrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()).Sum(s => s.NoOfDocs) : 0;
-                        }
-                        else if (string.Compare(subMedia.ToString(), CommonFunctions.DashBoardMediumType.MS.ToString(), true) == 0)
-                        {
-                            lstSummaryReportMulti.MSRecords = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput);
-                            lstSummaryReportMulti.MSRecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)));
-                        }
+                        seriesSingleMedia.data.Add(highChartDatum);
                     }
+
+                    lstSeriesSubMediaType.Add(series);
+
+                    // set signle series for spark chart of current medium type, and assign list of data for that series.
+                    List<Series> lstSeriesSingleMediaType = new List<Series>();
+                    lstSeriesSingleMediaType.Add(seriesSingleMedia);
+                    highLineChartSingleMediaChartOutput.series = lstSeriesSingleMediaType;
+
+
+                    // set json chart for spark chart based on medium type                    
+
+                    lstSummaryReportMulti.SummaryReportMedium.Add(new SummaryReportMedium()
+                    {
+                        MediaTypeModel = media,
+                        PrevRecordsSum = (p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(a => a.SubMediaType != null && string.Compare(a.MediaType, media.MediaType, true) == 0 && CheckSubMediaTypeAccess(p_MediaTypeList, a.SubMediaType)).Sum(s => s.NoOfDocs) : 0),
+                        Records = CommonFunctions.SearializeJson(highLineChartSingleMediaChartOutput),
+                        RecordsSum = (series.data.Sum(s => Convert.ToInt64(s.y)))
+
+                    });
                 }
 
                 // Create series for third party data
@@ -3705,7 +3641,7 @@ namespace IQMedia.Web.Logic
                 lstSummaryReportMulti.MediaRecords = jsonResult;
 
                 // create spark chart for audience and media value
-                if (p_Isv4TMAccess || p_Isv4NMAccess || p_Isv4SMAccess || p_Isv4TWAccess || p_Isv4TVAccess || p_Isv4BLPMAccess || p_Isv4PQAccess)
+                if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && (m.UseAudience == true || m.UseMediaValue == true)).Count() > 0)
                 {
                     //Single Media Chart 
                     HighLineChartOutput highLineChartAudienceMediaValue = new HighLineChartOutput();
@@ -3713,7 +3649,7 @@ namespace IQMedia.Web.Logic
                     highLineChartAudienceMediaValue.subtitle = new Subtitle() { text = "", x = -20 };
                     //highLineChartAudienceMediaValue.Colors = new List<string>();
 
-                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                    highLineChartAudienceMediaValue.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                     highLineChartAudienceMediaValue.xAxis = new XAxis()
                     {
@@ -3742,82 +3678,86 @@ namespace IQMedia.Web.Logic
                     highLineChartAudienceMediaValue.tooltip = new Tooltip() { valueSuffix = "" };
                     highLineChartAudienceMediaValue.legend = new Legend() { enabled = false };
 
-                    List<Series> lstSeriesMediaValue = new List<Series>();
-
-                    Series series = new Series();
-                    series.data = new List<HighChartDatum>();
-                    series.name = "Media Value";
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseMediaValue == true).Count() > 0)
                     {
+                        List<Series> lstSeriesMediaValue = new List<Series>();
 
-                        var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                               )
-                          ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+                        Series series = new Series();
+                        series.data = new List<HighChartDatum>();
+                        series.name = "Media Value";
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
-                        series.data.Add(highChartDatum);
+                        foreach (var item in dateRange)
+                        {
+
+                            var singleIQMediaValueRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
+                                && smr.DefaultMediaType
+                                && (
+                                        p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType) 
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+
+                                   )
+                              ).Sum(s => s.IQMediaValue);// SingleOrDefault();
+
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = Convert.ToDecimal(singleIQMediaValueRec != null ? singleIQMediaValueRec : 0);
+                            series.data.Add(highChartDatum);
+                        }
+
+                        lstSeriesMediaValue.Add(series);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
+
+                        lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+
+                        //lstSummaryReportMulti.IQMediaValueRecords = temp;
+                        lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
+                        lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType) 
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseMediaValue, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+                                          ).Sum(a => a.IQMediaValue) : 0;
                     }
 
-                    lstSeriesMediaValue.Add(series);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesMediaValue;
-
-                    lstSummaryReportMulti.IQMediaValueRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
 
 
-                    //lstSummaryReportMulti.IQMediaValueRecords = temp;
-                    lstSummaryReportMulti.IQMediaValueRecordsSum = (series.data.Sum(s => Convert.ToDecimal(s.y)));
-                    lstSummaryReportMulti.IQMediaValuePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess)
-                                      ).Sum(a => a.IQMediaValue) : 0;
-
-
-
-                    List<Series> lstSeriesAudience = new List<Series>();
-                    Series seriesAudience = new Series();
-                    seriesAudience.name = "Audience";
-                    seriesAudience.data = new List<HighChartDatum>();
-
-                    foreach (var item in dateRange)
+                    if (p_MediaTypeList.Where(m => m.TypeLevel == 2 && m.HasAccess == true && m.UseAudience == true).Count() > 0)
                     {
+                        List<Series> lstSeriesAudience = new List<Series>();
+                        Series seriesAudience = new Series();
+                        seriesAudience.name = "Audience";
+                        seriesAudience.data = new List<HighChartDatum>();
 
-                        var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
-                            && (
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                )
-                        ).Sum(s => s.Audience);// SingleOrDefault();
+                        foreach (var item in dateRange)
+                        {
 
-                        HighChartDatum highChartDatum = new HighChartDatum();
-                        highChartDatum.y = singleAudienceRec;
-                        seriesAudience.data.Add(highChartDatum);
+                            var singleAudienceRec = listOfSummaryReportData.Where(smr => smr.GMT_DateTime.Equals(item)
+                                && smr.DefaultMediaType
+                                && (
+                                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType) 
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+                                    )
+                            ).Sum(s => s.Audience);// SingleOrDefault();
 
+                            HighChartDatum highChartDatum = new HighChartDatum();
+                            highChartDatum.y = singleAudienceRec;
+                            seriesAudience.data.Add(highChartDatum);
+
+                        }
+
+                        lstSeriesAudience.Add(seriesAudience);
+
+                        highLineChartAudienceMediaValue.series = lstSeriesAudience;
+
+                        lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
+
+                        lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
+                        lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
+
+                            p_MediaTypeList.Where(m => CheckSubMediaTypeAccess(m, smr.SubMediaType) 
+                                            && CommonFunctions.CheckNielsenCompeteAccess(m.UseAudience, m.RequireNielsenAccess, p_NielsenAccess, m.RequireCompeteAccess, p_CompeteDataAccess)).Count() > 0
+
+                                            ).Sum(a => a.Audience) : 0;
                     }
-
-                    lstSeriesAudience.Add(seriesAudience);
-
-                    highLineChartAudienceMediaValue.series = lstSeriesAudience;
-
-                    lstSummaryReportMulti.AudienceRecords = CommonFunctions.SearializeJson(highLineChartAudienceMediaValue);
-
-                    lstSummaryReportMulti.AudienceRecordsSum = (seriesAudience.data.Sum(s => Convert.ToInt64(s.y)));
-                    lstSummaryReportMulti.AudiencePrevRecordsSum = p_ListOfIQAgent_ComparisionValues != null ? p_ListOfIQAgent_ComparisionValues.Where(smr =>
-                                        ((p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) && p_CompeteDataAccess) ||
-                                        ((p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) && p_CompeteDataAccess) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString() && p_NielsenAccess) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString())).Sum(a => a.Audience) : 0;
                 }
 
                 return lstSummaryReportMulti;
@@ -3827,6 +3767,21 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
+        }
+        
+        private bool CheckMainMediaTypeAccess(List<IQ_MediaTypeModel> p_MediaTypeList, string p_RecordMediaType)
+        {
+            return (p_MediaTypeList.Where(m => string.Compare(p_RecordMediaType, m.MediaType, true) == 0 && m.TypeLevel == 1).Single().HasAccess);
+        }
+
+        private bool CheckSubMediaTypeAccess(List<IQ_MediaTypeModel> p_MediaTypeList, string p_RecordSubMediaType)
+        {
+            return (p_MediaTypeList.Where(m => string.Compare(p_RecordSubMediaType, m.SubMediaType, true) == 0 && m.TypeLevel == 2).Single().HasAccess);
+        }
+
+        private bool CheckSubMediaTypeAccess(IQ_MediaTypeModel p_MediaType, string p_RecordSubMediaType)
+        {
+            return (string.Compare(p_RecordSubMediaType, p_MediaType.SubMediaType, true) == 0 && p_MediaType.TypeLevel == 2 && p_MediaType.HasAccess);
         }
 
         #endregion
@@ -3937,6 +3892,7 @@ namespace IQMedia.Web.Logic
         }
 
         #region Default Chart
+        /*
         public string GetLineChartForDocs(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
@@ -3971,8 +3927,8 @@ namespace IQMedia.Web.Logic
 
                 seriesData.seriesname = p_Medium;
                 seriesData.color = "";
-                /*seriesData.anchorBorderColor = "";
-                seriesData.anchorBgColor = "";*/
+                //seriesData.anchorBorderColor = "";
+                //seriesData.anchorBgColor = "";
 
                 if (p_SearchRequestIDs != null && p_SearchRequestIDs.Count > 0)
                 {
@@ -4001,8 +3957,8 @@ namespace IQMedia.Web.Logic
                         {
                             seriesData.seriesname = SearchRequest.Query_Name;
                             seriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (DateTime rDate in distinctDate)
                             {
@@ -4074,7 +4030,7 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
-        }
+        }*/
 
         public string GetLineChartForHits(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_HitsCount)
         {
@@ -4738,11 +4694,11 @@ namespace IQMedia.Web.Logic
                     {
                         minValue = mention;
                     }
-                    
+
                     lstFusionMapData.Add(fusionMapData);
                 }
 
-               long colorStep = (maxValue - minValue) / 5;
+                long colorStep = (maxValue - minValue) / 5;
                 if (colorStep > 0)
                 {
                     for (int i = 0; i < 5; i++)
@@ -4751,7 +4707,7 @@ namespace IQMedia.Web.Logic
                         if (i == 0)
                         {
                             fusionMapColor.minvalue = (minValue).ToString();
-                            fusionMapColor.maxvalue = ((colorStep * (i + 1)) - 1).ToString();                            
+                            fusionMapColor.maxvalue = ((colorStep * (i + 1)) - 1).ToString();
                         }
                         else if (i == 4)
                         {
@@ -4771,7 +4727,7 @@ namespace IQMedia.Web.Logic
                 }
                 else
                 {
-                    if (maxValue==0)
+                    if (maxValue == 0)
                     {
                         maxValue = 1;
                     }
@@ -4788,7 +4744,7 @@ namespace IQMedia.Web.Logic
                     fusionMapColor.displayvalue = fusionMapColor.maxvalue;
                     fusionMapColorRange.color.Add(fusionMapColor);
                 }
-                
+
                 fusionMapOutput.map = fusionMap;
                 fusionMapOutput.colorrange = fusionMapColorRange;
                 fusionMapOutput.data = lstFusionMapData;
@@ -4926,7 +4882,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public string GetHighChartForDocs(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
+        public string GetHighChartForDocs(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, IQ_MediaTypeModel p_MediaType, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
             try
@@ -4953,7 +4909,7 @@ namespace IQMedia.Web.Logic
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5079,7 +5035,7 @@ namespace IQMedia.Web.Logic
                     // set sereies name as "Media" , will shown in legent and tooltip.
                     Series series = new Series();
                     series.data = new List<HighChartDatum>();
-                    series.name = p_Medium;
+                    series.name = p_MediaType.DisplayName;
 
                     foreach (DateTime rDate in distinctDate)
                     {
@@ -5136,7 +5092,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5149,7 +5105,7 @@ namespace IQMedia.Web.Logic
                 {
                     tickInterval = Convert.ToInt32(Math.Floor(Convert.ToDouble(distinctDate.Count()) / 7)),
                     tickmarkPlacement = "off",
-                    categories = distinctDate.Select(a=> a.ToShortDateString()).ToList(),
+                    categories = distinctDate.Select(a => a.ToShortDateString()).ToList(),
                     labels = new labels()
                     {
                         enabled = false
@@ -5158,7 +5114,7 @@ namespace IQMedia.Web.Logic
 
                 // set chart with height , width and type of chart
                 highLineChartSingleMediaChartOutput.hChart = new HChart() { height = 100, width = 120, type = "spline" };
-                
+
                 // show default tooltip format x / y values
                 highLineChartSingleMediaChartOutput.tooltip = new Tooltip() { valueSuffix = "" };
 
@@ -5212,7 +5168,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public string GetHighChartForViews(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, out Int64 p_ViewsCount)
+        public string GetHighChartForViews(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_ViewsCount)
         {
 
             try
@@ -5235,7 +5191,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5334,7 +5290,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5434,7 +5390,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5534,7 +5490,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -5641,7 +5597,7 @@ namespace IQMedia.Web.Logic
             {
                 categories.Add(rDate.ToShortDateString());
             }
-            
+
             HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
             highLineChartOutput.title = new Title() { text = "", x = -20 };
             highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
@@ -5669,9 +5625,10 @@ namespace IQMedia.Web.Logic
             {
                 spline = new PlotSeries()
                 {
-                    events = new PlotEvents(){
-                         mouseOver = "HandleChartMouseHover",
-                         mouseOut = "HandleChartMouseOut"
+                    events = new PlotEvents()
+                    {
+                        mouseOver = "HandleChartMouseHover",
+                        mouseOut = "HandleChartMouseOut"
                     },
                     marker = new PlotMarker()
                     {
@@ -5682,7 +5639,7 @@ namespace IQMedia.Web.Logic
             };
 
             // show default tooltip format x / y values
-            highLineChartOutput.tooltip = new Tooltip() { valueSuffix = "", shared = true  };
+            highLineChartOutput.tooltip = new Tooltip() { valueSuffix = "", shared = true };
 
             // show legend in center (as no other property is applied, it will take default values of it) , with borderWidth  = 0
             highLineChartOutput.legend = new Legend() { enabled = false };
@@ -5697,7 +5654,7 @@ namespace IQMedia.Web.Logic
             // set list of data for each series 
             foreach (var dma in p_Dmas)
             {
-                var reqDma = p_lstIQAgent_DaySummaryModel.Where(a => string.Compare(a.Query_Name, dma.id,true) == 0).FirstOrDefault();
+                var reqDma = p_lstIQAgent_DaySummaryModel.Where(a => string.Compare(a.Query_Name, dma.id, true) == 0).FirstOrDefault();
 
                 if (reqDma != null)
                 {
@@ -6120,6 +6077,7 @@ namespace IQMedia.Web.Logic
         #endregion
 
         #region Hourly Chart
+        /*
         public string GetLineChartForDocsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
@@ -6133,7 +6091,7 @@ namespace IQMedia.Web.Logic
                     distinctDate.Add(dt);
                 }
 
-                p_TotalAirSeconds = ((p_lstIQAgent_DaySummaryModel != null && p_lstIQAgent_DaySummaryModel.ToList().Count > 0) ? p_lstIQAgent_DaySummaryModel.Sum(s => s.NoOfDocs) : 0) *8;
+                p_TotalAirSeconds = ((p_lstIQAgent_DaySummaryModel != null && p_lstIQAgent_DaySummaryModel.ToList().Count > 0) ? p_lstIQAgent_DaySummaryModel.Sum(s => s.NoOfDocs) : 0) * 8;
 
                 Chart chart = GetChartObject();
                 chart.showLabels = "1";
@@ -6199,8 +6157,8 @@ namespace IQMedia.Web.Logic
                         {
                             seriesData.seriesname = SearchRequest.Query_Name;
                             seriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (DateTime rDate in distinctDate)
                             {
@@ -6232,8 +6190,8 @@ namespace IQMedia.Web.Logic
                 {
                     seriesData.seriesname = p_Medium;
                     seriesData.color = "";
-                    /*seriesData.anchorBorderColor = "";
-                    seriesData.anchorBgColor = "";*/
+                    //seriesData.anchorBorderColor = "";
+                    //seriesData.anchorBgColor = "";
 
                     var dayWiseTotalRecord = p_lstIQAgent_DaySummaryModel.GroupBy(g => g.DayDate).Select(s => new
                     {
@@ -6282,7 +6240,7 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
-        }
+        }*/
 
         public string GetLineChartForHitsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_HitsCount)
         {
@@ -6886,7 +6844,7 @@ namespace IQMedia.Web.Logic
         }
 
 
-        public string GetHighChartForDocsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
+        public string GetHighChartForDocsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, IQ_MediaTypeModel p_MediaType, decimal p_ClientGmtOffset, decimal p_ClientDstOffset, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
             try
@@ -6922,7 +6880,7 @@ namespace IQMedia.Web.Logic
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -7046,7 +7004,7 @@ namespace IQMedia.Web.Logic
                     // set sereies name as "Media" , will shown in legent and tooltip.
                     Series series = new Series();
                     series.data = new List<HighChartDatum>();
-                    series.name = p_Medium;
+                    series.name = p_MediaType.DisplayName;
 
                     foreach (DateTime rDate in distinctDate)
                     {
@@ -7118,7 +7076,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -7193,7 +7151,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public string GetHighChartForViewsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, out Int64 p_ViewsCount, decimal p_ClientGmtOffset, decimal p_ClientDstOffset)
+        public string GetHighChartForViewsHourly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_ViewsCount, decimal p_ClientGmtOffset, decimal p_ClientDstOffset)
         {
 
             try
@@ -7227,7 +7185,7 @@ namespace IQMedia.Web.Logic
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -7281,7 +7239,7 @@ namespace IQMedia.Web.Logic
                 // set series data
                 foreach (var rDate in distinctDate)
                 {
-                    var daywiseCount = p_lstIQAgent_DaySummaryModel.Where(d => d.DayDate.Equals(rDate)).Sum(sm => sm.Audience); 
+                    var daywiseCount = p_lstIQAgent_DaySummaryModel.Where(d => d.DayDate.Equals(rDate)).Sum(sm => sm.Audience);
 
                     HighChartDatum highChartDatum = new Model.HighChartDatum();
                     highChartDatum.y = daywiseCount != null ? daywiseCount : 0;
@@ -7339,7 +7297,7 @@ namespace IQMedia.Web.Logic
 
                 List<PlotLine> plotlinesSingleMedia = new List<PlotLine>();
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -7383,7 +7341,7 @@ namespace IQMedia.Web.Logic
 
                 // series of data for medium chart
                 List<Series> lstSeries = new List<Series>();
-                
+
                 // set series name
                 Series series = new Series();
                 series.name = "Air Time";
@@ -7448,8 +7406,8 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartSingleMediaChartOutput = new HighLineChartOutput();
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -7560,9 +7518,9 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartSingleMediaChartOutput = new HighLineChartOutput();
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -8181,7 +8139,7 @@ namespace IQMedia.Web.Logic
 
         #region Monthly Chart
 
-        public string GetHighChartForDocsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
+        public string GetHighChartForDocsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, IQ_MediaTypeModel p_MediaType, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
             try
@@ -8196,9 +8154,9 @@ namespace IQMedia.Web.Logic
 
                 List<string> categories = new List<string>();
                 foreach (DateTime rDate in distinctDate)
-                {   
+                {
                     categories.Add(rDate.ToShortDateString());
-                }               
+                }
 
                 p_TotalAirSeconds = ((p_lstIQAgent_DaySummaryModel != null && p_lstIQAgent_DaySummaryModel.ToList().Count > 0) ? p_lstIQAgent_DaySummaryModel.Sum(s => s.NoOfDocs) : 0) * 8;
 
@@ -8207,9 +8165,9 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartOutput = new HighLineChartOutput();
                 highLineChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
 
-                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis(){ title = new Title2() }};
+
+                highLineChartOutput.yAxis = new List<YAxis>() { new YAxis() { title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -8234,7 +8192,7 @@ namespace IQMedia.Web.Logic
                 highLineChartOutput.tooltip = new Tooltip() { valueSuffix = "" };
 
                 // show legend in center (as no other property is applied, it will take default values of it) , with borderWidth  = 0
-                highLineChartOutput.legend = new Legend() { borderWidth = "0", width = 750};
+                highLineChartOutput.legend = new Legend() { borderWidth = "0", width = 750 };
 
                 // set chart with height = 300 px and width = 100 % (as not applied it will take default to 100%)
                 highLineChartOutput.hChart = new HChart() { height = 300, type = "spline" };
@@ -8336,7 +8294,7 @@ namespace IQMedia.Web.Logic
                     // set sereies name as "Media" , will shown in legent and tooltip.
                     Series series = new Series();
                     series.data = new List<HighChartDatum>();
-                    series.name = p_Medium;
+                    series.name = p_MediaType.DisplayName;
 
                     foreach (DateTime rDate in distinctDate)
                     {
@@ -8398,7 +8356,7 @@ namespace IQMedia.Web.Logic
                     tickInterval = 2, will skip show alternative labels in x-axis , form category values. 
                 */
                 /* tickmarkPlacement = off  to force chart to show last value of category in x-axis, otherwise it may show values as per tickinterval */
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 highLineChartSingleMediaChartOutput.xAxis = new XAxis()
                 {
@@ -8472,7 +8430,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public string GetHighChartForViewsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, out Int64 p_ViewsCount)
+        public string GetHighChartForViewsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_ViewsCount)
         {
 
             try
@@ -8497,9 +8455,9 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartSingleMediaChartOutput = new HighLineChartOutput();
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
 
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -8601,8 +8559,8 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartSingleMediaChartOutput = new HighLineChartOutput();
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -8702,8 +8660,8 @@ namespace IQMedia.Web.Logic
                 HighLineChartOutput highLineChartSingleMediaChartOutput = new HighLineChartOutput();
                 highLineChartSingleMediaChartOutput.title = new Title() { text = "", x = -20 };
                 highLineChartSingleMediaChartOutput.subtitle = new Subtitle() { text = "", x = -20 };
-                
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 /* to show date lables on x-axis , vertically, will apply rotation on label = 270 */
                 /* 
@@ -8808,7 +8766,7 @@ namespace IQMedia.Web.Logic
                     tickInterval = 2, will skip show alternative labels in x-axis , form category values. 
                 */
                 /* tickmarkPlacement = off  to force chart to show last value of category in x-axis, otherwise it may show values as per tickinterval */
-                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis(){ min = 0, gridLineWidth = 0, title = new Title2() }};
+                highLineChartSingleMediaChartOutput.yAxis = new List<YAxis>() { new YAxis() { min = 0, gridLineWidth = 0, title = new Title2() } };
 
                 // set chart with height , width and type 
                 highLineChartSingleMediaChartOutput.xAxis = new XAxis()
@@ -8891,7 +8849,7 @@ namespace IQMedia.Web.Logic
                 throw;
             }
         }
-
+        /*
         public string GetLineChartForDocsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, List<string> p_SearchRequestIDs, out Int64 p_TotalAirSeconds)
         {
 
@@ -8926,8 +8884,8 @@ namespace IQMedia.Web.Logic
 
                 seriesData.seriesname = p_Medium;
                 seriesData.color = "";
-                /*seriesData.anchorBorderColor = "";
-                seriesData.anchorBgColor = "";*/
+                //seriesData.anchorBorderColor = "";
+                //seriesData.anchorBgColor = "";
 
                 if (p_SearchRequestIDs != null && p_SearchRequestIDs.Count > 0)
                 {
@@ -8957,8 +8915,8 @@ namespace IQMedia.Web.Logic
                         {
                             seriesData.seriesname = SearchRequest.Query_Name;
                             seriesData.color = "";
-                            /*multiSeriesData.anchorBorderColor = "";
-                            multiSeriesData.anchorBgColor = "";*/
+                            //multiSeriesData.anchorBorderColor = "";
+                            //multiSeriesData.anchorBgColor = "";
 
                             foreach (DateTime rDate in distinctDate)
                             {
@@ -9026,7 +8984,7 @@ namespace IQMedia.Web.Logic
 
                 throw;
             }
-        }
+        }*/
 
         public string GetLineChartForHitsMonthly(List<IQAgent_DaySummaryModel> p_lstIQAgent_DaySummaryModel, DateTime p_FromDate, DateTime p_ToDate, out Int64 p_HitsCount)
         {
@@ -9685,7 +9643,7 @@ namespace IQMedia.Web.Logic
 
                     foreach (DateTime rDate in distinctDate)
                     {
-                        
+
                         var daywiseCount = Convert.ToDecimal(p_lstIQAgent_DaySummaryModel.Where(smr => String.Compare(smr.Query_Name.ToString(), dma.id, true) == 0 && smr.DayDate.Month.Equals(rDate.Month) && smr.DayDate.Year.Equals(rDate.Year)).Sum(s => s.NoOfDocs));
                         daywiseCount = Math.Round(Convert.ToDecimal(daywiseCount * 8) / 60, 2);
 
@@ -9908,6 +9866,26 @@ namespace IQMedia.Web.Logic
                 throw;
             }
         }
+
+        private string GetXmlOfMediaType(List<IQCommon.Model.IQ_MediaTypeModel> p_MediaTypeList)
+        {
+            XDocument doc = new XDocument(new XElement("list", from mt in p_MediaTypeList select new XElement("item", new XAttribute("SubMediaType", mt.SubMediaType), new XAttribute("HasAccess", mt.HasAccess), new XAttribute("MediaType", mt.MediaType), new XAttribute("TypeLevel", mt.TypeLevel))));
+
+            return doc.ToString();
+        }
+
+        private string GetListSPNameOfMediaType(List<IQ_MediaTypeModel> p_MediaTypeList, string p_Medium)
+        {
+            var listSPName = "";
+
+            if (!string.IsNullOrEmpty(p_Medium))
+            {
+                listSPName = p_MediaTypeList.Where(mt => string.Compare(mt.MediaType, p_Medium, true) == 0 && mt.TypeLevel == 1).Single().DashboardData.ListSPName;
+            }
+
+            return listSPName;
+        }
+
         //public class SearchTermTotalRecords
         //{
 

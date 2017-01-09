@@ -181,47 +181,5 @@ namespace IQMedia.Data
                 throw _Exception;
             }
         }
-
-        // When calling FeedsSearch, used to filter out IQAgents and individual Feeds records that have been queued for deletion but not yet processed in solr
-        public Dictionary<string, List<string>> GetQueuedDeleteMediaResults(Guid clientGUID)
-        {
-            try
-            {
-                List<DataType> dataTypeList = new List<DataType>();
-                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGUID, ParameterDirection.Input));
-                DataSet dataSet = DataAccess.GetDataSet("usp_v4_IQAgent_MediaResults_SelectInactive", dataTypeList);
-
-                Dictionary<string, List<string>> dictResult = new Dictionary<string, List<string>>();
-                if (dataSet != null && dataSet.Tables.Count > 0)
-                {
-                    // Deleted IQSeqIDs
-                    if (dataSet.Tables[0] != null && dataSet.Tables[0].Rows.Count > 0)
-                    {
-                        List<string> ids = new List<string>();
-                        foreach (DataRow dr in dataSet.Tables[0].Rows)
-                        {
-                            ids.Add(dr["ID"].ToString());
-                        }
-                        dictResult.Add("ExcludeIDs", ids);
-                    }
-
-                    // Deleted IQAgent IDs
-                    if (dataSet.Tables[1] != null && dataSet.Tables[1].Rows.Count > 0)
-                    {
-                        List<string> ids = new List<string>();
-                        foreach (DataRow dr in dataSet.Tables[1].Rows)
-                        {
-                            ids.Add(dr["SearchRequestID"].ToString());
-                        }
-                        dictResult.Add("ExcludeSearchRequestIDs", ids);
-                    }
-                }
-                return dictResult;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

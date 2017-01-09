@@ -30,7 +30,7 @@ namespace IQMedia.WebApplication.Controllers
         string PATH_GloblaAdminCustomerRegistationPartialView = "~/Views/GlobalAdmin/_CustomerRegistation.cshtml";
         string PATH_GloblaAdminUGCSetupPartialView = "~/Views/GlobalAdmin/_UGCSetup.cshtml";
         string PATH_GloblaAdminClientUGC_MapListPartialView = "~/Views/GlobalAdmin/_ClientUGC_MapList.cshtml";
-
+        string PATH_GloblaAdminGroupPartialView = "~/Views/GlobalAdmin/_Group.cshtml";
         private string _ClientExistMessage = "Client Already Exists.";
         private string _CustomerExistMessage = "Customer is already exists.";
         private string _CustomerCanNotFliq = "Customer can not be Fliq Customer, as Selected Client is not Fliq Client";
@@ -787,6 +787,48 @@ namespace IQMedia.WebApplication.Controllers
                 TempData.Keep("GlobalAdminTempData");
             }
         }
+        [HttpPost]
+        public JsonResult AddClientToAnewstip(long clientKey, string clientName)
+        {
+            try
+            {
+                string url = "https://connect.iqmcorp.com/api/client/create";
+                string data = String.Format("key={0}&client_id={1}&client_name={2}", ConfigurationManager.AppSettings["AnewstipAPIKey"], clientKey, clientName);
+                string response = Shared.Utility.CommonFunctions.DoHttpPostRequest(url, data, p_ContentType: "application/x-www-form-urlencoded", p_IgnoreResponseLength: true);
+
+                bool isSuccess = false;
+                if (!String.IsNullOrEmpty(response))
+                {
+                    Newtonsoft.Json.Linq.JObject jsonData = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(response);
+
+                    if (Convert.ToString(jsonData["code"]) == "1")
+                    {
+                        isSuccess = true;
+                        ClientLogic clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
+                        clientLogic.AddClientToAnewstip(clientKey, clientKey);
+                    }
+                    else
+                        Utility.CommonFunctions.WriteException(new Exception(String.Format("Received error code from Anewstip Add Client API call.  Url: {0}?{1} || Error Code: {2} || Error Message: {3}", url, data, jsonData["code"], jsonData["msg"])));
+                }
+                else
+                {
+                    Utility.CommonFunctions.WriteException(new Exception(String.Format("No response received from Anewstip Add Client API call.  Url: {0}?{1}", url, data)));
+                }
+
+                return Json(new
+                {
+                    isSuccess = isSuccess
+                });
+            }
+            catch (Exception exception)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(exception);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
 
         private bool CheckForImage( HttpPostedFileBase flPlayerLogo,bool isCheckSize = true)
         {
@@ -1216,8 +1258,51 @@ namespace IQMedia.WebApplication.Controllers
             }
         }
 
-        #endregion
+        [HttpPost]
+        public JsonResult AddCustomerToAnewstip(long customerKey)
+        {
+            try
+            {
+                CustomerLogic customerLogic = (CustomerLogic)LogicFactory.GetLogic(LogicType.Customer);
+                CustomerModel customer = customerLogic.GetCustomerWithRoleByCustomerID(customerKey);
 
+                string url = "https://connect.iqmcorp.com/api/user/create";
+                string data = String.Format("key={0}&client_id={1}&user_id={2}&user_name={3}&user_email={4}", ConfigurationManager.AppSettings["AnewstipAPIKey"], customer.ClientID, customer.LoginID, customer.FirstName + " " + customer.LastName, customer.Email);
+                string response = Shared.Utility.CommonFunctions.DoHttpPostRequest(url, data, p_ContentType: "application/x-www-form-urlencoded", p_IgnoreResponseLength: true);
+
+                bool isSuccess = false;
+                if (!String.IsNullOrEmpty(response))
+                {
+                    Newtonsoft.Json.Linq.JObject jsonData = (Newtonsoft.Json.Linq.JObject)Newtonsoft.Json.JsonConvert.DeserializeObject(response);
+
+                    if (Convert.ToString(jsonData["code"]) == "1")
+                    {
+                        isSuccess = true;
+                        customerLogic.AddCustomerToAnewstip(customerKey, customer.LoginID);
+                    }
+                    else
+                        Utility.CommonFunctions.WriteException(new Exception(String.Format("Received error code from Anewstip Add User API call.  Url: {0}?{1} || Error Code: {2} || Error Message: {3}", url, data, jsonData["code"], jsonData["msg"])));
+                }
+                else
+                {
+                    Utility.CommonFunctions.WriteException(new Exception(String.Format("No response received from Anewstip Add User API call.  Url: {0}?{1}", url, data)));
+                }
+
+                return Json(new
+                {
+                    isSuccess = isSuccess
+                });
+            }
+            catch (Exception exception)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(exception);
+                return Json(new
+                {
+                    isSuccess = false
+                });
+            }
+        }
+        #endregion
         #region Client UGC Settings
 
         [HttpPost]
@@ -1356,9 +1441,6 @@ namespace IQMedia.WebApplication.Controllers
             {
 
                 ClientLogic clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
-
-                p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastLocation = !string.IsNullOrEmpty(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastLocation) ? p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastLocation.Trim() : p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastLocation;
-                p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastType = !string.IsNullOrEmpty(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastType) ? p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastType.Trim() : p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.BroadcastType;
                 p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Title = !string.IsNullOrEmpty(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Title) ? p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Title.Trim() : p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Title;
                 p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.URL = !string.IsNullOrEmpty(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.URL) ? p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.URL.Trim() : p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.URL;
                 p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID = !string.IsNullOrEmpty(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID) ? p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID.Trim() : p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID;
@@ -1370,18 +1452,8 @@ namespace IQMedia.WebApplication.Controllers
                         if (flUGCMapLogo != null)
                         {
                             p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo = p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID + Path.GetExtension(flUGCMapLogo.FileName);
-                            if (!Directory.Exists(ConfigurationManager.AppSettings["UGCMapLogo"]))
-                            {
-                                Directory.CreateDirectory(ConfigurationManager.AppSettings["UGCMapLogo"]);
-                            }
-
-                            if (!Directory.Exists(ConfigurationManager.AppSettings["UGCMapLogo2"]))
-                            {
-                                Directory.CreateDirectory(ConfigurationManager.AppSettings["UGCMapLogo2"]);
-                            }
 
                             flUGCMapLogo.SaveAs(ConfigurationManager.AppSettings["UGCMapLogo"] + @"\" + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
-                            flUGCMapLogo.SaveAs(ConfigurationManager.AppSettings["UGCMapLogo2"] + @"\" + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
                         }
 
                         string result = clientLogic.InsertIQClient_UGCMap(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel);
@@ -1429,23 +1501,16 @@ namespace IQMedia.WebApplication.Controllers
                 }
                 else
                 {
-                    if (flUGCMapLogo == null || !CheckForImage(flUGCMapLogo,false))
+                    if (flUGCMapLogo == null || CheckForImage(flUGCMapLogo,false))
                     {
                         if (flUGCMapLogo != null)
                         {
                             p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo = p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.SourceID + Path.GetExtension(flUGCMapLogo.FileName);
-                            if (!Directory.Exists(ConfigurationManager.AppSettings["UGCMapLogo"]))
+                            if (System.IO.File.Exists(ConfigurationManager.AppSettings["UGCMapLogo"] + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo))
                             {
-                                Directory.CreateDirectory(ConfigurationManager.AppSettings["UGCMapLogo"]);
+                                System.IO.File.Delete(ConfigurationManager.AppSettings["UGCMapLogo"] + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
                             }
-
-                            if (!Directory.Exists(ConfigurationManager.AppSettings["UGCMapLogo2"]))
-                            {
-                                Directory.CreateDirectory(ConfigurationManager.AppSettings["UGCMapLogo2"]);
-                            }
-
-                            flUGCMapLogo.SaveAs(ConfigurationManager.AppSettings["UGCMapLogo"] + @"\" + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
-                            flUGCMapLogo.SaveAs(ConfigurationManager.AppSettings["UGCMapLogo2"] + @"\" + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
+                            flUGCMapLogo.SaveAs(ConfigurationManager.AppSettings["UGCMapLogo"] + p_IQClient_UGCMapPostModel.IQClient_UGCMapModel.Logo);
                         }
 
                         string result = clientLogic.UpdateIQClient_UGCMap(p_IQClient_UGCMapPostModel.IQClient_UGCMapModel);
@@ -1544,5 +1609,236 @@ namespace IQMedia.WebApplication.Controllers
 
 
         #endregion
+        #region Group
+
+        public JsonResult GetAllActiveClient()
+        {
+            try
+            {
+                var clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
+                var clientList = clientLogic.SelectAllActive();
+
+                clientList = clientList.OrderBy(c => c.ClientName).ToList();
+
+                var clients = from client in clientList
+                              select new { ID = client.ClientKey, Name = client.ClientName, RID = client.MCID };
+
+                var groupHtml = RenderPartialToString(PATH_GloblaAdminGroupPartialView, clientList);
+
+                return Json(new
+                {
+
+                    isSuccess = true,
+                    html = groupHtml,
+                    clients = Newtonsoft.Json.JsonConvert.SerializeObject(clients)
+                });
+
+            }
+            catch (Exception exception)
+            {
+
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(exception);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupAddSubClient(Int64 p_ID, List<Int64> p_RIDList)
+        {
+            try
+            {
+                if ((p_ID <= 0 || p_RIDList.Count() == 0 || p_RIDList.Where(sc => sc <= 0).Count() > 0 || p_RIDList.Where(sc => sc == p_ID).Count() > 0))
+                {
+                    throw new CustomException("Invalid Input.");
+                }
+
+                var clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
+                var clientList = clientLogic.SelectAllActive();
+
+                var isValid = clientLogic.GroupAddSubClient(p_ID, p_RIDList, clientList, ActiveUserMgr.GetActiveUser().CustomerGUID);
+
+                return Json(new { isSuccess = isValid });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupRemoveSubClient(Int64 p_ID, Int64 p_RID)
+        {
+            try
+            {
+                if (p_ID <= 0 || p_RID <= 0 || p_ID == p_RID)
+                {
+                    throw new CustomException("Invalid Input.");
+                }
+
+                var clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
+
+                var isValid = clientLogic.GroupRemoveSubClient(p_ID, p_RID, ActiveUserMgr.GetActiveUser().CustomerGUID);
+
+                return Json(new { isSuccess = isValid });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupGetCLCUST(Int64 p_ID, Int64? p_CID)
+        {
+            try
+            {
+                if (p_ID <= 0 || p_CID <= 0)
+                {
+                    throw new CustomException("Invalid Input.");
+                }
+
+                var clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
+
+                var custList = clientLogic.GroupGetCustomerByClient(p_ID, p_CID);
+
+                var customers = (from cust in custList
+                                 select new { ID = cust.CustomerKey, Name = cust.FirstName + " " + cust.LastName }).OrderBy(c => c.Name);
+
+                return Json(new { isSuccess = true, customers = Newtonsoft.Json.JsonConvert.SerializeObject(customers) });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupAddSubCustomer(Int64 p_GrpID, Int64 p_MCID, Int64 p_SCID, Int64 p_MCCID, Int64 p_SCCID)
+        {
+            try
+            {
+                var isValid = false;
+
+                if (p_GrpID == 0 || p_MCID == 0 || p_SCID == 0 || p_MCCID == 0 || p_SCCID == 0)
+                {
+                    throw new CustomException("Invalid Input");
+                }
+
+                var custLgc = (CustomerLogic)LogicFactory.GetLogic(LogicType.Customer);
+                isValid = custLgc.GroupAddSubCustomer(p_GrpID, p_MCID, p_SCID, p_MCCID, p_SCCID, ActiveUserMgr.GetActiveUser().CustomerGUID);
+
+                return Json(new
+                {
+                    isSuccess = isValid
+                });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupGetSubCustomer(Int64 p_MCustID)
+        {
+            try
+            {
+                if (!(p_MCustID > 0))
+                {
+                    throw new CustomException("Invalid Input");
+                }
+
+                var custLgc = (CustomerLogic)LogicFactory.GetLogic(LogicType.Customer);
+                var custList = custLgc.GroupGetSubCustomerByCustomer(p_MCustID);
+
+                var customers = from cust in custList
+                                select new { ID = cust.CustomerKey, Name = cust.FirstName + " " + cust.LastName, CID = cust.ClientID, LID = cust.LoginID };
+
+                return Json(new { isSuccess = true, customers = Newtonsoft.Json.JsonConvert.SerializeObject(customers) });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+
+        public JsonResult GroupRemoveSubCustomer(Int64 p_MCustID, Int64 p_SCustID)
+        {
+            try
+            {
+                if (p_MCustID <= 0 || p_SCustID <= 0 || p_MCustID == p_SCustID)
+                {
+                    throw new CustomException("Invalid Input.");
+                }
+
+                var custLgc = (CustomerLogic)LogicFactory.GetLogic(LogicType.Customer);
+
+                var isValid = custLgc.GroupRemoveSubCustomer(p_MCustID, p_SCustID, ActiveUserMgr.GetActiveUser().CustomerGUID);
+
+                return Json(new { isSuccess = isValid });
+            }
+            catch (Exception ex)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(ex);
+                return Json(new
+                {
+                    isSuccess = false,
+                    error = Config.ConfigSettings.Settings.ErrorOccurred
+                });
+            }
+            finally
+            {
+                TempData.Keep("GlobalAdminTempData");
+            }
+        }
+        #endregion Group
     }
 }

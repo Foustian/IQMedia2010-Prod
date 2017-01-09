@@ -10,6 +10,8 @@ namespace IQMedia.Model
     {
         public long ClientKey { get; set; }
 
+        public long AnewstipClientID { get; set; }
+
         public Guid ClientGuid { get; set; }
 
         public string DefaultCategory { get; set; }
@@ -224,6 +226,8 @@ namespace IQMedia.Model
     {
 
         public long hdnClientKey { get; set; }
+
+        public long hdnAnewstipClientID { get; set; }
 
         public string txtClientName { get; set; }
 

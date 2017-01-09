@@ -107,6 +107,7 @@ namespace IQMedia.Web.Logic
             ClientPostModel clientPostModel = new ClientPostModel();
             clientPostModel.txtClientName = clientModel.ClientName;
             clientPostModel.hdnClientKey = clientModel.ClientKey;
+            clientPostModel.hdnAnewstipClientID = clientModel.AnewstipClientID;
 
             clientPostModel.ddlPricingCode = clientModel.PricingCodeID;
             clientPostModel.ddlBillFrequency = clientModel.BillFrequencyID;
@@ -276,6 +277,65 @@ namespace IQMedia.Web.Logic
         {
             ClientDA clientDADA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
             return (clientDADA.GetClipCCExportSettings(p_ClientGUID) == 1);
+        }
+
+        public List<ClientModel> SelectAllActive()
+        {
+            ClientDA clientDA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
+            return clientDA.SelectAllActive();
+        }
+
+        public bool GroupAddSubClient(Int64 p_MCID, List<Int64> p_SCIDList, List<ClientModel> p_ClientList, Guid p_CustomerGUID)
+        {
+            var valid = false;
+
+            valid = p_ClientList.Where(c => c.ClientKey == p_MCID && (c.MCID == 0 || c.MCID == c.ClientKey)).Count() == 1;
+
+            if (valid)
+            {
+                foreach (var SCID in p_SCIDList)
+                {
+                    valid = p_ClientList.Where(c => c.ClientKey == SCID && (c.MCID == 0 || c.MCID == c.ClientKey)).Count() == 1;
+
+                    valid = p_ClientList.Where(c => c.MCID == SCID && c.ClientKey != SCID).Count() == 0;
+
+                    if (!valid)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (valid)
+            {
+                XDocument xdoc = new XDocument(new XElement("list",
+                                             from ID in p_SCIDList
+                                             select new XElement("item", new XAttribute("ID", ID))
+                                                     ));
+
+                ClientDA clientDA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
+                valid = clientDA.GroupAddSubClient(p_MCID, xdoc.ToString(), p_CustomerGUID);
+            }
+
+            return valid;
+        }
+
+        public bool GroupRemoveSubClient(Int64 p_MCID, Int64 p_SCID, Guid p_CustomerGUID)
+        {
+            ClientDA clientDA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
+            return clientDA.GroupRemoveSubClient(p_MCID, p_SCID, p_CustomerGUID);
+        }
+
+        public List<CustomerModel> GroupGetCustomerByClient(Int64 p_ClientID, Int64? p_CustomerID)
+        {
+            ClientDA clientDA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
+            return clientDA.GroupGetCustomerByClient(p_ClientID, p_CustomerID);
+        }
+
+        public void AddClientToAnewstip(long clientKey, long AnewstipClientID)
+        {
+            ClientDA clientDA = (ClientDA)DataAccessFactory.GetDataAccess(DataAccessType.Client);
+            clientDA.AddClientToAnewstip(clientKey, AnewstipClientID);
         }
     }
 }

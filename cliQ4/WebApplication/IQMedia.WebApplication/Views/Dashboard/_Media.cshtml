@@ -30,7 +30,7 @@
             <table align="center" width="100%">
                 <tr>
                     <td class="broadcastSmallChartHeaderMedium" colspan="2">
-                        Number of Mentions<div class="float-right cursorPointer">
+                        @Model.HitsTitle<div class="float-right cursorPointer">
                             <img id="imgMentions" onclick="ExpandCollapseSparkChart(this,'divNoOfHitsChart');"
                                 alt="" src="~/images/ex.gif" /></div>
                     </td>
@@ -98,7 +98,7 @@
             <table align="center" width="100%">
                 <tr>
                     <td class="broadcastSmallChartHeaderMedium" colspan="2">
-                        <span id="tdViewsHeader">Total Audience</span><div class="float-right cursorPointer">
+                        <span id="tdViewsHeader">@Model.AudienceTitle</span><div class="float-right cursorPointer">
                             <img id="imgAudience" onclick="ExpandCollapseSparkChart(this,'divNoOfViewsChart');"
                                 alt="" src="~/images/ex.gif" /></div>
                     </td>
@@ -166,7 +166,7 @@
             <table align="center" width="100%">
                 <tr>
                     <td class="broadcastSmallChartHeaderMedium" colspan="2">
-                        Total Air Time (hh:mm:ss)<div class="float-right cursorPointer">
+                        @Model.AirTitle<div class="float-right cursorPointer">
                             <img id="imgAirTime" onclick="ExpandCollapseSparkChart(this,'divMinOfAiringChart');"
                                 alt="" src="~/images/ex.gif" /></div>
                     </td>
@@ -233,7 +233,7 @@
             <table align="center" width="100%">
                 <tr>
                     <td class="broadcastSmallChartHeaderMedium" colspan="2">
-                        Media Value<div class="float-right cursorPointer">
+                        @Model.MediaValueTitle<div class="float-right cursorPointer">
                             <img id="imgMediaValue" onclick="ExpandCollapseSparkChart(this,'divAdChart');" alt=""
                                 src="~/images/ex.gif" /></div>
                     </td>
@@ -301,7 +301,7 @@
             <table align="center" width="100%">
                 <tr>
                     <td class="broadcastSmallChartHeaderMedium" colspan="2">
-                        Sentiment<div class="float-right cursorPointer">
+                        @Model.SentimentTitle<div class="float-right cursorPointer">
                             <img id="imgSentiment" onclick="ExpandCollapseSparkChart(this,'divSentimentChart');"
                                 alt="" src="~/images/ex.gif" /></div>
                     </td>
@@ -587,6 +587,9 @@
     <div onmouseover="hideToolTipDiv();" onmouseout="hideToolTip();" id="mapToolTip"
         class="mapTooltip">
     </div>
+</div>
+<div id="divCommonList" class="clear">
+
 </div>
 <div id="divTopStations" class="clear">
 </div>

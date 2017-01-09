@@ -38,8 +38,8 @@
 // Chart ID | Analytics Type | HC Type
 //----------+----------------+------------
 //        1 |           Line | spline
-//        2 |             US | fusionMaps
-//        2 |         Canada | fusionMaps
+//        2 |             US | fusionMap
+//        2 |         Canada | fusionMap
 //        4 |            Pie | pie
 //        5 |            Bar | bar
 //        6 |         Column | column
@@ -66,6 +66,8 @@ var _urlOpenIFrame = "/Analytics/OpenIFrame/";
 var _urlSendEmail = "/Analytics/SendEmail/";
 var _urlQuerySolr = "/Analytics/QuerySolr/";
 var _urlGetActiveElements = "/Analytics/GetActiveElements/";
+var _urlGetDayparts = "/Analytics/GetDayparts/";
+var _urlDEVLogging = "/Analytics/DevLogging/";
 
 /* Page Info */
 var _tab = "OverTime";
@@ -110,11 +112,14 @@ var _TSSTSeries = [];
 var _DEVTable = [];
 var _DEVJsonMaps = [];
 var _DEVMaps = [];
-var _DEVJsonChart = "";
 var _demoSubTab = "gender"; // default to gender
 var _DEVSeries = null;
 var _DEVSolrResult = null;
 var _HCColors = ["#598ea2", "#f3b350", "#c7d36a", "#b4b4da", "#d8635d", "#f3da72", "#9ad1dc", "#e1cba4", "#ff9bb8", "#808285", "#da3ab3", "#6ecdb2", "#e2cc00", "#ff6c36", "#3b5cad", "#9778d3", "#00bfd6", "#5b2c3f", "#4c8b2b", "#d9a460"];
+var _Dayparts;
+var _DMAs;
+var _DMAProcessed = [];
+var _IQDMAtoFusion;
 
 //global selector
 var _highChart = "";
@@ -190,7 +195,7 @@ $(document).ready(function () {
     $("#ddSourceFilter0").on("change", FilterCriteriaChange);
     $("#ddSourceFilter1").on("change", FilterCriteriaChange);
 
-    // Bottom chart nave not applicable on page load
+    // Bottom chart nav not applicable on page load
     $("#divBottomChartNav ul").hide();
 
     $("#ddSourceFilter0").on("change", ChangeSubMediaType);
@@ -211,17 +216,26 @@ $(document).ready(function () {
             $("#ampNetworks").show();
             break;
         case "campaign":
-            $("#ampShows").hide();
-            $("#ampNetworks").hide();
+            $("#ampShows").show();
+            $("#ampNetworks").show();
             break;
     }
 
     GetDateRange();
+    // Show Loading Message
+    ShowLoading();
 
     // Initialize Main Table
-    GetMainTable();
-    $("#MSTableTab").addClass("active");
+    $.when(GetMainTable()).then(function(status) {
+        // When GetMainTable done get dayparts - if called and waiting at the same time as GetMainTable then ShowLoading message will be lost
+        GetDayparts();
+    },
+    function(status) {
+    },
+    function(status) {
+    });
 
+    $("#MSTableTab").addClass("active");
     $("#divSecondaryChart").hide();
 });
 
@@ -229,9 +243,11 @@ $(document).ready(function () {
 
 // Updates both secondary tables as well as the chart
 function GetMainTable() {
-    //console.log("GetMainTable()");
+    var deferred = $.Deferred();
     console.time("GetMainTable");
     console.time("GetMain Ajax Call");
+    // Automatically set SMT to TV if on certain tabs and SMT filter not set
+    var tabSubMediaType = (_subMediaType === "" && (_tab === "Daypart" || _tab === "Networks" || _tab === "Shows")) ? "TV" : _subMediaType;
     var subTab;
     // Need to slice _selectedAgents so RequestIDs is own array and changes to _selectedAgents won't propagate to this array (held in _prevRequest)
     var gRequest = {
@@ -246,7 +262,7 @@ function GetMainTable() {
         PESHTypes: _ActivePESHTypes,
         SourceGroups: _ActiveSourceGroups,
         IsFilter: _isFilterActive,
-        SubMediaType: (_tab == "Daypart" ? 'TV' : _subMediaType),
+        SubMediaType: tabSubMediaType,
         IsCompareMode: _isCompare
     };
 
@@ -279,7 +295,6 @@ function GetMainTable() {
 
                 $("#MSTable").html(result.MSTable);
                 $("#MSTableTabLink").text(result.MSTableTab);
-                _DEVJsonChart = result.chartJSON;
                 ResetQuickFilterValues();
                 $("#divPrimaryChart").html('');
 
@@ -359,7 +374,7 @@ function GetMainTable() {
 
                     $("#bottomShortNav li").removeClass("active");
                     $("#TSSTableTab").addClass("active");
-                    if (result.hasMSTData)
+                    if (result.hasMSTData && result.TSSTSeries != null)
                     {
                         SetStoredSeriesIDs();
                     }
@@ -415,9 +430,25 @@ function GetMainTable() {
                 {
                     if (result.hasMSTData)
                     {
-                        SetChartSeriesIDs();
-                        FormatLegend();
-                        SetColorsFromChart();
+                        if (result.chartJSON != null)
+                        {
+                            SetChartSeriesIDs();
+                            FormatLegend();
+                            SetColorsFromChart();
+                        }
+                        else
+                        {
+                            if (_pageType === "amplification")
+                            {
+                                $("[id^='agentCB_']:checked + label div span").css("background-color", "#6D6E71");
+                                $("[id^='agentCB_']:checked + label div span").prop("title", "select to remove from graph");
+                            }
+                            else
+                            {
+                                $("[id^='campaignCB_']:checked + label div span").css("background-color", "#6D6E71");
+                                $("[id^='campaignCB_']:checked + label div span").prop("title", "select to remove from graph");
+                            }
+                        }
                     }
                 }
 
@@ -457,19 +488,24 @@ function GetMainTable() {
             {
                 console.log("GetMainTable failed");
             }
+            deferred.resolve("success");
         },
         error: function (a, b, c) {
             console.error("GetMainTable ajax error - " + c);
             ShowNotification(_msgErrorOccured);
+            deferred.reject("fail");
         }
     });
+
+    return deferred.promise();
 }
 
 // Updates the TSST and chart
 function GetTabSpecificTable() {
     console.time("GetTabSpecificTable");
     console.time("GetTST Ajax Call");
-    //console.log("GetTabSpecificTable()");
+    // Automatically set SMT to TV if on certain tabs and SMT filter not set
+    var tabSubMediaType = (_subMediaType === "" && (_tab === "Daypart" || _tab === "Networks" || _tab === "Shows")) ? "TV" : _subMediaType;
     // Need to slice _selectedAgents so RequestIDs is own array and changes to _selectedAgents won't propagate to this array (held in _prevRequest)
     var gRequest = {
         Tab: _tab,
@@ -483,7 +519,7 @@ function GetTabSpecificTable() {
         PESHTypes: _ActivePESHTypes,
         SourceGroups: _ActiveSourceGroups,
         IsFilter: _isFilterActive,
-        SubMediaType: (_tab == "Daypart" ? 'TV' : _subMediaType),
+        SubMediaType: tabSubMediaType,
         IsCompareMode: _isCompare
     };
 
@@ -631,110 +667,6 @@ function GetTabSpecificTable() {
     });
 }
 
-// Updates the TSST and chart
-function GetNetworkShowSpecificTable() {
-    console.time("GetNetworkShowTable");
-    console.time("GetNetworkShowTable Ajax Call");
-    // Need to slice _selectedAgents so RequestIDs is own array and changes to _selectedAgents won't propagate to this array (held in _prevRequest)
-    var gRequest = {
-        Tab: _tab,
-        DateInterval: _dateInterval,
-        RequestIDs: _selectedAgents.slice(),
-        PageType: _pageType,
-        HCChartType: _HCChartType,
-        ChartType: _AnalyticsChartType,
-        DateFrom: _dateFrom,
-        DateTo: _dateTo,
-        PESHTypes: _ActivePESHTypes,
-        SourceGroups: _ActiveSourceGroups,
-        IsFilter: _isFilterActive,
-        SubMediaType: 'TV',
-        IsCompareMode: _isCompare
-    };
-
-    var jsonPostData = {
-        graphRequest: gRequest
-    }
-
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        url: _urlGetNetworkShowTabTable,
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(jsonPostData),
-        success: function (result) {
-            if (result.isSuccess)
-            {
-                console.timeEnd("GetNetworkShowTable Ajax Call");
-
-                _prevRequest = gRequest;
-                _TSSTSeries = result.TSSTSeries;
-                if (result.TSSTSeries !== null)
-                {
-                    SetStoredSeriesIDs();
-                }
-
-                $("#MSTable").html(result.MSTable);
-                $("#MSTableTabLink").text(result.MSTableTab);
-                $("#TSSTable").html(result.TSSTable);
-                $("#TSSTableTabLink").text(result.TSSTableTab)
-
-                if (result.chartJSON !== null && result.chartJSON.length > 0)
-                {
-                    switch (_HCChartType)
-                    {
-                        case "spline":
-                            RenderHighChartsLineChart(result.chartJSON);
-                            break;
-                        case "bar":
-                        case "column":
-                            RenderHighChartsColumnOrBarChart(result.chartJSON);
-                            break;
-                        case "pie":
-                            RenderHighChartsPieChart(result.chartJSON);
-                            break;
-                    }
-                }
-                else
-                {
-                    $("#divPrimaryChart").html('<div class="chartNoData">No Data Available<br/><br/>Please Select At Least One Agent</div>');
-                }
-
-                ResetQuickFilterValues();
-                $.each(_selectedAgents, function (index, value) {
-                    UpdatePESHFilters(value, true);
-                });
-
-                $("#TSSTable").show();
-                $("#MSTable").hide();
-
-                $("#TSSTableTab").show();
-                $("#bottomShortNav li").removeClass("active");
-                $("#TSSTableTab").addClass("active");
-
-                if (result.chartJSON !== null && result.chartJSON.length > 0 && result.TSSTSeries !== null && result.TSSTSeries.length > 0)
-                {
-                    SetChartSeriesIDs();
-                    SetColorsFromChart();
-                    FormatLegend();
-                }
-
-                SetActiveElements();
-
-                console.timeEnd("GetNetworkShowTable");
-            }
-            else
-            {
-                console.log("GetNetworkShowSpecificTable failed");
-            }
-        },
-        error: function (a, b, c) {
-            console.error("GetNetworkShowSpecificTable ajax error - " + c);
-            ShowNotification(_msgErrorOccured);
-        }
-    });
-}
-
 // Only updates chart
 function GetChart() {
     //    console.log("GetChart");
@@ -785,7 +717,6 @@ function GetChart() {
                 {
                     SetStoredSeriesIDs();
                 }
-                _DEVJsonChart = result.chartJSON;
 
                 if (result.chartJSON !== null && result.chartJSON.length > 0)
                 {
@@ -1129,236 +1060,407 @@ function ToggleOverlayData(overlayType) {
 }
 
 function OpenFeed() {
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        url: _urlOpenIFrame,
-        contentType: "application/json; charset=utf-8",
-        success: OpenFeedSuccess,
-        error: function (a, b, c) {
-            console.error("OpenFeed error - " + c);
-            ShowNotification(_msgErrorOccured);
-        }
-    });
+    var point = this;
+    var sID = "";
+    var allowDPDD = _tab !== "Daypart" || point.y !== 2;
+    var tab = _tab;
 
-    var startDate = new Date(this.category);
-
-    if (_pageType === "campaign")
+    if (_HCChartType === "pie")
     {
-        startDate = new Date(this.Date);
+        sID = this.id;
+    }
+    else if (_HCChartType === "fusionMap")
+    {
+        sID = this.label;
+        // Fusion map is basically a market drilldown even though it's on OT
+        tab = "Market";
+    }
+    else if (_HCChartType !== "heatmap")
+    {
+        sID = this.series.options.id;
     }
 
-    var mediumQS = "";
-    if (_subMediaType != null && _subMediaType != "")
+    // Do not allow drilldown on overlays or for daypart
+    if (!sID.endsWith("_overlay") && allowDPDD)
     {
-        mediumQS = '&medium=["' + _subMediaType + '"]&mediumDesc=["' + _subMediaType + '"]';
-    }
-    else
-    {
-        var subMediaTypes = [];
-        var isAllTypes = true;
+        // The url of iframe must be set after initializing the modal popup.
+        // The ajax call is used to trigger logging of the user action.
+        $.when(OpenFeedHelper()).then(
+            function (status) {
+                var startDate = new Date(point.category);
 
-        if ($.inArray("OnAir", _ActiveSourceGroups) > -1)
-        {
-            $.each($.grep(_MasterMediaTypes, function (obj) {
-                return obj[0] == "OnAir";
-            }), function (index, obj) {
-                subMediaTypes.push(obj[1]);
-            });
-            isAllTypes = false;
-        }
+                if (_pageType === "campaign")
+                {
+                    startDate = new Date(point.Date);
+                }
 
-        if ($.inArray("Online", _ActiveSourceGroups) > -1)
-        {
-            $.each($.grep(_MasterMediaTypes, function (obj) {
-                return obj[0] == "Online";
-            }), function (index, obj) {
-                subMediaTypes.push(obj[1]);
-            });
-            isAllTypes = false;
-        }
+                var mediumQS = "";
+                if (_subMediaType != null && _subMediaType != "")
+                {
+                    mediumQS = '&submediatype=["' + _subMediaType + '"]';
+                }
+                else
+                {
+                    var subMediaTypes = [];
+                    var isAllTypes = true;
 
-        if ($.inArray("Print", _ActiveSourceGroups) > -1)
-        {
-            $.each($.grep(_MasterMediaTypes, function (obj) {
-                return obj[0] == "Print";
-            }), function (index, obj) {
-                subMediaTypes.push(obj[1]);
-            });
-            isAllTypes = false;
-        }
+                    if ($.inArray("OnAir", _ActiveSourceGroups) > -1)
+                    {
+                        $.each($.grep(_MasterMediaTypes, function (obj) {
+                            return obj[0] == "OnAir";
+                        }), function (index, obj) {
+                            subMediaTypes.push(obj[1]);
+                        });
+                        isAllTypes = false;
+                    }
 
-        if ($.inArray("Read", _ActivePESHTypes) > -1)
-        {
-            $.each($.grep(_MasterMediaTypes, function (obj) {
-                return obj[0] == "Print" || obj[0] == "Online";
-            }), function (index, obj) {
-                subMediaTypes.push(obj[1]);
-            });
-            isAllTypes = false;
-        }
+                    if ($.inArray("Online", _ActiveSourceGroups) > -1)
+                    {
+                        $.each($.grep(_MasterMediaTypes, function (obj) {
+                            return obj[0] == "Online";
+                        }), function (index, obj) {
+                            subMediaTypes.push(obj[1]);
+                        });
+                        isAllTypes = false;
+                    }
 
-        if (!isAllTypes)
-        {
-            mediumQS = '&medium=["' + subMediaTypes.join('","') + '"]&mediumDesc=["' + subMediaTypes.join('","') + '"]';
-        }
-    }
+                    if ($.inArray("Print", _ActiveSourceGroups) > -1)
+                    {
+                        $.each($.grep(_MasterMediaTypes, function (obj) {
+                            return obj[0] == "Print";
+                        }), function (index, obj) {
+                            subMediaTypes.push(obj[1]);
+                        });
+                        isAllTypes = false;
+                    }
 
-    if ($.inArray("Heard", _ActivePESHTypes) > -1)
-    {
-        mediumQS += '&heard=true';
-    }
-    if ($.inArray("Seen", _ActivePESHTypes) > -1)
-    {
-        mediumQS += '&seen=true';
-    }
-    if ($.inArray("Paid", _ActivePESHTypes) > -1)
-    {
-        mediumQS += '&paid=true';
-    }
-    if ($.inArray("Earned", _ActivePESHTypes) > -1)
-    {
-        mediumQS += '&earned=true';
-    }
+                    if ($.inArray("Read", _ActivePESHTypes) > -1)
+                    {
+                        $.each($.grep(_MasterMediaTypes, function (obj) {
+                            return obj[0] == "Print" || obj[0] == "Online";
+                        }), function (index, obj) {
+                            subMediaTypes.push(obj[1]);
+                        });
+                        isAllTypes = false;
+                    }
 
-    var searchDescs = $.map(_selectedAgents, function (a) {
-        return '"' + $("#agentTD_" + a).text().split('+').join(' ') + '"';
-    });
+                    if (!isAllTypes)
+                    {
+                        mediumQS = '&submediatype=["' + subMediaTypes.join('","') + '"]';
+                    }
+                }
 
-    var agents = $.map(_selectedAgents, function (a) {
-        var agID = a;
-//        if (agID === "6817")
-//        {
-//            console.log("Manual switch to ID 7893");
-//            agID = 7893;
-//        }
-        return '"' + agID + '"';
-    });
+                if ($.inArray("Heard", _ActivePESHTypes) > -1)
+                {
+                    mediumQS += '&heard=true';
+                }
+                if ($.inArray("Seen", _ActivePESHTypes) > -1)
+                {
+                    mediumQS += '&seen=true';
+                }
+                if ($.inArray("Paid", _ActivePESHTypes) > -1)
+                {
+                    mediumQS += '&paid=true';
+                }
+                if ($.inArray("Earned", _ActivePESHTypes) > -1)
+                {
+                    mediumQS += '&earned=true';
+                }
 
-    if (_pageType === "campaign")
-    {
-        agents = $.map(_selectedAgents, function (a) {
-            var agentTDid = $("#campaignTR_" + a).children("[id^='agent_']").attr("id");
-            var agentID = agentTDid.slice(agentTDid.indexOf("_") + 1, agentTDid.length);
-            return '"' + agentID + '"';
-        });
+                var searchDescs = $.map(_selectedAgents, function (a) {
+                    return '"' + $("#agentTD_" + a).text().split('+').join(' ') + '"';
+                });
 
-        searchDescs = $.map(_selectedAgents, function (a) {
-            var agentTD = $("#campaignTR_" + a);
-            return '"' + agentTD.text().split('+').join(' ') + '"';
-        });
-    }
+                var agents = $.map(_selectedAgents, function (a) {
+                    var agID = a;
+                    return '"' + agID + '"';
+                });
 
-    var interval = "";
-    var dateStr = "date=";
-    // Only spline charts will have a single interval to drill into - all others are usually of the entire date range
-    if (_HCChartType === "bar" || _HCChartType === "column")
-    {
-        if (_dateInterval === "month")
-        {
-            interval = "&isMonth=true";
-        }
+                if (_pageType === "campaign")
+                {
+                    agents = $.map(_selectedAgents, function (a) {
+                        var agentTDid = $("#campaignTR_" + a).children("[id^='agent_']").attr("id");
+                        var agentID = agentTDid.slice(agentTDid.indexOf("_") + 1, agentTDid.length);
+                        return '"' + agentID + '"';
+                    });
 
-        GetDateRange();
-        // Dates formatted as Year-Month-Day strings
-        var start = _dateFrom.split("-");
-        var end = _dateTo.split("-");
+                    searchDescs = $.map(_selectedAgents, function (a) {
+                        var agentTD = $("#campaignTR_" + a);
+                        return '"' + agentTD.text().split('+').join(' ') + '"';
+                    });
+                }
 
-        dateStr = "fromDate=" + start[1] + "/" + start[2] + "/" + start[0] + "&toDate=" + end[1] + "/" + end[2] + "/" + end[0];
-    }
-    else
-    {
-        if (_dateInterval === "month")
-        {
-            var thisDate = this.Date.split("/");
-            // DateFrom formatted as M/D/YYYY
-            interval = "&isMonth=true";
-            dateStr = "date=" + thisDate[0] + "/01/" + thisDate[2];
-        }
-        else if (_dateInterval === "hour")
-        {
-            // Safari will break, Invalid date
-            if (_tab !== "Daytime")
-            {
-                dateStr = "date=" + startDate.toJSON();
+                var interval = "";
+                var dateStr = "date=";
+                // Only spline charts will have a single interval to drill into - all others are usually of the entire date range
+                if (_HCChartType !== "spline")
+                {
+                    if (_dateInterval === "month")
+                    {
+                        interval = "&isMonth=true";
+                    }
+
+                    GetDateRange();
+                    // Dates formatted as Year-Month-Day strings
+                    var start = _dateFrom.split("-");
+                    var end = _dateTo.split("-");
+
+                    dateStr = "fromDate=" + start[1] + "/" + start[2] + "/" + start[0] + "&toDate=" + end[1] + "/" + end[2] + "/" + end[0];
+                }
+                else
+                {
+                    if (_dateInterval === "month")
+                    {
+                        var thisDate = point.Date.split("/");
+                        // DateFrom formatted as M/D/YYYY
+                        interval = "&isMonth=true";
+                        dateStr = "date=" + thisDate[0] + "/01/" + thisDate[2];
+                    }
+                    else if (_dateInterval === "hour")
+                    {
+                        // Safari will break, Invalid date
+                        if (_tab !== "Daytime")
+                        {
+                            dateStr = "date=" + startDate.toJSON();
+                        }
+                        interval = "&isHour=true";
+                    }
+                    else
+                    {
+                        dateStr = "date=" + (startDate.getMonth() + 1) + "/" + startDate.getDate() + "/" + startDate.getFullYear();
+                    }
+                }
+
+                if (tab === "Demographic")
+                {
+                    var demoValue = (_HCChartType === "pie") ? point.id : point.Value;
+
+                    if (_isCompare)
+                    {
+                        if (_HCChartType === "bar" || _HCChartType === "column")
+                        {
+                            searchDescs = '"' + point.category + '"';
+                            agents = '"' + point.SearchTerm + '"';
+                        }
+                        else
+                        {
+                            var split = demoValue.split("_");
+                            agents = '"' + demoSplit[1] + '"';
+                            demoValue = demoSplit[0];
+                            searchDescs = '"' + $("#agentTD_" + demoSplit[1]).text().split('+').join(' ') + '"';
+                        }
+                    }
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + mediumQS + "&demo=" + encodeURIComponent(demoValue) + '&isDD=true' + interval
+                    );
+                }
+                else if (tab === "Sources")
+                {
+                    var sourceValue = (_HCChartType === "pie") ? point.id : point.Value;
+
+                    if (_isCompare)
+                    {
+                        var sourceSplit = sourceValue.split("_");
+                        agents = '"' + sourceSplit[1] + '"';
+                        sourceValue = sourceSplit[0];
+
+                        searchDescs = '"' + $("#agentTD_" + sourceSplit[1]).text().split('+').join(' ') + '"';
+                    }
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + '&submediatype=["' + sourceValue + '"]&isDD=true' + interval
+                    );
+                }
+                else if (tab === "Market")
+                {
+                    var marketName = "";
+                    if (_HCChartType === "pie")
+                    {
+                        marketName = point.name;
+                    }
+                    else if (_HCChartType === "fusionMap")
+                    {
+                        // Find marketName in _DMAs - label is not the same
+                        marketName = _DMAs.find(function (val, i) {
+                            var formattedVal = val.replace(/ /g, "").toLowerCase();
+                            var formattedSID = sID.replace(/ /g, "").toLowerCase();
+                            return formattedVal.includes(formattedSID);
+                        });
+                    }
+                    else
+                    {
+                        marketName = point.SearchTerm;
+                    }
+
+                    if (_isCompare && _HCChartType !== "fusionMap")
+                    {
+                        var marketSplit = (_HCChartType === "pie") ? point.id.split("_") : point.Value.split("_");
+                        agents = '"' + marketSplit[1] + '"';
+
+                        marketName = $("#marketTD_" + marketSplit[0]).text().split('+').join(' ');
+                        searchDescs = '"' + $("#agentTD_" + marketSplit[1]).text().split('+').join(' ') + '"';
+                    }
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + mediumQS + '&dma="' + encodeURIComponent(marketName) + '"&isDD=true' + interval
+                    );
+                }
+                else if (tab === "Shows" || _tab === "Networks")
+                {
+                    var networkShowsValue = (_HCChartType === "pie") ? point.name : point.SearchTerm;
+
+                    if (_isCompare)
+                    {
+                        var split = (_HCChartType === "pie") ? point.id.split("_") : point.Value.split("_");
+                        agents = '"' + split[1] + '"';
+
+                        networkShowsValue = $("#" + (_tab === "Networks" ? "networksTD_" : "showsTD_") + split[0]).text().split('+').join(' ');
+                        searchDescs = '"' + $("#agentTD_" + split[1]).text().split('+').join(' ') + '"';
+                    }
+
+                    var tabChoice = (_tab === "Shows" ? '&showTitle="' : '&stationAffil=') + networkShowsValue + (_tab === "Shows" ? '"' : '');
+
+                    mediumQS = '&submediatype=["TV"]';
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + mediumQS + tabChoice + '&isDD=true' + interval
+                    );
+                }
+                else if (tab === "Daytime")
+                {
+                    GetDateRange();
+                    // Dates formatted as Year-Month-Day strings
+                    var start = _dateFrom.split("-");
+                    var end = _dateTo.split("-");
+
+                    var dayOfWeek = "";
+                    var timeOfDay = "";
+
+                    if (_HCChartType === "heatmap")
+                    {
+                        dayOfWeek = point.y;
+                        timeOfDay = point.x;
+                    }
+                    else
+                    {
+                        var dtID = (_HCChartType === "pie") ? point.id.split("_") : point.Value.split("_");
+                        dayOfWeek = (GetDayNumber(dtID[0]));
+                        timeOfDay = dtID[1];
+
+                        if (_isCompare)
+                        {
+                            agents = '"' + dtID[2] + '"';
+                            searchDescs = '"' + $("#agentTD_" + dtID[2]).text().split('+').join(' ') + '"';
+                        }
+                    }
+
+                    dayOfWeek = ConvertDayOfWeek(dayOfWeek);
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?fromDate=" + start[1] + "/" + start[2] + "/" + start[0] +
+                        "&toDate=" + end[1] + "/" + end[2] + "/" + end[0] + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + mediumQS + "&timeOfDay=[" + timeOfDay + "]&dayOfWeek=[" + dayOfWeek + "]&isDD=true" + interval +
+                        "&useGMT=true"
+                    );
+                }
+                else if (tab === "Daypart")
+                {
+                    GetDateRange();
+                    // Dates formatted as Year-Month-Day strings
+                    var start = _dateFrom.split("-");
+                    var end = _dateTo.split("-");
+
+                    var daypart = '';
+                    var dayOfWeek = [];
+                    var timeOfDay = [];
+
+                    // Heatmap will only select a single DOW and TOD
+                    if (_HCChartType === "heatmap")
+                    {
+                        dayOfWeek = ConvertDayOfWeek(point.y);
+                        timeOfDay = point.x;
+
+                        var dpObject = _Dayparts.find(function(s, i) {
+                            return s.DayOfWeek === dayOfWeek[0] && s.HourOfDay === timeOfDay[0];
+                        });
+                    }
+                    else
+                    {
+                        var dpID = (_HCChartType === "pie") ? point.id.split("_") : point.Value.split("_");
+
+                        var dpObjects = _Dayparts.filter(function(s, i) {
+                            return s.DayPartCode === dpID[0];
+                        });
+                        daypart = dpObjects[0].DayPartName; // All found daypart objects should have the same name
+
+                        $.map(dpObjects, function(dp) {
+                            // If hourOfDay/TimeOfDay or DayOfWeek not already accounted for
+                            if (timeOfDay.indexOf(dp.HourOfDay) < 0)
+                            {
+                                timeOfDay.push(dp.HourOfDay);
+                            }
+                            var dow = ConvertDayOfWeek(dp.DayOfWeek);
+                            if (dayOfWeek.indexOf(dow) < 0)
+                            {
+                                dayOfWeek.push(dow);
+                            }
+                        });
+
+                        if (_isCompare)
+                        {
+                            agents = '"' + dpID[1] + '"';
+                            searchDescs = '"' + $("#agentTD_" + dpID[1]).text().split('+').join(' ') + '"';
+                        }
+                    }
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?fromDate=" + start[1] + "/" + start[2] + "/" + start[0] + 
+                        "&toDate=" + end[1] + "/" + end[2] + "/" + end[0] + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
+                        encodeURIComponent("[" + searchDescs + "]") + mediumQS + "&timeOfDay=[" + timeOfDay + "]&dayOfWeek=[" + dayOfWeek + "]&isDD=true" + interval +
+                        "&daypart=" + encodeURIComponent(daypart)
+                    );
+                }
+                else
+                {
+                    var reqID = point.Value;
+                    var searchDesc = "";
+
+                    if (_pageType === "campaign")
+                    {
+                        // Find agent ID for row
+                        var rawID = $("#campaignTR_" + point.Value).children("[id^='agent_']").attr("id");
+                        reqID = rawID.slice(rawID.indexOf("_") + 1, rawID.length);
+                    }
+
+                    if (_HCChartType === "pie")
+                    {
+                        reqID = point.id;
+                        searchDesc = point.name.split('+').join(' ');
+                    }
+                    else
+                    {
+                        searchDesc = point.SearchTerm.split('+').join(' ');
+                    }
+
+                    $("#iFrameFeeds").attr("src",
+                        "//" + window.location.hostname + "/Feeds?" + dateStr + '&searchrequest=["' + reqID + '"]&searchrequestDesc=' +
+                        encodeURIComponent('["' + searchDesc + '"]') + mediumQS + '&isDD=true' + interval
+                    );
+                }
+
+                $("#divFeedsPage").css("height", documentHeight - 200);
+                $("#iFrameFeeds").css("height", documentHeight - 200);
+            },
+            function (status) {
+            },
+            function (status) {
             }
-            interval = "&isHour=true";
-        }
-        else
-        {
-            dateStr = "date=" + (startDate.getMonth() + 1) + "/" + startDate.getDate() + "/" + startDate.getFullYear();
-        }
-    }
-
-    if (_tab === "Sources")
-    {
-        $("#iFrameFeeds").attr("src",
-            "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
-            encodeURIComponent("[" + searchDescs + "]") + '&medium=["' + this.Value + '"]&mediumDesc=["' + this.Value + '"]&isDD=true' + interval
         );
     }
-    else if (_tab === "Market")
-    {
-        $("#iFrameFeeds").attr("src",
-            "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
-            encodeURIComponent("[" + searchDescs + "]") + mediumQS + '&dma="' + this.SearchTerm + '"&isDD=true' + interval
-        );
-    }
-    else if (_tab === "Shows")
-    {
-        mediumQS = '&medium=["TV"]&mediumDesc=["TV"]';
-        $("#iFrameFeeds").attr("src",
-            "//" + window.location.hostname + "/Feeds?" + dateStr + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
-            encodeURIComponent("[" + searchDescs + "]") + mediumQS + '&showTitle="' + this.SearchTerm + '"&isDD=true' + interval
-        );
-    }
-    else if (_tab === "Daytime")
-    {
-        GetDateRange();
-        // Dates formatted as Year-Month-Day strings
-        var start = _dateFrom.split("-");
-        var end = _dateTo.split("-");
-
-        var dayOfWeek = this.y;
-
-        // The dayOfWeek value from the chart is different from what is stored in solr, so the values need to be mapped
-        if (dayOfWeek == 1) { dayOfWeek = 6; }
-        else if (dayOfWeek == 2) { dayOfWeek = 5; }
-        else if (dayOfWeek == 3) { dayOfWeek = 4; }
-        else if (dayOfWeek == 4) { dayOfWeek = 3; }
-        else if (dayOfWeek == 5) { dayOfWeek = 2; }
-        else if (dayOfWeek == 6) { dayOfWeek = 1; }
-
-        $("#iFrameFeeds").attr("src",
-            "//" + window.location.hostname + "/Feeds?fromDate=" + start[1] + "/" + start[2] + "/" + start[0] +
-            "&toDate=" + end[1] + "/" + end[2] + "/" + end[0] + "&searchrequest=[" + agents + "]&searchrequestDesc=" +
-            encodeURIComponent("[" + searchDescs + "]") + mediumQS + "&timeOfDay=" + this.x + "&dayOfWeek=" + dayOfWeek + "&isDD=true" + interval
-        );
-    }
-    else
-    {
-        var reqID = this.Value;
-//        if (reqID === "6817")
-//        {
-//            // TODO - remove for QA
-//            console.log("Manual switch ID to 7893");
-//            reqID = 7893;
-//        }
-        if (_pageType === "campaign")
-        {
-            // Find agent ID for row
-            var rawID = $("#campaignTR_" + this.Value).children("[id^='agent_']").attr("id");
-            reqID = rawID.slice(rawID.indexOf("_") + 1, rawID.length);
-        }
-
-        $("#iFrameFeeds").attr("src",
-            "//" + window.location.hostname + "/Feeds?" + dateStr + '&searchrequest=["' + reqID + '"]&searchrequestDesc=' + 
-            encodeURIComponent('["' + this.SearchTerm.split('+').join(' ') + '"]') + mediumQS + '&isDD=true' + interval
-        );
-    }
-
-    $("#divFeedsPage").css("height", documentHeight - 200);
-    $("#iFrameFeeds").css("height", documentHeight - 200);
 }
 
 function SendEmail() {
@@ -1416,10 +1518,34 @@ function SendEmail() {
     }
 }
 
+function GetDayparts() {
+    $.ajax({
+        url: _urlGetDayparts,
+        contentType: "application/json; charset=utf-8",
+        type: "POST",
+        dataType: "json",
+        success: function (result) {
+            if (result.isSuccess)
+            {
+                _Dayparts = result.Dayparts;
+                _DMAs = result.DMAs;
+                _IQDMAtoFusion = result.DMAtoFusion;
+            }
+            else
+            {
+                console.log("GetDayparts failed");
+            }
+        },
+        error: function(a, b, c) {
+            console.error("GetDayparts ajax error - " + c);
+            ShowNotification(_msgErrorOccured);
+        }
+    });
+}
+
 /*-------------------------- END AJAX --------------------------*/
 
 /*-------------------------- MISC --------------------------*/
-
 function DateRangeListClick(e) {
     $("#dateRangeList li").children().removeClass("active");
     $(this).addClass("active");
@@ -1866,23 +1992,14 @@ function SetFilter() {
     $("#filterLink").text("filters applied");
     $("#linkApplyFilters").css("color", "");
 
-    if (_tab == "Networks" || _tab == "Shows") {
-        GetNetworkShowSpecificTable();
-    }
-    else {
-        GetMainTable();
-    }
+    GetMainTable();
 }
 
 // Clears filter and reloads main table
 function RemoveFilter() {
     ClearFilter();
-    if (_tab == "Networks" || _tab == "Shows") {
-        GetNetworkShowSpecificTable();
-    }
-    else {
-        GetMainTable();
-    }
+
+    GetMainTable();
 }
 
 // Only clears filter - removes search agents and filter visuals
@@ -2066,6 +2183,17 @@ function ChangeTab(SecondaryTabID) {
             $("#ampFilterText").text("How many occurrences are there across all mediums and engagement types?");
         }
     }
+    else
+    {
+        if (_tab === "Networks" || _tab === "Shows" || _tab === "Daypart")
+        {
+            $("#campFilterText").text("How many occurrences are there on TV across campaigns?");
+        }
+        else
+        {
+            $("#campFilterText").text("How many occurrences are there across campaigns?");
+        }
+    }
 
     if (_tab == "Demographic")
     {
@@ -2125,16 +2253,18 @@ function ChangeTab(SecondaryTabID) {
     {
         GetMainTable();
     }
-    else {
+    else
+    {
+        var excludedPrevious = _prevTab !== "Networks" && _prevTab !== "Shows" && _prevTab !== "Daypart" && _prevTab !== "Daytime";
+        var excludedCurrent = _tab !== "Networks" && _tab !== "Shows" && _tab !== "Daypart" && _tab !== "Datime";
 
-        if (_tab == "Networks" || _tab == "Shows") {
-            GetNetworkShowSpecificTable();
-        }
-        else if (_prevTab != "Networks" && _prevTab != "Shows" && _prevTab != "Daypart" && _tab != "Daypart" && _prevTab != "Daytime" && _tab != "Daytime") {
+        if (excludedPrevious && excludedCurrent)
+        {
             GetTabSpecificTable();
         }
-        else {
-            // The Networks and Shows tabs hide the PESH columns of the main table, so when switching away from them, reload that table to add the columns back
+        else
+        {
+            // The Networks/Shows tabs hide PESH columns of the MST, so when switching away from/into them, reload that table to add/remove columns
             GetMainTable();
         }
 
@@ -2157,17 +2287,14 @@ function ApplyDateRange() {
     }
     else
     {
+        $("#dateRangeList").data("previous", "");
         SpecifyDateRange();
     }
 
     $("#dateRangeDD").css("display", "none");
     GetDateRange();
-    if (_tab == "Networks" || _tab == "Shows") {
-        GetNetworkShowSpecificTable();
-    }
-    else {
-        GetMainTable();
-    }
+
+    GetMainTable();
 }
 
 function SwitchDemoSubTab(element) {
@@ -2528,7 +2655,11 @@ function CloseDateRange() {
 
     // If canceling range selection revert to previous value
     $("#dateRangeList > li > a.active").removeClass("active");
-    $("#" + $("#dateRangeList").data("previous")).addClass("active");
+    var prevTrailingID = $("#dateRangeList").data("previous");
+    if (prevTrailingID !== "")
+    {
+        $("#" + prevTrailingID).addClass("active");
+    }
 
     $("#dpDateFrom").datepicker("setDate", $("#dpDateFrom").data("previous"));
     $("#dpDateTo").datepicker("setDate", $("#dpDateTo").data("previous"));
@@ -2550,6 +2681,11 @@ function OpenDateRange() {
         if (trailing !== undefined)
         {
             $("#dateRangeList").data("previous", trailing);
+        }
+        else
+        {
+            // If no trailing selection, e.x. supplying own date range, then remove previous data if any
+            $("#dateRangeList").data("previous", "");
         }
         $("#dpDateFrom").data("previous", $("#dpDateFrom").datepicker("getDate"));
         $("#dpDateTo").data("previous", $("#dpDateTo").datepicker("getDate"));
@@ -2691,10 +2827,10 @@ function ChangeDateInterval(e) {
             $("#linkOpenDateRange").text("trailing " + activeTrailing[0].innerHTML);
         }
     }
-    else if (interval === "day" && (end.getDate() === now.getDate()))
+    else if ((interval === "day" || interval === "hour") && (end.getDate() === now.getDate()))
     {
         var days = DaysBetween(_dateFrom, _dateTo);
-        console.log(days + " days between start and end date");
+        //console.log(days + " days between start and end date");
         if (days === 1)
         {
             $("#dateRange1days").addClass("active");
@@ -2733,12 +2869,7 @@ function ChangeDateInterval(e) {
         }
     }
 
-    if (_tab == "Networks" || _tab == "Shows") {
-        GetNetworkShowSpecificTable();
-    }
-    else {
-        GetMainTable();
-    }
+    GetMainTable();
 }
 
 function MonthsBetween(startDate, endDate) {
@@ -2779,6 +2910,32 @@ function GetDaysInMonth(year, month) {
     // Months on 1 - 12 scale
     var days = new Date(year, month, 0);
     return days.getDate();
+}
+
+function GetDayNumber(weekday) {
+    switch (weekday)
+    {
+        case "Monday":
+            return 6;
+            break;
+        case "Tuesday":
+            return 5;
+            break;
+        case "Wednesday":
+            return 4;
+            break;
+        case "Thursday":
+            return 3;
+            break;
+        case "Friday":
+            return 2;
+            break;
+        case "Saturday":
+            return 1;
+            break;
+        case "Sunday":
+            break;
+    }
 }
 
 // Changes date range selections from chosen interval
@@ -3026,6 +3183,9 @@ function ClearPrimaryNavFilters() {
     // If all is clicked while already active, do nothing
     if (_ActivePESHTypes.length > 0 || _ActiveSourceGroups.length > 0)
     {
+        // Check All CB
+        $("#qfAllCB").prop("checked", true);
+
         _ActivePESHTypes = [];
         _ActiveSourceGroups = [];
 
@@ -3122,7 +3282,7 @@ function ToggleSeries(id) {
                 var overlaySeries = IsSeriesInChart(id + "_overlay");
                 if (overlaySeries !== null)
                 {
-                    overlaySeries.update({
+                    overlaySeries[0].update({
                         visible: checked,
                         showInLegend: checked
                     });
@@ -3168,12 +3328,8 @@ function ToggleSeries(id) {
                 {
                     _selectedAgents.push(Number(id));
                 }
-                if (_tab == "Networks" || _tab == "Shows") {
-                    GetNetworkShowSpecificTable();
-                }
-                else {
-                    GetTabSpecificTable();
-                }
+
+                GetTabSpecificTable();
                 break;
             case "campaign":
                 // Add remove campaign from search
@@ -3565,6 +3721,7 @@ function UpdatePESHFilters(id, checked) {
     $("#primaryNavPrint_Results").text(addCommas(newNum));
 }
 
+// Adds thousand delimiter commas to a number string
 function addCommas(str) {
     str = str.toString();
     if (str.toLowerCase() == 'nan' || str == '')
@@ -3657,6 +3814,38 @@ function ChangeSubMediaType() {
     $("#ddSourceFilter1").find(":contains('" + selected.text() + "')").prop("selected", true);
 }
 
+function ConvertDayOfWeek(dayOfWeek) {
+    // The dayOfWeek value from the chart is different from what is stored in solr, so the values need to be mapped
+    // 0 day of week is mapped to Sunday in both chart and solr
+    switch(dayOfWeek)
+    {
+        case 0:         // Sunday for DT - Sunday for DP
+            return 0;
+            break;
+        case 1:         // Saturday for DT - Saturday for DP
+            return 6;
+            break;
+        case 2:         // Friday for DT - Nothing/Empty row for DP
+            return 5;
+            break;
+        case 3:         // Thursday for DT - Friday for DP
+            return (_tab === "Daytime") ? 4 : 5;
+            break;
+        case 4:         // Wednesday for DT - Thursday for DP
+            return (_tab === "Daytime") ? 3 : 4;
+            break;
+        case 5:         // Tuesday for DT - Wednesday for DP
+            return (_tab === "Daytime") ? 2 : 3;
+            break;
+        case 6:         // Monday for DT - Tuesday for DP
+            return (_tab === "Daytime") ? 1 : 2;
+            break;
+        case 7:         // Not possible for DT - Monday for DP
+            return 1;
+            break;
+    }
+}
+
 /*-------------------------- END OLD --------------------------*/
 
 /*-------------------------- CHART RENDERING --------------------------*/
@@ -3665,6 +3854,12 @@ function RenderHighChartsDaypartHeatMap(jsonChartData) {
     console.time("Render Daypart Heat-Map");
     var jsonChart = JSON.parse(jsonChartData);
     jsonChart.tooltip.formatter = FormatDaypartTooltip;
+    if (_pageType !== "campaign")
+    {
+        jsonChart.plotOptions = { series: { point: { events: { click: OpenFeed}}}};
+    }
+    jsonChart.series[0].cursor = "pointer";
+
     jsonChart.series[0].dataLabels.formatter = FormatDaypartDataLabel;
     $('#divPrimaryChart').highcharts(jsonChart);
     console.timeEnd("Render Daypart Heat-Map");
@@ -3674,8 +3869,8 @@ function RenderHighChartsPieChart(jsonChartData) {
     console.time("Render Pie Chart");
     var jsonPieChart = JSON.parse(jsonChartData);
     jsonPieChart.tooltip.formatter = FormatPieTooltip;
-
     jsonPieChart.chart.height = $("#divPrimaryChart").height();
+
     if (jsonPieChart.series.length > 1)
     {
         var primaryLength = jsonPieChart.series[0].data.length;
@@ -3688,18 +3883,22 @@ function RenderHighChartsPieChart(jsonChartData) {
         jsonPieChart.series[1].center = ["50%", "50%", "50%", "50%"];
     }
 
+    if (_tab === "OverTime" || _pageType !== "campaign")
+    {
+        jsonPieChart.plotOptions.series = { point: { events: { click: OpenFeed}}};
+    }
 
     $("#divPrimaryChart").highcharts(jsonPieChart);
     // Call reflow to center pie chart in container (resizes svg to consume all container space) -- only type to not do this automatically
     $("#divPrimaryChart").highcharts().reflow();
 
     var chart = $("#divPrimaryChart").highcharts();
+    chart.series[0].update({allowPointSelect: false});
     if (chart.series.length > 1)
     {
         chart.series[0].update({ size: "60%" });
         chart.series[0].update({ innerSize: "50%" });
 
-        chart.series[0].update({ allowPointSelect: false });
         chart.series[1].update({ allowPointSelect: false });
     }
 
@@ -3711,10 +3910,10 @@ function RenderHighChartsColumnOrBarChart(jsonChartData) {
     var jsonChart = JSON.parse(jsonChartData);
     jsonChart.tooltip.formatter = FormatBarColumnTooltip;
 
-//    if (_tab === "OverTime" || ((_tab === "Sources" || _tab === "Market" || _tab === "Shows") && _pageType !== "campaign"))
-//    {
-//        jsonChart.plotOptions.series.point.events.click = OpenFeed;
-//    }
+    if (_tab === "OverTime" || _pageType !== "campaign")
+    {
+        jsonChart.plotOptions.series.point.events.click = OpenFeed;
+    }
 
     $("#divPrimaryChart").highcharts(jsonChart);
     console.timeEnd("Render Bar/Column Chart");
@@ -3724,6 +3923,7 @@ function RenderHighChartsDaytimeHeatMap(jsonChartData) {
     console.time("Render Daytime Heat-Map");
     var jsonChart = JSON.parse(jsonChartData);
     jsonChart.tooltip.formatter = FormatDaytimeTooltip;
+    jsonChart.series[0].cursor = "pointer";
     if (_pageType !== "campaign")
     {
         jsonChart.plotOptions = { series: { point: { events: { click: OpenFeed}}} };
@@ -3740,7 +3940,7 @@ function RenderHighChartsLineChart(jsonChartData) {
     jsonLineChart.tooltip.formatter = FormatSplineTooltip;
     jsonLineChart.legend.floating = true;
 
-    if (_tab === "OverTime" || ((_tab === "Sources" || _tab === "Market" || _tab === "Shows") && _pageType !== "campaign"))
+    if (_tab === "OverTime" || _pageType !== "campaign")
     {
         // Demographic drilldown doesn't make sense
         // Campaign drilldown needs agent ID to work
@@ -3775,15 +3975,18 @@ function RenderDmaMapChart(jsonMapData) {
             dataFormat: 'json',
             dataSource: jsonMapData[i]
         }).render();
-        _DEVMaps.push(populationMap);
-        //populationMap.addEventListener('entityClick',CheckUncheckDma);
+
+        populationMap.addEventListener('entityClick', function (evt, data) {
+            // pass data as context
+            OpenFeed.apply(data);
+        });
         populationMap.addEventListener('entityRollOut', function (evt, data) {
             //SetCurrentSelectedItemsFillColor(this, _SelectedDmas);
             hideToolTip();
         });
         populationMap.addEventListener('entityRollOver', function (evt, data) {
             //SetCurrentSelectedItemsFillColor(this, _SelectedDmas);
-            showToolTipOnChart("Market Area Name : " + data.label + "<br/>" + "Mention : " + data.value);
+            showToolTipOnChart("Market Area Name : " + data.label + "<br/>" + "Mention : " + addCommas(data.value));
         });
         populationMap.addEventListener('drawComplete', function (evt, data) {
             if (_IsExporting)
@@ -3826,7 +4029,8 @@ function RenderCanadaMapChart(jsonMapData) {
             dataFormat: 'json',
             dataSource: jsonMapData[i]
         }).render();
-        //populationMap.addEventListener('entityClick', CheckUncheckProvince);
+
+//        populationMap.addEventListener('entityClick', OpenFeed);
         populationMap.addEventListener('entityRollOut', function (evt, data) {
             //SetCurrentSelectedItemsFillColor(this, _SelectedProvinces);
             hideToolTip();
@@ -3893,7 +4097,7 @@ function FormatDaypartTooltip() {
     }
     else
     {
-        return 0;
+        return "";
     }
 }
 
@@ -3978,6 +4182,7 @@ function SetActiveElements() {
         toggleEnabledAndHidden();
     }
 }
+
 function toggleEnabledAndHidden() {
     var updateChart = false;
 
@@ -4151,6 +4356,7 @@ function toggleEnabledAndHidden() {
 
     $("#primaryNavBar li a").trigger("blur");
 }
+
 function SetPESHFiltersEnabledDisabled(isEnabled) {
     // Setting the on click function multiple times will cause the event to fire once for each time it was added.
     // To prevent this, always unbind the event beforehand.
@@ -4177,29 +4383,38 @@ function SetPESHFiltersEnabledDisabled(isEnabled) {
         $("a[name='navSourceGroup']").css('cursor', 'not-allowed');
     }
 }
+
 function TogglePESHTypeFilter(eleVal, getChart) {
     var index = $.inArray(eleVal, _ActivePESHTypes);
-    if (index == -1) {
+    // Not previously selected
+    if (index == -1)
+    {
         _ActivePESHTypes.push(eleVal);
     }
-    else {
+    else
+    {
         _ActivePESHTypes.splice(index, 1);
     }
 
-    if (getChart) {
+    if (getChart)
+    {
         GetChart();
     }
 }
+
 function ToggleSourceGroupFilter(eleVal, getChart) {
     var index = $.inArray(eleVal, _ActiveSourceGroups);
-    if (index == -1) {
+    if (index == -1)
+    {
         _ActiveSourceGroups.push(eleVal);
     }
-    else {
+    else
+    {
         _ActiveSourceGroups.splice(index, 1);
     }
 
-    if (getChart) {
+    if (getChart)
+    {
         GetChart();
     }
 }
@@ -4281,26 +4496,44 @@ function hideToolTip1() {
 
 /*-------------------------- FEEDS --------------------------*/
 
-function OpenFeedSuccess(result) {
-    $("#divFeedsPage").modal({
-        backdrop: "static",
-        keyboard: true,
-        dynamic: true
+function OpenFeedHelper(result) {
+    var deferred = $.Deferred();
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: _urlOpenIFrame,
+        contentType: "application/json; charset=utf-8",
+        success: function (result) {
+            $("#divFeedsPage").modal({
+                backdrop: "static",
+                keyboard: true,
+                dynamic: true
+            });
+
+            $("#divFeedsPage").resizable({
+                handles: "e,se,s,w",
+                iframeFix: true,
+                start: OpenFeedsStart,
+                stop: OpenFeedsStop,
+                resize: OpenFeedsResize
+            }).draggable({
+                iframeFix: true,
+                start: OpenFeedsStart,
+                stop: OpenFeedsStop
+            });
+
+            $("#divFeedsPage").css("position", "static");
+            deferred.resolve("success"); // this will allow to execute .done method. 
+        },
+        error: function (a, b, c) {
+            console.error("OpenFeed error - " + c);
+            ShowNotification(_msgErrorOccured);
+            deferred.reject("fail");
+        }
     });
 
-    $("#divFeedsPage").resizable({
-        handles: "e,se,s,w",
-        iframeFix: true,
-        start: OpenFeedsStart,
-        stop: OpenFeedsStop,
-        resize: OpenFeedsResize
-    }).draggable({
-        iframeFix: true,
-        start: OpenFeedsStart,
-        stop: OpenFeedsStop
-    });
-
-    $("#divFeedsPage").css("position", "static");
+    return deferred.promise();
 }
 
 function OpenFeedsStart() {
@@ -4651,3 +4884,60 @@ function AgentSort(a, b) {
     return 0;
 }
 
+function EnableDEVLogging(enable = null) {
+    console.log("EnableDEVLogging: " + enable);
+    var postData = {
+        enable: enable
+    };
+    $.ajax({
+        url: _urlDEVLogging,
+        contentType: "application/json; charset=utf-8",
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(postData),
+        success: function (result) {
+            if (result.isSuccess)
+            {
+                console.log("DEVLogging is " + (result.enabled ? "" : "not ") + "enabled");
+            }
+            else
+            {
+                console.log("EnableDEVLogging failed");
+            }
+        },
+        error: function(a, b, c) {
+            console.error("EnableDEVLogging ajax error - " + c);
+            ShowNotification(_msgErrorOccured);
+        }
+    });
+}
+
+function ChangeDevGUID(useClientGUID = true, GUID = '') {
+    console.log("ChangeDevGUID");
+    var postData = {
+        useClientGUID: useClientGUID,
+        newGUID: GUID
+    };
+
+    $.ajax({
+        url: "/Analytics/DevGUID/",
+        contentType: "application/json; charset=utf-8",
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(postData),
+        success: function(result) {
+            if (result.isSuccess)
+            {
+                console.log("Using " + (result.useClientGUID ? "client" : "dev") + " GUID" + (result.useClientGUID ? "" : result.devGUID))
+            }
+            else
+            {
+                console.log("ChangeDevGUID failed");
+            }
+        },
+        error: function(a, b, c) {
+            console.error("ChangeDevGUID ajax error - " + c);
+            ShowNotification(_msgErrorOccurred);
+        }
+    });
+}

@@ -1,5 +1,6 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 @model EmailResultsModel
 @if (Model != null)
 {
@@ -80,6 +81,9 @@
                                                 <tr>
                                                     <td style="border-top:1pt solid black; padding-bottom:10px;">
                                             @{
+                                                IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
+                                                string mediaIconPath = BaseUrl + objSubMediaType.EmailMediaIconPath;
+                                                
                                                 string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
                                                 string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
                                                 string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
@@ -119,7 +123,7 @@
                                                     </table>
                                                 </td>
                                                 <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img alt="TV" src="@TVModel.StationLogo" style="width: 25px;" />
+                                                    <img alt="@objSubMediaType.DisplayName" src="@TVModel.StationLogo" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaTVBody" style="text-align: left; vertical-align: top; width: 445px;">
                                                     <table style="width: 100%;">
@@ -198,7 +202,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25twitter.png")" alt="Twitter" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     @{
@@ -252,6 +256,7 @@
 
                                                         break;
                                                     case CommonFunctions.CategoryType.NM:
+                                                    case CommonFunctions.CategoryType.LN:
                                                         IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
 
                             <table style="width: 100%;">
@@ -279,7 +284,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25onlinenews.png")" alt="News" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -360,7 +365,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25x25_publicationScanned.png")" alt="Publication (scanned)" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -436,7 +441,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25social.png")" alt="social media" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -510,7 +515,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25forum.png")" alt="forum" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -584,7 +589,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25blog.png")"  alt="blog" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -633,8 +638,6 @@
                                                     case CommonFunctions.CategoryType.FB:
                                                     case CommonFunctions.CategoryType.IG:
                                                         IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
-                                                        string imgName = item.SubMediaType == CommonFunctions.CategoryType.FB ? "25facebook.png" : "instagram.png";
-                                                            string imgTooltip = item.SubMediaType == CommonFunctions.CategoryType.FB ? CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB) : CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.IG);
 
                             <table style="width: 100%;">
                                 <tr>
@@ -661,7 +664,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/" + imgName)" alt="@imgTooltip" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaTVBody" style="text-align: left; vertical-align: top; width: 445px;">
                                                     <table style="width: 100%;">
@@ -746,7 +749,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25x25_radio.png")" alt="radio" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -845,7 +848,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/" + catimg)"  alt="misc" style="width: 25px;" />
+                                                    <img src="@(ImageBaseUrl + "MediaIcon/" + catimg)"  alt="Misc" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">
@@ -919,7 +922,7 @@
                                                     </table>
                                                 </td>
                                                 <td style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                    <img src="@(ImageBaseUrl + "MediaIcon/25x25_publicationText.png")" alt="Publications (text)" style="width: 25px;" />
+                                                    <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" style="width: 25px;" />
                                                 </td>
                                                 <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                     <table style="width: 100%;">

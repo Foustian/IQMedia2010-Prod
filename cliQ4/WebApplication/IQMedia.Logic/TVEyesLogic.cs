@@ -42,10 +42,10 @@ namespace IQMedia.Web.Logic
             return tvEyesDA.UpdateDownloadStatusByID(ID, CustomerGuid);
         }
 
-        public string InsertArchiveTVEyes(long mediaID, Guid customerGUID, Guid clientGUID, Guid categoryGUID, IQAgent_TVEyesResultsModel iqAgent_TVEyesResultsModel, string keywords, string description)
+        public string InsertArchiveTVEyes(long mediaID, Guid customerGUID, Guid clientGUID, Guid categoryGUID, IQAgent_TVEyesResultsModel iqAgent_TVEyesResultsModel, string keywords, string description, string p_MediaType, string p_SubMediaType)
         {
             TVEyesDA tvEyesDA = (TVEyesDA)DataAccessFactory.GetDataAccess(DataAccessType.TVEyes);
-            return tvEyesDA.InsertArchiveTVEyes(mediaID, customerGUID, clientGUID, categoryGUID, iqAgent_TVEyesResultsModel, keywords, description);
+            return tvEyesDA.InsertArchiveTVEyes(mediaID, customerGUID, clientGUID, categoryGUID, iqAgent_TVEyesResultsModel, keywords, description, p_MediaType, p_SubMediaType);
         }
 
         public IQAgent_TVEyesResultsModel SearchTVEyesByMediaID(long mediaID, string feedsUrl)

@@ -166,8 +166,17 @@ namespace IQMedia.WebApplication.Controllers
                                 sessionInformation.Isv4Google = customerValue.Isv4Google;
                                 sessionInformation.IsTimeshiftFacet = customerValue.IsTimeshiftFacet;
                                 sessionInformation.IsShareTV = customerValue.IsShareTV;
+                                sessionInformation.IsSMOther = customerValue.IsSMOther;
+                                sessionInformation.IsFB = customerValue.IsFB;
+                                sessionInformation.IsIG = customerValue.IsIG;
+                                sessionInformation.IsBL = customerValue.IsBL;
+                                sessionInformation.IsFO = customerValue.IsFO;
+                                sessionInformation.IsPR = customerValue.IsPR;
+                                sessionInformation.IsLN = customerValue.IsLN;
                                 sessionInformation.IsThirdPartyData = customerValue.IsThirdPartyData;
                                 sessionInformation.IsClientSpecificData = customerValue.IsClientSpecificData;
+                                sessionInformation.IsConnectAccess = customerValue.IsConnectAccess;
+                                sessionInformation.IsExternalRuleEditor = customerValue.IsExternalRuleEditor;
 
                                 IQMedia.WebApplication.Utility.ActiveUserMgr.AddUserIntoCache(sessionInformation);
 

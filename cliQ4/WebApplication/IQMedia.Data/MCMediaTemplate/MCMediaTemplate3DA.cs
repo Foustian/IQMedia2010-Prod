@@ -37,7 +37,7 @@ namespace IQMedia.Data.MCMediaTemplate
                 dataTypeList.Add(new DataType("@SearchTerm", DbType.String, SearchTerm, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CategoryXml", DbType.Xml, CategoryXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ReportGUID", DbType.String, reportGUID, ParameterDirection.Input));
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQ_Report_MCMediaTemplate3_SelectCategoryFilter", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQ_Report_MCMediaTemplate3_SelectCategoryFilter", dataTypeList);
 
                 List<IQArchive_Filter> lstCategories = new List<IQArchive_Filter>();
                 if (dataset != null && dataset.Tables.Count > 0)
@@ -74,7 +74,7 @@ namespace IQMedia.Data.MCMediaTemplate
 
             mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel()
             {
-                SubMediaTypes = new List<MCMediaReport_Filter>(),
+                MediaTypes = new List<MCMediaReport_MediaTypeFilter>(),
                 Categories = new List<MCMediaReport_Filter>()
             };
 
@@ -125,11 +125,11 @@ namespace IQMedia.Data.MCMediaTemplate
                                 break;
                             case "SubMediaTypeFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }
-                                mcMediaReportModel.FilterResults.SubMediaTypes = GetFilterResults(dt, "SubMediaTypeFilter");
+                                GetFilterResults(dt, "SubMediaTypeFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "CategoryFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }
-                                mcMediaReportModel.FilterResults.Categories = GetFilterResults(dt, "CategoryFilter");
+                                GetFilterResults(dt, "CategoryFilter", mcMediaReportModel.FilterResults);
                                 break;
                         }
                     }

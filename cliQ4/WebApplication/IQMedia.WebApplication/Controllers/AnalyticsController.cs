@@ -22,7 +22,7 @@ using IQMedia.WebApplication.Utility;
 using Newtonsoft.Json;
 using Log4NetLogger = IQMedia.Shared.Utility.Log4NetLogger;
 using System.Runtime.Serialization.Formatters.Binary;
-//using AnalyticsSearch;
+using AnalyticsSearch;
 
 namespace IQMedia.WebApplication.Controllers
 {
@@ -39,6 +39,8 @@ namespace IQMedia.WebApplication.Controllers
         List<string> lstTopTen = new List<string>();
         Dictionary<string, string> dctTopTen = new Dictionary<string, string>();
         DateTime defaultStartDate = DateTime.Now.Subtract(new TimeSpan(30, 0, 0, 0));
+        Guid clientGUID = new Guid();
+        bool useClientGUID = true;  // Used to specify if to use client's actual GUID or one specified, used for DEV purposes
         #endregion
 
         public ActionResult Index(string type)
@@ -54,15 +56,38 @@ namespace IQMedia.WebApplication.Controllers
                 if (TempData.ContainsKey("GlobalAdminTempData")) { TempData["GlobalAdminTempData"] = null; } 
 
                 sessionInfo = ActiveUserMgr.GetActiveUser();
-                //Log4NetLogger.Debug(string.Format("Controller Index - Client GUID: {0}", sessionInfo.ClientGUID));
+
+                if (Session["enableDEVLogging"] == null)
+                {
+                    Session["enableDEVLogging"] = false;
+                }
+                if (Session["useClientGUID"] == null)
+                {
+                    Session["useClientGUID"] = true;
+                }
+                if (Session["devGUID"] == null)
+                {
+                    Session["devGUID"] = new Guid();
+                }
+
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid();
+                }
+
+                Log4NetLogger.Debug(string.Format("Controller Index - Client GUID: {0}", clientGUID));
                 //Log4NetLogger.Debug(string.Format("sessionInfo.gmt: {0}", sessionInfo.gmt));
                 IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
                 AnalyticsLogic analyticsLogic = new AnalyticsLogic();
 
                 SetTempData(null);
                 analyticsTempData = new AnalyticsTempData();
-                analyticsTempData.CampaignModelList = iQAgentLogic.SelectIQAgentCampaignsByClientGuid(sessionInfo.ClientGUID);
-                analyticsTempData.ClientAgents = GetAgentsByGUID(sessionInfo.ClientGUID).Select(agent => new {
+                analyticsTempData.CampaignModelList = iQAgentLogic.SelectIQAgentCampaignsByClientGuid(clientGUID);
+                analyticsTempData.ClientAgents = GetAgentsByGUID(clientGUID).Select(agent => new {
                     agent.ID,
                     agent.QueryName
                 }).ToDictionary(
@@ -78,18 +103,21 @@ namespace IQMedia.WebApplication.Controllers
                 analyticsTempData.Groups.Add("agent", GetAllAgentGroups());
                 analyticsTempData.Groups.Add("campaign", GetAllCampaignGroups());
 
-                analyticsTempData.ClientAnalyticsCampaigns = GetCampaignsByGUID(sessionInfo.ClientGUID);
+                analyticsTempData.ClientAnalyticsCampaigns = GetCampaignsByGUID(clientGUID);
                 analyticsTempData.ActiveElements = analyticsLogic.GetActiveElements();
 
-                analyticsTempData.SubMediaTypes = sessionInfo.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2).ToList();
-                analyticsTempData.OnlineSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("Online")).Select(s => s.SubMediaType).ToList();
-                analyticsTempData.PrintSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("Print")).Select(s => s.SubMediaType).ToList();
-                analyticsTempData.OnAirSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("OnAir")).Select(s => s.SubMediaType).ToList();
+                analyticsTempData.SubMediaTypes = sessionInfo.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).ToList();
+                analyticsTempData.OnlineSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("Online") && w.IsArchiveOnly == false).Select(s => s.SubMediaType).ToList();
+                analyticsTempData.PrintSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("Print") && w.IsArchiveOnly == false).Select(s => s.SubMediaType).ToList();
+                analyticsTempData.OnAirSubMediaTypes = sessionInfo.MediaTypes == null ? new List<string>() : sessionInfo.MediaTypes.Where(w => w.AnalyticsDataType.Equals("OnAir") && w.IsArchiveOnly == false).Select(s => s.SubMediaType).ToList();
 
                 SetTempData(analyticsTempData);
 
                 var aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("Index Initial analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("Index Initial analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                }
 
                 Dictionary<string, object> dictModel = new Dictionary<string, object>();
 
@@ -98,7 +126,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 // For some reason these lines will break the page if uncommented
                 ClientLogic clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
-                IQClient_CustomSettingsModel customSettings = clientLogic.GetClientCustomSettings(sessionInfo.ClientGUID.ToString());
+                IQClient_CustomSettingsModel customSettings = clientLogic.GetClientCustomSettings(clientGUID.ToString());
                 dictModel.Add("UseCustomerEmailByDefault", customSettings.UseCustomerEmailDefault.Value);
                 dictModel.Add("DefaultEmailSender", customSettings.UseCustomerEmailDefault.Value ? sessionInfo.Email : ConfigurationManager.AppSettings["Sender"]);
                 switch (type)
@@ -110,7 +138,7 @@ namespace IQMedia.WebApplication.Controllers
                         dictModel.Add("Filter", RenderPartialToString(PATH_AnalyticsCampPartialFilter, analyticsTempData.CampaignModelList));
                         break;
                 }
-                dictModel.Add("MasterMediaTypes", sessionInfo.MediaTypes);
+                dictModel.Add("MasterMediaTypes", analyticsTempData.SubMediaTypes);
 
                 ViewBag.IsSuccess = true;
                 return View("Index", dictModel);
@@ -130,22 +158,42 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                //Log4NetLogger.Debug("GetMainTable");
-                //Log4NetLogger.Debug(graphRequest.ToString());
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("GetMainTable");
+                    Log4NetLogger.Debug(graphRequest.ToString());
+                }
                 var sw = new Stopwatch();
                 sw.Start();
 
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 analyticsTempData = GetTempData();
                 var aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                }
+
                 AnalyticsLogic analyticsLogic = new AnalyticsLogic();
+
                 graphRequest.Campaigns = analyticsTempData.ClientAnalyticsCampaigns;
                 graphRequest.Agents = analyticsTempData.ClientAgents;
 
+                // Initialize empty data containers
                 List<AnalyticsSecondaryTable> tables = new List<AnalyticsSecondaryTable>();
                 // Summaries for MSTable - summaries from all agents during time period
                 AnalyticsDataModel mstData = new AnalyticsDataModel();
+                List<AnalyticsGrouping> mstGroupings = new List<AnalyticsGrouping>();
+
+                // Set flags
                 bool useCampaignIDs = graphRequest.IsFilter && graphRequest.RequestIDs != null;
                 // If network or shows LRAds will be hidden
                 bool networkOrShows = graphRequest.Tab == SecondaryTabID.Networks || graphRequest.Tab == SecondaryTabID.Shows;
@@ -153,8 +201,6 @@ namespace IQMedia.WebApplication.Controllers
                 bool multiFilter = graphRequest.IsCompareMode;
                 // Specifies when filtering to SMT ONLY
                 bool isSMTFilter = graphRequest.IsFilter && (graphRequest.RequestIDs == null || graphRequest.RequestIDs.Count == 0) && !string.IsNullOrEmpty(graphRequest.SubMediaType);
-
-                List<AnalyticsGrouping> mstGroupings = new List<AnalyticsGrouping>();
 
                 // If no previous request - newSecondaries should be true, should not need to worry about prev tables being null
                 if (isNewSecondary)
@@ -173,13 +219,23 @@ namespace IQMedia.WebApplication.Controllers
                 PropertyInfo msGroupBy = typeof(AnalyticsSummaryModel).GetProperty(msTable.GroupBy);
                 PropertyInfo msGroupByDisplay = typeof(AnalyticsSummaryModel).GetProperty(msTable.GroupByDisplay);
 
-                // Get data from tempdata or DB
-                if (analyticsTempData.PrevMSTData != null && !isNewRequest)
+                // Set start end dates to correct values if not campaign (campaign dates are locked)
+                if (graphRequest.PageType != "campaign")
+                {
+                    ConvertDatesFromInterval(graphRequest);
+                }
+
+                #region MST
+                // Get data from tempdata or DB - assume that if GetMain called from network/shows tab there will not be network/shows data stored in temp
+                if (analyticsTempData.PrevMSTData != null && !isNewRequest && !networkOrShows)
                 {
                     mstData = analyticsTempData.PrevMSTData;
                 }
                 else
                 {
+                    Stopwatch dataSW = new Stopwatch();
+                    dataSW.Start();
+
                     if (graphRequest.PageType == "campaign")
                     {
                         mstData = GetCampaignSummaries(graphRequest, useCampaignIDs);
@@ -187,18 +243,23 @@ namespace IQMedia.WebApplication.Controllers
                     }
                     else
                     {
-                        ConvertDatesFromInterval(graphRequest);
                         if (graphRequest.IsFilter && graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
                         {
-                            mstData = GetAgentSummaries(sessionInfo.ClientGUID, graphRequest);
+                            mstData = GetAgentSummaries(clientGUID, graphRequest);
                             mstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                             mstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                         }
                         else
                         {
                             // MSTData should include all items in MapLists, unless specifically filtering
-                            mstData = GetAllAgentSummaries(sessionInfo.ClientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
+                            mstData = GetAllAgentSummaries(clientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
                         }
+                    }
+
+                    dataSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("MST Data retrieved in {0} ms", dataSW.ElapsedMilliseconds));
                     }
 
                     //Log4NetLogger.Debug("Setting SMTs and Markets");
@@ -217,9 +278,20 @@ namespace IQMedia.WebApplication.Controllers
                             var marketID = analyticsTempData.Groups["market"].Where(dma => dma.Value == summary.Market);
                             summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
                         }
+                        if (summary.MarketID == null)
+                        {
+                            summary.MarketID = -1;
+                        }
+                        if (string.IsNullOrEmpty(summary.SubMediaType) || string.IsNullOrWhiteSpace(summary.SubMediaType))
+                        {
+                            summary.SubMediaType = "";
+                        }
                     }
                     sw2.Stop();
-                    //Log4NetLogger.Debug(string.Format("SMTs and Markets set: {0} ms", sw2.ElapsedMilliseconds));
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("SMTs and Markets set: {0} ms", sw2.ElapsedMilliseconds));
+                    }
 
                     analyticsTempData.PrevMSTData = mstData;
                 }
@@ -261,6 +333,7 @@ namespace IQMedia.WebApplication.Controllers
                 // Put summaries into groupings for MST, groupings based around agents or campaigns
                 foreach (var group in allGroups)
                 {
+                    // Remove summaries with null values for their group by property
                     var groupSummaries = mstData.SummaryDataList.Where(w => msGroupBy.GetValue(w, null) != null).ToList();
                     mstGroupings.Add(new AnalyticsGrouping() {
                         ID = group.Key,
@@ -269,7 +342,15 @@ namespace IQMedia.WebApplication.Controllers
                     });
                 }
                 sw3.Stop();
-                //Log4NetLogger.Debug(string.Format("MainTable Groupings: {0} ms", sw3.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    decimal timePerGroup = sw3.ElapsedMilliseconds / allGroups.Count;
+                    Log4NetLogger.Debug(string.Format("MainTable Groupings: {0} ms", sw3.ElapsedMilliseconds));
+                    Log4NetLogger.Debug(string.Format("MainTable grouped in {0} ms for each {1} groups", timePerGroup, allGroups.Count));
+                }
+
+                Stopwatch tableSW = new Stopwatch();
+                tableSW.Start();
 
                 HtmlTable msTableHTML = new HtmlTable();
                 msTableHTML.Attributes["class"] = "table clearBorders font12Pt";
@@ -284,25 +365,27 @@ namespace IQMedia.WebApplication.Controllers
                 StringWriter msTableStrWriter = new StringWriter();
                 msTableHTML.RenderControl(new System.Web.UI.HtmlTextWriter(msTableStrWriter));
 
+                tableSW.Stop();
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("MST built in {0} ms", tableSW.ElapsedMilliseconds));
+                }
+
                 dynamic jsonResult = new ExpandoObject();
                 jsonResult.MSTable = msTableStrWriter.ToString();
                 jsonResult.MSTableTab = msTable.TabDisplay;
+                #endregion
 
+                #region TSST
                 // If not on OT tab there will be a second table, the TSST
                 if (tables.Count > 1)
                 {
                     AnalyticsSecondaryTable tssTable = tables.First(tbl => string.Compare(tbl.TabDisplay, graphRequest.Tab.ToString(), true) == 0);
                     List<AnalyticsGrouping> tsstGroupings = new List<AnalyticsGrouping>();
-                    if (networkOrShows)
+
+                    if (graphRequest.Tab != SecondaryTabID.Demographic && !networkOrShows)
                     {
-                        allGroups = dctTopTen;
-                    }
-                    else
-                    {
-                        if (graphRequest.Tab != SecondaryTabID.Demographic)
-                        {
-                            allGroups = analyticsTempData.Groups[tssTable.TabDisplay];
-                        }
+                        allGroups = analyticsTempData.Groups[tssTable.TabDisplay];
                     }
 
                     PropertyInfo tsstGroupBy = typeof(AnalyticsSummaryModel).GetProperty(tssTable.GroupBy);
@@ -311,26 +394,59 @@ namespace IQMedia.WebApplication.Controllers
                     // Summaries for TSSTable - summaries from selected agents
                     AnalyticsDataModel tsstData = new AnalyticsDataModel();
 
-                    if (isCamp)
+                    Stopwatch tsstDataSW = new Stopwatch();
+                    tsstDataSW.Start();
+
+                    if (!networkOrShows)
                     {
-                        tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(w.CampaignID)).ToList();
+                        if (isCamp)
+                        {
+                            tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(w.CampaignID)).ToList();
+                        }
+                        else
+                        {
+                            tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                        }
+
+                        // tsstData Map Lists should only ever include items with SRID/CampID contained in request
+                        tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                        tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                     }
                     else
                     {
-                        tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                        if (!graphRequest.IsFilter || graphRequest.SubMediaType.Equals("TV"))
+                        {
+                            if (isCamp)
+                            {
+                                tsstData = GetCampaignNetworkShowSummaries(clientGUID, graphRequest, true);
+                                allGroups = dctTopTen;
+                            }
+                            else
+                            {
+                                tsstData = GetNetworkShowSummaries(clientGUID, graphRequest);
+                                allGroups = dctTopTen;
+                            }
+                        }
+                        else
+                        {
+                            Log4NetLogger.Debug("isSMTFilter && graphRequest.SMT != TV");
+                            tsstData = new AnalyticsDataModel();
+                        }
                     }
 
-                    // tsstData Map Lists should only ever include items with SRID/CampID contained in request
-                    tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                    tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                    tsstDataSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("tsstData constructed in {0} ms", tsstDataSW.ElapsedMilliseconds));
+                    }
 
                     HtmlTable tssTableHTML = new HtmlTable();
                     tssTableHTML.Attributes["class"] = "table clearBorders font12Pt";
                     tssTableHTML.Attributes["id"] = string.Format("tbl_{0}", tssTable.TabDisplay);
                     tssTableHTML.Rows.Add(CreateSecondaryTableHeader(tssTable, networkOrShows));
 
-                    // DONT CREATE AN EMPTY TSST TABLE IF NO AGENTS OR CAMPAIGNS FOR CLIENT
-                    if (mstData.SummaryDataList != null && mstData.SummaryDataList.Count > 0)
+                    // DO NOT CREATE AN EMPTY TSST TABLE IF NO AGENTS OR CAMPAIGNS FOR CLIENT
+                    if (mstData.SummaryDataList != null && mstData.SummaryDataList.Count > 0 && tsstData.SummaryDataList != null && tsstData.SummaryDataList.Count > 0)
                     {
                         if (graphRequest.Tab == SecondaryTabID.Demographic)
                         {
@@ -400,12 +516,25 @@ namespace IQMedia.WebApplication.Controllers
                                 tsstGroupings.Add(grouping);
                             }
                             sw4.Stop();
-                            //Log4NetLogger.Debug(string.Format("GetMain tsstGroupings: {0} ms", sw4.ElapsedMilliseconds));
+                            if ((bool)Session["enableDEVLogging"])
+                            {
+                                Log4NetLogger.Debug(string.Format("GetMain tsstGroupings: {0} ms", sw4.ElapsedMilliseconds));
+                                Log4NetLogger.Debug(string.Format("TSST data grouped in {0} ms for each {1} groups", (sw4.ElapsedMilliseconds / allGroups.Count), allGroups.Count));
+                            }
+
+                            Stopwatch tsstSW = new Stopwatch();
+                            tsstSW.Start();
 
                             BuildTabSpecificTableRows(tssTable, tsstGroupings, networkOrShows).ForEach(e =>
                             {
                                 tssTableHTML.Rows.Add(e);
                             });
+
+                            tsstSW.Stop();
+                            if ((bool)Session["enableDEVLogging"])
+                            {
+                                Log4NetLogger.Debug(string.Format("TSST rows built in {0} ms", tsstSW.ElapsedMilliseconds));
+                            }
                         }
                     }
 
@@ -415,18 +544,37 @@ namespace IQMedia.WebApplication.Controllers
                     jsonResult.TSSTable = tssTableStrWriter.ToString();
                     jsonResult.TSSTableTab = tssTable.TabDisplay;
 
+                    Stopwatch tsstChartSW = new Stopwatch();
+                    tsstChartSW.Start();
+
                     Dictionary<string, object> tsstChart = analyticsLogic.GetChart(graphRequest, tssTable, tsstData, tsstGroupings, analyticsTempData.SubMediaTypes);
 
+                    tsstChartSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("tsstChart built in {0} ms", tsstChartSW.ElapsedMilliseconds));
+                    }
                     jsonResult.TSSTSeries = tsstChart["series"];
                     jsonResult.chartJSON = tsstChart["chart"];
                 }
                 else
                 {
+                    Stopwatch otChartSW = new Stopwatch();
+                    otChartSW.Start();
+
                     var otChart = analyticsLogic.GetChart(graphRequest, msTable, mstData, mstGroupings, analyticsTempData.SubMediaTypes);
+
+                    otChartSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("OT Chart built in {0} ms", otChartSW.ElapsedMilliseconds));
+                    }
+
                     jsonResult.chartJSON = otChart["chart"];
                     jsonResult.TSSTable = string.Empty;
                     jsonResult.TSSTableTab = string.Empty;
                 }
+                #endregion
 
                 jsonResult.isSuccess = true;
                 jsonResult.isLRAccess = sessionInfo.isv5LRAccess;
@@ -438,10 +586,13 @@ namespace IQMedia.WebApplication.Controllers
                 jsonResult.hasMSTData = mstData.SummaryDataList.Count > 0 ? true : false;
 
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("{0} summaries in tempData", analyticsTempData.PrevMSTData.SummaryDataList.Count));
-                aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
-                //Log4NetLogger.Debug(string.Format("GetMainTable: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("{0} summaries in tempData", analyticsTempData.PrevMSTData.SummaryDataList.Count));
+                    aTempSize = GetObjectSize(analyticsTempData);
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                    Log4NetLogger.Debug(string.Format("GetMainTable: {0} ms", sw.ElapsedMilliseconds));
+                }
 
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
             }
@@ -464,30 +615,54 @@ namespace IQMedia.WebApplication.Controllers
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                //Log4NetLogger.Debug("GetTabSpecificTable");
-                //Log4NetLogger.Debug(graphRequest.ToString());
-                //Log4NetLogger.Debug(string.Format("isNewRequest: {0}", isNewRequest));
-                //Log4NetLogger.Debug(string.Format("isNewSecondary: {0}", isNewSecondary));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("GetTabSpecificTable");
+                    Log4NetLogger.Debug(graphRequest.ToString());
+                    Log4NetLogger.Debug(string.Format("isNewRequest: {0}", isNewRequest));
+                    Log4NetLogger.Debug(string.Format("isNewSecondary: {0}", isNewSecondary));
+                }
+
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
+
                 analyticsTempData = GetTempData();
                 AnalyticsLogic analyticsLogic = new AnalyticsLogic();
                 var aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                }
 
                 graphRequest.Campaigns = analyticsTempData.ClientAnalyticsCampaigns;
                 graphRequest.Agents = analyticsTempData.ClientAgents;
 
+                // Set flags
                 bool useCampaignIDs = graphRequest.IsFilter && graphRequest.RequestIDs != null;
-
-                // If network or shows LRAds will be hidden
+                // If network or shows LRAds will be hidden in tables
                 bool networkOrShows = graphRequest.Tab == SecondaryTabID.Networks || graphRequest.Tab == SecondaryTabID.Shows;
                 bool isCamp = graphRequest.PageType.Equals("campaign");
                 bool multiFilter = graphRequest.IsCompareMode;
 
+                // Initialize empty data containers
                 List<AnalyticsSecondaryTable> tables = new List<AnalyticsSecondaryTable>();
+                AnalyticsDataModel mstData = new AnalyticsDataModel();
+                AnalyticsDataModel tsstData = new AnalyticsDataModel();
+                List<AnalyticsGrouping> tsstGroupings = new List<AnalyticsGrouping>();
+                Dictionary<string, string> allGroups = new Dictionary<string, string>();
+
                 // If no previous request - newSecondaries should be true, should not need to worry about prev tables being null
                 if (isNewSecondary)
                 {
+                    // Get table configurations from DB
                     tables = analyticsLogic.GetSecondaryTables(graphRequest.Tab, graphRequest.PageType);
                     analyticsTempData.PrevSecondaryTables = tables;
                 }
@@ -496,71 +671,67 @@ namespace IQMedia.WebApplication.Controllers
                     tables = analyticsTempData.PrevSecondaryTables;
                 }
 
-                // Tab Specific Secondary Data
-                AnalyticsSecondaryTable tssTable = tables.First(tbl => string.Compare(tbl.TabDisplay, graphRequest.Tab.ToString(), true) == 0);
-                AnalyticsDataModel tsstData = new AnalyticsDataModel();
-                List<AnalyticsGrouping> tsstGroupings = new List<AnalyticsGrouping>();
-                Dictionary<string, string> allGroups = new Dictionary<string, string>();
-                if (graphRequest.Tab != SecondaryTabID.Demographic)
+                // Set start end dates to correct values if not campaign (campaign dates are locked)
+                if (graphRequest.PageType != "campaign")
                 {
-                    allGroups = analyticsTempData.Groups[tssTable.TabDisplay];
+                    ConvertDatesFromInterval(graphRequest);
                 }
-                PropertyInfo tsstGroupBy = typeof(AnalyticsSummaryModel).GetProperty(tssTable.GroupBy);
-                PropertyInfo tsstGroupByDisplay = typeof(AnalyticsSummaryModel).GetProperty(tssTable.GroupByDisplay);
 
-                AnalyticsDataModel mstData = new AnalyticsDataModel();
-
-                // Get summaries
+                #region MST
+                // If previous MST data saved in temp data and request does not require new MST data - a call for new MST data will normally go through GetMainTable
                 if (analyticsTempData.PrevMSTData != null && !isNewRequest)
                 {
+                    Stopwatch prevMSTDataSW = new Stopwatch();
+                    prevMSTDataSW.Start();
+
                     mstData.SummaryDataList = analyticsTempData.PrevMSTData.SummaryDataList;
                     mstData.DmaMentionMapList = analyticsTempData.PrevMSTData.DmaMentionMapList;
                     mstData.CanadaMentionMapList = analyticsTempData.PrevMSTData.CanadaMentionMapList;
 
-                    if (graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
+                    prevMSTDataSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
                     {
-                        tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(isCamp ? w.CampaignID : w.SearchRequestID)).ToList();
-                        tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                        tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                    }
-                    else
-                    {
-                        tsstData.SummaryDataList = new List<AnalyticsSummaryModel>();
-                        tsstData.DmaMentionMapList = new List<AnalyticsMapSummaryModel>();
-                        tsstData.CanadaMentionMapList = new List<AnalyticsMapSummaryModel>();
+                        Log4NetLogger.Debug(string.Format("Retrieved prev MST data in {0} ms", prevMSTDataSW.ElapsedMilliseconds));
                     }
                 }
                 else
                 {
+                    // Either no previous data saved in temp data (initial call or temp data cleared) or request requires new MST data 
+                    // Normally new MST requests routed to GetMainTable - kept in case temp data is empty or cleared for some reason
+                    Stopwatch getMSTSW = new Stopwatch();
+                    getMSTSW.Start();
+
                     if (isCamp)
                     {
                         mstData = GetCampaignSummaries(graphRequest, useCampaignIDs);
-
-                        tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(w.CampaignID)).ToList();
-                        tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                        tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-
-                        SetCampaignDates(tsstData, graphRequest);
                     }
                     else
                     {
+                        // Don't believe this condition getting new MST data to be necessary (not likely to ever be called)
                         if (graphRequest.IsFilter && graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
                         {
-                            mstData = GetAgentSummaries(sessionInfo.ClientGUID, graphRequest);
+                            mstData = GetAgentSummaries(clientGUID, graphRequest);
                             mstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                             mstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                         }
                         else
                         {
                             // MSTData should include all items in MapLists, unless specifically filtering
-                            mstData = GetAllAgentSummaries(sessionInfo.ClientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
+                            mstData = GetAllAgentSummaries(clientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
                         }
                     }
 
-                    //Log4NetLogger.Debug("Setting SMTs and Markets");
+                    getMSTSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("Retrieved MST data in {0} ms", getMSTSW.ElapsedMilliseconds));
+                        Log4NetLogger.Debug("Setting SMTs and Markets");
+                    }
+
                     Stopwatch sw2 = new Stopwatch();
                     sw2.Start();
 
+                    // Fill in any empty properties in mst data summaries
                     foreach (AnalyticsSummaryModel summary in mstData.SummaryDataList)
                     {
                         if (!string.IsNullOrEmpty(summary.SubMediaType))
@@ -574,27 +745,98 @@ namespace IQMedia.WebApplication.Controllers
                             var marketID = analyticsTempData.Groups["market"].Where(dma => dma.Value == summary.Market);
                             summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
                         }
+                        if (summary.MarketID == null)
+                        {
+                            summary.MarketID = -1;
+                        }
+                        if (string.IsNullOrEmpty(summary.SubMediaType) || string.IsNullOrWhiteSpace(summary.SubMediaType))
+                        {
+                            summary.SubMediaType = "";
+                        }
                     }
                     sw2.Stop();
-                    //Log4NetLogger.Debug(string.Format("SMTs and Markets set: {0} ms", sw2.ElapsedMilliseconds));
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("SMTs and Markets set: {0} ms", sw2.ElapsedMilliseconds));
+                    }
 
                     analyticsTempData.PrevMSTData = mstData;
-                    tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(isCamp ? w.CampaignID : w.SearchRequestID)).ToList();
-                    tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                    tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                 }
+                #endregion
 
+                #region TSST
+                AnalyticsSecondaryTable tssTable = tables.First(tbl => string.Compare(tbl.TabDisplay, graphRequest.Tab.ToString(), true) == 0);
+
+                // Create Secondary Table object with header
                 HtmlTable tableHTML = new HtmlTable();
                 tableHTML.Attributes["class"] = "table clearBorders font12Pt";
                 tableHTML.Attributes["id"] = string.Format("tbl_{0}", tssTable.TabDisplay);
                 tableHTML.Rows.Add(CreateSecondaryTableHeader(tssTable));
                 List<HtmlTableRow> detailRows = new List<HtmlTableRow>();
 
-                // Create secondary (groups and tables)
+                PropertyInfo tsstGroupBy = typeof(AnalyticsSummaryModel).GetProperty(tssTable.GroupBy);
+                PropertyInfo tsstGroupByDisplay = typeof(AnalyticsSummaryModel).GetProperty(tssTable.GroupByDisplay);
+
+                // Create secondary (groups and tables) if mstData contains summaries
                 if (mstData.SummaryDataList != null && mstData.SummaryDataList.Count > 0)
                 {
+                    // Demographic && network/shows groupings not contained in tempdata groups
+                    // Demographics is a special case where no grouping is conducted
+                    // Networks/Shows groups are based off of the "top" x networks or shows which isn't available until network/shows summaries are retrieved
+                    if (graphRequest.Tab != SecondaryTabID.Demographic && !networkOrShows)
+                    {
+                        allGroups = analyticsTempData.Groups[tssTable.TabDisplay];
+                    }
+                    else if (networkOrShows)
+                    {
+                        if (isCamp)
+                        {
+                            tsstData = GetCampaignNetworkShowSummaries(clientGUID, graphRequest, true);
+                            allGroups = dctTopTen;
+                        }
+                        else
+                        {
+                            tsstData = GetNetworkShowSummaries(clientGUID, graphRequest);
+                            allGroups = dctTopTen;
+                        }
+                    }
+
+                    Stopwatch tsstDataSW = new Stopwatch();
+                    tsstDataSW.Start();
+
+                    if (!networkOrShows)
+                    {
+                        // Limit TSST data to MST summaries for agents that were requested
+                        if (graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
+                        {
+                            tsstData.SummaryDataList = mstData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(isCamp ? w.CampaignID : w.SearchRequestID)).ToList();
+                            tsstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                            tsstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+
+                            if (isCamp)
+                            {
+                                SetCampaignDates(tsstData, graphRequest);
+                            }
+                        }
+                        else
+                        {
+                            tsstData.SummaryDataList = new List<AnalyticsSummaryModel>();
+                            tsstData.DmaMentionMapList = new List<AnalyticsMapSummaryModel>();
+                            tsstData.CanadaMentionMapList = new List<AnalyticsMapSummaryModel>();
+                        }
+                    }
+
+                    tsstDataSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("TSSTData selected in {0} ms", tsstDataSW.ElapsedMilliseconds));
+                    }
+
                     if (graphRequest.Tab != SecondaryTabID.Demographic)
                     {
+                        Stopwatch groupingSW = new Stopwatch();
+                        groupingSW.Start();
+
                         foreach (var group in allGroups)
                         {
                             var groupSummaries = tsstData.SummaryDataList.Where(w => tsstGroupBy.GetValue(w, null) != null).ToList();
@@ -625,33 +867,26 @@ namespace IQMedia.WebApplication.Controllers
                             tsstGroupings.Add(grouping);
                         }
 
+                        groupingSW.Stop();
+                        if ((bool)Session["enableDEVLogging"])
+                        {
+                            Log4NetLogger.Debug(string.Format("Summaries grouped in {0} ms", groupingSW.ElapsedMilliseconds));
+                            Log4NetLogger.Debug(string.Format("Summaries grouped in {0} ms for each {1} groups", (groupingSW.ElapsedMilliseconds / allGroups.Count), allGroups.Count));
+                        }
+
                         Stopwatch swTable = new Stopwatch();
                         swTable.Start();
 
                         BuildTabSpecificTableRows(tssTable, tsstGroupings).ForEach(e =>
                         {
-                            //if (graphRequest.Tab != SecondaryTabID.Market)
-                            //{
-                                tableHTML.Rows.Add(e);
-                            //}
+                            tableHTML.Rows.Add(e);
                         });
 
                         swTable.Stop();
-                        //Log4NetLogger.Debug(string.Format("TSSTRows built in {0} ms", swTable.ElapsedMilliseconds));
-
-                        //if (graphRequest.Tab == SecondaryTabID.Market)
-                        //{
-                        //    Stopwatch swMkt = new Stopwatch();
-                        //    swMkt.Start();
-
-                        //    BuildMarketTable(tssTable, graphRequest).ForEach(e => {
-                        //        tableHTML.Rows.Add(e);
-                        //    });
-
-                        //    swMkt.Stop();
-                        //    Log4NetLogger.Debug(string.Format("MarketTableRows built in {0} ms", swMkt.ElapsedMilliseconds));
-                        //}
-
+                        if ((bool)Session["enableDEVLogging"])
+                        {
+                            Log4NetLogger.Debug(string.Format("TSSTRows built in {0} ms", swTable.ElapsedMilliseconds));
+                        }
                     }
                     else
                     {
@@ -686,6 +921,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 StringWriter strWriter = new StringWriter();
                 tableHTML.RenderControl(new System.Web.UI.HtmlTextWriter(strWriter));
+                #endregion
 
                 dynamic jsonResult = new ExpandoObject();
                 jsonResult.isSuccess = true;
@@ -709,9 +945,13 @@ namespace IQMedia.WebApplication.Controllers
                 }
 
                 sw.Stop();
-                aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
-                //Log4NetLogger.Debug(string.Format("GetTabSpecificTable: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    aTempSize = GetObjectSize(analyticsTempData);
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                    Log4NetLogger.Debug(string.Format("GetTabSpecificTable: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
             }
             catch (Exception exc)
@@ -726,21 +966,36 @@ namespace IQMedia.WebApplication.Controllers
         }
 
         [HttpPost]
-        public ContentResult GetNetworkShowTabTable(AnalyticsRequest graphRequest)
+        public ContentResult GetNetworkShowTabTable(AnalyticsRequest graphRequest, bool isSeriesToggle)
         {
             // When method called, it is assumed that MainTable is already on page - no need to build/return main table for this method
             try
             {
-                //Log4NetLogger.Debug("GetNetworkShowTabTable");
-                //Log4NetLogger.Debug(graphRequest.ToString());
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("GetNetworkShowTabTable");
+                    Log4NetLogger.Debug(graphRequest.ToString());
+                }
+
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 analyticsTempData = GetTempData();
-                //Log4NetLogger.Debug("GetNetworkShowTabTable");
-                //Log4NetLogger.Debug(graphRequest.ToString());
+
                 var aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                }
 
                 AnalyticsLogic analyticsLogic = new AnalyticsLogic();
                 List<AnalyticsSecondaryTable> tables = analyticsLogic.GetSecondaryTables(graphRequest.Tab, graphRequest.PageType);
@@ -761,13 +1016,14 @@ namespace IQMedia.WebApplication.Controllers
                 // If filtering to specific agents then only want those agents in MST Data
                 if (graphRequest.IsFilter && graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
                 {
-                    mstData = GetNetworkShowSummaries(sessionInfo.ClientGUID, graphRequest);
+                    mstData = GetNetworkShowSummaries(clientGUID, graphRequest);
                     mstData.DmaMentionMapList = mstData.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                     mstData.CanadaMentionMapList = mstData.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
                 }
                 else
                 {
-                    mstData = GetAllAgentSummaries(sessionInfo.ClientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
+                    // Get summaries for all agents of the TV SMT
+                    mstData = GetAllAgentSummaries(clientGUID, Convert.ToDateTime(graphRequest.DateFrom), Convert.ToDateTime(graphRequest.DateTo), graphRequest.DateInterval, graphRequest.SubMediaType);
                 }
 
                 foreach (AnalyticsSummaryModel summary in mstData.SummaryDataList)
@@ -782,6 +1038,14 @@ namespace IQMedia.WebApplication.Controllers
                     {
                         var marketID = analyticsTempData.Groups["market"].Where(dma => dma.Value == summary.Market);
                         summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                    }
+                    if (summary.MarketID == null)
+                    {
+                        summary.MarketID = -1;
+                    }
+                    if (string.IsNullOrEmpty(summary.SubMediaType) || string.IsNullOrWhiteSpace(summary.SubMediaType))
+                    {
+                        summary.SubMediaType = "";
                     }
                 }
 
@@ -828,7 +1092,7 @@ namespace IQMedia.WebApplication.Controllers
                 //Network/Show tab data
                 AnalyticsSecondaryTable tssTable = tables.First(tbl => tbl.TabDisplay == graphRequest.Tab.ToString().ToLower());
                 AnalyticsDataModel tsstData = new AnalyticsDataModel();
-                tsstData = GetNetworkShowSummaries(sessionInfo.ClientGUID, graphRequest);
+                tsstData = GetNetworkShowSummaries(clientGUID, graphRequest);
                 List<AnalyticsGrouping> networkShowGroupings = new List<AnalyticsGrouping>();
 
                 //Network/Show HTML
@@ -874,7 +1138,6 @@ namespace IQMedia.WebApplication.Controllers
                 StringWriter strWriter = new StringWriter();
                 tableHTML.RenderControl(new System.Web.UI.HtmlTextWriter(strWriter));
 
-
                 dynamic jsonResult = new ExpandoObject();
                 jsonResult.MSTable = msTableStrWriter.ToString();
                 jsonResult.MSTableTab = msTable.TabDisplay;
@@ -887,14 +1150,30 @@ namespace IQMedia.WebApplication.Controllers
                 jsonResult.TSSTableTab = tssTable.TabDisplay;
 
                 Dictionary<string, object> tsstChart = new Dictionary<string, object>();
+
+                Stopwatch swChart = new Stopwatch();
+                swChart.Start();
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("Creating {0} chart", graphRequest.ChartType));
+                }
                 tsstChart = analyticsLogic.GetChart(graphRequest, tssTable, tsstData, networkShowGroupings, analyticsTempData.SubMediaTypes);
+                swChart.Stop();
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("{0} chart built in {1} ms", graphRequest.ChartType, swChart.ElapsedMilliseconds));
+                }
                 jsonResult.chartJSON = tsstChart["chart"];
                 jsonResult.TSSTSeries = tsstChart["series"];
 
                 sw.Stop();
-                aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
-                //Log4NetLogger.Debug(string.Format("GetNetworkShowTabTable: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    aTempSize = GetObjectSize(analyticsTempData);
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                    Log4NetLogger.Debug(string.Format("GetNetworkShowTabTable: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
             }
             catch (Exception exc)
@@ -915,19 +1194,39 @@ namespace IQMedia.WebApplication.Controllers
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                //Log4NetLogger.Debug(string.Format("GetChart"));
-                //Log4NetLogger.Debug(graphRequest.ToString());
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("GetChart"));
+                    Log4NetLogger.Debug(graphRequest.ToString());
+                }
 
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 analyticsTempData = GetTempData();
                 AnalyticsLogic analyticsLogic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
                 var aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                }
 
                 List<AnalyticsSecondaryTable> tables = new List<AnalyticsSecondaryTable>();
                 bool networkOrShows = graphRequest.Tab == SecondaryTabID.Networks || graphRequest.Tab == SecondaryTabID.Shows;
                 bool isCamp = graphRequest.PageType.Equals("campaign");
                 bool multiFilter = graphRequest.IsCompareMode;
+
+                // Set start end dates to correct values if not campaign (campaign dates are locked)
+                if (graphRequest.PageType != "campaign")
+                {
+                    ConvertDatesFromInterval(graphRequest);
+                }
 
                 graphRequest.Campaigns = analyticsTempData.ClientAnalyticsCampaigns;
                 graphRequest.Agents = analyticsTempData.ClientAgents;
@@ -961,6 +1260,9 @@ namespace IQMedia.WebApplication.Controllers
                 // Get data
                 if (!networkOrShows)
                 {
+                    Stopwatch mstSW0 = new Stopwatch();
+                    mstSW0.Start();
+
                     if (graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
                     {
                         dataModel.SummaryDataList = analyticsTempData.PrevMSTData.SummaryDataList.Where(w => graphRequest.RequestIDs.Contains(isCamp ? w.CampaignID : w.SearchRequestID)).ToList();
@@ -973,14 +1275,27 @@ namespace IQMedia.WebApplication.Controllers
                         dataModel.DmaMentionMapList = new List<AnalyticsMapSummaryModel>();
                         dataModel.CanadaMentionMapList = new List<AnalyticsMapSummaryModel>();
                     }
+
+                    mstSW0.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("Retrieved MST data in {0} ms", mstSW0.ElapsedMilliseconds));
+                    }
                 }
                 else
                 {
-                    ConvertDatesFromInterval(graphRequest);
-                    dataModel = GetNetworkShowSummaries(sessionInfo.ClientGUID, graphRequest);
+                    if (isCamp)
+                    {
+                        dataModel = GetCampaignNetworkShowSummaries(clientGUID, graphRequest, false);
+                    }
+                    else
+                    {
+                        ConvertDatesFromInterval(graphRequest);
+                        dataModel = GetNetworkShowSummaries(clientGUID, graphRequest);
 
-                    dataModel.DmaMentionMapList = dataModel.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
-                    dataModel.CanadaMentionMapList = dataModel.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                        dataModel.DmaMentionMapList = dataModel.DmaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                        dataModel.CanadaMentionMapList = dataModel.CanadaMentionMapList.Where(w => graphRequest.RequestIDs.Contains(w.SearchRequestID)).ToList();
+                    }
                 }
 
                 if (dataModel.SummaryDataList != null && dataModel.SummaryDataList.Count > 0)
@@ -1064,13 +1379,21 @@ namespace IQMedia.WebApplication.Controllers
                             grouping.AgentSubGroupings = agentSubGroups;
                             tsstGroupings.Add(grouping);
                         }
-                    } 
+                    }
                 }
 
                 Dictionary<string, object> tsstChart = new Dictionary<string, object>();
                 if (graphRequest.RequestIDs != null && graphRequest.RequestIDs.Count > 0)
                 {
+                    Stopwatch swChart = new Stopwatch();
+                    swChart.Start();
                     tsstChart = analyticsLogic.GetChart(graphRequest, tssTable, dataModel, tsstGroupings, analyticsTempData.SubMediaTypes);
+                    swChart.Stop();
+
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("{0} chart built in {1} ms", graphRequest.ChartType, swChart.ElapsedMilliseconds));
+                    }
                 }
                 else
                 {
@@ -1088,9 +1411,13 @@ namespace IQMedia.WebApplication.Controllers
                 //jsonResult.isAdsAccess = false;
 
                 sw.Stop();
-                aTempSize = GetObjectSize(analyticsTempData);
-                Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
-                Log4NetLogger.Debug(string.Format("GetChart: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    aTempSize = GetObjectSize(analyticsTempData);
+                    Log4NetLogger.Debug(string.Format("analyticsTempData: {0}", FormatByteSize(aTempSize)));
+                    Log4NetLogger.Debug(string.Format("GetChart: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
             }
             catch (Exception exc)
@@ -1111,11 +1438,23 @@ namespace IQMedia.WebApplication.Controllers
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                //Log4NetLogger.Debug(string.Format("GetOverlayData"));
-                //Log4NetLogger.Debug(graphRequest.ToString());
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("GetOverlayData"));
+                    Log4NetLogger.Debug(graphRequest.ToString());
+                }
+
                 string overlayData = string.Empty;
 
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 analyticsTempData = GetTempData();
                 AnalyticsLogic analyticsLogic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
                 AnalyticsDataModel overlayDataModel = new AnalyticsDataModel();
@@ -1129,6 +1468,9 @@ namespace IQMedia.WebApplication.Controllers
 
                     List<AnalyticsGrouping> groupings = new List<AnalyticsGrouping>();
 
+                    Stopwatch groupingSW = new Stopwatch();
+                    groupingSW.Start();
+
                     // Only make groupings for agents requested
                     foreach (var id in graphRequest.RequestIDs)
                     {
@@ -1140,6 +1482,15 @@ namespace IQMedia.WebApplication.Controllers
                         });
                     }
 
+                    groupingSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("Summaries grouping: {0} ms", groupingSW.ElapsedMilliseconds));
+                    }
+
+                    Stopwatch ovSW = new Stopwatch();
+                    ovSW.Start();
+
                     if (overlayType == 1)
                     {
                         GoogleLogic googleLogic = (GoogleLogic)LogicFactory.GetLogic(LogicType.Google);
@@ -1149,13 +1500,13 @@ namespace IQMedia.WebApplication.Controllers
                         switch (graphRequest.DateInterval)
                         {
                             case "day":
-                                googleData = googleLogic.GetGoogleDataByDay(sessionInfo.ClientGUID, fromDate, toDate);
+                                googleData = googleLogic.GetGoogleDataByDay(clientGUID, fromDate, toDate);
                                 break;
                             case "hour":
-                                googleData = googleLogic.GetGoogleDataByHour(sessionInfo.ClientGUID, fromDate, toDate);
+                                googleData = googleLogic.GetGoogleDataByHour(clientGUID, fromDate, toDate);
                                 break;
                             case "month":
-                                googleData = googleLogic.GetGoogleDataByMonth(sessionInfo.ClientGUID, fromDate, toDate);
+                                googleData = googleLogic.GetGoogleDataByMonth(clientGUID, fromDate, toDate);
                                 break;
                         }
 
@@ -1164,6 +1515,12 @@ namespace IQMedia.WebApplication.Controllers
                     else
                     {
                         overlayData = analyticsLogic.CreateOverlay(groupings, graphRequest, overlayType, analyticsTempData.SubMediaTypes);
+                    }
+
+                    ovSW.Stop();
+                    if ((bool)Session["enableDEVLogging"])
+                    {
+                        Log4NetLogger.Debug(string.Format("OverlayCreated in {0} ms", ovSW.ElapsedMilliseconds));
                     }
                 }
 
@@ -1174,7 +1531,11 @@ namespace IQMedia.WebApplication.Controllers
                 jsonResult.isAdsAccess = sessionInfo.Isv5AdsAccess;
 
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("GetOverlayData: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("GetOverlayData: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
             }
             catch (Exception exc)
@@ -1200,7 +1561,14 @@ namespace IQMedia.WebApplication.Controllers
             try
             {
                 sessionInfo = ActiveUserMgr.GetActiveUser();
-
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 analyticsTempData = GetTempData();
                 List<AnalyticsActiveElement> activeElements = analyticsTempData.ActiveElements;
 
@@ -1208,7 +1576,7 @@ namespace IQMedia.WebApplication.Controllers
                 if (activeElements.Any())
                 {
                     // Hardcode Audience Overlay to be active w PESH for VW Client
-                    if (String.Compare(sessionInfo.ClientGUID.ToString(), "43E4329E-9C07-4374-9C50-5725190D9D54", true) == 0)
+                    if (String.Compare(clientGUID.ToString(), "43E4329E-9C07-4374-9C50-5725190D9D54", true) == 0)
                     {
                         var AOs = activeElements.Where(w => w.ElementSelector.Equals("Audience Overlay")).ToList();
                         AOs.ForEach(e => {
@@ -1234,6 +1602,118 @@ namespace IQMedia.WebApplication.Controllers
             finally
             {
                 TempData.Keep("AnalyticsTempData");
+            }
+        }
+
+        [HttpPost]
+        public ContentResult GetDayparts()
+        {
+            try
+            {
+                dynamic jsonResult = new ExpandoObject();
+                AnalyticsLogic logic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+
+                jsonResult.Dayparts = logic.GetDayPartData("A");
+                jsonResult.DMAs = IQDmaToFusionIDMapModel.IQDmaToFusionIDMap.Select(s => s.Key).ToList();
+                jsonResult.isSuccess = true;
+
+                return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
+            }
+            catch (Exception exc)
+            {
+                CommonFunctions.WriteException(exc);
+                return Content(CommonFunctions.GetSuccessFalseJson(), "application/json", Encoding.UTF8);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DevLogging(bool? enable)
+        {
+            try
+            {
+                sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
+
+                bool devClient = string.Compare(clientGUID.ToString(), "7722A116-C3BC-40AE-8070-8C59EE9E3D2A", true) == 0;
+                bool devWeb = string.Compare(HttpContext.Request.Url.Host.ToString(), "jmylet.iqmediacorp.com", true) == 0;
+                //Log4NetLogger.Debug(string.Format("devClient: {0}", devClient));
+                //Log4NetLogger.Debug(string.Format("devWeb: {0}", devWeb));
+                //Log4NetLogger.Debug(string.Format("enable logging: {0}", enable));
+                if (devClient && devWeb)
+                {
+                    if (enable != null)
+                    {
+                        Session["enableDEVLogging"] = enable;
+                        return Json(new { isSuccess = true, enabled = enable });
+                    }
+                    else
+                    {
+                        var isEnabled = Session["enableDEVLogging"];
+                        if (isEnabled != null)
+                        {
+                            return Json(new { isSuccess = true, enabled = isEnabled });
+                        }
+                        else
+                        {
+                            Session["enableDEVLogging"] = false;
+                            return Json(new { isSuccess = true, enabled = false });
+                        }
+                    }
+                }
+                else
+                {
+                    return Json(new { isSuccess = false });
+                }
+            }
+            catch (Exception exc)
+            {
+                CommonFunctions.WriteException(exc);
+                return Json(CommonFunctions.GetSuccessFalseJson());
+            }
+        }
+
+        [HttpPost]
+        public JsonResult DevGUID(bool useClientGUID, string newGUID)
+        {
+            try
+            {
+                sessionInfo = ActiveUserMgr.GetActiveUser();
+                clientGUID = sessionInfo.ClientGUID;
+
+                bool devClient = string.Compare(clientGUID.ToString(), "7722A116-C3BC-40AE-8070-8C59EE9E3D2A", true) == 0;
+                bool devWeb = string.Compare(HttpContext.Request.Url.Host.ToString(), "jmylet.iqmediacorp.com", true) == 0;
+
+                if (devClient && devWeb)
+                {
+                    Session["useClientGUID"] = useClientGUID;
+
+                    if (!string.IsNullOrEmpty(newGUID))
+                    {
+                        Session["devGUID"] = new Guid(newGUID);
+                    }
+                    else
+                    {
+                        Session["devGUID"] = new Guid();
+                    }
+
+                    return Json(new { isSuccess = true, useClientGUID = useClientGUID, devGUID = Session["devGUID"] });
+                }
+                else
+                {
+                    return Json(new { isSuccess = false });
+                }
+            }
+            catch (Exception exc)
+            {
+                CommonFunctions.WriteException(exc);
+                return Json(CommonFunctions.GetSuccessFalseJson());
             }
         }
 
@@ -1585,7 +2065,7 @@ namespace IQMedia.WebApplication.Controllers
                 {
                     dataModel = logic.GetHourSummaryData(clientGUID, requestXml, subMediaType, sessionInfo.gmt, sessionInfo.dst, inTrailing30);
                     // Convert summary dates to client's local time
-                    dataModel.SummaryDataList = CommonFunctions.GetGMTandDSTTime(dataModel.SummaryDataList, CommonFunctions.ResultType.Analytics);
+                    //dataModel.SummaryDataList = CommonFunctions.GetGMTandDSTTime(dataModel.SummaryDataList, CommonFunctions.ResultType.Analytics);
                 }
                 else if (interval == "month")
                 {
@@ -1683,7 +2163,11 @@ namespace IQMedia.WebApplication.Controllers
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                Log4NetLogger.Debug("GetNetworkShowSummaries");
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("GetNetworkShowSummaries");
+                }
+
                 AnalyticsLogic logic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
                 AnalyticsDataModel dataModel;
                 string requestXml = null;
@@ -1706,7 +2190,7 @@ namespace IQMedia.WebApplication.Controllers
                 }
                 //Log4NetLogger.Debug(string.Format("requestXML: {0}", requestXml));
 
-                lstTopTen = logic.GetTopTenData(clientGUID, requestXml, request.Tab).Where(x => x != null && x.Trim() != "").ToList();
+                lstTopTen = logic.GetTopNetworkShows(clientGUID, requestXml, request.Tab).Where(x => x != null && x.Trim() != "").ToList();
                 dctTopTen = new Dictionary<string, string>();
                 var count = 0;
                 foreach (var item in lstTopTen)
@@ -1719,7 +2203,83 @@ namespace IQMedia.WebApplication.Controllers
                 dataModel = logic.GetNetworkShowSummaryData(clientGUID, requestXml, request.SubMediaType, sessionInfo.gmt, sessionInfo.dst, lstTopTen, request.Tab, request.DateInterval);
 
                 sw.Stop();
-                Log4NetLogger.Debug(string.Format("GetAgentSummaries: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("GetAgentSummaries: {0} ms", sw.ElapsedMilliseconds));
+                }
+
+                return dataModel;
+            }
+            catch (Exception exc)
+            {
+                CommonFunctions.WriteException(exc);
+            }
+            return new AnalyticsDataModel();
+        }
+
+        private AnalyticsDataModel GetCampaignNetworkShowSummaries(Guid clientGUID, AnalyticsRequest request, bool useSelectedIDs)
+        {
+            try
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("GetCampaignNetworkShowSummaries");
+                }
+
+                var campaigns = useSelectedIDs ? request.Campaigns.Where(w => request.RequestIDs.Contains(w.CampaignID)) : request.Campaigns;
+
+                AnalyticsLogic logic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                AnalyticsDataModel dataModel;
+                string requestXML = null;
+
+                if (request.RequestIDs != null && request.RequestIDs.Count > 0)
+                {
+                    XDocument xDox = new XDocument(new XElement(
+                        "list",
+                        from i in campaigns
+                        select new XElement(
+                            "item",
+                            new XAttribute("id", i.SearchRequestID),
+                            new XAttribute("fromDate", i.StartDate),
+                            new XAttribute("toDate", i.EndDate),
+                            new XAttribute("fromDateGMT", CommonFunctions.GetGMTandDSTTime(i.StartDate).ToString()),
+                            new XAttribute("toDateGMT", CommonFunctions.GetGMTandDSTTime(i.EndDate).ToString())
+                        )
+                    ));
+                    requestXML = xDox.ToString();
+                }
+
+                lstTopTen = logic.GetTopNetworkShows(clientGUID, requestXML, request.Tab).Where(x => x != null && x.Trim() != "").ToList();
+                dctTopTen = new Dictionary<string, string>();
+                var count = 0;
+                foreach (var item in lstTopTen)
+                {
+                    dctTopTen.Add("TopTen" + count, item);
+                    count++;
+                }
+
+                dataModel = logic.GetNetworkShowSummaryData(clientGUID, requestXML, request.SubMediaType, sessionInfo.gmt, sessionInfo.dst, lstTopTen, request.Tab, request.DateInterval);
+
+                // Fill in campaign properties
+                dataModel.SummaryDataList.ForEach(e => {
+                    var thisCamp = campaigns.Where(f => f.SearchRequestID == e.SearchRequestID).DefaultIfEmpty(null).FirstOrDefault();
+                    if (thisCamp != null)
+                    {
+                        e.CampaignID = thisCamp.CampaignID;
+                        e.CampaignName = thisCamp.CampaignName;
+                    }
+                });
+
+                SetCampaignDates(dataModel, request);
+
+                sw.Stop();
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("GetCampaignNetworkShowSummaries: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return dataModel;
             }
             catch (Exception exc)
@@ -1805,7 +2365,7 @@ namespace IQMedia.WebApplication.Controllers
                 Dictionary<string, string> subMediaTypes = new Dictionary<string, string>();
                 if (sessionInfo.MediaTypes != null)
                 {
-                    subMediaTypes = sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2).Select(s => new {
+                    subMediaTypes = sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).Select(s => new {
                         s.SubMediaType,
                         s.DisplayName
                     }).ToDictionary(
@@ -1887,7 +2447,16 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                Dictionary<string, string> agentGroups = GetAgentsByGUID(sessionInfo.ClientGUID).Select(s => new {
+                sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
+                Dictionary<string, string> agentGroups = GetAgentsByGUID(clientGUID).Select(s => new {
                     s.ID,
                     s.QueryName
                 }).Distinct().ToDictionary(
@@ -1908,7 +2477,16 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                Dictionary<string, string> campGroups = GetCampaignsByGUID(sessionInfo.ClientGUID).Select(s => new {
+                sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
+                Dictionary<string, string> campGroups = GetCampaignsByGUID(clientGUID).Select(s => new {
                     s.CampaignID,
                     s.CampaignName
                 }).Distinct().ToDictionary(
@@ -1923,6 +2501,20 @@ namespace IQMedia.WebApplication.Controllers
                 CommonFunctions.WriteException(exc);
             }
             return new Dictionary<string, string>();
+        }
+
+        private List<DayPartDataItem> GetAllDaypartItems()
+        {
+            try
+            {
+                AnalyticsLogic logic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                return logic.GetDayPartData("A");
+            }
+            catch (Exception exc)
+            {
+                CommonFunctions.WriteException(exc);
+            }
+            return new List<DayPartDataItem>();
         }
 
         #endregion
@@ -2118,6 +2710,14 @@ namespace IQMedia.WebApplication.Controllers
             try
             {
                 sessionInfo = ActiveUserMgr.GetActiveUser();
+                if ((bool)Session["useClientGUID"])
+                {
+                    clientGUID = sessionInfo.ClientGUID;
+                }
+                else
+                {
+                    clientGUID = new Guid(Session["devGUID"].ToString());
+                }
                 Request.InputStream.Position = 0;
                 Dictionary<string, object> dictParameters;
 
@@ -2147,7 +2747,7 @@ namespace IQMedia.WebApplication.Controllers
                     int sendCount = 0;
                     string html = GetHTMLWithCSS(HTML, agent0, agent1, source0, source1);
                     string timeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
-                    //string tempImagePath = string.Format("C:\\Logs\\Download\\Analytics\\IMG\\{0}_{1}.jpg", sessionInfo.ClientGUID, timeStamp);
+                    //string tempImagePath = string.Format("C:\\Logs\\Download\\Analytics\\IMG\\{0}_{1}.jpg", clientGUID, timeStamp);
                     string tempImagePath = string.Format("{0}Download\\Analytics\\PDF\\{1}_{2}.jpg", ConfigurationManager.AppSettings["TempHTML-PDFPath"], sessionInfo.CustomerGUID, timeStamp);
 
                     HtmlToImage HtIConverter = new HtmlToImage();
@@ -2221,7 +2821,11 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                //Log4NetLogger.Debug(string.Format("BuildMainTableRows"));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("BuildMainTableRows"));
+                }
+
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
@@ -2356,7 +2960,7 @@ namespace IQMedia.WebApplication.Controllers
                                 break;
                             case "on air time":
                                 // If we don't have seen/heard values, calculate on air time off the total number of hits
-                                long onAir = !hideLRAds ? group.Summaries.Sum(s => ((s.HeardEarned + s.HeardPaid) * 8 + (s.SeenEarned + s.SeenPaid))) : group.Summaries.Sum(s => s.Number_Of_Hits * 8);
+                                long onAir = hideLRAds ? group.Summaries.Sum(s => s.Number_Of_Hits * 8) : group.Summaries.Sum(s => ((s.HeardEarned + s.HeardPaid) * 8 + (s.SeenEarned + s.SeenPaid)));
                                 var sumOnAir = group.Summaries.Where(w => analyticsTempData.OnAirSubMediaTypes.Contains(w.SubMediaType)).Sum(s => s.Number_Of_Hits);
                                 tc.InnerText = string.Format("{0:00}:{1:00}:{2:00}", onAir / 3600, (onAir / 60) % 60, onAir % 60);
                                 tc.ID = string.Format("ONAIRTIME_{0}", group.ID);
@@ -2448,7 +3052,10 @@ namespace IQMedia.WebApplication.Controllers
                 }
 
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("BuildMainTableRows: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("BuildMainTableRows: {0} ms", sw.ElapsedMilliseconds));
+                }
 
                 return tableRows;
             }
@@ -2469,7 +3076,11 @@ namespace IQMedia.WebApplication.Controllers
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                //Log4NetLogger.Debug("BuildDemographicTableRows");
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("BuildDemographicTableRows");
+                }
+
                 sessionInfo = ActiveUserMgr.GetActiveUser();
                 analyticsTempData = GetTempData();
 
@@ -2592,7 +3203,10 @@ namespace IQMedia.WebApplication.Controllers
                 }
 
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("BuildDemographicTableRows: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("BuildDemographicTableRows: {0} ms", sw.ElapsedMilliseconds));
+                }
 
                 return demoRows;
             }
@@ -2611,7 +3225,10 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                //Log4NetLogger.Debug("BuildTabSpecificTableRows");
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug("BuildTabSpecificTableRows");
+                }
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
@@ -2841,7 +3458,10 @@ namespace IQMedia.WebApplication.Controllers
                 }
 
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("BuildTabSpecificTableRows: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("BuildTabSpecificTableRows: {0} ms", sw.ElapsedMilliseconds));
+                }
 
                 return tableRows;
             }
@@ -2860,7 +3480,11 @@ namespace IQMedia.WebApplication.Controllers
         {
             try
             {
-                //Log4NetLogger.Debug(string.Format("CreateSecondaryTableHeader"));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("CreateSecondaryTableHeader"));
+                }
+
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
@@ -2948,7 +3572,11 @@ namespace IQMedia.WebApplication.Controllers
                     headerRow.Cells.Add(tc);
                 }
                 sw.Stop();
-                //Log4NetLogger.Debug(string.Format("CreateSecondaryTableHeader: {0} ms", sw.ElapsedMilliseconds));
+                if ((bool)Session["enableDEVLogging"])
+                {
+                    Log4NetLogger.Debug(string.Format("CreateSecondaryTableHeader: {0} ms", sw.ElapsedMilliseconds));
+                }
+
                 return headerRow;
             }
             catch (Exception exc)
@@ -2957,235 +3585,6 @@ namespace IQMedia.WebApplication.Controllers
             }
             return new HtmlTableRow();
         }
-
-        //private List<HtmlTableRow> BuildMarketTable(AnalyticsSecondaryTable table, AnalyticsRequest request, bool hideLRAds = false)
-        //{
-        //    try
-        //    {
-        //        Stopwatch sw = new Stopwatch();
-        //        sw.Start();
-
-        //        sessionInfo = ActiveUserMgr.GetActiveUser();
-        //        AnalyticsLogic logic = new AnalyticsLogic();
-
-        //        List<HtmlTableRow> tableRows = new List<HtmlTableRow>();
-                
-        //        List<string> querySRIDs = new List<string>();
-        //        querySRIDs.Add("6889");
-        //        querySRIDs.Add("2111");
-        //        querySRIDs.Add("8052");
-
-        //        DateTime startDate = new DateTime(2016,6,29,4,0,0);
-        //        DateTime endDate = new DateTime(2016,6,30,3,59,59);
-
-        //        List<FacetResponse> markets = logic.Search(querySRIDs, Convert.ToDateTime(request.DateFrom), Convert.ToDateTime(request.DateTo));
-        //        Log4NetLogger.Debug(string.Format("Building markets table with {0} markets", markets.Count));
-
-        //        int count = 0;
-        //        foreach (FacetResponse mkt in markets.OrderByDescending(ob => ob.TotalHitCount))
-        //        {
-        //            count++;
-
-        //            HtmlTableRow tr = new HtmlTableRow() {
-        //                ID = string.Format("{0}TR_{1}", table.GroupByHeader, mkt.MarketID)
-        //            };
-        //            tr.Attributes.Add("class", "secondaryDetailRow");
-
-        //            HtmlTableCell tc = new HtmlTableCell();
-        //            tc.Attributes.Add("class", "secondaryDetailCBCol");
-
-        //            HtmlInputCheckBox cbControl = new HtmlInputCheckBox() {
-        //                ID = string.Format("{0}CB_{1}", table.GroupByHeader, mkt.MarketID)
-        //            };
-
-        //            if (count <= 10)
-        //            {
-        //                cbControl.Checked = true;
-        //            }
-
-        //            cbControl.Attributes.Add("onclick", string.Format("ToggleSeries('{0}')", mkt.MarketID));
-        //            cbControl.Attributes.Add("class", "coloredCB");
-
-        //            HtmlGenericControl lblControl = new HtmlGenericControl("label");
-        //            lblControl.Attributes.Add("for", string.Format("{0}CB_{1}", table.GroupByHeader, mkt.MarketID));
-
-        //            HtmlGenericControl divControl = new HtmlGenericControl("div");
-        //            divControl.Attributes.Add("class", "coloredCBdiv");
-
-        //            HtmlGenericControl spnControl = new HtmlGenericControl("span");
-        //            spnControl.Attributes.Add("title", "select to add to graph");
-        //            spnControl.Attributes.Add("class", "coloredCBspan");
-
-        //            divControl.Controls.Add(spnControl);
-        //            lblControl.Controls.Add(divControl);
-
-        //            tc.Controls.Add(cbControl);
-        //            tc.Controls.Add(lblControl);
-
-        //            tr.Cells.Add(tc);
-
-        //            // Group by col
-        //            tr.Cells.Add(new HtmlTableCell() {
-        //                InnerText = string.Format("{0}", mkt.Market),
-        //                ID = string.Format("{0}TD_{1}", table.GroupByHeader, mkt.MarketID)
-        //            });
-
-        //            List<string> columnHeader = new List<string>();
-        //            if (sessionInfo.isv5LRAccess && sessionInfo.Isv5AdsAccess && !hideLRAds)
-        //            {
-        //                columnHeader = table.ColumnHeadersAdsLR;
-        //            }
-        //            else if (sessionInfo.Isv5AdsAccess && !hideLRAds)
-        //            {
-        //                columnHeader = table.ColumnHeadersAds;
-        //            }
-        //            else if (sessionInfo.isv5LRAccess && !hideLRAds)
-        //            {
-        //                columnHeader = table.ColumnHeadersLR;
-        //            }
-        //            else
-        //            {
-        //                columnHeader = table.ColumnHeaders;
-        //            }
-
-        //            foreach (string column in columnHeader)
-        //            {
-        //                tc = new HtmlTableCell();
-        //                tc.Attributes.Add("style", "text-align:right;");
-
-        //                switch (column)
-        //                {
-        //                    case "agent":
-        //                        tc.InnerText = string.Format("{0}", mkt.Market);
-        //                        tc.Attributes.Clear();
-        //                        break;
-        //                    case "occurrences":
-        //                        tc.InnerText = string.Format("{0}", mkt.TotalHitCount);
-        //                        break;
-        //                    case "seen":
-        //                        if (sessionInfo.isv5LRAccess && !hideLRAds)
-        //                        {
-        //                            tc.InnerText = string.Format("{0:N0}", mkt.Seen);
-        //                        }
-        //                        break;
-        //                    case "heard":
-        //                        if (sessionInfo.isv5LRAccess && !hideLRAds)
-        //                        {
-        //                            tc.InnerText = string.Format("{0:N0}", mkt.Heard);
-        //                        }
-        //                        break;
-        //                    case "read":
-        //                        if (sessionInfo.isv5LRAccess && !hideLRAds)
-        //                        {
-        //                            tc.InnerText = string.Format("{0:N0}", mkt.Read);
-        //                        }
-        //                        break;
-        //                    case "paid":
-        //                        if (sessionInfo.Isv5AdsAccess && !hideLRAds)
-        //                        {
-        //                            tc.InnerText = string.Format("{0:N0}", mkt.Paid);
-        //                        }
-        //                        break;
-        //                    case "earned":
-        //                        if (sessionInfo.Isv5AdsAccess && !hideLRAds)
-        //                        {
-        //                            tc.InnerText = string.Format("{0:N0}", mkt.Earned);
-        //                        }
-        //                        break;
-        //                    case "on air time":
-        //                        tc.InnerText = mkt.OnAirTime;
-        //                        break;
-        //                    case "audience":
-        //                        tc.InnerText = string.Format("{0:N0}", mkt.Audience);
-        //                        break;
-        //                    case "ad value":
-        //                        tc.InnerText = string.Format("{0:C2}", mkt.MediaValue);
-        //                        break;
-        //                    case "sentiment":
-        //                        tc.Attributes.Add("class", "sentimentTDContainer");
-
-        //                        divControl = new HtmlGenericControl("div");
-        //                        divControl.Attributes.Add("class", "sentimentDivContainer");
-        //                        divControl.Attributes.Add("align", "center");
-
-        //                        HtmlTable sentimentTbl = new HtmlTable() {
-        //                            CellPadding = 0,
-        //                            CellSpacing = 0
-        //                        };
-        //                        sentimentTbl.Attributes.Add("style", "height:100%;");
-
-        //                        HtmlTableRow sentimentTR = new HtmlTableRow();
-        //                        sentimentTR.Attributes.Add("class", "sentimentTRContainer");
-
-        //                        long negSentWidth = 0;
-        //                        long posSentWidth = 0;
-
-        //                        if (mkt.NegativeSentiment > 0)
-        //                        {
-        //                            negSentWidth = mkt.NegativeSentiment.ToString().Length * 8 + 5;
-        //                        }
-        //                        if (mkt.PositiveSentiment > 0)
-        //                        {
-        //                            posSentWidth = mkt.PositiveSentiment.ToString().Length * 8 + 5;
-        //                        }
-
-        //                        if (negSentWidth > 51)
-        //                        {
-        //                            negSentWidth = 51;
-        //                        }
-        //                        if (posSentWidth > 51)
-        //                        {
-        //                            posSentWidth = 51;
-        //                        }
-
-        //                        HtmlTableCell sentimentNegTD = new HtmlTableCell();
-        //                        sentimentNegTD.Attributes.Add("class", "sentimentNegPosTD");
-
-        //                        HtmlGenericControl negSpan = new HtmlGenericControl("span") {
-        //                            InnerHtml = string.Format("{0:N0}&nbsp;", mkt.NegativeSentiment)
-        //                        };
-        //                        negSpan.Attributes.Add("class", "sentimentNegSpan");
-        //                        negSpan.Attributes.Add("style", string.Format("width:{0}px;", negSentWidth));
-
-        //                        sentimentNegTD.Controls.Add(negSpan);
-
-        //                        HtmlTableCell sentimentPosTD = new HtmlTableCell();
-        //                        sentimentPosTD.Attributes.Add("class", "sentimentNegPosTD");
-
-        //                        HtmlGenericControl posSpan = new HtmlGenericControl("span") {
-        //                            InnerHtml = string.Format("&nbsp;{0:N0}", mkt.PositiveSentiment)
-        //                        };
-        //                        posSpan.Attributes.Add("class", "sentimentPosSpan");
-        //                        posSpan.Attributes.Add("style", string.Format("width:{0}px;", posSentWidth));
-
-        //                        sentimentPosTD.Controls.Add(posSpan);
-
-        //                        sentimentTR.Controls.Add(sentimentNegTD);
-        //                        sentimentTR.Controls.Add(sentimentPosTD);
-
-        //                        sentimentTbl.Controls.Add(sentimentTR);
-
-        //                        divControl.Controls.Add(sentimentTbl);
-        //                        tc.Controls.Add(divControl);
-        //                        break;
-        //                }
-
-        //                tr.Cells.Add(tc);
-        //            }
-
-        //            tableRows.Add(tr);
-        //        }
-
-        //        sw.Stop();
-        //        Log4NetLogger.Debug(string.Format("BuildMarketTable: {0} ms", sw.ElapsedMilliseconds));
-        //        return tableRows;
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        CommonFunctions.WriteException(exc);
-        //        return new List<HtmlTableRow>();
-        //    }
-        //}
 
         #endregion
     }

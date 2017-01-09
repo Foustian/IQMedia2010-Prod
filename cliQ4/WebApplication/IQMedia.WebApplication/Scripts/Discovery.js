@@ -17,9 +17,7 @@ var _SearchDatebkp = '';
 var _fromDate = '';
 var _toDate = '';
 
-var _SearchMedium = '';
-var _SearchMediumDesc = '';
-var _SearchMediumbkp = '';
+var _SearchMediums = [];
 
 var _SearchTVMarket = '';
 var _SearchTVMarketbkp = '';
@@ -33,6 +31,7 @@ var _imgLoading = '<img alt="" id="imgSaveSearchLoading" class="marginRight10" s
 var _DateMessage = '';
 var _ChartDate = '';
 var _IsDefaultLoad = true;
+var _MasterMediaTypes = []; // Array of submedia type objects with the structure [MediaType, SubMediaType, SubMediaType Display Name]
 
 var _MaxDiscoveryReportItems = 0;
 var _MaxDiscoveryExportItems = 0;
@@ -234,8 +233,7 @@ $(document).ready(function () {
         $('#ulSearchTerm').append("<li style=\"list-style:none outside none\" id=\"lisearchTerm_1\" ><input type=\"text\" placeholder=\"Search Term\" id=\"txtSearchTerm_1\" readonly=\"readonly\" style=\"height:30px; width:90%;\" /></li>");
 
         //set medium based on drop down
-        _SearchMedium = getParameterByName("TopicMedium");
-        _SearchMediumDesc = getParameterByName("TopicMediumName");
+        _SearchMediums = [getParameterByName("TopicMedium")];
 
         //set other filters based on parent
         _SearchTVMarket = parent._SearchTVMarket;
@@ -278,17 +276,6 @@ $(document).ready(function () {
         _SearchTermIndex = $(this).index();
         GetDataOnTabChange();
     });
-
-
-    /*var documentHeight = $(window).height();
-    $('#divMainContent').css({ 'height': documentHeight - 200 });
-    //$('#mCSB_1').css({ 'max-height': '' });
-    $("#divMainContent").mCustomScrollbar({
-    advanced: {
-    updateOnContentResize: true,
-    autoScrollOnFocus: false
-    }
-    });*/
 
     $('.ndate').click(function () {
         $("#divCalender").datepicker("refresh");
@@ -343,15 +330,38 @@ function GetCustomCategory(callback, forceBind) {
     }
 }
 
-function SetMedium(mediumName, mediumDesc) {
-    if (mediumName != "TV") {
-        _SearchTVMarket = '';
-        _SearchMediumDesc = '';
-    }
-    //ClearChartDateVariable();
+// When filtering on a media type, set the actual filter as every submedia type associated to it
+function SetMediaType(event, mediaType) {
+    // This event is fired whenever a child submedia type is selected. Only run it if a media type was selected.
+    var event = window.event || event;
+    var target = event.target || event.srcElement;
 
-    _SearchMedium = mediumName;
-    _SearchMediumDesc = mediumDesc;
+    if (target.name == "aMediaType") {
+        if (mediaType != "TV") {
+            _SearchTVMarket = '';
+        }
+
+        var subMediaTypes = $.map($.grep(_MasterMediaTypes, function (obj) {
+            return obj[0] == mediaType;
+        }), function (obj1, index) {
+            return obj1[1]; // SubMedia Type abbreviations (TV, NM, Blog, PQ, etc.)
+        });
+
+        _SearchMediums = subMediaTypes;
+        IsChartUpdated = false;
+        _IsToggle = false;
+        ResetSearchTermClassToFalse();
+
+        SearchResult();
+    }
+}
+
+function SetSubMediaType(subMediaType) {
+    if (subMediaType != "TV") {
+        _SearchTVMarket = '';
+    }
+
+    _SearchMediums = [subMediaType];
     IsChartUpdated = false;
     _IsToggle = false;
     ResetSearchTermClassToFalse();
@@ -388,7 +398,6 @@ function OnCategoryBindComplete(result, callback) {
 }
 
 function SetTVMarket(tvMarket) {
-    //ClearChartDateVariable();
     _SearchTVMarket = tvMarket;
 
     IsChartUpdated = false;
@@ -399,12 +408,8 @@ function SetTVMarket(tvMarket) {
 }
 
 function SetCurrentSearchTermTextBox(content, searchTermTextBoxID) {
-
-    //alert('blur');
-    //alert(_NeedToValidateSearchTerm);
-    //setTimeout(function () {
     //do not use smart quotes
-    content = content.trim().replace(/[\u201C\u201D]/g, '"')/*.replace(/[\u2018\u2019]/g, "'")*/;
+    content = content.trim().replace(/[\u201C\u201D]/g, '"');
     var tooltiptext = content.length > 100 ? tooltiptext = content.replace(/"/g, "\"").substring(0, 100) + "..." : tooltiptext = content.replace(/"/g, "\"");
 
     $('#' + searchTermTextBoxID.id).val(content);
@@ -412,10 +417,8 @@ function SetCurrentSearchTermTextBox(content, searchTermTextBoxID) {
     $('#' + searchTermTextBoxID.id).attr('SearchID', "Z" + _NextSearchTermID);
     $('#' + searchTermTextBoxID.id).attr('title', tooltiptext);
 
-    //if (_NeedToValidateSearchTerm)
     $('#divPopover').remove();
     PushSearchTermintoArray();
-    //}, 1000)
 
     _NextSearchTermID++;
 }
@@ -498,10 +501,7 @@ function PushSearchTermintoArray() {
             SearchTermClass.TotalRecords = 0;
             SearchTermClass.DisplayPageSize = 0;
 
-            /*SearchTermClass.ID = sTermID;
-            sTermID += 1;*/
             _searchTerm.push(SearchTermClass);
-
         }
     });
     if (!isCurrentSearchTermInArray && _searchTerm.length > 0) {
@@ -509,7 +509,6 @@ function PushSearchTermintoArray() {
     }
 
     GenerateSearchTermTab();
-    //ClearChartDateVariable();
     if (_searchTerm.length > 0) {
         SearchResult();
     }
@@ -518,8 +517,6 @@ function PushSearchTermintoArray() {
         $('#divDiscoveryUtility').hide();
         ClearAllData();
     }
-    // }
-    //_NeedToValidateSearchTerm = true;
 }
 
 function ClearAllData() {
@@ -541,14 +538,10 @@ function ClearAllData() {
 
     $('#ulMedium').html('<li role="presentation" class="cursorPointer"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
     $('#ulMedium').html('<li role="presentation" class="cursorPointer"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
-    //$('#ulTVMarket').html('<li role="presentation" class="cursorPointer"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
     disabledDays = [];
-    _SearchMedium = ''
-    _SearchMediumDesc = '';
+    _SearchMediums = [];
     _SearchTVMarket = '';
     _SearchDate = '';
-    /*_fromDate = '';
-    _toDate = '';*/
     $("#dpFrom").datepicker('option', 'beforeShowDay', '');
     $("#dpTo").datepicker('option', 'beforeShowDay', '');
     $('#divActiveFilter').html('');
@@ -575,47 +568,30 @@ function SearchResult() {
             }
         }
         else {
-            //$('#divDiscoveryClearAll').hide();
             ShowNotification(_SearchTermValidationMessage);
         }
-    }
-    else {
-        //$('#divDiscoveryClearAll').hide();
     }
 }
 
 function OnResultSearchFail(result) {
-    //alert('OnResultSearch Fail - Local');
-
     ClearResultsOnError('divResult_Child_Data_' + _SearchTermIndex, 'spnNoOfRecords_' + _SearchTermIndex, 'divMoreResult_' + _SearchTermIndex, _msgErrorOnSearch.replace(/@@MethodName@@/g, "SearchResult()"));
     _IsTabChange = false;
 
     ShowNotification(_msgErrorOccured);
 }
 function OnResultSearchComplete(result) {
-
     $('#divResult_Child_NoData_' + result.searchedIndex).html('');
-
-    /*if (result.notAvailableDataResult) {
-    SetNoDataAvailableMessage(result.notAvailableDataResult, 'divResult_Child_NoData_' + result.searchedIndex);
-    }*/
 
     if (result.availableDataResult) {
         SetNoDataAvailableMessage(result.availableDataResult, 'divResult_Child_NoData_' + result.searchedIndex);
     }
 
     if (result.isSuccess) {
-
         $('#divDiscoveryUtility').show();
         $("#spnNoOfRecords_" + result.searchedIndex).show();
         $("#divMoreResult_" + result.searchedIndex).show();
         SetDiscoveryResultStatus(result);
-
-        // for (var i = 0; i < _searchTerm.length; i++) {
-        _searchTerm[result.searchedIndex].IsCurrentTab = false;
-
-        // if (_searchTerm[i].SearchTerm.trim() == result.searchedTerm) {
-
+        
         _searchTerm[result.searchedIndex].IsCurrentTab = true;
         _searchTerm[result.searchedIndex].ResultShown = true;
         _searchTerm[result.searchedIndex].ShownRecords = result.searchTermShownRecords;
@@ -639,8 +615,6 @@ function OnResultSearchComplete(result) {
         else {
             result.hasMoreResults = false;
         }
-        //}
-        //}
 
         var _PageSizeArray = JSON.parse("[" + _searchTerm[result.searchedIndex].DisplayPageSizeOptions + "]");
         $('#divMoreResult_' + result.searchedIndex).remove();
@@ -688,7 +662,6 @@ function OnResultSearchComplete(result) {
 
         _SearchDatebkp = _SearchDate;
         _searchTermbkp = _searchTerm;
-        _SearchMediumbkp = _SearchMedium;
         _SearchTVMarketbkp = _SearchTVMarket;
 
         if (!_IsToggle) {
@@ -699,7 +672,6 @@ function OnResultSearchComplete(result) {
             RenderSearchTermTabs(result.pieChartMediumJson, result.pieChartSearchTermJson, result.lineChartMediumJson);
             SetDateFilter(result);
             SetMediumFilter(result);
-            //SetTVMarketFilter(result);
 
             $('#divNoDataChart').html('');
 
@@ -722,23 +694,14 @@ function OnResultSearchComplete(result) {
         SetImageSrc();
 
         SetMediaClickEvent();
-
     }
     else {
         CheckForAuthentication(result, "An error occurred. Please save your search and reload.");
         ClearResultsOnError('divResult_Child_Data_' + _SearchTermIndex, 'spnNoOfRecords_' + _SearchTermIndex, 'divMoreResult_' + _SearchTermIndex, _msgErrorOnSearch.replace(/@@MethodName@@/g, "SearchResult()"));
-        //ShowNotification('Some error occured, try again later');
     }
-
-
-
 }
 
-
 function OnMediaSearchComplete(result) {
-    /*$("#dpFrom").datepicker('option', 'beforeShowDay', enableAllTheseDays);
-    $("#dpTo").datepicker('option', 'beforeShowDay', enableAllTheseDays);*/
-
     IsChartUpdated = true;
     $('#divNoDataChart').html('');
 
@@ -751,7 +714,6 @@ function OnMediaSearchComplete(result) {
                 $('#divDiscoveryUtility').show();
                 _SearchDatebkp = _SearchDate;
                 _searchTermbkp = _searchTerm;
-                _SearchMediumbkp = _SearchMedium;
                 _SearchTVMarketbkp = _SearchTVMarket;
                 _PieChartIndividualTotals = result.pieChartSearchTermTotals;
 
@@ -760,7 +722,6 @@ function OnMediaSearchComplete(result) {
                 RenderSearchTermTabs(result.pieChartMediumJson, result.pieChartSearchTermJson, result.lineChartMediumJson);
                 SetDateFilter(result);
                 SetMediumFilter(result);
-                //SetTVMarketFilter(result);
 
                 $('#divChartTotal').html('Total Records :: ' + result.chartTotal);
             }
@@ -779,22 +740,17 @@ function OnMediaSearchComplete(result) {
     }
     else {
         CheckForAuthentication(result, "An error occurred. Please save your search and reload.");
-        //ShowNotification('Some error occured, try again later');
     }
     setTimeout(function () {
-        //$("#divMainContent").mCustomScrollbar("scrollTo", "top");
     }, 200);
 }
 
 function OnFail(result) {
-
     _IsTabChange = false;
     _IsToggle = false;
-    //alert('On Chart Fail - Local');
 
     ShowNotification(_msgErrorOccured);
 }
-
 
 function SetMediaClickEvent() {
     $("#divResult .media").click(function (e) {
@@ -813,18 +769,6 @@ function SetMediaClickEvent() {
 }
 
 function SearchResultAjaxRequest() {
-    /*var finalFromDate = '';
-    var finalToDate = '';
-
-    if (_ChartDate) {
-    finalFromDate = _ChartDate;
-    finalToDate = _ChartDate;
-    }
-    else {
-    finalFromDate = _fromDate;
-    finalToDate = _toDate;
-    }*/
-
     var mySearchTermArray = new Array();
     var mySearchNameArray = new Array();
     var mySearchIDArray = new Array();
@@ -854,7 +798,7 @@ function SearchResultAjaxRequest() {
             searchIDArray: mySearchIDArray,
             fromDate: _fromDate,
             toDate: _toDate,
-            medium: _SearchMedium,
+            mediums: _SearchMediums,
             IsTabChange: _IsTabChange,
             IsToggle: _IsToggle,
             IsAsc: _IsAsc,
@@ -876,15 +820,13 @@ function SearchResultAjaxRequest() {
         });
     }
     else {
-        //if (!IsChartUpdated) {
-        //IsChartUpdated = true;
         var jsonPostData = {
             searchTerm: mySearchTermArray,
             searchName: mySearchNameArray,
             searchID: mySearchIDArray,
             fromDate: _fromDate,
             toDate: _toDate,
-            medium: _SearchMedium,
+            mediums: _SearchMediums,
             isDefaultLoad: _IsDefaultLoad,
             advanceSearches: _IsActiveAdvanceSearch == true ? advanceSearchesArray : new Object(),
             advanceSearchIDs: _IsActiveAdvanceSearch == true ? advanceSearchIDsArray : new Object(),
@@ -901,14 +843,10 @@ function SearchResultAjaxRequest() {
             success: OnMediaSearchComplete,
             error: OnFail
         });
-        //}
-
-
     }
 }
 
 function ShowMoreResult() {
-
     if (_searchTerm[_SearchTermIndex].ShownRecords < _searchTerm[_SearchTermIndex].AvailableRecords) {
 
         $('#imgMoreResultLoading_' + _SearchTermIndex).removeClass("visibilityHidden");
@@ -922,13 +860,9 @@ function ShowMoreResult() {
                 _searchTerm[_SearchTermIndex].ShownRecords = _searchTerm[_SearchTermIndex].TotalRecords;
             }
 
-            //alert('available ' + _searchTerm[_SearchTermIndex].AvailableRecords);
-
             if (_searchTerm[_SearchTermIndex].AvailableRecords > _searchTerm[_SearchTermIndex].TotalRecords) {
                 _searchTerm[_SearchTermIndex].AvailableRecords = _searchTerm[_SearchTermIndex].TotalRecords;
             }
-
-            //alert('after more results :: Shown records' + _searchTerm[_SearchTermIndex].ShownRecords + "-- Available Results :: " + _searchTerm[_SearchTermIndex].AvailableRecords);
 
             $('#divResult_Child_Data_' + _SearchTermIndex + ' > div').slice(0, _searchTerm[_SearchTermIndex].ShownRecords).removeClass("displayNone");
             if (_searchTerm[_SearchTermIndex].TotalRecords > 0) {
@@ -936,18 +870,6 @@ function ShowMoreResult() {
             }
 
             var hasMoreResults = false;
-            /*alert('ShownRecords '+ _searchTerm[_SearchTermIndex].ShownRecords);
-            alert('AvailableRecords ' + _searchTerm[_SearchTermIndex].AvailableRecords);
-            alert('TotalRecords ' + _searchTerm[_SearchTermIndex].TotalRecords);
-
-            if (_searchTerm[_SearchTermIndex].ShownRecords < _searchTerm[_SearchTermIndex].AvailableRecords) {
-            alert('shown is less than available');
-            }
-
-            if (_searchTerm[_SearchTermIndex].ShownRecords < _searchTerm[_SearchTermIndex].TotalRecords) {
-            alert('shown is less than total');
-            }*/
-
             if ((_searchTerm[_SearchTermIndex].ShownRecords < _searchTerm[_SearchTermIndex].AvailableRecords)
                ||
                 (_searchTerm[_SearchTermIndex].ShownRecords < _searchTerm[_SearchTermIndex].TotalRecords)) {
@@ -996,7 +918,7 @@ function ShowMoreResult() {
             searchTermIndex: _SearchTermIndex,
             fromDate: _fromDate,
             toDate: _toDate,
-            medium: _SearchMedium,
+            mediums: _SearchMediums,
             searchTermArray: mySearchTermArray,
             IsAsc: _IsAsc,
             PageSize: _PageSize,
@@ -1023,11 +945,8 @@ function ShowMoreResult() {
 function OnMoreResultComplete(result) {
 
     $('#imgMoreResultLoading_' + result.searchedIndex).addClass("visibilityHidden");
-    //$('#divNoDataResult').html('');
     $('#divResult_Child_NoData_' + result.searchedIndex).html('');
-
-
-
+    
     if (result.isSuccess) {
 
         if (result.availableData) {
@@ -1035,8 +954,6 @@ function OnMoreResultComplete(result) {
         }
         else {
             $('#divResult_Child_NoData_' + result.searchedIndex).html('');
-            //SetNoDataAvailableMessage('', 'divResult_Child_NoData_' + result.searchedIndex);
-
         }
 
         SetDiscoveryResultStatus(result);
@@ -1051,7 +968,6 @@ function OnMoreResultComplete(result) {
         if (_searchTerm[result.searchedIndex].ShownRecords > _searchTerm[result.searchedIndex].TotalRecords) {
             _searchTerm[result.searchedIndex].ShownRecords = _searchTerm[result.searchedIndex].TotalRecords;
         }
-
 
         if (_searchTerm[result.searchedIndex].AvailableRecords > _searchTerm[result.searchedIndex].TotalRecords) {
             _searchTerm[result.searchedIndex].AvailableRecords = _searchTerm[result.searchedIndex].TotalRecords;
@@ -1077,8 +993,6 @@ function OnMoreResultComplete(result) {
 
         _searchTerm[result.searchedIndex].DisplayPageSize = result.displayPageSize;
 
-        //alert('after more results :: Shown records' + _searchTerm[result.searchedIndex].ShownRecords + "-- Available Results :: " + _searchTerm[result.searchedIndex].AvailableRecords);
-
         if (result.isAnyDataAvailable && _searchTerm[result.searchedIndex].TotalRecords > 0) {
             $('#spnNoOfRecords_' + result.searchedIndex).html(numberWithCommas(_searchTerm[result.searchedIndex].ShownRecords) + ' of ' + numberWithCommas(_searchTerm[result.searchedIndex].TotalRecords));
         }
@@ -1098,10 +1012,8 @@ function OnMoreResultComplete(result) {
 
             $('#btnShowMoreResults_' + result.searchedIndex).attr('value', _msgNoMoreResult);
             $('#btnShowMoreResults_' + result.searchedIndex).removeAttr('onclick');
-
         }
         else {
-
             $('#btnShowMoreResults_' + result.searchedIndex).attr('value', _msgShowMoreResults);
             $('#btnShowMoreResults_' + result.searchedIndex).attr('onclick', 'ShowMoreResult();');
         }
@@ -1119,20 +1031,12 @@ function OnMoreResultComplete(result) {
         SetMediaClickEvent();
     }
     else {
-
         CheckForAuthentication(result, 'Some error occured, try again later');
-        //ShowNotification('Some error occured, try again later');
     }
-
-    //    setTimeout(function () {
-    //        $("#divMainContent").mCustomScrollbar("scrollTo", "top");
-    //    }, 200);
 }
 
 function OnMoreResultFail(result) {
-
     $('#imgMoreResultLoading_' + result.searchedIndex).addClass("visibilityHidden");
-    //alert('On More Result Fail - Local');
     ShowNotification(_msgErrorOccured);
 }
 
@@ -1230,44 +1134,50 @@ function SetActiveFilter() {
         });
     }
 
-    if (_SearchMediumDesc) {
-        $('#divActiveFilter').append('<div class=\"filter-in\">' + _SearchMediumDesc + '<span onclick="RemoveMediumFilter();" class="cancel"></span></div>');
-        switch (_SearchMedium) {
-            case 'TV':
-                $("#divOnlineNewsTabContent").addClass('blurOnlyControls');
-                $("#divSocialMediaTabContent").addClass('blurOnlyControls');
-                $("#divProQuestTabContent").addClass('blurOnlyControls');
-                break;
-            case 'NM':
-                $("#divTVTabContent").addClass('blurOnlyControls');
-                $("#divSocialMediaTabContent").addClass('blurOnlyControls');
-                $("#divProQuestTabContent").addClass('blurOnlyControls');
-                break;
-            case 'SM':
-                $("#divTVTabContent").addClass('blurOnlyControls');
-                $("#divOnlineNewsTabContent").addClass('blurOnlyControls');
-                $("#divProQuestTabContent").addClass('blurOnlyControls');
-                break;
-            case 'PQ':
-                $("#divTVTabContent").addClass('blurOnlyControls');
-                $("#divOnlineNewsTabContent").addClass('blurOnlyControls');
-                $("#divSocialMediaTabContent").addClass('blurOnlyControls');
-                break;
-        }
+    // Display individual filters for each submedia type, so that they can be disabled independently
+    if (_SearchMediums != null && _SearchMediums.length > 0) {
+        var filterHTML = "";
+        var subMediaTypes = $.grep(_MasterMediaTypes, function (obj) {
+            return $.inArray(obj[1], _SearchMediums) > -1;
+        });
+
+        $.each(subMediaTypes, function (index, obj) { // See _MasterMediaTypes declaration for structure
+            filterHTML += '<div id="divSubMediaTypeActiveFilter_' + obj[1] + '" class="filter-in">' + obj[2] + '<span class="cancel" onclick="RemoveMediumFilter(\'' + obj[1] + '\');"></span></div>';
+        });
+        $('#divActiveFilter').append(filterHTML);
+
+        $("div[name='advSearchTabContent']").addClass('blurOnlyControls');
+
+        $.each(_SearchMediums, function (eventID, eventData) {
+            switch (eventData) {
+                case 'TV':
+                    $("#divTVTabContent").removeClass('blurOnlyControls');
+                    break;
+                case 'NM':
+                    $("#divOnlineNewsTabContent").removeClass('blurOnlyControls');
+                    break;
+                case 'Blog':
+                    $("#divBLTabContent").removeClass('blurOnlyControls');
+                    break;
+                case 'Forum':
+                    $("#divFOTabContent").removeClass('blurOnlyControls');
+                    break;
+                case 'PQ':
+                    $("#divProQuestTabContent").removeClass('blurOnlyControls');
+                    break;
+                case 'LN':
+                    $("#divLNTabContent").removeClass('blurOnlyControls');
+                    break;
+            }
+        });
     }
     else {
-        $("#divTVTabContent").removeClass('blurOnlyControls');
-        $("#divOnlineNewsTabContent").removeClass('blurOnlyControls');
-        $("#divSocialMediaTabContent").removeClass('blurOnlyControls');
-        $("#divProQuestTabContent").removeClass('blurOnlyControls');
+        $("div[name='advSearchTabContent']").removeClass('blurOnlyControls');
     }
 
     if (_SearchDate)
         $('#divActiveFilter').append('<div class=\"filter-in\" id=\"divMainDateFilter\">' + _SearchDate + '<span onclick="RemoveDateFilter();" class="cancel"></span></div>');
-
-    /*if (_ChartDate && IsChartActive == 0)
-    $('#divActiveFilter').append('<div id=\"divChartDateFilter\" class=\"filter-in\">' + _ChartDate.substring(0, 10) + '<span onclick="RemoveChartDate();" class="cancel"></span></div>');*/
-
+        
     if (_SearchTVMarket)
         $('#divActiveFilter').append('<div class=\"filter-in\">' + _SearchTVMarket + '<span onclick="RemoveTVMarketFilter();" class="cancel"></span></div>');
 
@@ -1284,25 +1194,15 @@ function SetActiveFilter() {
         //        alert('main date wil be shown');
         $('#divMainDateFilter').show();
     }
-
 }
-
 
 function SetNoDataAvailableMessage(message, divID) {
     var noDataHTML = '<div class="alert" id="divNoData">'
-    //                    + '<button type="button" class="close" data-dismiss="alert">'
-    //                      + '&times;</button>'
                      + '<div id="divNotAvailableDataMessage" class="row-fluid filter margin0">' + message
-    //+ '<input value="Go" class="RefreshResult" id="btnRefresh Data" type="button" alt="Go" onclick="RefreshResult();" />'
                      + '</div>'
-
                  + '</div>';
     $('#' + divID).append(noDataHTML);
-    //onclick="var documentHeight = $(window).height();$(\'#divMainContent\').css({ \'height\': documentHeight - 200 });"
-    //$('#divNotAvailableDataMessage').html(message);
 }
-
-
 
 function ShowPieChart(elementIndex) {
     $('#divPieChartHeader div').each(function () {
@@ -1322,7 +1222,6 @@ function ShowPieChart(elementIndex) {
 function RenderColumnChartHighCharts(jsonChartData) {
     $('#divColumnChart').highcharts(JSON.parse(jsonChartData));
 }
-
 
 function RenderLineHighChart(jsonLineChartData) {
 
@@ -1462,24 +1361,20 @@ function RenderSearchTermTabs(jsonPieChartMediumData, jsonPieChartSearchTermData
         $("#divPieChartStaticPDF").highcharts().setTitle({ text: "Share of Voice" });
 
         var pieChartChks = $('input:checkbox[name=chkPieChartMedium]');
-        var selectedMedium = _SearchMedium;
-        if (selectedMedium == "Social Media") {
-            selectedMedium = "SocialMedia";
-        }
 
-        if (selectedMedium == '') {
+        if (_SearchMediums == null || _SearchMediums.length == 0) {
+            $('input:checkbox[name=chkPieChartMedium]').prop('checked', false);
             $('input:checkbox[name=chkPieChartMedium]').filter('[value=TV]').prop('checked', true);
             $('input:checkbox[name=chkPieChartMedium]').filter('[value=NM]').prop('checked', true);
-            $('input:checkbox[name=chkPieChartMedium]').filter('[value=Blog]').prop('checked', false);
-            $('input:checkbox[name=chkPieChartMedium]').filter('[value=Forum]').prop('checked', false);
-            $('input:checkbox[name=chkPieChartMedium]').filter('[value=SocialMedia]').prop('checked', false);
-            $('input:checkbox[name=chkPieChartMedium]').filter('[value=PQ]').prop('checked', false);
             pieChartChks.removeAttr('disabled');
         }
         else {
-            pieChartChks.filter('[value=' + selectedMedium + ']').prop('checked', true);
-            pieChartChks.filter('[value!=' + selectedMedium + ']').prop('checked', false);
-            pieChartChks.prop('disabled', 'disabled');
+            $('input:checkbox[name=chkPieChartMedium]').prop('checked', false);
+
+            $.each(_SearchMediums, function (eventID, eventData) {
+                pieChartChks.filter('[value=' + eventData + ']').prop('checked', true);
+                pieChartChks.prop('disabled', 'disabled');
+            });
         }
 
         $("#divPieChartDynamic").highcharts(JSON.parse(jsonPieChartSearchTermData));
@@ -1503,7 +1398,6 @@ function RenderSearchTermTabs(jsonPieChartMediumData, jsonPieChartSearchTermData
     }
 }
 
-
 function ShowPieChartHighCharts(elementIndex) {
     $('#divPieChartHeader div').each(function () {
         $(this).removeAttr("class");
@@ -1519,13 +1413,10 @@ function ShowPieChartHighCharts(elementIndex) {
     $('#divPieChartData').children().eq(elementIndex).show();
 }
 
-
 function SetDateFilter(result) {
     disabledDays = [];
     $.each(result.discoveryDateFilter, function (eventID, eventData) {
-
         disabledDays.push(eventData.Date);
-
     });
 }
 
@@ -1533,8 +1424,17 @@ function SetMediumFilter(result) {
     $('#ulMedium').html('');
     var discoveryMedium = '';
     $.each(result.discoveryMediumFilter, function (eventID, eventData) {
+        var mediaTypeClass = eventData.SubMediaTypeFilterData != null && eventData.SubMediaTypeFilterData.length > 0 ? ' class="dropdown-submenu"' : "";
+        discoveryMedium += '<li onclick="SetMediaType(event, \'' + eventData.MediaType + '\');"' + mediaTypeClass + '><a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">' + eventData.MediaTypeName + '</a>';
+        if (eventData.SubMediaTypeFilterData != null && eventData.SubMediaTypeFilterData.length > 0) {
+            discoveryMedium += '<ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMedium">'
+            $.each(eventData.SubMediaTypeFilterData, function (eventID2, eventData2) {
+                discoveryMedium += '<li onclick="SetSubMediaType(\'' + eventData2.SubMediaType + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData2.SubMediaTypeName + '</a></li>';
 
-        discoveryMedium = discoveryMedium + ' <li onclick="SetMedium(\'' + eventData.Medium + '\',\'' + eventData.MediumValue + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData.MediumValue + '</a></li>';
+            });
+            discoveryMedium += '</ul>';
+        }
+        discoveryMedium += '</li>';
     });
 
     if (discoveryMedium != '') {
@@ -1550,17 +1450,13 @@ function enableAllTheseDays(date) {
     return [$.inArray(date, disabledDays) !== -1];
 }
 
-
-
 function GetChartData(e) {
     if (e.keyCode == 13) {
         $('#' + $(e.target).attr("id")).blur();
-        //$('#divAddItem').focus();
     }
 }
 
 function RemoveSearchTerm(divID) {
-
     var textBoxLiID = divID.replace('divFilterSearchTerm_', 'lisearchTerm_');
 
     $('#' + textBoxLiID).remove();
@@ -1569,12 +1465,9 @@ function RemoveSearchTerm(divID) {
 
 function RemoveDateFilter() {
     _SearchDate = '';
-    /*_fromDate = '';
-    _toDate = '';*/
 
     var _tDate = new Date();
     var _fDate = new Date(_tDate.getFullYear(), _tDate.getMonth() - 3, _tDate.getDate());
-
 
     $("#dpFrom").datepicker("setDate", _fDate);
     $("#dpTo").datepicker("setDate", _tDate);
@@ -1588,9 +1481,14 @@ function RemoveDateFilter() {
     SearchResult();
 }
 
-function RemoveMediumFilter() {
-    _SearchMedium = '';
-    _SearchMediumDesc = ''
+function RemoveMediumFilter(subMediaType) {
+    if (_SearchMediums.length > 1) {
+        _SearchMediums.splice($.inArray(subMediaType, _SearchMediums), 1);
+    }
+    else {
+        _SearchMediums = [];
+    }
+
     IsChartUpdated = false;
     _IsToggle = false;
     ResetSearchTermClassToFalse();
@@ -1618,52 +1516,20 @@ function RemoveAdvanceSearchFilter() {
 
 function ToggleChartResult() {
     if (IsChartActive == 0) {
-
         IsChartActive = 1;
-        //$('#divMainDateFilter').show();
-
-        /*$('#divChartMain').show();
-        $('#divResultMain').hide();*/
 
         $('#divChartMain').removeAttr('class');
         $('#divResultMain').attr('class', 'heightWidth0');
-
-        //$('#imgChartResult').attr('src', '../../Images/Result.png');
-        /*if (!IsChartUpdated) {
-        SearchResult();
-        }*/
     }
     else {
         IsChartActive = 0;
 
-
-        //alert('_ChartDate ' +_ChartDate);
-        /*if (_ChartDate) {
-
-        $('#divMainDateFilter').hide();
-        }
-        else {
-
-        $('#divMainDateFilter').show();
-        }*/
-
-
-        /*$('#divChartMain').hide();
-        $('#divResultMain').show();*/
-
         $('#divChartMain').attr('class', 'heightWidth0');
         $('#divResultMain').removeAttr('class');
 
-        //$('#imgChartResult').attr('src', '../../Images/Chart.png');
-
         for (var i = 0; i < _searchTerm.length; i++) {
-
             if (_searchTerm[i].SearchTerm.trim() == _SearchTermResult && _searchTerm[i].ResultShown == false) {
-                //_SearchTermResult = _searchTerm[i].SearchTerm.trim();
                 _searchTerm[i].IsCurrentTab = true;
-                //_searchTerm[i].ResultShown = true;
-                //_IsTabChange = true;
-                //_IsToggle = true;
                 SearchResult();
             }
         }
@@ -1671,13 +1537,6 @@ function ToggleChartResult() {
 }
 
 function GenerateSearchTermTab() {
-    //if (IsResultInitialLoad == 1) {
-    /*if (_searchTerm.length > 0) {
-    _SearchTermResult = _searchTerm[0].SearchTerm.trim();
-    _searchTerm[0].IsCurrentTab = true;
-    _searchTerm[0].ResultShown = true;
-    }
-    SearchResult();*/
     $('#divResultHeader').html('');
     $('#divResult').html('');
     for (var i = 0; i < _searchTerm.length; i++) {
@@ -1696,12 +1555,9 @@ function GenerateSearchTermTab() {
             $('#divResult').append('<div id=\'divResult_Child_' + i + '\'><div id=\'divResult_Child_NoData_' + i + '\'></div><span class="resultTotal float-right" id="spnNoOfRecords_' + i + '"></span><div class="clear" id="divResult_Child_Scroll_' + i + '"><div class="posts" id="divResult_Child_Data_' + i + '"></div></div></div>');
         }
     }
-    //}
-
 }
 
 function GetDataOnTabChange() {
-
     $('#divResultHeader div').each(function () {
         $(this).removeAttr("class");
     });
@@ -1710,31 +1566,17 @@ function GetDataOnTabChange() {
         $(this).hide();
     });
 
-
-    // for (var i = 0; i < _searchTerm.length; i++) {
-    // _searchTerm[i].IsCurrentTab = false;
-
-    // if (_searchTerm[_SearchTermIndex].SearchTerm.trim() == p_searchTerm) {
-
-    //     _searchTerm[_SearchTermIndex].IsCurrentTab = true;
-
     _SearchTermResult = _searchTerm[_SearchTermIndex].SearchTerm.trim();
 
     if (!_searchTerm[_SearchTermIndex].ResultShown) {
 
         IsChartUpdated = true;
-        //_IsToggle = true;
         _IsTabChange = true;
         SearchResult();
-        //_searchTerm[_SearchTermIndex].ResultShown = true;
     }
 
     $('#divResultHeader').children().eq(_SearchTermIndex).attr("class", "pieChartActive");
     $('#divResult').children().eq(_SearchTermIndex).show();
-
-    //$('#divResult_Child_' + p_searchTerm.replace(/ /g, "_")).show();
-    // }
-    //}
 }
 
 function ResetSearchTermClassToFalse() {
@@ -1744,27 +1586,11 @@ function ResetSearchTermClassToFalse() {
 }
 
 function RefreshResult() {
-    /*_SearchMedium = '';
-    _SearchMediumDesc = '';
-    _SearchTVMarket = '';
-    _SearchDate = '';
-    _IsToggle = false;
-
-    var _tDate = new Date();
-    var _fDate = new Date(_tDate.getFullYear(), _tDate.getMonth() - 3, _tDate.getDate());
-
-    $("#dpFrom").datepicker("setDate", _fDate);
-    $("#dpTo").datepicker("setDate", _tDate);
-
-    _fromDate = $('#dpFrom').val();
-    _toDate = $('#dpTo').val();*/
-
     PushSearchTermintoArray();
 }
 
 function ClearFilterVariable() {
-    _SearchMedium = '';
-    _SearchMediumDesc = '';
+    _SearchMediums = [];
     _SearchDate = '';
 
     _Searchtv = '';
@@ -1782,7 +1608,6 @@ function setDateVariableOnClick(selector) {
 }
 
 function SetDateVariable() {
-
     _ChartDate = '';
 
     if ($("#dpFrom").val() && $("#dpTo").val()) {
@@ -1793,7 +1618,6 @@ function SetDateVariable() {
             _IsToggle = false;
             SearchResult();
             $('#ulCalender').parent().removeClass('open');
-            //$('#aDuration').html(_msgCustom + '&nbsp;&nbsp;<span class="caret"></span>');
         }
     }
     else
@@ -1882,18 +1706,28 @@ function isValidDate(s) {
 
 function ShowDateRangeExpansion() {
     _DateMessage = '';
-    if (_SearchMedium == '' || _SearchMedium == 'Social Media' || _SearchMedium == 'Blog' || _SearchMedium == 'Forum') {
+    if (_SearchMediums.length == 0 || $.inArray('Blog', _SearchMediums) > -1) {
         var smDate = new Date(_constSMContentMinDate);
 
         if (new Date(_fromDate) < smDate) {
             if (_DateMessage) {
                 _DateMessage = _DateMessage + '<br/>';
             }
-            _DateMessage = _DateMessage + 'Social content is not available prior to July 1st, 2012, would you like to continue with your search?';
+            _DateMessage = _DateMessage + 'Blog content is not available prior to July 1st, 2012, would you like to continue with your search?';
+        }
+    }
+    if (_SearchMediums.length == 0 || $.inArray('Forum', _SearchMediums) > -1) {
+        var smDate = new Date(_constSMContentMinDate);
+
+        if (new Date(_fromDate) < smDate) {
+            if (_DateMessage) {
+                _DateMessage = _DateMessage + '<br/>';
+            }
+            _DateMessage = _DateMessage + 'Forum content is not available prior to July 1st, 2012, would you like to continue with your search?';
         }
     }
 
-    if (_SearchMedium == '' || _SearchMedium == 'NM') {
+    if (_SearchMediums.length == 0 || $.inArray('NM', _SearchMediums) > -1) {
         var nmDate = new Date(_constNMContentMinDate);
 
         if (new Date(_fromDate) < nmDate) {
@@ -1904,20 +1738,35 @@ function ShowDateRangeExpansion() {
         }
     }
 
+    if (_SearchMediums.length == 0 || $.inArray('PQ', _SearchMediums) > -1) {
+        var nmDate = new Date(_constPQContentMinDate);
+
+        if (new Date(_fromDate) < nmDate) {
+            if (_DateMessage) {
+                _DateMessage = _DateMessage + '<br/>';
+            }
+            _DateMessage = _DateMessage + 'ProQuest content is not available prior to January 1st, 2013, would you like to continue with your search?';
+        }
+    }
+
+    if (_SearchMediums.length == 0 || $.inArray('LN', _SearchMediums) > -1) {
+        var nmDate = new Date(_constLNContentMinDate);
+
+        if (new Date(_fromDate) < nmDate) {
+            if (_DateMessage) {
+                _DateMessage = _DateMessage + '<br/>';
+            }
+            _DateMessage = _DateMessage + 'LexisNexis content is not available prior to September 1st, 2015, would you like to continue with your search?';
+        }
+    }
 
     if (_DateMessage) {
-        //        var dateValidationMessage = '<div id="divDateValidationMessage" class="modal fade hide resizable modalPopupDiv"><div>' + _DateMessage + '</div><div><input class="span2" type="button" value="Continue" /></div><input class="span2" type="button" value="Cancel" /></div></div>';
-        //        $(document.body).append(dateValidationMessage);
         return false;
-
     }
     else {
-
         return true;
     }
-    //ShowModal('divDateValidationMessage');
 }
-
 
 function GenerateDashboardPDF() {
     var mySearchTermArray = new Array();
@@ -1943,7 +1792,6 @@ function GenerateDashboardPDF() {
         dataType: "json",
         data: JSON.stringify(jsonPostData),
         success: function (result) {
-
             if (result.isSuccess) {
                 window.location = _urlDiscoveryDownloadPDFFile;
             }
@@ -1995,7 +1843,6 @@ function ToggleExportStyles(isExporting) {
     }
 }
 
-
 function ShowDashboardEmailPopup() {
 
     $('#txtFromEmail').val($('#hdnDefaultSender').val());
@@ -2010,7 +1857,6 @@ function ShowDashboardEmailPopup() {
         dynamic: true
     });
 }
-
 
 function CancelEmailpopup() {
     $("#divEmailPopup").css({ "display": "none" });
@@ -2098,7 +1944,6 @@ function ValidateSendEmail() {
 }
 
 function CheckEmailAddress(email) {
-    //var emailPattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
     var emailPattern = /^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
     return emailPattern.test(email);
 }
@@ -2139,7 +1984,6 @@ function SendEmail() {
 }
 
 function OnEmailSendComplete(result) {
-
     CancelEmailpopup();
     if (result.isSuccess) {
         ShowNotification(_msgEmailSent.replace(/@@emailSendCount@@/g, result.emailSendCount));
@@ -2170,60 +2014,33 @@ function SearchByChartDate(cDate, sTerm) {
     $('#divChartMain').attr('class', 'heightWidth0');
     $('#divResultMain').removeAttr('class');
     PushSearchTermintoArray();
-    /*for (var i = 0; i < _searchTerm.length; i++) {
-    if (_searchTerm[i].SearchTerm.trim() == _SearchTermResult) {
-    _SearchTermIndex = i;
-    }
-    _searchTerm[i].ResultShown = false;
-    }
-    GenerateSearchTermTab();
-    ToggleChartResult();*/
 }
 
-
 function RemoveChartDate() {
-    //_SearchDate = '';
-    /*_fromDate = '';
-    _toDate = '';*/
-
-    //ClearChartDateVariable();
-
     IsChartUpdated = false;
     _IsToggle = false;
     ResetSearchTermClassToFalse();
     SearchResult();
 }
 
-
 function ClearChartDateVariable() {
     _ChartDate = '';
-    /* var _tDate = new Date();
-    var _fDate = new Date(_tDate.getFullYear(), _tDate.getMonth() - 3, _tDate.getDate());
-
-
-    $("#dpFrom").datepicker("setDate", _fDate);
-    $("#dpTo").datepicker("setDate", _tDate);*/
 
     _fromDate = $('#dpFrom').val();
     _toDate = $('#dpTo').val();
 }
 
-
-
 function InsertDiscoveryReport() {
-
     if (ValidateReportInputs()) {
-        var test = '';
         $('#imgCreateReportLoading').show();
         var mediaID = new Array();
         $("#divResult input[type=checkbox]").each(function () {
             if ($(this).is(':checked')) {
                 var tempIDValue = $(this).val().trim().split(',');
 
-
                 var mediaIDClass = new Object();
                 mediaIDClass.MediaID = tempIDValue[0];
-                mediaIDClass.MediaType = tempIDValue[1];
+                mediaIDClass.SubMediaType = tempIDValue[1];
 
                 var _MediaSearchIndex = eval($(this).parents('[id^="divResult_Child_Data_"]').attr('id').replace('divResult_Child_Data_', ''));
                 mediaIDClass.SearchTerm = _searchTerm[_MediaSearchIndex].SearchTerm;
@@ -2242,7 +2059,6 @@ function InsertDiscoveryReport() {
         }
 
         $.ajax({
-
             type: 'POST',
             dataType: 'json',
             url: _urlDiscoverInsert_DiscoveryReport,
@@ -2256,31 +2072,25 @@ function InsertDiscoveryReport() {
 }
 
 function OnInsertDiscoveryReportSuccess(result) {
-
     $('#imgCreateReportLoading').hide();
     if (result.isSuccess) {
         GetDiscoveryReport();
         ClosePopUp('divReportPopup');
         ShowNotification(result.message);
         ClearCheckboxSelection();
-
     }
     else {
         ClosePopUp('divReportPopup');
         ShowNotification(_msgErrorOccured);
-
     }
 }
 
-
 function OnInsertDiscoveryReportFail(result) {
-
     $('#imgCreateReportLoading').hide();
     ShowNotification(_msgErrorOccured);
 }
 
 function ValidateReportInputs() {
-
     var isValid = true;
     $("#txtReportTitle").removeClass('warningInput');
     $("#txtReportKeywords").removeClass('warningInput');
@@ -2314,15 +2124,11 @@ function ValidateReportInputs() {
     }
 
     return isValid;
-
 }
 
 
 function ShowSaveReportPopup() {
-
     if (ValidateCheckBoxSelection()) {
-        //_MaxFeedsReportItems
-
         var checkedChecboxCount = 0;
         $("#divResult input[type=checkbox]").each(function () {
             if ($(this).is(':checked')) {
@@ -2379,11 +2185,9 @@ function ShowSaveReportPopup() {
     else {
         ShowNotification(_msgAtleastOneRecordSelect);
     }
-
 }
 
 function ValidateCheckBoxSelection() {
-
     var isChecked = false;
     $("#divResult input[type=checkbox]").each(function () {
         if (this.checked) {
@@ -2400,10 +2204,7 @@ function ClosePopUp(divID) {
 }
 
 function ShowAddToReportPopup() {
-
     if (ValidateCheckBoxSelection()) {
-
-
         $('#ddlReportTitle').val(0);
         $('#ddlReportTitle').removeClass('warningInput');
         $('#divAddToReportPopup').modal({
@@ -2417,11 +2218,9 @@ function ShowAddToReportPopup() {
     else {
         ShowNotification(_msgAtleastOneRecordSelect);
     }
-
 }
 
 function GetDiscoveryReport() {
-
     $("#divAddtoReport").addClass("blurOnlyControls");
     $("#divAddtoReportMsg").html("Please Wait...");
     $.ajax({
@@ -2442,7 +2241,6 @@ function GetDiscoveryReport() {
 
 
 function OnSelectDiscoveryReportComplete(result) {
-
     if (result.isSuccess) {
         $("#divAddtoReport").removeClass("blurOnlyControls");
         $("#divAddtoReportMsg").html("");
@@ -2478,13 +2276,10 @@ function OnSelectDiscoveryReportComplete(result) {
 }
 
 function OnSelectDiscoveryReportFail(result) {
-
     ShowNotification(_msgErrorOccured);
 }
 
-
 function AddToDiscoveryReport() {
-
     if ($('#ddlReportTitle').val() > 0) {
         var selectedReport = $('#ddlReportTitle option:selected');
         if (selectedReport.attr("status") == "processing") {
@@ -2506,7 +2301,7 @@ function AddToDiscoveryReport() {
 
                     var mediaIDClass = new Object();
                     mediaIDClass.MediaID = tempIDValue[0];
-                    mediaIDClass.MediaType = tempIDValue[1];
+                    mediaIDClass.SubMediaType = tempIDValue[1];
 
                     var _MediaSearchIndex = eval($(this).parents('[id^="divResult_Child_Data_"]').attr('id').replace('divResult_Child_Data_', ''));
                     mediaIDClass.SearchTerm = _searchTerm[_MediaSearchIndex].SearchTerm;
@@ -2543,7 +2338,6 @@ function AddToDiscoveryReport() {
 }
 
 function OnAddToDiscoveryReportSuccess(result) {
-
     $('#imgAddToReportLoading').hide();
     if (result.isSuccess) {
         ClearCheckboxSelection();
@@ -2557,9 +2351,7 @@ function OnAddToDiscoveryReportSuccess(result) {
     }
 }
 
-
 function OnAddToDiscoveryReportFail(result) {
-
     $('#imgAddToReportLoading').hide();
     ShowNotification(_msgErrorOccured);
 }
@@ -2573,14 +2365,11 @@ function ClearCheckboxSelection() {
 }
 
 function GetDiscoveryReportLimit() {
-
     $.ajax({
-
         type: 'POST',
         dataType: 'json',
         url: _urlDiscoveryGetDiscoveryReportLimit,
         contentType: 'application/json; charset=utf-8',
-        //data: JSON.stringify(jsonPostData),
 
         global: false,
         success: OnGetDiscoveryReportLimitSuccess,
@@ -2591,7 +2380,6 @@ function GetDiscoveryReportLimit() {
 }
 
 function OnGetDiscoveryReportLimitSuccess(result) {
-
     if (result.isSuccess) {
         _MaxDiscoveryReportItems = result.MaxDiscoveryReportItems;
         _MaxDiscoveryExportItems = result.MaxDiscoveryExportItems;
@@ -2604,7 +2392,6 @@ function numberWithCommas(x) {
 }
 
 function checkUncheckAll(divID, mainCheckBox) {
-
     var checkBoxValue = false;
     checkBoxValue = $("#" + mainCheckBox).is(":checked");
 
@@ -2620,7 +2407,6 @@ function checkUncheckAll(divID, mainCheckBox) {
 }
 
 function CheckUncheckMasterCheckBox(checkbox, divID, mainCheckBox) {
-
     if (!$(checkbox).is(":checked")) {
         $("#" + mainCheckBox).prop("checked", false);
         $(checkbox).closest('.media').css('background', '');
@@ -2636,7 +2422,6 @@ function CheckUncheckMasterCheckBox(checkbox, divID, mainCheckBox) {
                     isChecked = false;
                 }
             });
-
         }
 
         if (isChecked == true) {
@@ -2648,8 +2433,6 @@ function CheckUncheckMasterCheckBox(checkbox, divID, mainCheckBox) {
     }
 }
 
-
-
 function SetDiscoveryResultStatus(result) {
     if (result.isAnyDataAvailable) {
         if (result.searchTermShownRecords <= 0) {
@@ -2658,7 +2441,6 @@ function SetDiscoveryResultStatus(result) {
             result.searchTermAvailableRecords = 0;
             result.searchTermTotalRecords = 0;
         }
-
 
         var totalRecordHTML = '';
         if (result.searchTermTotalRecords > 0) {
@@ -2730,7 +2512,6 @@ function ShowAddToLibraryPopup() {
 }
 
 function ValidateLibraryInputs() {
-
     var isValid = true;
 
     $('#txtLibraryKeywords').removeClass('warningInput');
@@ -2768,11 +2549,9 @@ function ValidateLibraryInputs() {
     }
 
     return isValid;
-
 }
 
 function AddToDiscoveryLibrary() {
-
     if (ValidateLibraryInputs()) {
 
         $('#txtLibraryKeywords').removeClass('warningInput');
@@ -2787,7 +2566,7 @@ function AddToDiscoveryLibrary() {
 
                 var mediaIDClass = new Object();
                 mediaIDClass.MediaID = tempIDValue[0];
-                mediaIDClass.MediaType = tempIDValue[1];
+                mediaIDClass.SubMediaType = tempIDValue[1];
 
                 var _MediaSearchIndex = eval($(this).parents('[id^="divResult_Child_Data_"]').attr('id').replace('divResult_Child_Data_', ''));
                 mediaIDClass.SearchTerm = _searchTerm[_MediaSearchIndex].SearchTerm;
@@ -2826,13 +2605,11 @@ function AddToDiscoveryLibrary() {
 }
 
 function OnAddToDiscoveryLibrarySuccess(result) {
-
     $('#imgAddToLibraryLoading').hide();
     if (result.isSuccess) {
         ClearCheckboxSelection();
         ClosePopUp('divAddToLibraryPopup');
         ShowNotification(result.message + " " + _msgRecordAddedToLibrary);
-
     }
     else {
         ShowNotification(_msgErrorOccured);
@@ -2840,15 +2617,13 @@ function OnAddToDiscoveryLibrarySuccess(result) {
     }
 }
 
-
 function OnAddToDiscoveryLibraryFail(result) {
 
     $('#imgAddToLibraryLoading').hide();
     ShowNotification(_msgErrorOccured);
 }
-function ChartClick() {
-    //alert("Category :" + this.category + "\r\n" + "Search Term : " + this.SearchTerm);
 
+function ChartClick() {
     _fromDate = this.category;
     _toDate = this.category;
     _SearchTermResult = this.SearchTerm;
@@ -2869,8 +2644,7 @@ function MediumChartClick() {
     _fromDate = this.category;
     _toDate = this.category;
     _SearchTermResult = this.SearchTerm;
-    _SearchMedium = this.Type;
-    _SearchMediumDesc = this.series.name;
+    _SearchMediums = [this.Type];
 
     _SearchDate = this.category;
     $("#dpFrom").datepicker("setDate", _SearchDate);
@@ -3019,13 +2793,10 @@ function ExportDiscoveryToCSV() {
                 if ($(this).is(':checked')) {
                     var tempIDValue = $(this).val().trim().split(',');
 
-
                     var mediaIDClass = new Object();
                     mediaIDClass.MediaID = tempIDValue[0];
-                    mediaIDClass.MediaType = tempIDValue[1];
+                    mediaIDClass.SubMediaType = tempIDValue[1];
 
-                    //var _MediaSearchIndex = eval($(this).parents('[id^="divResult_Child_Data_"]').attr('id').replace('divResult_Child_Data_', ''));
-                    //mediaIDClass.SearchTerm = _searchTerm[_MediaSearchIndex].SearchTerm;
                     mediaID.push(mediaIDClass);
                 }
             });
@@ -3044,7 +2815,7 @@ function ExportDiscoveryToCSV() {
             searchTermArray: mySearchTermArray,
             fromDate: _fromDate,
             toDate: _toDate,
-            medium: _SearchMedium,
+            subMediaTypes: _SearchMediums,
             advanceSearch: getAdvancedSearchByTermIndex(_SearchTermIndex)
         }
 
@@ -3196,7 +2967,6 @@ function GetExportCSVStatus() {
             }
             else {
                 ShowNotification(_msgErrorOccured);
-
             }
         },
         error: function (a, b, c) {
@@ -3238,10 +3008,8 @@ function AddToFeeds() {
 
                     var mediaIDClass = new Object();
                     mediaIDClass.MediaID = tempIDValue[0];
-                    mediaIDClass.MediaType = tempIDValue[1];
+                    mediaIDClass.SubMediaType = tempIDValue[1];
 
-                    //var _MediaSearchIndex = eval($(this).parents('[id^="divResult_Child_Data_"]').attr('id').replace('divResult_Child_Data_', ''));
-                    //mediaIDClass.SearchTerm = _searchTerm[_MediaSearchIndex].SearchTerm;
                     mediaID.push(mediaIDClass);
                 }
             });
@@ -3354,14 +3122,13 @@ function ShowViewArticleDiscovery(articleID) {
 }
 
 function GetTopics(ddlMedium, index, isInitialLoad) {
-
     var jsonPostData = {
         index: index,
         searchTerm: _searchTerm[index].SearchTerm.trim(),
         searchName: _searchTerm[index].SearchName.trim(),
         fromDate: _fromDate,
         toDate: _toDate,
-        medium: isInitialLoad ? _SearchMedium : $(ddlMedium).val(),
+        mediums: isInitialLoad ? _SearchMediums : [$(ddlMedium).val()],
         advanceSearches: _IsActiveAdvanceSearch == true ? getAdvancedSearchByTermIndex(index) : new Object(),
         isInitialLoad: isInitialLoad
     }
@@ -3421,7 +3188,6 @@ function TopicClick() {
     var newSearchTermVar = EscapeUrlCharacters("\"" + newTopic + "\" AND (" + this.SearchTerm.toString().trim() + ")");
     var newValueVar = EscapeUrlCharacters("\"" + newTopic + "\" AND (" + this.SearchName.toString().trim() + ")");
     var newMedium = this.Medium.toString().trim();
-    var newMediumName = this.MediumName.toString().trim();
 
     $.ajax({
         type: 'POST',
@@ -3477,7 +3243,7 @@ function TopicClick() {
                     }
                 });
 
-                $('#iFrameDiscoveryResults').attr("src", "//" + window.location.hostname + "/Discovery?SearchTermTopic=" + newSearchTermVar + "&SearchNameTopic=" + newValueVar + "&Topic=" + newTopic + "&TopicMedium=" + newMedium + "&TopicMediumName=" + newMediumName);
+                $('#iFrameDiscoveryResults').attr("src", "//" + window.location.hostname + "/Discovery?SearchTermTopic=" + newSearchTermVar + "&SearchNameTopic=" + newValueVar + "&Topic=" + newTopic + "&TopicMedium=" + newMedium);
                 $('#divDiscoveryResultsPage').css("position", "");
                 $('#divDiscoveryResultsPage').css("height", documentHeight - 200);
                 $('#iFrameDiscoveryResults').css("height", documentHeight - 200);
@@ -3507,12 +3273,8 @@ function CancelIFramePopup() {
 }
 
 
-
-
-
 //Saved Search
 function SaveSearch() {
-
     var mySearchIDArray = new Array();
     for (var zz = 0; zz < _searchTerm.length; zz++) {
         mySearchIDArray.push(_searchTerm[zz].SearchID.trim());
@@ -3539,14 +3301,9 @@ function SaveSearch() {
             title: $('#txtSaveSearchPopup').val().trim(),
             SearchID: mySearchIDArray,
             searchTerm: mySearchTermArray,
-            medium: _SearchMedium,
+            mediums: _SearchMediums,
             advanceSearchList: advanceSearchesArray,
             advanceSearchIDList: advanceSearchIDsArray
-            //date: _SearchDate,
-            /*fromDate: _fromDate,
-            toDate: _toDate,
-            
-            tvMarket: _SearchTVMarket*/
         }
 
         $.ajax({
@@ -3575,6 +3332,7 @@ function SaveSearch() {
         }
     }
 }
+
 function ValidateSaveSearchInput() {
     var isValid = true;
     msg = '';
@@ -3598,15 +3356,10 @@ function ValidateSaveSearchInput() {
         }
     }
 
-    /*if (_searchTerm.length <= 0) {
-    msg = 'Enter Search Term';
-    isValid = false;
-    }*/
-
     return isValid;
 }
-function OnSaveSearchComplete(result) {
 
+function OnSaveSearchComplete(result) {
     $('#imgSaveSearchLoading').hide();
     $('#divPopover').remove();
     if (result.isSuccess) {
@@ -3616,20 +3369,17 @@ function OnSaveSearchComplete(result) {
     else {
 
         CheckForAuthentication(result, _msgErrorOccured);
-        //ShowNotification('Some error occured, try again later');
     }
 }
-function OnSaveSearchFail(result) {
 
+function OnSaveSearchFail(result) {
     $('#imgSaveSearchLoading').hide();
     $('#divPopover').remove();
-    //alert('On Save Search Fail - Local');
     ShowNotification(_msgErrorOccured);
 }
 
 //Populate saved searches on sidebar
 function ShowSaveSearchDiscovery() {
-
     $('#divPopover').remove();
     $('#aSaveSearch').popover({
         trigger: 'manual',
@@ -3641,9 +3391,8 @@ function ShowSaveSearchDiscovery() {
     });
 
     $('#aSaveSearch').popover('show');
-
-
 }
+
 function GetSavedSearch(p_isNext, p_isInitialize) {
     $('#divSavedSearch').html(_imgLoading);
     $('#divSavedSearch').addClass('text-align-center');
@@ -3671,41 +3420,36 @@ function OnGetSaveSearchComplete(result) {
         SetSavedSearchHTML(result);
     }
     else {
-
-        //CheckForAuthentication(result, 'Some error occured, try again later');
         $('#divSavedSearch').html('An error occured,<a class="cursorPointer" onclick="GetSavedSearch(false, true);">try again</a>');
-        //ShowNotification('Some error occured, try again later');
     }
 }
+
 function SetSavedSearchHTML(result) {
     $('#divSavedSearch').removeClass('text-align-center');
     $('#divSavedSearch').html(result.HTML);
 
     if (result.isPreviousAvailable) {
         $('#aSavedSearchPrevious').attr("onclick", "GetSavedSearch(false,false);");
-        $('#aSavedSearchPrevious').show(); //  removeClass("inactiveLink");
+        $('#aSavedSearchPrevious').show();
     }
     else {
         $('#aSavedSearchPrevious').removeAttr("onclick");
-        $('#aSavedSearchPrevious').hide(); // addClass("inactiveLink");
+        $('#aSavedSearchPrevious').hide();
     }
-
 
     if (result.HasMoreResult) {
         $('#aSavedSearchNext').attr("onclick", "GetSavedSearch(true,false);");
-        $('#aSavedSearchNext').show(); //  removeClass("inactiveLink");
+        $('#aSavedSearchNext').show();
     }
     else {
         $('#aSavedSearchNext').removeAttr("onclick");
-        $('#aSavedSearchNext').hide(); //  addClass("inactiveLink");
+        $('#aSavedSearchNext').hide();
     }
 
     $('#spnSavedSearchRecordDetail').html(result.saveSearchRecordDetail);
 }
-function OnGetSaveSearchFail(result) {
 
-    //alert('GetSaveSearchFail - Local');
-    //ShowNotification('Some error occured, try again later');
+function OnGetSaveSearchFail(result) {
     $('#divSavedSearch').html('An error occured, <a class="cursorPointer" onclick="GetSavedSearch(false, true);">try again</a>');
 }
 
@@ -3730,20 +3474,14 @@ function LoadSavedSearch(ID) {
         error: OnLoadSaveSearchFail
     });
 }
+
 function OnLoadSaveSearchComplete(result) {
     if (result.isSuccess) {
         SetSavedSearchHTML(result)
         _searchTerm = new Array();
-        _SearchMedium = result.discovery_SavedSearch.Medium == null ? '' : result.discovery_SavedSearch.Medium;
-        _SearchMediumDesc = result.discovery_SavedSearch.MediumDesc == null ? '' : result.discovery_SavedSearch.MediumDesc;
-        _SearchDate = ''; // result.discovery_SavedSearch.SearchDate;
-        _SearchTVMarket = ''; // = result.discovery_SavedSearch.TVMarket;
-
-        /*_fromDate = GetDateFormatFromJsonString(result.discovery_SavedSearch.FromDate);
-        _toDate = GetDateFormatFromJsonString(result.discovery_SavedSearch.ToDate);
-        
-        $("#dpFrom").datepicker("setDate", _fromDate);
-        $("#dpTo").datepicker("setDate", _toDate);*/
+        _SearchMediums = result.discovery_SavedSearch.Mediums == null ? new Array() : result.discovery_SavedSearch.Mediums;
+        _SearchDate = '';
+        _SearchTVMarket = '';
 
         var invalidAgents = new Array();
         var _tDate = new Date();
@@ -3758,7 +3496,6 @@ function OnLoadSaveSearchComplete(result) {
         $('#ulSearchTerm').html('');
         searchTermCount = 0;
         for (var zz = 0; zz < result.discovery_SavedSearch.SearchTermArray.length; zz++) {
-
             var SearchTermClass = new Object();
             SearchTermClass.SearchTerm = result.discovery_SavedSearch.SearchTermArray[zz];
             SearchTermClass.SearchID = result.discovery_SavedSearch.SearchIDArray[zz];
@@ -3854,7 +3591,6 @@ function OnLoadSaveSearchComplete(result) {
 
         $('#imgChartResult').attr('src', '../../Images/Result.png');
 
-
         setTimeout(function () {
             SearchResult();
         }, 1);
@@ -3871,16 +3607,13 @@ function OnLoadSaveSearchComplete(result) {
                 }
             });
         }
-
     }
     else {
         CheckForAuthentication(result, _msgErrorOccured);
-        //ShowNotification('Some error occured, try again later');
     }
 }
-function OnLoadSaveSearchFail(result) {
 
-    //alert('OnLoadSaveSearchFail - Local');
+function OnLoadSaveSearchFail(result) {
     ShowNotification(_msgErrorOccured);
 }
 
@@ -3896,6 +3629,7 @@ function UpdateDiscoverySavedSearch(p_id) {
         ShowNotification(_msgEnterSearchTerm);
     }
 }
+
 function UpdateDiscoverySavedSearchInner(p_id) {
     $('#imgSaveSearchLoading').show();
     var mySearchTermArray = new Array();
@@ -3918,7 +3652,7 @@ function UpdateDiscoverySavedSearchInner(p_id) {
         p_ID: p_id,
         p_SearchTerm: mySearchTermArray,
         p_SearchID: mySearchIDArray,
-        medium: _SearchMedium,
+        mediums: _SearchMediums,
         advanceSearchList: advanceSearchesArray,
         advanceSearchIDList: advanceSearchIDsArray
     }
@@ -3938,7 +3672,6 @@ function UpdateDiscoverySavedSearchInner(p_id) {
             }
             else {
                 CheckForAuthentication(result, _msgErrorOccured);
-                //ShowNotification('Some error occured, try again later');
             }
         },
         error: function (a, b, c) {
@@ -3967,6 +3700,7 @@ function DeleteDiscoverySavedSearchByID(ID) {
         }
     });
 }
+
 function OnDeleteSaveSearchComplete(result) {
 
     if (result.isSuccess) {
@@ -3977,18 +3711,11 @@ function OnDeleteSaveSearchComplete(result) {
     }
     else {
         CheckForAuthentication(result, _msgErrorOccured);
-        //ShowNotification('Some error occured, try again later');
     }
 }
 function OnDeleteSaveSearchFail(result) {
-
-    //alert('OnDeleteSaveSearchFail - Local');
     ShowNotification(_msgErrorOccured);
 }
-
-
-
-
 
 
 
@@ -4020,22 +3747,29 @@ function OpenAdvanceSearchPopup() {
     });
 
     //show/hide subsections
-    if ((_SearchMedium == '' || _SearchMedium == 'TV') && $("#divTVSetup").length > 0) {
+    if ((_SearchMediums == '' || $.inArray('TV', _SearchMediums) > -1) && $("#divTVSetup").length > 0) {
         ShowHideTabdiv(0, true);
     }
-    else if ((_SearchMedium == '' || _SearchMedium == 'NM') && $("#divNMSetup").length > 0) {
+    else if ((_SearchMediums == '' || $.inArray('NM', _SearchMediums) > -1) && $("#divNMSetup").length > 0) {
         ShowHideTabdiv(1, true);
     }
-    else if ((_SearchMedium == '' || _SearchMedium == 'Social Media' || _SearchMedium == 'Blog' || _SearchMedium == 'Forum') && $("#divSMSetup").length > 0) {
+    else if ((_SearchMediums == '' || $.inArray('Blog', _SearchMediums) > -1) && $("#divBLSetup").length > 0) {
         ShowHideTabdiv(2, true);
     }
-    else if ((_SearchMedium == '' || _SearchMedium == 'PQ') && $("#divPQSetup").length > 0) {
+    else if ((_SearchMediums == '' || $.inArray('Forum', _SearchMediums) > -1) && $("#divFOSetup").length > 0) {
+        ShowHideTabdiv(3, true);
+    }
+    else if ((_SearchMediums == '' || $.inArray('PQ', _SearchMediums) > -1) && $("#divPQSetup").length > 0) {
         ShowHideTabdiv(4, true);
+    }
+    else if ((_SearchMediums == '' || $.inArray('LN', _SearchMediums) > -1) && $("#divLNSetup").length > 0) {
+        ShowHideTabdiv(5, true);
     }
 
     //disable other tabs on load if 
     ToggleTabEnable(mainTabID);
 }
+
 function PopulateAdvanceSearchTabHeaders() {
     $('#divAdvSearchTabHeader').html('');
     var html =
@@ -4053,11 +3787,13 @@ function PopulateAdvanceSearchTabHeaders() {
 
     $('#divAdvSearchTabHeader').append(html);
 }
+
 function ClearAdvancedSearchTab() {
     $('[name="txtClearAdvSearch"]').val('');
     $('[name="ddlClearAdvSearch"]').val(CONST_ZERO).trigger("chosen:updated");
     $('[name="ddlAdvSearchLanguage"]').val(CONST_ZERO).trigger("chosen:updated");
 }
+
 function GetAdvancedSearchTabData(id) {
     if (previousTabID != id) {
         if (previousTabID == defaultPreviousTabID || SetAdvanceSearch(previousTabID)) {
@@ -4083,6 +3819,7 @@ function GetAdvancedSearchTabData(id) {
         }
     }
 }
+
 function ToggleTabEnable(ID) {
     if (ID == mainTabID) {
         //if main tab is not default then the other tabs cannot be edited
@@ -4125,7 +3862,7 @@ function SetActiveAdvanceSearchValues(id) {
     }
 
     if (AdvanceSearch != null) {
-        if ((_SearchMedium == '' || _SearchMedium == 'TV') && $("#divTVSetup").length > 0) {
+        if ((_SearchMediums == '' || $.inArray('TV', _SearchMediums) > -1) && $("#divTVSetup").length > 0) {
             if (AdvanceSearch.TVSettings != null) {
                 $("#txtSearchTerm_TV").val(AdvanceSearch.TVSettings.SearchTerm);
                 $("#txtProgramTitle").val(AdvanceSearch.TVSettings.ProgramTitle);
@@ -4169,7 +3906,7 @@ function SetActiveAdvanceSearchValues(id) {
             }
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'NM') && $("#divNMSetup").length > 0) {
+        if ((_SearchMediums == '' || $.inArray('NM', _SearchMediums) > -1) && $("#divNMSetup").length > 0) {
             if (AdvanceSearch.NewsSettings != null) {
                 $("#txtSearchTerm_NM").val(AdvanceSearch.NewsSettings.SearchTerm);
 
@@ -4221,33 +3958,54 @@ function SetActiveAdvanceSearchValues(id) {
             }
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'Social Media' || _SearchMedium == 'Blog' || _SearchMedium == 'Forum') && $("#divSMSetup").length > 0) {
-            if (AdvanceSearch.SociaMediaSettings != null) {
-                $("#txtSearchTerm_SM").val(AdvanceSearch.SociaMediaSettings.SearchTerm);
-                $("#txtAuthor_SM").val(AdvanceSearch.SociaMediaSettings.Author);
-                $("#txtTitle_SM").val(AdvanceSearch.SociaMediaSettings.Title);
+        if ((_SearchMediums == '' || $.inArray('Blog', _SearchMediums) > -1) && $("#divBLSetup").length > 0) {
+            if (AdvanceSearch.BlogSettings != null) {
+                $("#txtSearchTerm_BL").val(AdvanceSearch.BlogSettings.SearchTerm);                     
+                $("#txtAuthor_BL").val(AdvanceSearch.BlogSettings.Author);
+                $("#txtTitle_BL").val(AdvanceSearch.BlogSettings.Title);
 
-                var output = $.map(AdvanceSearch.SociaMediaSettings.SourceList, function (obj, index) { return obj; }).join('; ');
-                $("#txtSource_SM").val(output);
+                var output = $.map(AdvanceSearch.BlogSettings.SourceList, function (obj, index) { return obj; }).join('; ');
+                $("#txtSource_BL").val(output);
 
-                if (AdvanceSearch.SociaMediaSettings.SourceTypeList != null && AdvanceSearch.SociaMediaSettings.SourceTypeList.length > 0) {
-                    $("#ddlSourceType_SM").val(AdvanceSearch.SociaMediaSettings.SourceTypeList).trigger("chosen:updated");
-                }
-
-                output = $.map(AdvanceSearch.SociaMediaSettings.ExcludeDomainList, function (obj, index) { return obj; }).join('; ');
-                $("#txtExcludeDomains_SM").val(output);
+                output = $.map(AdvanceSearch.BlogSettings.ExcludeDomainList, function (obj, index) { return obj; }).join('; ');
+                $("#txtExcludeDomains_BL").val(output);
             }
             else {
-                AdvanceSearch.SociaMediaSettings = new Object();
-                AdvanceSearch.SociaMediaSettings.Author = null;
-                AdvanceSearch.SociaMediaSettings.Title = null;
-                AdvanceSearch.SociaMediaSettings.SourceList = [];
-                AdvanceSearch.SociaMediaSettings.SourceTypeList = [];
-                AdvanceSearch.SociaMediaSettings.ExcludeDomainList = [];
+                AdvanceSearch.BlogSettings = new Object();
+                AdvanceSearch.BlogSettings.Author = null;
+                AdvanceSearch.BlogSettings.Title = null;
+                AdvanceSearch.BlogSettings.SourceList = [];
+                AdvanceSearch.BlogSettings.ExcludeDomainList = [];
             }
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'PQ') && $("#divPQSetup").length > 0) {
+        if ((_SearchMediums == '' || $.inArray('Forum', _SearchMediums) > -1) && $("#divFOSetup").length > 0) {
+            if (AdvanceSearch.ForumSettings != null) {
+                $("#txtSearchTerm_FO").val(AdvanceSearch.ForumSettings.SearchTerm);
+                $("#txtAuthor_FO").val(AdvanceSearch.ForumSettings.Author);
+                $("#txtTitle_FO").val(AdvanceSearch.ForumSettings.Title);
+
+                var output = $.map(AdvanceSearch.ForumSettings.SourceList, function (obj, index) { return obj; }).join('; ');
+                $("#txtSource_FO").val(output);
+
+                if (AdvanceSearch.ForumSettings.SourceTypeList != null && AdvanceSearch.ForumSettings.SourceTypeList.length > 0) {
+                    $("#ddlSourceType_FO").val(AdvanceSearch.ForumSettings.SourceTypeList).trigger("chosen:updated");
+                }
+
+                output = $.map(AdvanceSearch.ForumSettings.ExcludeDomainList, function (obj, index) { return obj; }).join('; ');
+                $("#txtExcludeDomains_FO").val(output);
+            }
+            else {
+                AdvanceSearch.ForumSettings = new Object();
+                AdvanceSearch.ForumSettings.Author = null;
+                AdvanceSearch.ForumSettings.Title = null;
+                AdvanceSearch.ForumSettings.SourceList = [];
+                AdvanceSearch.ForumSettings.SourceTypeList = [];
+                AdvanceSearch.ForumSettings.ExcludeDomainList = [];
+            }
+        }
+
+        if ((_SearchMediums == '' || $.inArray('PQ', _SearchMediums) > -1) && $("#divPQSetup").length > 0) {
             if (AdvanceSearch.ProQuestSettings != null) {
                 $("#txtSearchTerm_PQ").val(AdvanceSearch.ProQuestSettings.SearchTerm);
 
@@ -4269,6 +4027,54 @@ function SetActiveAdvanceSearchValues(id) {
                 AdvanceSearch.NewsSettings.LanguageList = [];
             }
         }
+
+        if ((_SearchMediums == '' || $.inArray('LN', _SearchMediums) > -1) && $("#divLNSetup").length > 0) {
+            if (AdvanceSearch.LexisNexisSettings != null) {
+                $("#txtSearchTerm_LN").val(AdvanceSearch.LexisNexisSettings.SearchTerm);
+
+                var output = $.map(AdvanceSearch.LexisNexisSettings.PublicationList, function (obj, index) { return obj; }).join('; ');
+                $("#txtPublication_LN").val(output);
+
+                if (AdvanceSearch.LexisNexisSettings.CategoryList != null && AdvanceSearch.LexisNexisSettings.CategoryList.length > 0) {
+                    $("#ddlCategory_LN").val(AdvanceSearch.LexisNexisSettings.CategoryList).trigger("chosen:updated");
+                }
+
+                if (AdvanceSearch.LexisNexisSettings.PublicationCategoryList != null && AdvanceSearch.LexisNexisSettings.PublicationCategoryList.length > 0) {
+                    $("#ddlPublicationCategory_LN").val(AdvanceSearch.LexisNexisSettings.PublicationCategoryList).trigger("chosen:updated");
+                }
+
+                if (AdvanceSearch.LexisNexisSettings.GenreList != null && AdvanceSearch.LexisNexisSettings.GenreList.length > 0) {
+                    $("#ddlGenre_LN").val(AdvanceSearch.LexisNexisSettings.GenreList).trigger("chosen:updated");
+                }
+
+                if (AdvanceSearch.LexisNexisSettings.RegionList != null && AdvanceSearch.LexisNexisSettings.RegionList.length > 0) {
+                    $("#ddlRegion_LN").val(AdvanceSearch.LexisNexisSettings.RegionList).trigger("chosen:updated");
+                }
+
+                if (AdvanceSearch.LexisNexisSettings.CountryList != null && AdvanceSearch.LexisNexisSettings.CountryList.length > 0) {
+                    $("#ddlCountry_LN").val(AdvanceSearch.LexisNexisSettings.CountryList).trigger("chosen:updated");
+                }
+
+                if (AdvanceSearch.LexisNexisSettings.LanguageList != null && AdvanceSearch.LexisNexisSettings.LanguageList.length > 0) {
+                    $("#ddlLanguage_LN").val(AdvanceSearch.LexisNexisSettings.LanguageList).trigger("chosen:updated");
+                }
+                else $("#ddlLanguage_LN").val(CONST_ZERO).trigger("chosen:updated");
+
+                output = $.map(AdvanceSearch.LexisNexisSettings.ExcludeDomainList, function (obj, index) { return obj; }).join('; ');
+                $("#txtExcludeDomains_LN").val(output);
+            }
+            else {
+                AdvanceSearch.LexisNexisSettings = new Object();
+                AdvanceSearch.LexisNexisSettings.PublicationList = [];
+                AdvanceSearch.LexisNexisSettings.CategoryList = [];
+                AdvanceSearch.LexisNexisSettings.PublicationCategoryList = [];
+                AdvanceSearch.LexisNexisSettings.GenreList = [];
+                AdvanceSearch.LexisNexisSettings.RegionList = [];
+                AdvanceSearch.LexisNexisSettings.CountryList = [];
+                AdvanceSearch.LexisNexisSettings.LanguageList = [];
+                AdvanceSearch.LexisNexisSettings.ExcludeDomainList = [];
+            }
+        }
     }
 }
 
@@ -4286,12 +4092,20 @@ function ShowHideTabdiv(elementIndex, isClearOther) {
             HeaderID = 'divNMSetup';
             break;
         case 2:
-            EleID = 'divSocialMediaTabContent';
-            HeaderID = 'divSMSetup';
+            EleID = 'divBLTabContent';
+            HeaderID = 'divBLSetup';
+            break;
+        case 3:
+            EleID = 'divFOTabContent';
+            HeaderID = 'divFOSetup';
             break;
         case 4:
             EleID = 'divProQuestTabContent';
             HeaderID = 'divPQSetup';
+            break;
+        case 5:
+            EleID = 'divLNTabContent';
+            HeaderID = 'divLNSetup';
             break;
     }
 
@@ -4497,42 +4311,72 @@ function OnLoadAgentAdvancedSearchSuccess(result) {
             }
         }
 
-        //Social Media
-        if (searchRequestObject.SocialMedia != null && searchRequestObject.SocialMediaSpecified == true) {
-            AdvanceSearch.SociaMediaSettings = new Object();
+        //Blog
+        if (searchRequestObject.Blog != null && searchRequestObject.BlogSpecified == true) {
+            AdvanceSearch.BlogSettings = new Object();
 
             //Search Term
-            if (searchRequestObject.SocialMedia.SearchTerm.SearchTerm != null) {
-                AdvanceSearch.SociaMediaSettings.SearchTerm = searchRequestObject.SocialMedia.SearchTerm.SearchTerm.trim();
+            if (searchRequestObject.Blog.SearchTerm.SearchTerm != null) {
+                AdvanceSearch.BlogSettings.SearchTerm = searchRequestObject.Blog.SearchTerm.SearchTerm.trim();
             }
 
             //Sources
-            if (searchRequestObject.SocialMedia.Sources != null) {
-                AdvanceSearch.SociaMediaSettings.SourceList = searchRequestObject.SocialMedia.Sources;
+            if (searchRequestObject.Blog.Sources != null) {
+                AdvanceSearch.BlogSettings.SourceList = searchRequestObject.Blog.Sources;
             }
 
             //Author
-            if (searchRequestObject.SocialMedia.Author != null) {
-                AdvanceSearch.SociaMediaSettings.Author = searchRequestObject.SocialMedia.Author.trim().toLowerCase();
+            if (searchRequestObject.Blog.Author != null) {
+                AdvanceSearch.BlogSettings.Author = searchRequestObject.Blog.Author.trim().toLowerCase();
             }
 
             //Tile
-            if (searchRequestObject.SocialMedia.Title != null) {
-                AdvanceSearch.SociaMediaSettings.Title = searchRequestObject.SocialMedia.Title.trim().toLowerCase();
-            }
-
-            // SourceType List
-            if (searchRequestObject.SocialMedia.SourceType_Set != null && searchRequestObject.SocialMedia.SourceType_Set.IsAllowAll == false) {
-                var arr_SM_SourceType = [];
-                $.each(searchRequestObject.SocialMedia.SourceType_Set.SourceType, function (index, obj) {
-                    arr_SM_SourceType.push(obj);
-                });
-                AdvanceSearch.SociaMediaSettings.SourceTypeList = arr_SM_SourceType;
+            if (searchRequestObject.Blog.Title != null) {
+                AdvanceSearch.BlogSettings.Title = searchRequestObject.Blog.Title.trim().toLowerCase();
             }
 
             //Exclude Domains
-            if (searchRequestObject.SocialMedia.ExlcudeDomains != null) {
-                AdvanceSearch.SociaMediaSettings.ExcludeDomainList = searchRequestObject.SocialMedia.ExlcudeDomains;
+            if (searchRequestObject.Blog.ExlcudeDomains != null) {
+                AdvanceSearch.BlogSettings.ExcludeDomainList = searchRequestObject.Blog.ExlcudeDomains;
+            }
+        } 
+
+        //Forum
+        if (searchRequestObject.Forum != null && searchRequestObject.ForumSpecified == true) {
+            AdvanceSearch.ForumSettings = new Object();
+
+            //Search Term
+            if (searchRequestObject.Forum.SearchTerm.SearchTerm != null) {
+                AdvanceSearch.ForumSettings.SearchTerm = searchRequestObject.Forum.SearchTerm.SearchTerm.trim();
+            }
+
+            //Sources
+            if (searchRequestObject.Forum.Sources != null) {
+                AdvanceSearch.ForumSettings.SourceList = searchRequestObject.Forum.Sources;
+            }
+
+            //Author
+            if (searchRequestObject.Forum.Author != null) {
+                AdvanceSearch.ForumSettings.Author = searchRequestObject.Forum.Author.trim().toLowerCase();
+            }
+
+            //Tile
+            if (searchRequestObject.Forum.Title != null) {
+                AdvanceSearch.ForumSettings.Title = searchRequestObject.Forum.Title.trim().toLowerCase();
+            }
+
+            // SourceType List
+            if (searchRequestObject.Forum.SourceType_Set != null && searchRequestObject.Forum.SourceType_Set.IsAllowAll == false) {
+                var arr_FO_SourceType = [];
+                $.each(searchRequestObject.Forum.SourceType_Set.SourceType, function (index, obj) {
+                    arr_FO_SourceType.push(obj);
+                });
+                AdvanceSearch.ForumSettings.SourceTypeList = arr_FO_SourceType;
+            }
+
+            //Exclude Domains
+            if (searchRequestObject.Forum.ExlcudeDomains != null) {
+                AdvanceSearch.ForumSettings.ExcludeDomainList = searchRequestObject.Forum.ExlcudeDomains;
             }
         }
 
@@ -4557,6 +4401,80 @@ function OnLoadAgentAdvancedSearchSuccess(result) {
                     arr_PQ_Language.push(obj);
                 });
                 AdvanceSearch.ProQuestSettings.LanguageList = arr_PQ_Language;
+            }
+        }
+
+        //LexisNexis
+        if (searchRequestObject.LexisNexis != null && searchRequestObject.LexisNexisSpecified == true) {
+            AdvanceSearch.LexisNexisSettings = new Object();
+
+            //Search Term
+            if (searchRequestObject.LexisNexis.SearchTerm.SearchTerm != null) {
+                AdvanceSearch.LexisNexisSettings.SearchTerm = searchRequestObject.LexisNexis.SearchTerm.SearchTerm.trim();
+            }
+
+            //Publications
+            if (searchRequestObject.LexisNexis.Publications != null) {
+                AdvanceSearch.LexisNexisSettings.PublicationList = searchRequestObject.LexisNexis.Publications;
+            }
+
+            // Category List
+            if (searchRequestObject.LexisNexis.NewsCategory_Set != null && searchRequestObject.LexisNexis.NewsCategory_Set.IsAllowAll == false) {
+                var arr_LN_Category = [];
+                $.each(searchRequestObject.LexisNexis.NewsCategory_Set.NewsCategory, function (index, obj) {
+                    arr_LN_Category.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.CategoryList = arr_LN_Category;
+            }
+
+            // Publication Category List
+            if (searchRequestObject.LexisNexis.PublicationCategory_Set != null && searchRequestObject.LexisNexis.PublicationCategory_Set.IsAllowAll == false) {
+                var arr_LN_PubCategory = [];
+                $.each(searchRequestObject.LexisNexis.PublicationCategory_Set.PublicationCategory, function (index, obj) {
+                    arr_LN_PubCategory.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.PublicationCategoryList = arr_LN_PubCategory;
+            }
+
+            // Genre List
+            if (searchRequestObject.LexisNexis.Genre_Set != null && searchRequestObject.LexisNexis.Genre_Set.IsAllowAll == false) {
+                var arr_LN_Genere = [];
+                $.each(searchRequestObject.LexisNexis.Genre_Set.Genre, function (index, obj) {
+                    arr_LN_Genere.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.GenreList = arr_LN_Genere;
+            }
+
+            // Region List
+            if (searchRequestObject.LexisNexis.Region_Set != null && searchRequestObject.LexisNexis.Region_Set.IsAllowAll == false) {
+                var arr_LN_Region = [];
+                $.each(searchRequestObject.LexisNexis.Region_Set.Region, function (index, obj) {
+                    arr_LN_Region.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.RegionList = arr_LN_Region;
+            }
+
+            // Country List
+            if (searchRequestObject.LexisNexis.Country_Set != null && searchRequestObject.LexisNexis.Country_Set.IsAllowAll == false) {
+                var arr_LN_Country = [];
+                $.each(searchRequestObject.LexisNexis.Country_Set.Country, function (index, obj) {
+                    arr_LN_Country.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.CountryList = arr_LN_Country;
+            }
+
+            // Language List
+            if (searchRequestObject.LexisNexis.Language_Set != null && searchRequestObject.LexisNexis.Language_Set.IsAllowAll == false) {
+                var arr_LN_Language = [];
+                $.each(searchRequestObject.LexisNexis.Language_Set.Language, function (index, obj) {
+                    arr_LN_Language.push(obj);
+                });
+                AdvanceSearch.LexisNexisSettings.LanguageList = arr_LN_Language;
+            }
+
+            //Exclude Domains
+            if (searchRequestObject.LexisNexis.ExlcudeDomains != null) {
+                AdvanceSearch.LexisNexisSettings.ExcludeDomainList = searchRequestObject.LexisNexis.ExlcudeDomains;
             }
         }
 
@@ -4605,14 +4523,24 @@ function isDefaultAdvancedSearch(AdvanceSearch) {
             return false;
         }
 
-        //Social Media
-        if (AdvanceSearch.SociaMediaSettings != null
-        && ((AdvanceSearch.SociaMediaSettings.SearchTerm != null && AdvanceSearch.SociaMediaSettings.SearchTerm.trim() != '')
-        || (AdvanceSearch.SociaMediaSettings.Author != null && AdvanceSearch.SociaMediaSettings.Author.trim() != '')
-        || (AdvanceSearch.SociaMediaSettings.Title != null && AdvanceSearch.SociaMediaSettings.Title.trim() != '')
-        || (AdvanceSearch.SociaMediaSettings.SourceList != null && AdvanceSearch.SociaMediaSettings.SourceList.length > 0)
-        || (AdvanceSearch.SociaMediaSettings.SourceTypeList != null && AdvanceSearch.SociaMediaSettings.SourceTypeList.length > 0)
-        || (AdvanceSearch.SociaMediaSettings.ExcludeDomainList != null && AdvanceSearch.SociaMediaSettings.ExcludeDomainList.length > 0))) {
+        //Blog
+        if (AdvanceSearch.BlogSettings != null
+        && ((AdvanceSearch.BlogSettings.SearchTerm != null && AdvanceSearch.BlogSettings.SearchTerm.trim() != '')
+        || (AdvanceSearch.BlogSettings.Author != null && AdvanceSearch.BlogSettings.Author.trim() != '')
+        || (AdvanceSearch.BlogSettings.Title != null && AdvanceSearch.BlogSettings.Title.trim() != '')
+        || (AdvanceSearch.BlogSettings.SourceList != null && AdvanceSearch.BlogSettings.SourceList.length > 0)
+        || (AdvanceSearch.BlogSettings.ExcludeDomainList != null && AdvanceSearch.BlogSettings.ExcludeDomainList.length > 0))) {
+            return false;
+        }
+
+        //Forum
+        if (AdvanceSearch.ForumSettings != null 
+        && ((AdvanceSearch.ForumSettings.SearchTerm != null && AdvanceSearch.ForumSettings.SearchTerm.trim() != '')
+        || (AdvanceSearch.ForumSettings.Author != null && AdvanceSearch.ForumSettings.Author.trim() != '')
+        || (AdvanceSearch.ForumSettings.Title != null && AdvanceSearch.ForumSettings.Title.trim() != '')
+        || (AdvanceSearch.ForumSettings.SourceList != null && AdvanceSearch.ForumSettings.SourceList.length > 0)
+        || (AdvanceSearch.ForumSettings.SourceTypeList != null && AdvanceSearch.ForumSettings.SourceTypeList.length > 0)
+        || (AdvanceSearch.ForumSettings.ExcludeDomainList != null && AdvanceSearch.ForumSettings.ExcludeDomainList.length > 0))) {
             return false;
         }
 
@@ -4622,6 +4550,20 @@ function isDefaultAdvancedSearch(AdvanceSearch) {
         || (AdvanceSearch.ProQuestSettings.PublicationList != null && AdvanceSearch.ProQuestSettings.PublicationList.length > 0)
         || (AdvanceSearch.ProQuestSettings.AuthorList != null && AdvanceSearch.ProQuestSettings.AuthorList.length > 0)
         || (AdvanceSearch.ProQuestSettings.LanguageList != null && AdvanceSearch.ProQuestSettings.LanguageList.length > 0))) {
+            return false;
+        }
+
+        //LexisNexis
+        if (AdvanceSearch.LexisNexisSettings != null
+        && ((AdvanceSearch.LexisNexisSettings.SearchTerm != null && AdvanceSearch.LexisNexisSettings.SearchTerm.trim() != '')
+        || (AdvanceSearch.LexisNexisSettings.PublicationList != null && AdvanceSearch.LexisNexisSettings.PublicationList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.CategoryList != null && AdvanceSearch.LexisNexisSettings.CategoryList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.GenreList != null && AdvanceSearch.LexisNexisSettings.GenreList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.PublicationCategoryList != null && AdvanceSearch.LexisNexisSettings.PublicationCategoryList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.RegionList != null && AdvanceSearch.LexisNexisSettings.RegionList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.CountryList != null && AdvanceSearch.LexisNexisSettings.CountryList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.LanguageList != null && AdvanceSearch.LexisNexisSettings.LanguageList.length > 0)
+        || (AdvanceSearch.LexisNexisSettings.ExcludeDomainList != null && AdvanceSearch.LexisNexisSettings.ExcludeDomainList.length > 0))) {
             return false;
         }
     }
@@ -4647,7 +4589,7 @@ function SetAdvanceSearch(ID) {
             changedAdvSearch = true;
 
             AdvanceSearch = new Object();
-            if ((_SearchMedium == '' || _SearchMedium == 'TV') && $("#divTVSetup").length > 0) {
+            if ((_SearchMediums == '' || $.inArray('TV', _SearchMediums) > -1) && $("#divTVSetup").length > 0) {
                 AdvanceSearch.TVSettings = new Object();
                 AdvanceSearch.TVSettings.SearchTerm = $("#txtSearchTerm_TV").val().trim();
                 AdvanceSearch.TVSettings.ProgramTitle = $("#txtProgramTitle").val().trim().toLowerCase();
@@ -4660,7 +4602,7 @@ function SetAdvanceSearch(ID) {
                 AdvanceSearch.TVSettings.CountryList = $.inArray("0", $("#ddlCountry_TV").val()) !== -1 ? null : $("#ddlCountry_TV").val();
             }
 
-            if ((_SearchMedium == '' || _SearchMedium == 'NM') && $("#divNMSetup").length > 0) {
+            if ((_SearchMediums == '' || $.inArray('NM', _SearchMediums) > -1) && $("#divNMSetup").length > 0) {
                 AdvanceSearch.NewsSettings = new Object();
                 AdvanceSearch.NewsSettings.SearchTerm = $("#txtSearchTerm_NM").val().trim();
                 AdvanceSearch.NewsSettings.CategoryList = $.inArray("0", $("#ddlCategory_NM").val()) !== -1 ? null : $("#ddlCategory_NM").val();
@@ -4686,29 +4628,50 @@ function SetAdvanceSearch(ID) {
                 });
             }
 
-            if ((_SearchMedium == '' || _SearchMedium == 'Social Media' || _SearchMedium == 'Blog' || _SearchMedium == 'Forum') && $("#divSMSetup").length > 0) {
-                AdvanceSearch.SociaMediaSettings = new Object();
-                AdvanceSearch.SociaMediaSettings.SearchTerm = $("#txtSearchTerm_SM").val().trim();
-                AdvanceSearch.SociaMediaSettings.Author = $("#txtAuthor_SM").val().trim().toLowerCase();
-                AdvanceSearch.SociaMediaSettings.Title = $("#txtTitle_SM").val().trim().toLowerCase();
-                AdvanceSearch.SociaMediaSettings.SourceTypeList = $.inArray("0", $("#ddlSourceType_SM").val()) !== -1 ? null : $("#ddlSourceType_SM").val();
+            if ((_SearchMediums == '' || $.inArray('Blog', _SearchMediums) > -1) && $("#divBLSetup").length > 0) {
+                AdvanceSearch.BlogSettings = new Object();
+                AdvanceSearch.BlogSettings.SearchTerm = $("#txtSearchTerm_BL").val().trim();
+                AdvanceSearch.BlogSettings.Author = $("#txtAuthor_BL").val().trim().toLowerCase();
+                AdvanceSearch.BlogSettings.Title = $("#txtTitle_BL").val().trim().toLowerCase();
 
-                AdvanceSearch.SociaMediaSettings.SourceList = [];
-                $.each($("#txtSource_SM").val().trim().split(";"), function () {
+                AdvanceSearch.BlogSettings.SourceList = [];
+                $.each($("#txtSource_BL").val().trim().split(";"), function () {
                     if ($.trim(this) != '') {
-                        AdvanceSearch.SociaMediaSettings.SourceList.push($.trim(this).toLowerCase());
+                        AdvanceSearch.BlogSettings.SourceList.push($.trim(this).toLowerCase());
                     }
                 });
 
-                AdvanceSearch.SociaMediaSettings.ExcludeDomainList = [];
-                $.each($("#txtExcludeDomains_SM").val().trim().split(";"), function () {
+                AdvanceSearch.BlogSettings.ExcludeDomainList = [];
+                $.each($("#txtExcludeDomains_BL").val().trim().split(";"), function () {
                     if ($.trim(this) != '') {
-                        AdvanceSearch.SociaMediaSettings.ExcludeDomainList.push($.trim(this).toLowerCase());
+                        AdvanceSearch.BlogSettings.ExcludeDomainList.push($.trim(this).toLowerCase());
                     }
                 });
             }
 
-            if ((_SearchMedium == '' || _SearchMedium == 'PQ') && $("#divPQSetup").length > 0) {
+            if ((_SearchMediums == '' || $.inArray('Forum', _SearchMediums) > -1) && $("#divFOSetup").length > 0) {
+                AdvanceSearch.ForumSettings = new Object();
+                AdvanceSearch.ForumSettings.SearchTerm = $("#txtSearchTerm_FO").val().trim();
+                AdvanceSearch.ForumSettings.Author = $("#txtAuthor_FO").val().trim().toLowerCase();
+                AdvanceSearch.ForumSettings.Title = $("#txtTitle_FO").val().trim().toLowerCase();
+                AdvanceSearch.ForumSettings.SourceTypeList = $.inArray("0", $("#ddlSourceType_FO").val()) !== -1 ? null : $("#ddlSourceType_FO").val();
+
+                AdvanceSearch.ForumSettings.SourceList = [];
+                $.each($("#txtSource_FO").val().trim().split(";"), function () {
+                    if ($.trim(this) != '') {
+                        AdvanceSearch.ForumSettings.SourceList.push($.trim(this).toLowerCase());
+                    }
+                });
+
+                AdvanceSearch.ForumSettings.ExcludeDomainList = [];
+                $.each($("#txtExcludeDomains_FO").val().trim().split(";"), function () {
+                    if ($.trim(this) != '') {
+                        AdvanceSearch.ForumSettings.ExcludeDomainList.push($.trim(this).toLowerCase());
+                    }
+                });
+            }
+
+            if ((_SearchMediums == '' || $.inArray('PQ', _SearchMediums) > -1) && $("#divPQSetup").length > 0) {
                 AdvanceSearch.ProQuestSettings = new Object();
                 AdvanceSearch.ProQuestSettings.SearchTerm = $("#txtSearchTerm_PQ").val().trim();
                 AdvanceSearch.ProQuestSettings.LanguageList = $.inArray("0", $("#ddlLanguage_PQ").val()) !== -1 ? null : $("#ddlLanguage_PQ").val();
@@ -4728,30 +4691,58 @@ function SetAdvanceSearch(ID) {
                 });
             }
 
+            if ((_SearchMediums == '' || $.inArray('LN', _SearchMediums) > -1) && $("#divLNSetup").length > 0) {
+                AdvanceSearch.LexisNexisSettings = new Object();
+                AdvanceSearch.LexisNexisSettings.SearchTerm = $("#txtSearchTerm_LN").val().trim();
+                AdvanceSearch.LexisNexisSettings.CategoryList = $.inArray("0", $("#ddlCategory_LN").val()) !== -1 ? null : $("#ddlCategory_LN").val();
+                AdvanceSearch.LexisNexisSettings.PublicationCategoryList = $.inArray("0", $("#ddlPublicationCategory_LN").val()) !== -1 ? null : $("#ddlPublicationCategory_LN").val();
+                AdvanceSearch.LexisNexisSettings.GenreList = $.inArray("0", $("#ddlGenre_LN").val()) !== -1 ? null : $("#ddlGenre_LN").val();
+                AdvanceSearch.LexisNexisSettings.RegionList = $.inArray("0", $("#ddlRegion_LN").val()) !== -1 ? null : $("#ddlRegion_LN").val();
+                AdvanceSearch.LexisNexisSettings.CountryList = $.inArray("0", $("#ddlCountry_LN").val()) !== -1 ? null : $("#ddlCountry_LN").val();
+                AdvanceSearch.LexisNexisSettings.LanguageList = $.inArray("0", $("#ddlLanguage_LN").val()) !== -1 ? null : $("#ddlLanguage_LN").val();
+
+                AdvanceSearch.LexisNexisSettings.PublicationList = [];
+                $.each($("#txtPublication_LN").val().trim().split(";"), function () {
+                    if ($.trim(this) != '') {
+                        AdvanceSearch.LexisNexisSettings.PublicationList.push($.trim(this).toLowerCase());
+                    }
+                });
+
+                AdvanceSearch.LexisNexisSettings.ExcludeDomainList = [];
+                $.each($("#txtExcludeDomains_LN").val().trim().split(";"), function () {
+                    if ($.trim(this) != '') {
+                        AdvanceSearch.LexisNexisSettings.ExcludeDomainList.push($.trim(this).toLowerCase());
+                    }
+                });
+            }
+
             AdvancedSearchListTemp[ID] = AdvanceSearch;
         }
 
         // Clear out error messages
         $("#spanExcludeDomains_NM").html('').show();
-        $("#spanExcludeDomains_SM").html('').show();
-
+        $("#spanExcludeDomains_BL").html('').show();
+        $("#spanExcludeDomains_FO").html('').show();
+        $("#spanExcludeDomains_LN").html('').show();
 
         ToggleTabEnable(ID);
         return true;
     }
 
-
     ToggleTabEnable(ID);
     return false;
 }
+
 function IsValidSearch() {
     var flag = true;
     var stringToTest;
 
-    $("#spantxtExcludeDomains_NM").hide();
-    $("#spantxtExcludeDomains_SM").hide();
+    $("#spanExcludeDomains_NM").hide();
+    $("#spanExcludeDomains_BL").hide();
+    $("#spanExcludeDomains_FO").hide();
+    $("#spanExcludeDomains_LN").hide();
 
-    if ((_SearchMedium == '' || _SearchMedium == 'NM') && $("#divNMSetup").length > 0 && $.trim($("#txtExcludeDomains_NM").val()) != "") {
+    if ((_SearchMediums == '' || $.inArray('NM', _SearchMediums) > -1) && $("#divNMSetup").length > 0 && $.trim($("#txtExcludeDomains_NM").val()) != "") {
         var domains = [];
         $.each($("#txtExcludeDomains_NM").val().trim().split(";"), function () {
             if ($.trim(this) != '') {
@@ -4773,9 +4764,9 @@ function IsValidSearch() {
 
     }
 
-    if ((_SearchMedium == '' || _SearchMedium == 'SM') && $("#divSMSetup").length > 0 && $.trim($("#txtExcludeDomains_SM").val()) != "") {
+    if ((_SearchMediums == '' || $.inArray('Blog', _SearchMediums) > -1) && $("#divBLSetup").length > 0 && $.trim($("#txtExcludeDomains_BL").val()) != "") {
         var domains = [];
-        $.each($("#txtExcludeDomains_SM").val().trim().split(";"), function () {
+        $.each($("#txtExcludeDomains_BL").val().trim().split(";"), function () {
             if ($.trim(this) != '') {
                 domains.push($.trim(this).toLowerCase());
             }
@@ -4787,7 +4778,47 @@ function IsValidSearch() {
                 stringToTest = stringToTest.substring(1, stringToTest.length - 1);
             }
             if (!TestWildInput(stringToTest)) {
-                $("#spanExcludeDomains_SM").html(_msgInvalidDomain + obj).show();
+                $("#spanExcludeDomains_BL").html(_msgInvalidDomain + obj).show();
+                flag = false;
+            }
+        });
+    }
+
+    if ((_SearchMediums == '' || $.inArray('Forum', _SearchMediums) > -1) && $("#divFOSetup").length > 0 && $.trim($("#txtExcludeDomains_FO").val()) != "") {
+        var domains = [];
+        $.each($("#txtExcludeDomains_FO").val().trim().split(";"), function () {
+            if ($.trim(this) != '') {
+                domains.push($.trim(this).toLowerCase());
+            }
+        });
+
+        $.each(domains, function (index, obj) {
+            stringToTest = $.trim(obj);
+            if ((/^"/).test(stringToTest) && (/"$/).test(stringToTest)) {
+                stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+            }
+            if (!TestWildInput(stringToTest)) {
+                $("#spanExcludeDomains_FO").html(_msgInvalidDomain + obj).show();
+                flag = false;
+            }
+        });
+    }
+
+    if ((_SearchMediums == '' || $.inArray('LN', _SearchMediums) > -1) && $("#divLNSetup").length > 0 && $.trim($("#txtExcludeDomains_LN").val()) != "") {
+        var domains = [];
+        $.each($("#txtExcludeDomains_LN").val().trim().split(";"), function () {
+            if ($.trim(this) != '') {
+                domains.push($.trim(this).toLowerCase());
+            }
+        });
+
+        $.each(domains, function (index, obj) {
+            stringToTest = $.trim(obj);
+            if ((/^"/).test(stringToTest) && (/"$/).test(stringToTest)) {
+                stringToTest = stringToTest.substring(1, stringToTest.length - 1);
+            }
+            if (!TestWildInput(stringToTest)) {
+                $("#spanExcludeDomains_LN").html(_msgInvalidDomain + obj).show();
                 flag = false;
             }
         });
@@ -4800,8 +4831,7 @@ function IsNewSearch(ID) {
     AdvanceSearch = AdvancedSearchListTemp[ID];
 
     if (AdvanceSearch != null) {
-        if ((_SearchMedium == '' || _SearchMedium == 'TV') && $("#divTVSetup").length > 0) {
-
+        if ((_SearchMediums == '' || $.inArray('TV', _SearchMediums) > -1) && $("#divTVSetup").length > 0) {
             var tempCategoryList = $.inArray("0", $("#ddlCategory_TV").val()) !== -1 ? null : $("#ddlCategory_TV").val();
             var tempIQDmaList = $.inArray("0", $("#ddlDMA_TV").val()) !== -1 ? null : $("#ddlDMA_TV").val();
             var tempStationList = $.inArray("0", $("#ddlStation_TV").val()) !== -1 ? null : $("#ddlStation_TV").val();
@@ -4822,8 +4852,7 @@ function IsNewSearch(ID) {
             }
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'NM') && $("#divNMSetup").length > 0) {
-
+        if ((_SearchMediums == '' || $.inArray('NM', _SearchMediums) > -1) && $("#divNMSetup").length > 0) {
             var tempCategoryList = $.inArray("0", $("#ddlCategory_NM").val()) !== -1 ? null : $("#ddlCategory_NM").val();
             var tempGenreList = $.inArray("0", $("#ddlGenre_NM").val()) !== -1 ? null : $("#ddlGenre_NM").val();
             var tempMarketList = $.inArray("0", $("#ddlMarket_NM").val()) !== -1 ? null : $("#ddlMarket_NM").val();
@@ -4860,37 +4889,60 @@ function IsNewSearch(ID) {
             }
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'Social Media' || _SearchMedium == 'Blog' || _SearchMedium == 'Forum') && $("#divSMSetup").length > 0) {
+        if ((_SearchMediums == '' || $.inArray('Blog', _SearchMediums) > -1) && $("#divBLSetup").length > 0) {
+            var tempSourceTypeList = $.inArray("0", $("#ddlSourceType_BL").val()) !== -1 ? null : $("#ddlSourceType_BL").val();
 
-            var tempSourceTypeList = $.inArray("0", $("#ddlSourceType_SM").val()) !== -1 ? null : $("#ddlSourceType_SM").val();
-
-            var SMSourcesList = [];
-            $.each($("#txtSource_SM").val().trim().split(";"), function () {
+            var BLSourcesList = [];
+            $.each($("#txtSource_BL").val().trim().split(";"), function () {
                 if ($.trim(this) != '') {
-                    SMSourcesList.push($.trim(this).toLowerCase());
+                    BLSourcesList.push($.trim(this).toLowerCase());
                 }
             });
 
-            var SMExcludeList = [];
-            $.each($("#txtExcludeDomains_SM").val().trim().split(";"), function () {
+            var BLExcludeList = [];
+            $.each($("#txtExcludeDomains_BL").val().trim().split(";"), function () {
                 if ($.trim(this) != '') {
-                    SMExcludeList.push($.trim(this).toLowerCase());
+                    BLExcludeList.push($.trim(this).toLowerCase());
                 }
             });
 
-            if ((AdvanceSearch.SociaMediaSettings.SearchTerm != $("#txtSearchTerm_SM").val().trim())
-            || (AdvanceSearch.SociaMediaSettings.Author != $("#txtAuthor_SM").val().trim().toLowerCase())
-            || (AdvanceSearch.SociaMediaSettings.Title != $("#txtTitle_SM").val().trim().toLowerCase())
-            || ($(AdvanceSearch.SociaMediaSettings.SourceList).not(SMSourcesList).length != 0 || $(SMSourcesList).not(AdvanceSearch.SociaMediaSettings.SourceList).length != 0)
-            || ($(AdvanceSearch.SociaMediaSettings.SourceTypeList).not(tempSourceTypeList).length != 0 || $(tempSourceTypeList).not(AdvanceSearch.SociaMediaSettings.SourceTypeList).length != 0)
-            || ($(AdvanceSearch.SociaMediaSettings.ExcludeDomainList).not(SMExcludeList).length != 0 || $(SMExcludeList).not(AdvanceSearch.SociaMediaSettings.ExcludeDomainList).length != 0)) {
+            if ((AdvanceSearch.BlogSettings.SearchTerm != $("#txtSearchTerm_BL").val().trim())
+            || (AdvanceSearch.BlogSettings.Author != $("#txtAuthor_BL").val().trim().toLowerCase())
+            || (AdvanceSearch.BlogSettings.Title != $("#txtTitle_BL").val().trim().toLowerCase())
+            || ($(AdvanceSearch.BlogSettings.SourceList).not(BLSourcesList).length != 0 || $(BLSourcesList).not(AdvanceSearch.BlogSettings.SourceList).length != 0)
+            || ($(AdvanceSearch.BlogSettings.ExcludeDomainList).not(BLExcludeList).length != 0 || $(BLExcludeList).not(AdvanceSearch.BlogSettings.ExcludeDomainList).length != 0)) {
                 isNew = true;
             }
-
         }
 
-        if ((_SearchMedium == '' || _SearchMedium == 'PQ') && $("#divPQSetup").length > 0) {
+        if ((_SearchMediums == '' || $.inArray('Forum', _SearchMediums) > -1) && $("#divFOSetup").length > 0) {
+            var tempSourceTypeList = $.inArray("0", $("#ddlSourceType_FO").val()) !== -1 ? null : $("#ddlSourceType_FO").val();
 
+            var FOSourcesList = [];
+            $.each($("#txtSource_FO").val().trim().split(";"), function () {
+                if ($.trim(this) != '') {
+                    FOSourcesList.push($.trim(this).toLowerCase());
+                }
+            });
+
+            var FOExcludeList = [];
+            $.each($("#txtExcludeDomains_FO").val().trim().split(";"), function () {
+                if ($.trim(this) != '') {
+                    FOExcludeList.push($.trim(this).toLowerCase());
+                }
+            });
+
+            if ((AdvanceSearch.ForumSettings.SearchTerm != $("#txtSearchTerm_FO").val().trim())
+            || (AdvanceSearch.ForumSettings.Author != $("#txtAuthor_FO").val().trim().toLowerCase())
+            || (AdvanceSearch.ForumSettings.Title != $("#txtTitle_FO").val().trim().toLowerCase())
+            || ($(AdvanceSearch.ForumSettings.SourceList).not(FOSourcesList).length != 0 || $(FOSourcesList).not(AdvanceSearch.ForumSettings.SourceList).length != 0)
+            || ($(AdvanceSearch.ForumSettings.SourceTypeList).not(tempSourceTypeList).length != 0 || $(tempSourceTypeList).not(AdvanceSearch.ForumSettings.SourceTypeList).length != 0)
+            || ($(AdvanceSearch.ForumSettings.ExcludeDomainList).not(FOExcludeList).length != 0 || $(FOExcludeList).not(AdvanceSearch.ForumSettings.ExcludeDomainList).length != 0)) {
+                isNew = true;
+            }
+        }
+
+        if ((_SearchMediums == '' || $.inArray('PQ', _SearchMediums) > -1) && $("#divPQSetup").length > 0) {
             var tempLanguageList = $.inArray("0", $("#ddlLanguage_PQ").val()) !== -1 ? null : $("#ddlLanguage_PQ").val();
 
             var PQPublicationsList = [];
@@ -4911,6 +4963,41 @@ function IsNewSearch(ID) {
             || ($(AdvanceSearch.ProQuestSettings.PublicationList).not(PQPublicationsList).length != 0 || $(PQPublicationsList).not(AdvanceSearch.ProQuestSettings.PublicationList).length != 0)
             || ($(AdvanceSearch.ProQuestSettings.AuthorList).not(PQAuthorList).length != 0 || $(PQAuthorList).not(AdvanceSearch.ProQuestSettings.AuthorList).length != 0)
             || ($(AdvanceSearch.ProQuestSettings.LanguageList).not(tempLanguageList).length != 0 || $(tempLanguageList).not(AdvanceSearch.ProQuestSettings.LanguageList).length != 0)) {
+                isNew = true;
+            }
+        }
+
+        if ((_SearchMediums == '' || $.inArray('LN', _SearchMediums) > -1) && $("#divLNSetup").length > 0) {
+            var tempCategoryList = $.inArray("0", $("#ddlCategory_LN").val()) !== -1 ? null : $("#ddlCategory_LN").val();
+            var tempGenreList = $.inArray("0", $("#ddlGenre_LN").val()) !== -1 ? null : $("#ddlGenre_LN").val();
+            var tempPublicationCategoryList = $.inArray("0", $("#ddlPublicationCategory_LN").val()) !== -1 ? null : $("#ddlPublicationCategory_LN").val();
+            var tempRegionList = $.inArray("0", $("#ddlRegion_LN").val()) !== -1 ? null : $("#ddlRegion_LN").val();
+            var tempCountryList = $.inArray("0", $("#ddlCountry_LN").val()) !== -1 ? null : $("#ddlCountry_LN").val();
+            var tempLanguageList = $.inArray("0", $("#ddlLanguage_LN").val()) !== -1 ? null : $("#ddlLanguage_LN").val();
+
+            var LNPublicationsList = [];
+            $.each($("#txtPublication_LN").val().trim().split(";"), function () {
+                if ($.trim(this) != '') {
+                    LNPublicationsList.push($.trim(this).toLowerCase());
+                }
+            });
+
+            var LNExcludeList = [];
+            $.each($("#txtExcludeDomains_LN").val().trim().split(";"), function () {
+                if ($.trim(this) != '') {
+                    LNExcludeList.push($.trim(this).toLowerCase());
+                }
+            });
+
+            if ((AdvanceSearch.LexisNexisSettings.SearchTerm != $("#txtSearchTerm_LN").val().trim())
+            || ($(AdvanceSearch.LexisNexisSettings.PublicationList).not(LNPublicationsList).length != 0 || $(LNPublicationsList).not(AdvanceSearch.LexisNexisSettings.PublicationList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.CategoryList).not(tempCategoryList).length != 0 || $(tempCategoryList).not(AdvanceSearch.LexisNexisSettings.CategoryList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.GenreList).not(tempGenreList).length != 0 || $(tempGenreList).not(AdvanceSearch.LexisNexisSettings.GenreList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.PublicationCategoryList).not(tempPublicationCategoryList).length != 0 || $(tempPublicationCategoryList).not(AdvanceSearch.LexisNexisSettings.PublicationCategoryList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.RegionList).not(tempRegionList).length != 0 || $(tempRegionList).not(AdvanceSearch.LexisNexisSettings.RegionList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.CountryList).not(tempCountryList).length != 0 || $(tempCountryList).not(AdvanceSearch.LexisNexisSettings.CountryList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.LanguageList).not(tempLanguageList).length != 0 || $(tempLanguageList).not(AdvanceSearch.LexisNexisSettings.LanguageList).length != 0)
+            || ($(AdvanceSearch.LexisNexisSettings.ExcludeDomainList).not(LNExcludeList).length != 0 || $(LNExcludeList).not(AdvanceSearch.LexisNexisSettings.ExcludeDomainList).length != 0)) {
                 isNew = true;
             }
         }

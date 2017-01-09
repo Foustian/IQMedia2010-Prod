@@ -28,11 +28,11 @@
     <!-- Le styles -->
     <link href="~/Css/bootstrap.css" rel="stylesheet" type="text/css" />
     <!-- Customizable CSS -->
-    <link href="~/Css/feed.css?v=4.2" rel="stylesheet" type="text/css">
+    <link href="~/Css/feed.css?v=4.7" rel="stylesheet" type="text/css">
     <link href="~/Css/MasterInner.css?v=1.0" rel="stylesheet" type="text/css" />
     @*<script src="../../Scripts/jquery-ui-1.9.2.custom.min.js?v=1.0" type="text/javascript"></script>*@
     <script src="~/Scripts/jquery-ui.min.js?v=1.0" type="text/javascript"></script>
-    <script src="~/Scripts/ConstantScript.js?v=2.1" type="text/javascript"></script>
+    <script src="~/Scripts/ConstantScript.js?v=2.4" type="text/javascript"></script>
     <script type="text/javascript">
         var _urlVideoMetaData = '@System.Configuration.ConfigurationManager.AppSettings["UrlGetVideoMetaData"]';
         var _urlVideoNielsenData = '@System.Configuration.ConfigurationManager.AppSettings["UrlGetVideoNielSenData"]';
@@ -138,7 +138,7 @@
                 <div class="contact">
                     <a href="~/ContactUs" target="_blank" style="text-decoration: none; outline:none;">
                         <img src="../../Images/header/Contact.png" style="padding-bottom: 2px;" />
-                        <span>Contact Us</span> </a>
+                        <span>Help Center</span> </a>
                 </div>
                 <div class="working">
                     <img alt="Working In" src="../../Images/header/company.png" style="padding-bottom: 2px;" />
@@ -172,7 +172,7 @@
                         @if (sessionInformation.Isv5AnalyticsAccess)
                         {
                             <li id="liMenuAnalytics" style="position: relative"><a id="analytics" href="#" role="button"
-                                class="analytics dropdown-toggle" data-toggle="dropdown">analytics&nbsp; <span class="caret"
+                                class="analytics dropdown-toggle" data-toggle="dropdown">analyze&nbsp; <span class="caret"
                                     style="margin-top: 10px; border-bottom-color: #ffffff; border-top-color: #ffffff">
                                 </span></a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="analytics">
@@ -186,7 +186,7 @@
                         @if (sessionInformation.Isv4DiscoveryAccess)
                         {
                             <li id="liMenuDiscovery"><a href="~/Discovery/" onclick="ShowLoading();" class="discovery">
-                                discovery</a></li>
+                                discover</a></li>
                         }
                         @if (sessionInformation.Isv4DiscoveryLiteAccess)
                         {
@@ -211,6 +211,11 @@
                         {
                             <li id="liMenuLibrary"><a href="~/Library/" onclick="ShowLoading();" class="library">
                                 library</a></li>
+                        }
+                        @if (sessionInformation.IsConnectAccess)
+                        {
+                            <li id="liMenuConnect"><a href="~/Connect/" onclick="ShowLoading();" class="connect">
+                                connect</a></li>
                         }
                     </ul>
                     <!--<form class="navbar-form pull-right">
@@ -392,7 +397,7 @@
         }
     </script>
     <script src="~/Scripts/jquery.placeholder.min.js?v=1.0" type="text/javascript"></script>
-    <script src="~/Scripts/IQMediaCommon.js?v=2.9" type="text/javascript"></script>
+    <script src="~/Scripts/IQMediaCommon.js?v=3.0" type="text/javascript"></script>
 </body>
 <script type="text/javascript">
     if (document.documentMode < 9) {

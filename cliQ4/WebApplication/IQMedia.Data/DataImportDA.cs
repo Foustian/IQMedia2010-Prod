@@ -49,7 +49,7 @@ namespace IQMedia.Data
 
         #region Sony
 
-        public List<SonySummaryModel> GetSonySummaryData(Guid clientGuid, DateTime fromDate, DateTime toDate, int dateIntervalType, string searchRequestIDXml, string filterXml, string tableType, bool hasTM, bool hasTV, bool hasNM, bool hasTW, bool hasPM, bool hasPQ, bool hasSM)
+        public List<SonySummaryModel> GetSonySummaryData(Guid clientGuid, DateTime fromDate, DateTime toDate, int dateIntervalType, string searchRequestIDXml, string filterXml, string tableType, string p_MediaTypeXml)
         {
             try
             {
@@ -60,14 +60,8 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@DateIntervalType", DbType.Int16, dateIntervalType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, searchRequestIDXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@FilterXml", DbType.Xml, filterXml, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@TableType", DbType.String, tableType, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsTVAccess", DbType.Boolean, hasTV, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsNMAccess", DbType.Boolean, hasNM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsTWAccess", DbType.Boolean, hasTW, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, hasTM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsSMAccess", DbType.Boolean, hasSM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsBLPMAccess", DbType.Boolean, hasPM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsPQAccess", DbType.Boolean, hasPQ, ParameterDirection.Input));
 
                 DataSet dsSSP = DataAccess.GetDataSet("usp_v5_IQDataImport_Sony_SelectSummary", dataTypeList);
 
@@ -109,6 +103,10 @@ namespace IQMedia.Data
                     if (!datarow["Track"].Equals(DBNull.Value))
                     {
                         dataSummaryModel.Track = Convert.ToString(datarow["Track"]);
+                    }
+                    if (!datarow["MediaType"].Equals(DBNull.Value))
+                    {
+                        dataSummaryModel.MediaType = Convert.ToString(datarow["MediaType"]);
                     }
                     if (!datarow["SubMediaType"].Equals(DBNull.Value))
                     {
@@ -161,7 +159,7 @@ namespace IQMedia.Data
             }
         }
 
-        public List<SonyTableModel> GetSonyExportData(Guid clientGuid, DateTime fromDate, DateTime toDate, string searchRequestIDXml, string tableType, bool hasTM, bool hasTV, bool hasNM, bool hasTW, bool hasPM, bool hasPQ, bool hasSM)
+        public List<SonyTableModel> GetSonyExportData(Guid clientGuid, DateTime fromDate, DateTime toDate, string searchRequestIDXml, string tableType, string p_MediaTypeXml)
         {
             try
             {
@@ -171,13 +169,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ToDate", DbType.DateTime, toDate, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, searchRequestIDXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@TableType", DbType.String, tableType, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsTVAccess", DbType.Boolean, hasTV, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsNMAccess", DbType.Boolean, hasNM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsTWAccess", DbType.Boolean, hasTW, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, hasTM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsSMAccess", DbType.Boolean, hasSM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsBLPMAccess", DbType.Boolean, hasPM, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@IsPQAccess", DbType.Boolean, hasPQ, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
 
                 DataSet dsSSP = DataAccess.GetDataSet("usp_v5_IQDataImport_Sony_SelectExportData", dataTypeList);
                 return FillSonyTableData(dsSSP);

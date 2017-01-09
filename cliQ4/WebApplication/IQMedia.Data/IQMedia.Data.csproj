@@ -52,6 +52,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +68,7 @@
     <Compile Include="Base\IDataAccess.cs" />
     <Compile Include="ClientDA.cs" />
     <Compile Include="ClipDA.cs" />
+    <Compile Include="CohortDA.cs" />
     <Compile Include="CustomCategoryDA.cs" />
     <Compile Include="CustomerDA.cs" />
     <Compile Include="DashboardDA.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="EmailTemplate\EmailTemplate1DA.cs" />
     <Compile Include="EmailTemplate\EmailTemplate2DA.cs" />
     <Compile Include="EmailTemplate\EmailTemplateBaseDA.cs" />
+    <Compile Include="EmailTemplate\EmailTemplateDevryDA.cs" />
     <Compile Include="EmailTemplate\EmailTemplateFactory.cs" />
     <Compile Include="FacebookDA.cs" />
     <Compile Include="fliq_ApplicationDA.cs" />
@@ -93,7 +97,9 @@
     <Compile Include="IQClient_CustomImageDA.cs" />
     <Compile Include="IQReport_FolderDA.cs" />
     <Compile Include="IQService_DiscoveryDA.cs" />
+    <Compile Include="IQService_FeedsDA.cs" />
     <Compile Include="IQSolrEngineDA.cs" />
+    <Compile Include="IQTads_SavedSearchDA.cs" />
     <Compile Include="IQTimeSync_DataDA.cs" />
     <Compile Include="IQTrack_LicenseClickDA.cs" />
     <Compile Include="IQUGCArchiveDA.cs" />
@@ -126,6 +132,10 @@
     <Compile Include="UtilityDA.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\IQCommon\IQCommon\IQCommon.csproj">
+      <Project>{6C491916-50C9-4E52-A355-596FDE89816B}</Project>
+      <Name>IQCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\IQMedia.Shared\IQMedia.Shared.csproj">
       <Project>{0B641996-1E4E-41D7-AB14-36295FAA3F4E}</Project>
       <Name>IQMedia.Shared</Name>

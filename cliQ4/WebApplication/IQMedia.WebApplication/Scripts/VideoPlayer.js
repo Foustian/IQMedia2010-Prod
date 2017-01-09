@@ -238,7 +238,7 @@ var LoadPlayerbyAgentID = function (iqagentID, callback) {
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: _urlTAdsGetChart,
+                url: _urlCommonGetMTChart,
                 contentType: 'application/json; charset=utf-8',
                 data: JSON.stringify(jsonPostData),
                 success: OnGetChartComplete,
@@ -403,8 +403,8 @@ var LoadPlayerbyGuidTSRadio = function (p_itemGuid, p_searchTerm, p_market, p_da
 
     var st = "";
 
-    if (typeof (searchTerm) !== 'undefined' && searchTerm != "" && searchTerm != null) {
-        st = searchTerm;
+    if (typeof (p_searchTerm) !== 'undefined' && p_searchTerm != "" && p_searchTerm != null) {
+        st = p_searchTerm;
     }
 
     jsonPostData = {
@@ -1629,6 +1629,22 @@ var ClippingEvts = function () {
         var isValid = true;
 
         if (!$(".video-clip-title").val().trim().length > 0) {
+
+            $(".video-clip-title").addClass("video-input-error");
+            $(".video-clip-title").css("border", "1px solid #CB1C1C");
+
+            isValid = false;
+        }
+        else if ($(".video-clip-title").val().indexOf("\"") != -1) {
+            ShowNotification(_msgClipCreationQuotesInTitle);
+
+            $(".video-clip-title").addClass("video-input-error");
+            $(".video-clip-title").css("border", "1px solid #CB1C1C");
+
+            isValid = false;
+        }
+        else if ($(".video-clip-title").val().indexOf("\"") != -1) {
+            ShowNotification(_msgClipCreationQuotesInTitle);
 
             $(".video-clip-title").addClass("video-input-error");
             $(".video-clip-title").css("border", "1px solid #CB1C1C");
@@ -3422,7 +3438,7 @@ var _Callback;
 function OnGetChartComplete(result) {
     if (result.isSuccess) {
         if (typeof _IsShowMTChart !== 'undefined' && _IsShowMTChart) {
-            SetPlayerChartContent(result); // Builds the LR/Ads chart. Defined in VideoPlayerChart.js
+            SetPlayerChartContent(result, "Feeds"); // Builds the LR/Ads chart. Defined in VideoPlayerChart.js
         }
 
         // Build Kantor chart
@@ -3659,6 +3675,13 @@ var ResizeContainer = function (width, height) {
 
         _Width = width;
         _Height = height;
+
+        if ($("#ads-results").length > 0) {
+            var playerWidth = $(".video-player-row-one").width();
+            $("#ads-results-container").css("width", playerWidth - 163);
+
+            $("#ads-results").highcharts().reflow();
+        }
     }
 }
 

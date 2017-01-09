@@ -18,11 +18,17 @@ using IQMedia.Web.Logic;
 using IQMedia.Web.Logic.Base;
 using IQMedia.WebApplication.Config;
 using IQMedia.WebApplication.Models;
+using IQMedia.WebApplication.Models.TempData;
+using IQMedia.WebApplication.Controllers;
+using WebAppUtil = IQMedia.WebApplication.Utility;
+using WebAppCommon = IQMedia.WebApplication.Utility.CommonFunctions;
 using Newtonsoft.Json;
 using HiQPdf;
+using IQCommon.Model;
 using System.Reflection;
 using System.Globalization;
 using System.Web.UI.HtmlControls;
+using WebControls = System.Web.UI.WebControls;
 
 namespace IQMedia.WebApplication.Controllers
 {
@@ -42,6 +48,9 @@ namespace IQMedia.WebApplication.Controllers
         string PATH_DashboardTopOnlineNewsSites = "~/Views/Dashboard/_TopOnlineNewsSites.cshtml";
         string PATH_DashboardTopBroadcastCountries = "~/Views/Dashboard/_TopBroadcastCountries.cshtml";
 
+        string PATH_DashboardReportsOverview = "~/Views/Dashboard/Reports/_Overview.cshtml";
+        List<string> topListNS = new List<string>();
+        Dictionary<string, string> topDictNS = new Dictionary<string, string>();
         #endregion
 
         public ActionResult Index()
@@ -80,6 +89,15 @@ namespace IQMedia.WebApplication.Controllers
                 dictViewModel.Add("DefaultEmailSender", customSettings.UseCustomerEmailDefault.Value ? sessionInformation.Email : ConfigurationManager.AppSettings["Sender"]);
                 dictViewModel.Add("UseClientSpecificData", dataImportClient != null && sessionInformation.IsClientSpecificData);
 
+                #region Cohort Model
+                CohortLogic cohortLogic = (CohortLogic)LogicFactory.GetLogic(LogicType.Cohort);
+                var cohorts = cohortLogic.GetAllCohorts();
+                // TODO - need way to get cohorts for a client
+                dictViewModel.Add("IndustryCohorts", cohorts);
+                // TODO - need way to determine "default" cohort for a client
+                dictViewModel.Add("DefaultCohort", cohorts[1]);
+                #endregion
+
                 ViewBag.MaxEmailAddresses = System.Configuration.ConfigurationManager.AppSettings["MaxDefaultEmailAddress"];
                 ViewBag.IsSuccess = true;
                 return View(dictViewModel);
@@ -95,8 +113,10 @@ namespace IQMedia.WebApplication.Controllers
                 TempData.Keep();
             }
         }
-
-        public ContentResult SummaryReportResults(DateTime? p_FromDate, DateTime? p_ToDate, List<string> p_SearchRequestIDs, Int16 p_SearchType, List<string> p_ThirdPartyDataTypeIDs)
+        
+        /*
+        [HttpPost]
+        public ContentResult SummaryReportResults(DateTime? p_FromDate, DateTime? p_ToDate, List<string> p_SearchRequestIDs, Int16 p_SearchType)
         {
 
 
@@ -130,18 +150,19 @@ namespace IQMedia.WebApplication.Controllers
 
                 return Content(IQMedia.WebApplication.Utility.CommonFunctions.GetSuccessFalseJson(), "application/json", Encoding.UTF8);
             }
-        }
+        }*/
 
+        /*
         private List<string> MultiLinechart(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate)
         {
             DashboardLogic dashboardLogic = (DashboardLogic)LogicFactory.GetLogic(LogicType.Dashboard);
             List<string> lstMultiLineChart = dashboardLogic.MultiLinechart(listOfSummaryReportData, p_FromDate, p_ToDate);
             return lstMultiLineChart;
-        }
+        }*/
 
         [HttpPost]
         public ContentResult GetAdhocSummaryData(string mediaIDs, string source, DateTime? fromDate, DateTime? toDate, List<string> searchRequestID, List<string> mediumTypes, string keyword, short? sentiment, short? prominenceValue, bool? isProminenceAudience, bool? isOnlyParents, bool? isRead, long? sinceID, List<string> dmaIds,
-                                                    bool isHeardFilter, bool isSeenFilter, bool isPaidFilter, bool isEarnedFilter, bool usePESHFilters, string showTitle, int? dayOfWeek, int? timeOfDay, bool isHour, bool isMonth)
+                                                    bool? isHeardFilter, bool? isSeenFilter, bool? isPaidFilter, bool? isEarnedFilter, bool? usePESHFilters, string showTitle, List<int> dayOfWeek, List<int> timeOfDay, bool? isHour, bool? isMonth)
         {
             try
             {
@@ -149,6 +170,7 @@ namespace IQMedia.WebApplication.Controllers
 
                 List<IQAgent_DaySummaryModel> listOfSummaryReportData = null;
                 bool isValidResponse = true;
+
                 if (!isOnlyParents.HasValue && !sinceID.HasValue)
                 {
                     string mediaIDXml = null;
@@ -159,14 +181,14 @@ namespace IQMedia.WebApplication.Controllers
                     }
 
                     DashboardLogic dashboardLogic = (DashboardLogic)LogicFactory.GetLogic(LogicType.Dashboard);
-                    listOfSummaryReportData = dashboardLogic.GetAdhocSummaryData(mediaIDXml, source, null).ListOfIQAgentSummary;
+                    listOfSummaryReportData = dashboardLogic.GetAdhocSummaryData(mediaIDXml, source, null, sessionInformation.ClientGUID, sessionInformation.MediaTypes).ListOfIQAgentSummary;
                 }
                 else
                 {
                     if (fromDate.HasValue && toDate.HasValue)
                     {
                         fromDate = Utility.CommonFunctions.GetGMTandDSTTime(fromDate);
-                        if (!isHour && !isMonth)
+                        if ((!isHour.HasValue || !isHour.Value) && (!isMonth.HasValue || !isMonth.Value))
                         {
                             toDate = toDate.Value.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
                         }
@@ -181,20 +203,10 @@ namespace IQMedia.WebApplication.Controllers
                     List<string> excludeMediumTypes = new List<string>();
                     if (mediumTypes == null || mediumTypes.Count == 0)
                     {
-                        if (!sessionInformation.Isv4TV) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.TV.ToString());
-                        if (!sessionInformation.Isv4NM) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.NM.ToString());
-                        if (!sessionInformation.Isv4SM)
+                        foreach (var mt in sessionInformation.MediaTypes.Where(m=>m.TypeLevel == 2 && !m.HasAccess))
                         {
-                            excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.SocialMedia.ToString());
-                            excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.Blog.ToString());
-                            excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.Forum.ToString());
-                            excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.FB.ToString());
-                            excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.IG.ToString());
+                            excludeMediumTypes.Add(mt.SubMediaType);
                         }
-                        if (!sessionInformation.Isv4TW) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.TW.ToString());
-                        if (!sessionInformation.Isv4TM) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.Radio.ToString());
-                        if (!sessionInformation.Isv4BLPM) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.PM.ToString());
-                        if (!sessionInformation.Isv4PQ) excludeMediumTypes.Add(Shared.Utility.CommonFunctions.CategoryType.PQ.ToString());
                     }
                     
                     IQAgentLogic iQAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
@@ -233,6 +245,13 @@ namespace IQMedia.WebApplication.Controllers
                     if ((bool)dictResults["IsValid"])
                     {
                         listOfSummaryReportData = (List<IQAgent_DaySummaryModel>)dictResults["Results"];
+
+                        // Set MediaType
+
+                        foreach (var sm in listOfSummaryReportData)
+                        {
+                            sm.MediaType = sessionInformation.MediaTypes.Where(mt => string.Compare(mt.SubMediaType, sm.SubMediaType, true) == 0 && mt.HasAccess).Single().MediaType;
+                        }
                     }
                     else
                     {
@@ -245,7 +264,7 @@ namespace IQMedia.WebApplication.Controllers
                     DateTime fDate;
                     DateTime tDate;
                     Int16 searchType;
-                    bool isUGCEnabled = false;
+                    bool isUGCEnabled = false;                    
 
                     // Only display UGC data if coming from Library/Reports
                     if (source.ToLower() == "library" || source.ToLower() == "report")
@@ -281,26 +300,12 @@ namespace IQMedia.WebApplication.Controllers
                         Number_Docs = s.NoOfDocs,
                         Number_Of_Hits = s.NoOfHits,
                         SearchRequestID = s.SearchRequestID,
-                        Query_Name = s.Query_Name
+                        Query_Name = s.Query_Name,
+                        DefaultMediaType = sessionInformation.MediaTypes.Where(mt => string.Compare(mt.MediaType, s.MediaType, true) == 0).Count() > 0 ? true : false
 
-                    }).ToList();
+                    }).ToList();                    
 
-                    lstSummaryReport.ForEach(s =>
-                    {
-                        // Combine ProQuest and BLPM data
-                        if (s.SubMediaType == Shared.Utility.CommonFunctions.CategoryType.PQ.ToString())
-                        {
-                            s.SubMediaType = Shared.Utility.CommonFunctions.CategoryType.PM.ToString();
-                        }
-
-                        // Combine Facebook, Instagram, and SocialMedia data
-                        if (s.SubMediaType == Shared.Utility.CommonFunctions.CategoryType.FB.ToString() || s.SubMediaType == Shared.Utility.CommonFunctions.CategoryType.IG.ToString())
-                        {
-                            s.SubMediaType = Shared.Utility.CommonFunctions.CategoryType.SocialMedia.ToString();
-                        }
-                    });
-
-                    return GetJsonForAdhocSummary(lstSummaryReport, fDate, tDate, searchType, isUGCEnabled);
+                    return GetJsonForAdhocSummary(lstSummaryReport, fDate, tDate, searchType, sessionInformation, isUGCEnabled);
                 }
                 else
                 {
@@ -350,7 +355,7 @@ namespace IQMedia.WebApplication.Controllers
         }
 
         #region SummaryReport
-        public List<SummaryReportModel> GetSummaryReportData(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs, List<string> p_ThirdPartyDataTypeIDs, out IQAgent_DashBoardPrevSummaryModel iQAgent_DashBoardPrevSummaryModel)
+        public List<SummaryReportModel> GetSummaryReportData(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs, List<string> p_ThirdPartyDataTypeIDs, out IQAgent_DashBoardPrevSummaryModel iQAgent_DashBoardPrevSummaryModel, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
@@ -362,13 +367,11 @@ namespace IQMedia.WebApplication.Controllers
                     searchRequestXml = doc.ToString();
                 }
 
-                sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
                 DashboardLogic dashboardLogic = (DashboardLogic)LogicFactory.GetLogic(LogicType.Dashboard);
-                GoogleLogic googleLogic = (GoogleLogic)LogicFactory.GetLogic(LogicType.Google);
                 List<SummaryReportModel> lstSummaryReport = null;
                 if (p_SearchType == 0)
                 {
-                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, null, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, null, searchRequestXml, p_MediaTypeList);
                     iQAgent_DashBoardPrevSummaryModel = iQAgent_DashBoardModel.PrevIQAgentSummary;
                     lstSummaryReport = iQAgent_DashBoardModel.ListOfIQAgentSummary.Select(s => new SummaryReportModel()
                     {
@@ -380,13 +383,14 @@ namespace IQMedia.WebApplication.Controllers
                         Number_Docs = s.NoOfDocs,
                         Number_Of_Hits = s.NoOfHits,
                         SearchRequestID = s.SearchRequestID,
-                        Query_Name = s.Query_Name
+                        Query_Name = s.Query_Name,
+                        DefaultMediaType = p_MediaTypeList.Where(mt => string.Compare(mt.MediaType, s.MediaType,true) == 0).Count() > 0
 
                     }).ToList();
                 }
                 else if (p_SearchType == 1)
                 {
-                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, null, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, null, searchRequestXml, p_MediaTypeList);
                     iQAgent_DashBoardPrevSummaryModel = iQAgent_DashBoardModel.PrevIQAgentSummary;
                     lstSummaryReport = iQAgent_DashBoardModel.ListOfIQAgentSummary.Select(s => new SummaryReportModel()
                     {
@@ -398,14 +402,15 @@ namespace IQMedia.WebApplication.Controllers
                         Number_Docs = s.NoOfDocs,
                         Number_Of_Hits = s.NoOfHits,
                         SearchRequestID = s.SearchRequestID,
-                        Query_Name = s.Query_Name
+                        Query_Name = s.Query_Name,
+                        DefaultMediaType = p_MediaTypeList.Where(mt => string.Compare(mt.MediaType, s.MediaType, true) == 0).Count() > 0
 
                     }).ToList();
 
                 }
                 else if (p_SearchType == 3)
                 {
-                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, null, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    IQAgent_DashBoardModel iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, null, searchRequestXml, p_MediaTypeList);
                     iQAgent_DashBoardPrevSummaryModel = iQAgent_DashBoardModel.PrevIQAgentSummary;
                     lstSummaryReport = iQAgent_DashBoardModel.ListOfIQAgentSummary.Select(s => new SummaryReportModel()
                     {
@@ -417,7 +422,8 @@ namespace IQMedia.WebApplication.Controllers
                         Number_Docs = s.NoOfDocs,
                         Number_Of_Hits = s.NoOfHits,
                         SearchRequestID = s.SearchRequestID,
-                        Query_Name = s.Query_Name
+                        Query_Name = s.Query_Name,
+                        DefaultMediaType = p_MediaTypeList.Where(mt => string.Compare(mt.MediaType, s.MediaType, true) == 0).Count() > 0
 
                     }).ToList();
                 }
@@ -509,9 +515,13 @@ namespace IQMedia.WebApplication.Controllers
                 }
    
                 sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+
                 if (p_Medium.ToLower() == IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.Overview.ToString().ToLower())
                 {
-                    return SummaryReportResults(FromDate, ToDate, p_SearchRequestIDs, p_SearchType, p_ThirdPartyDataTypeIDs);
+                    IQAgent_DashBoardPrevSummaryModel PrevIQAgentSummary = null;
+                    List<SummaryReportModel> listOfSummaryReportData = GetSummaryReportData(sessionInformation.ClientGUID, FromDate, ToDate, p_SearchType, p_SearchRequestIDs, p_ThirdPartyDataTypeIDs, out PrevIQAgentSummary, sessionInformation.MediaTypes);
+
+                    return GetJsonSummaryWise(listOfSummaryReportData, FromDate, ToDate, p_SearchType, p_SearchRequestIDs, PrevIQAgentSummary,sessionInformation);
                 }
                 else if (p_Medium.ToLower() == IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.ClientSpecific.ToString().ToLower())
                 {
@@ -559,8 +569,18 @@ namespace IQMedia.WebApplication.Controllers
                 }
                 else
                 {
-                    IQAgent_DashBoardModel iQAgent_DashBoardModel = GetDaySummaryMediumWise(sessionInformation.ClientGUID, FromDate, ToDate, p_Medium, p_SearchType, p_SearchRequestIDs);
-                    return GetJsonMediumWise(p_Medium, iQAgent_DashBoardModel, FromDate, ToDate, p_SearchType, p_SearchRequestIDs);
+                    IQAgent_DashBoardModel iQAgent_DashBoardModel = GetDaySummaryMediumWise(sessionInformation.ClientGUID, FromDate, ToDate, p_Medium, p_SearchType, p_SearchRequestIDs, sessionInformation.MediaTypes);
+
+                    var mediaType = sessionInformation.MediaTypes.Where(mt => mt.TypeLevel == 1 && string.Compare(p_Medium, mt.MediaType, true) == 0).Single();
+
+                    if (mediaType.HasAccess)
+                    {
+                        return GetJsonMediumWise(mediaType, iQAgent_DashBoardModel, FromDate, ToDate, p_SearchType, p_SearchRequestIDs, sessionInformation); 
+                    }
+                    else
+                    {
+                        throw new CustomException("User doesn't have requested media type \""+ mediaType.MediaType+"\" access.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -915,8 +935,7 @@ namespace IQMedia.WebApplication.Controllers
                 }
 
                 DataImportLogic dataImportLogic = (DataImportLogic)LogicFactory.GetLogic(LogicType.DataImport);
-                List<SonyTableModel> lstExportData = dataImportLogic.GetSonyExportData(sessionInformation.ClientGUID, FromDate, ToDate, p_SearchRequestIDs, p_TableType, sessionInformation.Isv4TM, sessionInformation.Isv4TV,
-                                                                                        sessionInformation.Isv4NM, sessionInformation.Isv4TW, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ, sessionInformation.Isv4SM);
+                List<SonyTableModel> lstExportData = dataImportLogic.GetSonyExportData(sessionInformation.ClientGUID, FromDate, ToDate, p_SearchRequestIDs, p_TableType, sessionInformation.MediaTypes);
 
                 string csvData = GetSonyCSVData(lstExportData, p_TableType);
                 string TempCSVPath = ConfigurationManager.AppSettings["TempHTML-PDFPath"] + "Download\\Dashboard\\CSV\\" + sessionInformation.CustomerGUID + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "_Dashboard.csv";
@@ -1041,8 +1060,7 @@ namespace IQMedia.WebApplication.Controllers
                 sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
 
                 DataImportLogic dataImportLogic = (DataImportLogic)LogicFactory.GetLogic(LogicType.DataImport);
-                List<SonySummaryModel> lstSummaryData = dataImportLogic.GetSonySummaryData(sessionInformation.ClientGUID, p_FromDate, p_ToDate, p_SearchType, p_SearchRequestIDs, p_Artists, p_Albums, p_Tracks, p_TableType,
-                                                                                            sessionInformation.Isv4TM, sessionInformation.Isv4TV, sessionInformation.Isv4NM, sessionInformation.Isv4TW, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ, sessionInformation.Isv4SM);
+                List<SonySummaryModel> lstSummaryData = dataImportLogic.GetSonySummaryData(sessionInformation.ClientGUID, p_FromDate, p_ToDate, p_SearchType, p_SearchRequestIDs, p_Artists, p_Albums, p_Tracks, p_TableType, sessionInformation.MediaTypes);
 
                 Dictionary<long, string> dictSelectedAgents = new Dictionary<long, string>();
                 if (p_SearchRequestIDs != null && p_SearchRequestIDs.Count > 0)
@@ -1052,8 +1070,7 @@ namespace IQMedia.WebApplication.Controllers
                                                 .ToDictionary(t => t.ID, t => t.QueryName);
                 }
 
-                return dataImportLogic.SonyLineChart(lstSummaryData, p_FromDate, p_ToDate, p_SearchType, null, sessionInformation.Isv4TM, dictSelectedAgents, sessionInformation.Isv4NM, 
-                                                                                sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ, p_Artists, p_Albums, p_Tracks);
+                return dataImportLogic.SonyLineChart(lstSummaryData, p_FromDate, p_ToDate, p_SearchType, null, dictSelectedAgents, p_Artists, p_Albums, p_Tracks, sessionInformation.MediaTypes.Where(w => !w.IsArchiveOnly).ToList());
             }
             catch (Exception ex)
             {
@@ -1092,6 +1109,15 @@ namespace IQMedia.WebApplication.Controllers
                 string DateTimeStamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
 
                 string TempPDFPath = ConfigurationManager.AppSettings["TempHTML-PDFPath"] + "Download\\Dashboard\\PDF\\" + sessionInformation.CustomerGUID + "_" + DateTimeStamp + ".pdf";
+
+                //string TempPDFPath = "C:\\Logs\\Download\\Dashboard\\PDF\\" + sessionInformation.CustomerGUID + "_" + DateTimeStamp + ".pdf";
+                //string TempHTMLPath = "C:\\Logs\\Download\\Dashboard\\HTML\\" + sessionInformation.CustomerGUID + "_" + DateTimeStamp + ".html";
+
+                //using (FileStream fs = System.IO.File.Create(TempHTMLPath))
+                //{
+                //    Byte[] info = new UTF8Encoding(true).GetBytes(html);
+                //    fs.Write(info, 0, info.Length);
+                //}
 
                 bool IsFileGenerated = false;
 
@@ -1453,12 +1479,10 @@ namespace IQMedia.WebApplication.Controllers
 
         #region Utility
 
-        public IQAgent_DashBoardModel GetDaySummaryMediumWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, Int16 p_SearchType, List<string> p_SearchRequestIDs)
+        public IQAgent_DashBoardModel GetDaySummaryMediumWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, Int16 p_SearchType, List<string> p_SearchRequestIDs, List<IQ_MediaTypeModel> p_MediaTypeList)
         {
             try
             {
-                sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
-
                 string searchRequestXml = null;
 
                 if (p_SearchRequestIDs != null && p_SearchRequestIDs.Count > 0)
@@ -1471,15 +1495,15 @@ namespace IQMedia.WebApplication.Controllers
                 IQAgent_DashBoardModel iQAgent_DashBoardModel = null;
                 if (p_SearchType == 0)
                 {
-                    iQAgent_DashBoardModel = dashboardLogic.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    iQAgent_DashBoardModel = dashboardLogic.GetHourSummaryDataHourWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, searchRequestXml, p_MediaTypeList);
                 }
                 else if (p_SearchType == 1)
                 {
-                    iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataDayWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, searchRequestXml, p_MediaTypeList);
                 }
                 else if (p_SearchType == 3)
                 {
-                    iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, sessionInformation.Isv4TM, searchRequestXml, sessionInformation.Isv4NM, sessionInformation.Isv4SM, sessionInformation.Isv4TW, sessionInformation.Isv4TV, sessionInformation.Isv4BLPM, sessionInformation.Isv4PQ);
+                    iQAgent_DashBoardModel = dashboardLogic.GetDaySummaryDataMonthWise(p_ClientGUID, p_FromDate, p_ToDate, p_Medium, searchRequestXml, p_MediaTypeList);
                 }
 
                 return iQAgent_DashBoardModel;
@@ -1527,11 +1551,11 @@ namespace IQMedia.WebApplication.Controllers
             }
         }
 
-        public ContentResult GetJsonMediumWise(string p_Medium, IQAgent_DashBoardModel iQAgent_DashBoardModel, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs)
+        public ContentResult GetJsonMediumWise(IQ_MediaTypeModel p_MediaType, IQAgent_DashBoardModel iQAgent_DashBoardModel, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs,ActiveUser p_ActiveUser)
         {
             try
             {
-                Dictionary<string, object> dictResults = CommonController.GetDashboardMediumResults(p_Medium, iQAgent_DashBoardModel, p_FromDate, p_ToDate, p_SearchType, p_SearchRequestIDs, true);
+                Dictionary<string, object> dictResults = CommonController.GetDashboardMediumResults(p_MediaType, iQAgent_DashBoardModel, p_FromDate, p_ToDate, p_SearchType, p_SearchRequestIDs, true,p_ActiveUser);
                 DashboardMediaResults dashboardMediaResults = (DashboardMediaResults)dictResults["MediaResults"];
                 dynamic jsonResult = (ExpandoObject)dictResults["JsonResult"];
 
@@ -1542,29 +1566,91 @@ namespace IQMedia.WebApplication.Controllers
                 var TopPrintPublicationsHTML = string.Empty;
                 var topPrintAuthorsHTML = string.Empty;
                 var topCountriesHTML = string.Empty;
-                if (p_Medium == CommonFunctions.CategoryType.TV.ToString())
+
+                Func<DataList, List<DashboardTopResultsModel>, string> RenderDataList = (dl,data) =>
+                {
+                    var templateHTML = "";
+
+                    Dictionary<string, object> dictTopResults = new Dictionary<string, object>();
+                    dictTopResults.Add("Results", data);
+                    dictTopResults.Add("Medium", p_MediaType);
+                    dictTopResults.Add("TitleGrid", dl.Title);
+                    dictTopResults.Add("TitleColumn", dl.TitleColumn);
+                    dictTopResults.Add("DataType", dl.DataType);
+                    dictTopResults.Add("CompeteAccess", p_ActiveUser.IsCompeteData);
+                    dictTopResults.Add("NielsenAccess", p_ActiveUser.IsNielsenData);                    
+
+                    switch (dl.TemplateType)
+                    {
+                        case TemplateTypes.TVDMA:
+                            templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastDMA, dictTopResults);
+                            break;
+                        case TemplateTypes.TVStation:
+                            templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastStation, dictTopResults);
+                            break;
+                        case TemplateTypes.TVCountry:
+                            templateHTML = RenderPartialToString(PATH_DashboardTopBroadcastCountries, dictTopResults);
+                            break;
+                        case TemplateTypes.NMDMA:
+                            templateHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsDMA, dictTopResults);
+                            break;
+                        case TemplateTypes.Common:                            
+                            templateHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsSites, dictTopResults);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return templateHTML;
+                };
+
+                List<Tuple<string, string>> dataLists = new List<Tuple<string, string>>();
+                var listHtml = "";
+
+                foreach (DataList dl in p_MediaType.DashboardData.DataLists)
+                {
+                    switch (dl.ListType)
+                    {
+                        case ListTypes.Country:
+                            listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopCountryBroadCast);                            
+                            break;
+                        case ListTypes.DMA:
+                            listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopDMABroadCast);
+                            break;
+                        case ListTypes.Station:
+                            listHtml = RenderDataList(dl, iQAgent_DashBoardModel.ListOfTopStationBroadCast);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    dataLists.Add(Tuple.Create(dl.TemplateType.ToString(), listHtml));
+                }
+
+                /*
+                if (p_MediaType == CommonFunctions.CategoryType.TV.ToString())
                 {
                     TopDmasHTML = RenderPartialToString(PATH_DashboardTopBroadcastDMA, iQAgent_DashBoardModel.ListOfTopDMABroadCast);
                     TopStationsHTML = RenderPartialToString(PATH_DashboardTopBroadcastStation, iQAgent_DashBoardModel.ListOfTopStationBroadCast);
                     topCountriesHTML = RenderPartialToString(PATH_DashboardTopBroadcastCountries, iQAgent_DashBoardModel.ListOfTopCountryBroadCast);
                 }
-                else if (p_Medium != CommonFunctions.CategoryType.Radio.ToString() && p_Medium != CommonFunctions.CategoryType.PM.ToString())
+                else if (p_MediaType != CommonFunctions.CategoryType.Radio.ToString() && p_MediaType != CommonFunctions.CategoryType.PM.ToString())
                 {
-                    if (p_Medium == CommonFunctions.CategoryType.NM.ToString())
+                    if (p_MediaType == CommonFunctions.CategoryType.NM.ToString())
                     {
                         TopOnlineNewsDmasHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsDMA, iQAgent_DashBoardModel.ListOfTopDMABroadCast);
                     }
                     Dictionary<string, object> dicTopSites = new Dictionary<string, object>();
 
                     dicTopSites.Add("Results", iQAgent_DashBoardModel.ListOfTopStationBroadCast);
-                    dicTopSites.Add("Medium", p_Medium);
+                    dicTopSites.Add("Medium", p_MediaType);
                     TopOnlineNewsSitesHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsSites, dicTopSites);
                 }
-                else if (p_Medium == IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM.ToString() && sessionInformation.Isv4PQ)
+                else if (p_MediaType == IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM.ToString() && sessionInformation.Isv4PQ)
                 {
                     Dictionary<string, object> dictTopPubs = new Dictionary<string, object>();
                     dictTopPubs.Add("Results", iQAgent_DashBoardModel.ListOfTopStationBroadCast);
-                    dictTopPubs.Add("Medium", p_Medium);
+                    dictTopPubs.Add("Medium", p_MediaType);
                     dictTopPubs.Add("TitleGrid", "Publications");
                     dictTopPubs.Add("TitleColumn", "Publication");
                     dictTopPubs.Add("DataType", "pub");
@@ -1572,27 +1658,28 @@ namespace IQMedia.WebApplication.Controllers
 
                     Dictionary<string, object> dictTopAuthors = new Dictionary<string, object>();
                     dictTopAuthors.Add("Results", iQAgent_DashBoardModel.ListOfTopDMABroadCast);
-                    dictTopAuthors.Add("Medium", p_Medium);
+                    dictTopAuthors.Add("Medium", p_MediaType);
                     dictTopAuthors.Add("TitleGrid", "Authors");
                     dictTopAuthors.Add("TitleColumn", "Author");
                     dictTopAuthors.Add("DataType", "author");
                     topPrintAuthorsHTML = RenderPartialToString(PATH_DashboardTopOnlineNewsSites, dictTopAuthors);
                 }
-
+                */
                 // Determine if the client has Canadian TV. If not, hide Canadian heat map.
                 IQClient_CustomSettingsModel customSettings = (IQClient_CustomSettingsModel)TempData["CustomSettings"];
                 List<string> tvCountries = customSettings.IQTVCountry.Split(',').ToList();
                 List<string> tvRegions = customSettings.IQTVRegion.Split(',').ToList();
-                dashboardMediaResults.ShowCanadaMap = p_Medium == "NM" || (p_Medium == "TV" && tvCountries.Contains("2") && tvRegions.Contains("2"));
+                dashboardMediaResults.ShowCanadaMap = (p_MediaType.DashboardData.UseCanadaMap && (!p_MediaType.DashboardData.CheckCanadaSettings || (tvCountries.Contains("2") && tvRegions.Contains("2"))));
 
                 jsonResult.HTML = RenderPartialToString(PATH_DashboardBroadCastPartialView, dashboardMediaResults);
-                jsonResult.p_TopDmasHTML = TopDmasHTML;
+                /*jsonResult.p_TopDmasHTML = TopDmasHTML;
                 jsonResult.p_TopStationsHTML = TopStationsHTML;
                 jsonResult.p_TopOnlineNewsDmasHTML = TopOnlineNewsDmasHTML;
                 jsonResult.p_TopOnlineNewsSitesHTML = TopOnlineNewsSitesHTML;
                 jsonResult.p_TopPrintPublicationsHTML = TopPrintPublicationsHTML;
                 jsonResult.p_TopPrintAuthorsHTML = topPrintAuthorsHTML;
-                jsonResult.p_TopCountriesHTML = topCountriesHTML;
+                jsonResult.p_TopCountriesHTML = topCountriesHTML;*/
+                jsonResult.DataLists = dataLists;
                 jsonResult.isSuccess = true;
 
                 return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
@@ -1607,7 +1694,7 @@ namespace IQMedia.WebApplication.Controllers
             }
         }
 
-        private ContentResult GetJsonSummaryWise(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs, IQAgent_DashBoardPrevSummaryModel p_PrevIQAgentSummary)
+        private ContentResult GetJsonSummaryWise(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, Int16 p_SearchType, List<string> p_SearchRequestIDs, IQAgent_DashBoardPrevSummaryModel p_PrevIQAgentSummary, ActiveUser p_User)
         {
             try
             {
@@ -1621,7 +1708,7 @@ namespace IQMedia.WebApplication.Controllers
                                                 .ToDictionary(t => t.ID, t => t.QueryName);
                 }
 
-                Dictionary<string, object> dictResults = CommonController.GetDashboardOverviewResults(listOfSummaryReportData, p_FromDate, p_ToDate, p_SearchType, dictSelectedAgents, p_PrevIQAgentSummary, (List<ThirdPartyDataTypeModel>)TempData["ThirdPartyDataTypes"]);
+                Dictionary<string, object> dictResults = CommonController.GetDashboardOverviewResults(listOfSummaryReportData, p_FromDate, p_ToDate, p_SearchType, dictSelectedAgents, p_PrevIQAgentSummary, (List<ThirdPartyDataTypeModel>)TempData["ThirdPartyDataTypes"], p_User);
                 DashboardOverviewResults dashboardOverviewResults = (DashboardOverviewResults)dictResults["OverviewResults"];
                 dynamic jsonResult = (ExpandoObject)dictResults["JsonResult"];
 
@@ -1640,11 +1727,11 @@ namespace IQMedia.WebApplication.Controllers
             }
         }
 
-        private ContentResult GetJsonForAdhocSummary(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, short p_SearchType, bool isUGCEnabled = false)
+        private ContentResult GetJsonForAdhocSummary(List<SummaryReportModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, short p_SearchType, ActiveUser p_User, bool isUGCEnabled = false)
         {
             try
             {
-                Dictionary<string, object> dictResults = CommonController.GetDashboardAdhocResults(listOfSummaryReportData, p_FromDate, p_ToDate, p_SearchType, 850, isUGCEnabled);
+                Dictionary<string, object> dictResults = CommonController.GetDashboardAdhocResults(listOfSummaryReportData, p_FromDate, p_ToDate, p_SearchType, 850, isUGCEnabled,p_User);
                 DashboardOverviewResults dashboardOverviewResults = (DashboardOverviewResults)dictResults["OverviewResults"];
                 dynamic jsonResult = (ExpandoObject)dictResults["JsonResult"];
 
@@ -1682,8 +1769,6 @@ namespace IQMedia.WebApplication.Controllers
             cssData.Append(" li.liDmaMap{width:70%;float:left;}   li.liDmaChart{width:30%;float:left;}   \n");
             cssData.Append(" .divSentimentNeg div{overflow:visible;} \n .divSentimentPos div{overflow:visible;} \n .borderBottom{border-bottom:none;} \n body{background:none;}\n");
 
-
-
             p_HTML = "<html><head><style type=\"text/css\">" + Convert.ToString(cssData) + "</style></head>" + "<body>" + "<img src=\"../../" + ConfigurationManager.AppSettings["IQMediaEmailLogo"] + "\" alt='IQMedia Logo'/>" + p_HTML + "</body></html>";
 
             HtmlDocument doc = new HtmlDocument();
@@ -1717,9 +1802,11 @@ namespace IQMedia.WebApplication.Controllers
 
             HtmlNode dpDurationDiv = doc.DocumentNode.SelectSingleNode("//div[@id='divDuration']");
             var newdpDurationNodeHTML = string.Empty;
-            var newdpDurationNode = HtmlNode.CreateNode(newdpDurationNodeHTML);
-            dpDurationDiv.ParentNode.ReplaceChild(newdpDurationNode, dpDurationDiv);
-
+            if (dpDurationDiv != null)
+            {
+                var newdpDurationNode = HtmlNode.CreateNode(newdpDurationNodeHTML);
+                dpDurationDiv.ParentNode.ReplaceChild(newdpDurationNode, dpDurationDiv);
+            }
 
             HtmlNode dpDashboardUtilityDiv = doc.DocumentNode.SelectSingleNode("//div[@id='divDashboardUtility']");
             var newdpDashboardUtilityNodeHTML = string.Empty;
@@ -1745,7 +1832,29 @@ namespace IQMedia.WebApplication.Controllers
                 dpMapTooltipCompareDiv.ParentNode.ReplaceChild(newMapTooltipNode, dpMapTooltipCompareDiv);
             }
 
+            //HtmlNode divMediumData = doc.DocumentNode.SelectSingleNode("//div[@id='divMediumData']");
+            //if (divMediumData != null)
+            //{
+            //    divMediumData.SetAttributeValue("style", "width:1000px;");
+            //}
 
+            //HtmlNode divHeader = doc.DocumentNode.SelectSingleNode("//div[@id='divOverviewHeader']");
+            //if (divHeader != null)
+            //{
+            //    divHeader.SetAttributeValue("style", "width:1000px;");
+            //}
+
+            //HtmlNode divCharts = doc.DocumentNode.SelectSingleNode("//div[@id='divCharts']");
+            //if (divCharts != null)
+            //{
+            //    divCharts.SetAttributeValue("style", "width:1000px;");
+            //}
+
+            //HtmlNode chart0 = doc.DocumentNode.SelectSingleNode("//div[@id='divChart0']");
+            //if (chart0 != null)
+            //{
+            //    chart0.SetAttributeValue("style", "width:450px;");
+            //}
 
             foreach (HtmlNode link in doc.DocumentNode.SelectNodes("//img[@class='ui-datepicker-trigger']"))
             {
@@ -1770,6 +1879,1013 @@ namespace IQMedia.WebApplication.Controllers
             {
                 isSuccess = true
             });
+        }
+
+        #endregion
+
+        #region Cohorts
+
+        [HttpPost]
+        public ContentResult GetReport(DateTime startDate, DateTime endDate, string report, string cohortID = null, string subGroup = null)
+        {
+            try
+            {
+                sessionInformation = WebAppUtil.ActiveUserMgr.GetActiveUser();
+                AnalyticsLogic analyticsLogic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                IQAgentLogic agentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+                CohortLogic cohortLogic = (CohortLogic)LogicFactory.GetLogic(LogicType.Cohort);
+
+                Log4NetLogger.Debug(string.Format("GetReport"));
+                Log4NetLogger.Debug(string.Format("DateRange: {0} - {1}", startDate, endDate));
+                Log4NetLogger.Debug(string.Format("report: {0}", report));
+                Log4NetLogger.Debug(string.Format("cohortID: {0}", string.IsNullOrEmpty(cohortID) ? "null" : cohortID));
+                Log4NetLogger.Debug(string.Format("subGroup: {0}", string.IsNullOrEmpty(subGroup) ? "null" : subGroup));
+
+                string selectedCohort;
+
+                if (cohortID != null)
+                {
+                    selectedCohort = cohortID;
+                }
+                else
+                {
+                    // TODO - method to get default cohort for client
+                    selectedCohort = "1";   // Cohort 1 is Automobiles
+                    cohortID = selectedCohort;
+                }
+
+                Dictionary<long, string> cohorts = cohortLogic.GetAllCohorts();
+                Dictionary<long, string> industryAgents = cohortLogic.GetCohortAgents(selectedCohort);
+                Dictionary<long, string> allIndustryAgents = industryAgents;
+                string selectedOverview = "";
+
+                if (report == "Brand")
+                {
+                    Log4NetLogger.Debug("Report == Brand");
+                    // Only get selected cohort agent
+                    if (subGroup != null)
+                    {
+                        industryAgents = industryAgents.Where(w => w.Key.ToString() == subGroup).Select(s => new { s.Key, s.Value }).ToDictionary(ag => ag.Key, ag => ag.Value);
+                        selectedOverview = industryAgents.First().Value;
+                    }
+                    else
+                    {
+                        KeyValuePair<long, string> firstKvP = industryAgents.First();
+                        subGroup = firstKvP.Key.ToString();
+                        selectedOverview = firstKvP.Value;
+                        industryAgents = new Dictionary<long, string>();
+                        industryAgents.Add(firstKvP.Key, firstKvP.Value);
+                        Log4NetLogger.Debug(string.Format("Sub group set to {0}", subGroup));
+                    }
+                }
+
+                List<IQ_MediaTypeModel> smts = sessionInformation.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInformation.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).ToList();
+                Dictionary<string, string> markets = analyticsLogic.GetAllDMAs();
+
+                XDocument xDoc = new XDocument(new XElement(
+                    "list",
+                    from i in industryAgents
+                    select new XElement("item",
+                        new XAttribute("id", i.Key),
+                        new XAttribute("fromDate", startDate.ToString()),
+                        new XAttribute("toDate", endDate.ToString()),
+                        new XAttribute("fromDateGMT", WebAppCommon.GetGMTandDSTTime(startDate).ToString()),
+                        new XAttribute("toDateGMT", WebAppCommon.GetGMTandDSTTime(endDate).ToString())
+                    )
+                ));
+                string searchXML = xDoc.ToString();
+
+                var analyticsRequest = new AnalyticsRequest() {
+                    DateFrom = startDate.ToString(),
+                    DateTo = endDate.ToString(),
+                    HCChartType = HCChartTypes.spline,
+                    IsCompareMode = false,
+                    IsFilter = false,
+                    ChartType = ChartType.Line,
+                    DateInterval = "day",
+                    PageType = "dashboard",
+                    RequestIDs = industryAgents.Keys.ToList(),
+                    Tab = SecondaryTabID.Overview,
+                    SummationProperty = SummationProperty.Docs,
+                    PESHTypes = new List<string>()
+                };
+
+                AnalyticsDataModel requestedData = new AnalyticsDataModel();
+                AnalyticsDataModel earnedData = new AnalyticsDataModel();
+                List<CohortSolrFacet> networkTableFacets = new List<CohortSolrFacet>();
+                List<CohortSolrFacet> programTableFacets = new List<CohortSolrFacet>();
+                List<CohortSolrFacet> stationTableFacets = new List<CohortSolrFacet>();
+                string pmgUrl = WebAppCommon.GeneratePMGUrl(WebAppCommon.PMGUrlType.FE.ToString(), null, null);
+                List<string> SRIDs = industryAgents.Keys.Select(s => s.ToString()).ToList();
+                List<string> topFacetList = new List<string>();
+                string dmaID = null;
+                CohortSolrFacet selectedFacet = new CohortSolrFacet();
+                List<HtmlGenericControl> dropDownItems = new List<HtmlGenericControl>();
+
+                if (report == "Overview" || report == "Market" || report == "Brand")
+                {
+                    requestedData = analyticsLogic.GetDaySummaryData(sessionInformation.ClientGUID, searchXML, "", sessionInformation.gmt, sessionInformation.dst, false, true);
+
+                    foreach (AnalyticsSummaryModel summary in requestedData.SummaryDataList)
+                    {
+                        if (!string.IsNullOrEmpty(summary.SubMediaType))
+                        {
+                            var subMediaType = smts.Where(sm => sm.SubMediaType == summary.SubMediaType);
+                            summary.SMTDisplayName = subMediaType.Any() ? subMediaType.First().DisplayName : "";
+                        }
+                        if (!string.IsNullOrEmpty(summary.Market))
+                        {
+                            var marketID = markets.Where(dma => dma.Value == summary.Market);
+                            summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                        }
+                        if (summary.MarketID == null)
+                        {
+                            summary.MarketID = -1;
+                        }
+                        if (string.IsNullOrEmpty(summary.SubMediaType) || string.IsNullOrWhiteSpace(summary.SubMediaType))
+                        {
+                            summary.SubMediaType = "";
+                        }
+                    }
+
+                    earnedData.SummaryDataList = requestedData.SummaryDataList.Where(w => !w.SubMediaType.Equals("TV")).ToList();
+                    requestedData.SummaryDataList = requestedData.SummaryDataList.Where(w => w.SubMediaType.Equals("TV")).ToList();
+
+                    // If market tab - need to limit data to only that market
+                    if (report == "Market")
+                    {
+                        // Trim paid data to only specified market
+                        if (subGroup != null)
+                        {
+                            dmaID = subGroup;
+                            selectedOverview = markets[dmaID];
+                            if (requestedData.SummaryDataList.Any(a => a.MarketID.ToString().Equals(subGroup)))
+                            {
+                                requestedData.SummaryDataList = requestedData.SummaryDataList.Where(w => w.MarketID.ToString().Equals(subGroup)).ToList();
+                            }
+                            else
+                            {
+                                // Selected market is not present in the data
+                                requestedData.SummaryDataList = new List<AnalyticsSummaryModel>();
+                            }
+                        }
+                        else
+                        {
+                            // If no market selected on page - need to choose the top market
+                            if (requestedData.SummaryDataList.Any())
+                            {
+                                // Get top market
+                                AnalyticsSummaryModel topMarket = requestedData.SummaryDataList.OrderByDescending(o => o.IQMediaValue).First();
+                                subGroup = dmaID = topMarket.MarketID.ToString();
+
+                                // Trim requested data to top market
+                                requestedData.SummaryDataList = requestedData.SummaryDataList.Where(w => w.MarketID.Equals(topMarket.MarketID)).ToList();
+                                selectedOverview = requestedData.SummaryDataList.First().Market;
+                            }
+                            else
+                            {
+                                // If there is no data - no markets - default to National simply for visual continuity 
+                                subGroup = "1";
+                                selectedOverview = "National";
+                            }
+                        }
+                    }
+                    else if (report == "Overview")
+                    {
+                        subGroup = cohortID;
+                        selectedOverview = cohorts[Convert.ToInt64(cohortID)];
+                    }
+
+                    if (SRIDs.Count > 0)
+                    {
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+                        networkTableFacets = cohortLogic.GetTopNetworks(pmgUrl, startDate, endDate, SRIDs, dmaID, null, null, false);
+                        sw.Stop();
+                        Log4NetLogger.Debug(string.Format("network facet: {0} ms", sw.ElapsedMilliseconds));
+
+                        sw.Reset();
+                        sw.Start();
+                        programTableFacets = cohortLogic.GetTopPrograms(pmgUrl, startDate, endDate, SRIDs, dmaID, null, null, false);
+                        sw.Stop();
+                        Log4NetLogger.Debug(string.Format("show facet: {0} ms", sw.ElapsedMilliseconds));
+
+                        sw.Reset();
+                        sw.Start();
+                        stationTableFacets = cohortLogic.GetTopStations(pmgUrl, startDate, endDate, SRIDs, dmaID, null, null, false);
+                        sw.Stop();
+                        Log4NetLogger.Debug(string.Format("station facet: {0} ms", sw.ElapsedMilliseconds));
+                    }
+
+                    if (report == "Brand")
+                    {
+                        dropDownItems = CreateCohortListItems(report, new List<CohortSolrFacet>(), subGroup, allIndustryAgents);
+                    }
+                    else
+                    {
+                        dropDownItems = CreateCohortListItems(report, networkTableFacets, subGroup, new Dictionary<long,string>());
+                    }
+                }
+                else if (report == "Network")
+                {
+                    Stopwatch ntwkSw = new Stopwatch();
+                    ntwkSw.Start();
+                    // If network tab - need to limit data to only that network - get ALL Networks initially (to build dropdown selection)
+                    List<CohortSolrFacet> networkFacets = networkTableFacets = cohortLogic.GetTopNetworks(pmgUrl, startDate, endDate, SRIDs, null, null, null, true);
+                    ntwkSw.Stop();
+                    Log4NetLogger.Debug(string.Format("Main Network Facet: {0} ms {1} facets", ntwkSw.ElapsedMilliseconds, networkFacets.Count));
+                    ntwkSw.Reset();
+                    if (subGroup != null)
+                    {
+                        // If subGroup already known, only want this network
+                        topFacetList = new List<string>() { subGroup };
+                        // Also need the top network facet object to contain network name
+                        selectedFacet = networkFacets.Where(w => w.Name.Replace(" ", "").Equals(subGroup)).DefaultIfEmpty(null).FirstOrDefault();
+                    }
+                    else
+                    {
+                        // If no specific network selected - need the top network so get facets
+                        selectedFacet = networkFacets.OrderByDescending(o => o.AdValue).First();
+                        topFacetList = new List<string>() { selectedFacet.Name };
+                        subGroup = selectedFacet.Name.Replace(" ", "");
+                    }
+
+                    selectedOverview = selectedFacet.Name;
+                    analyticsRequest.Tab = SecondaryTabID.Networks;
+
+                    ntwkSw.Start();
+                    requestedData = GetNetworkShowSummaries(sessionInformation.ClientGUID, analyticsRequest, topFacetList);
+                    ntwkSw.Stop();
+                    Log4NetLogger.Debug(string.Format("Network DB Call: {0} ms", ntwkSw.ElapsedMilliseconds));
+                    ntwkSw.Reset();
+
+                    // Give markets their correct ID 
+                    foreach (AnalyticsSummaryModel summary in requestedData.SummaryDataList)
+                    {
+                        if (!string.IsNullOrEmpty(summary.Market) && summary.MarketID == null)
+                        {
+                            var marketID = markets.Where(dma => dma.Value == summary.Market);
+                            summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                        }
+                    }
+                    ntwkSw.Start();
+                    programTableFacets = cohortLogic.GetTopPrograms(pmgUrl, startDate, endDate, SRIDs, null, selectedFacet.Name, null, false);
+                    stationTableFacets = cohortLogic.GetTopStations(pmgUrl, startDate, endDate, SRIDs, null, selectedFacet.Name, null, false);
+                    ntwkSw.Stop();
+                    Log4NetLogger.Debug(string.Format("Program & Station facets: {0} ms", ntwkSw.ElapsedMilliseconds));
+
+                    dropDownItems = CreateCohortListItems(report, networkFacets, subGroup, new Dictionary<long,string>());
+
+                    analyticsRequest.Tab = SecondaryTabID.Overview;
+                }
+                else if (report == "Program")
+                {
+                    Stopwatch programSW = new Stopwatch();
+                    programSW.Start();
+                    // If show tab - need to limit data to only that show - get ALL shows initially (to build dropdown selection)
+                    List<CohortSolrFacet> programFacets = programTableFacets = cohortLogic.GetTopPrograms(pmgUrl, startDate, endDate, SRIDs, null, null, null, true);
+                    programSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Main Program Facet: {0} ms {1} facets", programSW.ElapsedMilliseconds, programFacets.Count));
+                    programSW.Reset();
+
+                    if (subGroup != null)
+                    {
+                        selectedFacet = programFacets.Where(w => w.Name.Replace(" ", "").Equals(subGroup)).DefaultIfEmpty(null).FirstOrDefault();
+                        topFacetList = new List<string> { selectedFacet.Name };
+                    }
+                    else
+                    {
+                        selectedFacet = programFacets.OrderByDescending(o => o.AdValue).First();
+                        topFacetList = new List<string>() { selectedFacet.Name };
+                        subGroup = selectedFacet.Name.Replace(" ", "");
+                    }
+
+                    selectedOverview = selectedFacet.Name;
+                    analyticsRequest.Tab = SecondaryTabID.Shows;
+                    programSW.Start();
+                    requestedData = GetNetworkShowSummaries(sessionInformation.ClientGUID, analyticsRequest, topFacetList);
+                    programSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Program DB call: {0} ms", programSW.ElapsedMilliseconds));
+                    programSW.Reset();
+
+                    foreach (AnalyticsSummaryModel summary in requestedData.SummaryDataList)
+                    {
+                        if (!string.IsNullOrEmpty(summary.Market) && summary.MarketID == null)
+                        {
+                            var marketID = markets.Where(dma => dma.Value == summary.Market);
+                            summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                        }
+                    }
+
+                    programSW.Start();
+                    networkTableFacets = cohortLogic.GetTopNetworks(pmgUrl, startDate, endDate, SRIDs, null, selectedFacet.Name, null, false);
+                    stationTableFacets = cohortLogic.GetTopStations(pmgUrl, startDate, endDate, SRIDs, null, null, selectedFacet.Name, false);
+                    programSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Network & Station facets: {0} ms", programSW.ElapsedMilliseconds));
+
+                    dropDownItems = CreateCohortListItems(report, programFacets, subGroup, new Dictionary<long,string>());
+
+                    analyticsRequest.Tab = SecondaryTabID.Overview;
+                }
+                else if (report == "Station")
+                {
+                    Stopwatch stationSW = new Stopwatch();
+                    stationSW.Start();
+                    List<CohortSolrFacet> stationFacet = stationTableFacets = cohortLogic.GetTopStations(pmgUrl, startDate, endDate, SRIDs, null, null, null, true);
+                    stationSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Main Station Facet: {0} ms {1} facets", stationSW.ElapsedMilliseconds, stationFacet.Count));
+                    stationSW.Reset();
+
+                    if (subGroup != null)
+                    {
+                        topFacetList = new List<string> { subGroup };
+                        selectedFacet = stationFacet.Where(w => w.Name.Equals(subGroup)).DefaultIfEmpty(null).FirstOrDefault();
+                    }
+                    else
+                    {
+                        selectedFacet = stationFacet.OrderByDescending(o => o.AdValue).First();
+                        topFacetList = new List<string> { selectedFacet.Name };
+                        subGroup = selectedFacet.Name;
+                    }
+
+                    selectedOverview = selectedFacet.Name;
+                    analyticsRequest.Tab = SecondaryTabID.Stations;
+                    stationSW.Start();
+                    requestedData = GetNetworkShowSummaries(sessionInformation.ClientGUID, analyticsRequest, topFacetList);
+                    stationSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Station DB call: {0} ms", stationSW.ElapsedMilliseconds));
+                    stationSW.Reset();
+
+                    foreach (AnalyticsSummaryModel summary in requestedData.SummaryDataList)
+                    {
+                        if (!string.IsNullOrEmpty(summary.Market) && summary.MarketID == null)
+                        {
+                            var marketID = markets.Where(dma => dma.Value == summary.Market);
+                            summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                        }
+                    }
+
+                    stationSW.Start();
+                    networkTableFacets = cohortLogic.GetTopNetworks(pmgUrl, startDate, endDate, SRIDs, null, null, selectedFacet.Name, false);
+                    programTableFacets = cohortLogic.GetTopPrograms(pmgUrl, startDate, endDate, SRIDs, null, null, selectedFacet.Name, false);
+                    stationSW.Stop();
+                    Log4NetLogger.Debug(string.Format("Network & Program facets: {0} ms", stationSW.ElapsedMilliseconds));
+
+                    dropDownItems = CreateCohortListItems(report, stationFacet, subGroup, new Dictionary<long,string>());
+
+                    analyticsRequest.Tab = SecondaryTabID.Overview;
+                }
+
+                List<AnalyticsGrouping> PESHGroupings = new List<AnalyticsGrouping>();
+                PESHGroupings.Add(new AnalyticsGrouping() {
+                    ID = "Paid",
+                    Name = "Paid",
+                    Summaries = requestedData.SummaryDataList.Where(w => w.HeardPaid > 0 || w.SeenPaid > 0).ToList()
+                });
+                PESHGroupings.Add(new AnalyticsGrouping() {
+                    ID = "Earned",
+                    Name = "Earned",
+                    Summaries = requestedData.SummaryDataList.Where(w => w.ReadEarned > 0 || w.SeenEarned > 0).ToList()
+                });
+
+                List<AnalyticsGrouping> agentGroupings = new List<AnalyticsGrouping>();
+                if (report == "Brand")
+                {
+                    agentGroupings.Add(new AnalyticsGrouping() {
+                        ID = "Heard",
+                        Name = "Heard",
+                        Summaries = requestedData.SummaryDataList.Where(w => w.HeardEarned > 0 || w.HeardPaid > 0).ToList()
+                    });
+
+                    agentGroupings.Add(new AnalyticsGrouping() {
+                        ID = "Seen",
+                        Name = "Seen",
+                        Summaries = requestedData.SummaryDataList.Where(w => w.SeenEarned > 0 || w.SeenPaid > 0).ToList()
+                    });
+                }
+                else
+                {
+                    foreach (var ag in industryAgents)
+                    {
+                        agentGroupings.Add(new AnalyticsGrouping() {
+                            ID = ag.Key.ToString(),
+                            Name = ag.Value,
+                            Summaries = requestedData.SummaryDataList.Where(w => w.SearchRequestID == ag.Key).ToList()
+                        });
+                    }
+                }
+
+                List<AnalyticsGrouping> demoGroupings = new List<AnalyticsGrouping>() {
+                    new AnalyticsGrouping() {
+                        ID = "",
+                        Name = "",
+                        Summaries = requestedData.SummaryDataList.ToList()
+                    }
+                };
+
+                List<AnalyticsGrouping> marketGroupings = new List<AnalyticsGrouping>();
+                foreach(var g in requestedData.SummaryDataList.GroupBy(gb => gb.MarketID).ToList())
+                {
+                    if (!string.IsNullOrEmpty(g.First().Market))
+                    {
+                        marketGroupings.Add(new AnalyticsGrouping() {
+                            ID = g.First().MarketID.ToString(),
+                            Name = g.First().Market,
+                            Summaries = g.ToList()
+                        });
+                    }
+                }
+
+                //List<AnalyticsGrouping> networkGroupings = new List<AnalyticsGrouping>();
+                //foreach (var g in requestedData.SummaryDataList.GroupBy(gb => gb.Networks).ToList())
+                //{
+                //    networkGroupings.Add(new AnalyticsGrouping() {
+                //        ID = g.First().Networks,
+                //        Name = g.First().Networks,
+                //        Summaries = g.ToList()
+                //    });
+                //}
+
+                //List<AnalyticsGrouping> programGroupings = new List<AnalyticsGrouping>();
+                //foreach (var g in requestedData.SummaryDataList.GroupBy(gb => gb.Shows).ToList())
+                //{
+                //    programGroupings.Add(new AnalyticsGrouping() {
+                //        ID = g.First().Shows,
+                //        Name = g.First().Shows,
+                //        Summaries = g.ToList()
+                //    });
+                //}
+
+                AnalyticsSecondaryTable emptyTable = new AnalyticsSecondaryTable();
+                Dictionary<string, object> chartAndSeries = new Dictionary<string, object>();
+
+                dynamic jsonResult = new ExpandoObject();
+                jsonResult.HTML = RenderPartialToString(PATH_DashboardReportsOverview, new object { });
+                jsonResult.Industries = cohorts.Values.ToList();
+                jsonResult.Brands = industryAgents.Count;
+                jsonResult.Airings = string.Format("{0:N0}", requestedData.SummaryDataList.Sum(s => s.Number_Docs));
+                jsonResult.HiddenElements = cohortLogic.GetHiddenElements(report);
+                jsonResult.SelectedOverview = selectedOverview;
+
+                var adSpend = requestedData.SummaryDataList.Sum(s => s.AdSpend);
+                jsonResult.AdSpend = string.Format("{0:C}", adSpend);
+                jsonResult.Audience = string.Format("{0:N0}", requestedData.SummaryDataList.Sum(s => s.Audience));
+
+                // Set to null so don't need to check for undefined in JS
+                jsonResult.LineChartAiring = null;
+                jsonResult.PieChartAiring = null;
+                jsonResult.PieChartShare = null;
+                jsonResult.AreaChartShare = null;
+                jsonResult.PieChartAdSpend = null;
+                jsonResult.LineChartAdSpend = null;
+
+                // Get Spline 0 - Occurrences
+                if (report != "Brand")
+                {
+                    chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, agentGroupings, smts);
+                    jsonResult.LineChartAiring = chartAndSeries["chart"];
+                    // Get Pie 1 - Ocurrences
+                    analyticsRequest.ChartType = ChartType.Pie;
+                    analyticsRequest.HCChartType = HCChartTypes.pie;
+                    chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, agentGroupings, smts);
+                    jsonResult.PieChartAiring = chartAndSeries["chart"];
+
+                    // Get Pie 3 - Ad Spend
+                    analyticsRequest.SummationProperty = SummationProperty.AdSpend;
+                    chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, agentGroupings, smts);
+                    jsonResult.PieChartAdSpend = chartAndSeries["chart"];
+
+                    // Get Spline 2 - Ad Spend
+                    analyticsRequest.ChartType = ChartType.Line;
+                    analyticsRequest.HCChartType = HCChartTypes.spline;
+                    chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, agentGroupings, smts);
+                    jsonResult.LineChartAdSpend = chartAndSeries["chart"];
+                }
+                else
+                {
+                    jsonResult.AreaChartShare = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, PESHGroupings, smts)["chart"];
+                    analyticsRequest.ChartType = ChartType.Pie;
+                    analyticsRequest.HCChartType = HCChartTypes.pie;
+                    chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, agentGroupings, smts);
+                    jsonResult.PieChartShare = chartAndSeries["chart"];
+                }
+
+                // Get gender pie - Demographic tab is unique in that it doesn't respect normal summation procedures
+                analyticsRequest.ChartType = ChartType.Pie;
+                analyticsRequest.HCChartType = HCChartTypes.pie;
+                analyticsRequest.Tab = SecondaryTabID.Demographic;
+                analyticsRequest.SubTab = "gender";
+                chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, demoGroupings, smts);
+                jsonResult.PieChartGender = chartAndSeries["chart"];
+                //jsonResult.Series4 = chartAndSeries["series"];
+
+                // Get age pie
+                analyticsRequest.SubTab = "age";
+                chartAndSeries = analyticsLogic.GetChart(analyticsRequest, emptyTable, requestedData, demoGroupings, smts);
+                jsonResult.PieChartAge = chartAndSeries["chart"];
+                //jsonResult.Series5 = chartAndSeries["series"];
+
+                // Build tables
+                HtmlTable marketTable = BuildTable(marketGroupings, "Market");
+                StringWriter mktTableWriter = new StringWriter();
+                marketTable.RenderControl(new System.Web.UI.HtmlTextWriter(mktTableWriter));
+                jsonResult.marketTable = mktTableWriter.ToString();
+
+                HtmlTable networkTable = BuildFacetTable(networkTableFacets, "Network");
+                StringWriter ntwkTableWriter = new StringWriter();
+                networkTable.RenderControl(new System.Web.UI.HtmlTextWriter(ntwkTableWriter));
+                jsonResult.networkTable = ntwkTableWriter.ToString();
+
+                HtmlTable showTable = BuildFacetTable(programTableFacets, "Program");
+                StringWriter showTableWriter = new StringWriter();
+                showTable.RenderControl(new System.Web.UI.HtmlTextWriter(showTableWriter));
+                jsonResult.showTable = showTableWriter.ToString();
+
+                HtmlTable stationTable = BuildFacetTable(stationTableFacets, "Station");
+                StringWriter stationTableWriter = new StringWriter();
+                stationTable.RenderControl(new System.Web.UI.HtmlTextWriter(stationTableWriter));
+                jsonResult.stationTable = stationTableWriter.ToString();
+
+                // Build dropdown list
+                StringWriter listItems = new StringWriter();
+                List<string> htmlItemList = new List<string>();
+                foreach (HtmlGenericControl li in dropDownItems)
+                {
+                    StringWriter liWriter = new StringWriter();
+                    li.RenderControl(new System.Web.UI.HtmlTextWriter(liWriter));
+                    htmlItemList.Add(liWriter.ToString());
+                }
+                jsonResult.DropDownList = htmlItemList;
+
+                // Earned data for NM, BL, and Print
+                if (report == "Overview" || report == "Market" || report == "Brand")
+                {
+                    List<AnalyticsSummaryModel> earnedList = new List<AnalyticsSummaryModel>();
+                    List<AnalyticsSummaryModel> topNMList = new List<AnalyticsSummaryModel>();
+                    topNMList = earnedList = earnedData.SummaryDataList.Where(w => w.SubMediaType.Equals("NM")).ToList();
+                    
+                    jsonResult.EarnedNM = earnedList.Any() ? earnedList.Sum(s => s.Number_Docs) : 0;
+                    earnedList = earnedData.SummaryDataList.Where(w => w.SubMediaType.Equals("BL")).ToList();
+                    jsonResult.EarnedBL = earnedList.Any() ? earnedList.Sum(s => s.Number_Docs) : 0;
+                    var printSMTs = sessionInformation.MediaTypes.Where(w => w.MediaType.Equals("PR") && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    earnedList = earnedData.SummaryDataList.Where(w => printSMTs.Contains(w.SubMediaType)).ToList();
+                    jsonResult.EarnedPR = earnedList.Any() ? earnedList.Sum(s => s.Number_Docs) : 0;
+                }
+
+                jsonResult.isSuccess = true;
+                return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
+            }
+            catch (Exception exc)
+            {
+                WebAppCommon.WriteException(exc);
+                return Content(WebAppCommon.GetSuccessFalseJson(), "application/json", Encoding.UTF8);
+            }
+        }
+
+        [HttpPost]
+        public ContentResult GetNewLineChart(string dateInterval, DateTime startDate, DateTime endDate, string summation)
+        {
+            try
+            {
+                sessionInformation = WebAppUtil.ActiveUserMgr.GetActiveUser();
+                AnalyticsLogic analyticsLogic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                IQAgentLogic agentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+
+                List<IQAgent_SearchRequestModel> clientAgents = agentLogic.SelectIQAgentSearchRequestByClientGuid(sessionInformation.ClientGUID.ToString());
+                Dictionary<long, string> agents = clientAgents.Select(ag => new {
+                    ag.ID,
+                    ag.QueryName
+                }).ToDictionary(
+                    ag => ag.ID,
+                    ag => ag.QueryName
+                );
+
+                // Change end date for hour
+                if (dateInterval.Equals("hour"))
+                {
+                    if (endDate.Date.Equals(DateTime.Now.Date))
+                    {
+                        endDate = WebAppCommon.GetLocalTime(new DateTime(
+                            endDate.Year,
+                            endDate.Month,
+                            endDate.Day,
+                            DateTime.UtcNow.Hour,
+                            0,
+                            0
+                        ).AddHours(-3)).Value;
+                    }
+                    else
+                    {
+                        endDate = endDate.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+                    }
+                }
+
+                var smts = sessionInformation.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInformation.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).ToList();
+                var markets = analyticsLogic.GetAllDMAs();
+
+                XDocument xDoc = new XDocument(new XElement(
+                    "list",
+                    from i in clientAgents
+                    select new XElement("item",
+                        new XAttribute("id", i.ID),
+                        new XAttribute("fromDate", startDate.ToString()),
+                        new XAttribute("toDate", endDate.ToString()),
+                        new XAttribute("fromDateGMT", WebAppCommon.GetGMTandDSTTime(startDate).ToString()),
+                        new XAttribute("toDateGMT", WebAppCommon.GetGMTandDSTTime(endDate).ToString())
+                    )
+                ));
+                string searchXML = xDoc.ToString();
+
+                var analyticsRequest = new AnalyticsRequest() {
+                    DateFrom = startDate.ToString(),
+                    DateTo = endDate.ToString(),
+                    HCChartType = HCChartTypes.spline,
+                    IsCompareMode = false,
+                    IsFilter = false,
+                    ChartType = ChartType.Line,
+                    DateInterval = dateInterval,
+                    PageType = "dashboard",
+                    RequestIDs = agents.Keys.ToList(),
+                    Tab = SecondaryTabID.Overview,
+                    SummationProperty = SummationProperty.Docs // Docs or IQMediaValue
+                };
+
+                AnalyticsDataModel analyticsData = new AnalyticsDataModel();
+                if (analyticsRequest.DateInterval.Equals("hour"))
+                {
+                    analyticsData = analyticsLogic.GetHourSummaryData(sessionInformation.ClientGUID, searchXML, "TV", sessionInformation.gmt, sessionInformation.dst, false, true);
+                }
+                else if (analyticsRequest.DateInterval.Equals("day"))
+                {
+                    analyticsData = analyticsLogic.GetDaySummaryData(sessionInformation.ClientGUID, searchXML, "TV", sessionInformation.gmt, sessionInformation.dst, false, true);
+                }
+                else
+                {
+                    // Month
+                    analyticsData = analyticsLogic.GetMonthSummaryData(sessionInformation.ClientGUID, searchXML, "TV", sessionInformation.gmt, sessionInformation.dst);
+                }
+
+                foreach (AnalyticsSummaryModel summary in analyticsData.SummaryDataList)
+                {
+                    if (!string.IsNullOrEmpty(summary.SubMediaType))
+                    {
+                        var subMediaType = smts.Where(sm => sm.SubMediaType == summary.SubMediaType);
+                        summary.SMTDisplayName = subMediaType.Any() ? subMediaType.First().DisplayName : "";
+                    }
+                    if (!string.IsNullOrEmpty(summary.Market))
+                    {
+                        var marketID = markets.Where(dma => dma.Value == summary.Market);
+                        summary.MarketID = marketID.Any() ? Convert.ToInt64(marketID.First().Key) : -1;
+                    }
+                    if (summary.MarketID == null)
+                    {
+                        summary.MarketID = -1;
+                    }
+                    if (string.IsNullOrEmpty(summary.SubMediaType) || string.IsNullOrWhiteSpace(summary.SubMediaType))
+                    {
+                        summary.SubMediaType = "";
+                    }
+                }
+
+                List<AnalyticsGrouping> agentGroupings = new List<AnalyticsGrouping>();
+                foreach (var ag in agents)
+                {
+                    // Remove summaryies with null values for their SRIDs
+                    agentGroupings.Add(new AnalyticsGrouping() {
+                        ID = ag.Key.ToString(),
+                        Name = ag.Value,
+                        Summaries = analyticsData.SummaryDataList.Where(w => w.SearchRequestID == ag.Key).ToList()
+                    });
+                }
+
+                var chartAndSeries = analyticsLogic.GetChart(analyticsRequest, new AnalyticsSecondaryTable(), analyticsData, agentGroupings, smts);
+                dynamic jsonResult = new ExpandoObject();
+                jsonResult.isSuccess = true;
+                jsonResult.Chart = chartAndSeries["chart"];
+                return Content(JsonConvert.SerializeObject(jsonResult), "application/json", Encoding.UTF8);
+            }
+            catch (Exception exc)
+            {
+                WebAppCommon.WriteException(exc);
+                return Content(WebAppCommon.GetSuccessFalseJson(), "application/json", Encoding.UTF8);
+            }
+        }
+
+        private HtmlTable BuildTable(List<AnalyticsGrouping> groupings, string tableName)
+        {
+            try
+            {
+                HtmlTable table = new HtmlTable();
+                table.Attributes["class"] = "topResult";
+                table.Attributes["style"] = "width:95%;";
+                HtmlTableRow headerRow = new HtmlTableRow();
+                HtmlTableCell tc = new HtmlTableCell() {
+                    InnerText = tableName
+                };
+                headerRow.Cells.Add(tc);
+                tc = new HtmlTableCell() {
+                    InnerText = "Volume"
+                };
+                headerRow.Cells.Add(tc);
+                tc = new HtmlTableCell() {
+                    InnerText = "EST. TV Spend"
+                };
+                tc.Attributes["style"] = "text-align:right;";
+                headerRow.Cells.Add(tc);
+                table.Rows.Add(headerRow);
+
+                foreach (var group in groupings.OrderByDescending(ob => ob.Summaries.Sum(s => s.IQMediaValue)).Take(5))
+                {
+                    HtmlTableRow tr = new HtmlTableRow();
+
+                    // Name Column
+                    tc = new HtmlTableCell() {
+                        InnerText = group.Name
+                    };
+                    tr.Cells.Add(tc);
+
+                    // Volume Column
+                    tc = new HtmlTableCell() {
+                        InnerText = string.Format("{0:N0}", group.Summaries.Sum(s => s.Number_Docs))
+                    };
+                    tr.Cells.Add(tc);
+
+                    // Spend Column
+                    tc = new HtmlTableCell() {
+                        InnerText = string.Format("{0:C}", group.Summaries.Sum(s => s.IQMediaValue))
+                    };
+                    tc.Attributes["style"] = "text-align:right;";
+                    tr.Cells.Add(tc);
+
+                    table.Rows.Add(tr);
+                }
+
+                return table;
+            }
+            catch (Exception exc)
+            {
+                WebAppCommon.WriteException(exc);
+                return new HtmlTable();
+            }
+        }
+
+        private HtmlTable BuildFacetTable(List<CohortSolrFacet> facets, string tableName)
+        {
+            HtmlTable facetTable = new HtmlTable();
+            facetTable.Attributes["class"] = "topResult";
+            facetTable.Attributes["style"] = "width:95%;";
+            HtmlTableRow headerRow = new HtmlTableRow();
+
+            HtmlTableCell tc = new HtmlTableCell() {
+                InnerText = tableName
+            };
+            headerRow.Cells.Add(tc);
+            tc = new HtmlTableCell() {
+                InnerText = "Volume"
+            };
+            headerRow.Cells.Add(tc);
+            tc = new HtmlTableCell() {
+                InnerText = "EST. TV Spend"
+            };
+            tc.Attributes["style"] = "text-align:right;";
+            headerRow.Cells.Add(tc);
+            facetTable.Rows.Add(headerRow);
+
+            foreach (var facet in facets.OrderByDescending(o => o.AdValue).Take(5))
+            {
+                HtmlTableRow tr = new HtmlTableRow();
+
+                // Name
+                tc = new HtmlTableCell() {
+                    InnerText = facet.Name
+                };
+                tr.Cells.Add(tc);
+
+                // Volume
+                tc = new HtmlTableCell() {
+                    InnerText = string.Format("{0:N0}", facet.Count)
+                };
+                tr.Cells.Add(tc);
+
+                // Spend
+                tc = new HtmlTableCell() {
+                    InnerText = string.Format("{0:C}", facet.AdValue)
+                };
+                tc.Attributes["style"] = "text-align:right;";
+                tr.Cells.Add(tc);
+
+                facetTable.Rows.Add(tr);
+            }
+
+            return facetTable;
+        }
+
+        private List<HtmlGenericControl> CreateCohortListItems(string report, List<CohortSolrFacet> facetList, string selectedID, Dictionary<long, string> brands)
+        {
+            try
+            {
+                Log4NetLogger.Debug(string.Format("CreateCohortListItem: {0}, {1}", report, selectedID));
+                List<HtmlGenericControl> listItems = new List<HtmlGenericControl>();
+                sessionInformation = WebAppUtil.ActiveUserMgr.GetActiveUser();
+                AnalyticsLogic analyticsLogic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                IQAgentLogic agentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
+                CohortLogic cohortLogic = (CohortLogic)LogicFactory.GetLogic(LogicType.Cohort);
+                Dictionary<long, string> cohorts = cohortLogic.GetAllCohorts();
+
+                var smts = sessionInformation.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInformation.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).ToList();
+                var markets = analyticsLogic.GetAllDMAs();
+
+                if (report == "Overview")
+                {
+                    foreach (KeyValuePair<long, string> cohort in cohorts.OrderBy(o => o.Value))
+                    {
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeCohort(this)");
+                        li.ID = string.Format("cohort_{0}", cohort.Key);
+                        li.InnerText = cohort.Value;
+
+                        if (selectedID != null && cohort.Key.ToString().Equals(selectedID))
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+                }
+                else if (report == "Market")
+                {
+                    foreach (var mkt in markets.OrderBy(o => o.Value))
+                    {
+                        //Log4NetLogger.Debug(string.Format("create li for cohort {0} w ID {1}", mkt.Value, mkt.Key));
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeMarket(this)");
+                        li.ID = string.Format("cohort_{0}", mkt.Key);
+                        li.InnerText = mkt.Value;
+
+                        if (selectedID != null && mkt.Key.Equals(selectedID))
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+
+                }
+                else if (report == "Network")
+                {
+                    foreach (var ntwk in facetList.OrderBy(o =>  o.Name))
+                    {
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeNetwork(this)");
+                        li.ID = string.Format("cohort_{0}", ntwk.Name.Replace(" ", ""));
+
+                        li.InnerText = ntwk.Name;
+
+                        if (selectedID != null && ntwk.Name.Replace(" ", "").Equals(selectedID))
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+                }
+                else if (report == "Station")
+                {
+                    foreach (var station in facetList.OrderBy(o => o.Name))
+                    {
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeStation(this)");
+                        li.ID = string.Format("cohort_{0}", station.Name);
+
+                        li.InnerText = station.Name;
+
+                        if (selectedID != null && station.Name.Equals(selectedID))
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+                }
+                else if (report == "Program")
+                {
+                    foreach (var program in facetList.OrderBy(o => o.Name))
+                    {
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeProgram(this)");
+                        li.ID = string.Format("cohort_{0}", program.Name.Replace(" ", ""));
+
+                        li.InnerText = program.Name;
+
+                        if (selectedID != null && program.Name.Replace(" ", "").Equals(selectedID))
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+                }
+                else if (report == "Brand")
+                {
+                    foreach (var brand in brands.OrderBy(o => o.Value))
+                    {
+                        HtmlGenericControl li = new HtmlGenericControl("li");
+                        li.Attributes.Add("role", "presentation");
+                        li.Attributes.Add("onclick", "ChangeBrand(this)");
+                        li.ID = string.Format("cohort_{0}", brand.Key);
+
+                        li.InnerText = brand.Value;
+
+                        if (selectedID != null && brand.Key.ToString() == selectedID)
+                        {
+                            li.Attributes.Add("class", "cursorPointer highlightedli");
+                        }
+                        else
+                        {
+                            li.Attributes.Add("class", "cursorPointer");
+                        }
+
+                        listItems.Add(li);
+                    }
+                }
+
+                return listItems;
+            }
+            catch (Exception exc)
+            {
+                WebAppCommon.WriteException(exc);
+            }
+            return new List<HtmlGenericControl>();
+        }
+
+        private AnalyticsDataModel GetNetworkShowSummaries(Guid clientGuid, AnalyticsRequest request, List<string> topNetworks)
+        {
+            try
+            {
+                AnalyticsLogic logic = (AnalyticsLogic)LogicFactory.GetLogic(LogicType.Analytics);
+                AnalyticsDataModel networksShows;
+                string requestXML = null;
+
+                if (request.RequestIDs != null && request.RequestIDs.Count > 0)
+                {
+                    XDocument xDoc = new XDocument(new XElement(
+                        "list",
+                        from i in request.RequestIDs
+                        select new XElement(
+                            "item",
+                            new XAttribute("id", i),
+                            new XAttribute("fromDate", request.DateFrom),
+                            new XAttribute("toDate", request.DateTo),
+                            new XAttribute("fromDateGMT", WebAppCommon.GetGMTandDSTTime(Convert.ToDateTime(request.DateFrom)).ToString()),
+                            new XAttribute("toDateGMT", WebAppCommon.GetGMTandDSTTime(Convert.ToDateTime(request.DateTo)).ToString())
+                        )
+                    ));
+                    requestXML = xDoc.ToString();
+                }
+
+                //topListNS = logic.GetTopNetworkShows(clientGuid, requestXML, request.Tab).Where(x => x != null && x.Trim() != "").ToList();
+                //topDictNS = new Dictionary<string, string>();
+                //var count = 0;
+                //foreach (var item in topListNS)
+                //{
+                //    topDictNS.Add("Top" + count, item);
+                //    count++;
+                //}
+
+                networksShows = logic.GetNetworkShowSummaryData(clientGuid, requestXML, request.SubMediaType, sessionInformation.gmt, sessionInformation.dst, topNetworks, request.Tab, request.DateInterval);
+
+                return networksShows;
+            }
+            catch (Exception exc)
+            {
+                WebAppCommon.WriteException(exc);
+            }
+            return new AnalyticsDataModel();
         }
 
         #endregion

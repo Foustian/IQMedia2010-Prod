@@ -6,7 +6,7 @@
 @if (Model != null)
 {
     ActiveUser sessionInfo = ActiveUserMgr.GetActiveUser();
-    List<IQ_MediaTypeModel> mediaTypes = sessionInfo.MediaTypes == null ? new List<IQCommon.Model.IQ_MediaTypeModel>() : sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2).OrderBy(o => o.DisplayName).ToList();
+    List<IQ_MediaTypeModel> mediaTypes = sessionInfo.MediaTypes == null ? new List<IQCommon.Model.IQ_MediaTypeModel>() : sessionInfo.MediaTypes.Where(w => w.TypeLevel == 2 && w.IsArchiveOnly == false).OrderBy(o => o.DisplayName).ToList();
         
     <div>
         <span id="ampFilterText" class="font14Pt" style="float:left;">How many occurrences are there across all mediums and engagement types?</span>

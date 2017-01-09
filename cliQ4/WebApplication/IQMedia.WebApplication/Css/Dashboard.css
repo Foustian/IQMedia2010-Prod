@@ -20,6 +20,8 @@
 {
     list-style: none;
     margin-left: 2px;
+    display: flex;
+    flex-flow: row wrap;
 }
 .clearDiv
 {

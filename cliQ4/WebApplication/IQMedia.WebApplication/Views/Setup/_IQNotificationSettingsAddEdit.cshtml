@@ -156,30 +156,17 @@
                     {
                         <option value="0">All</option>
                     }
-                    @foreach (IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType enumValue in Enum.GetValues(typeof(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType)).Cast<IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType>())
+                    @foreach (var mt in IQCommon.CommonFunctions.GetAccessibleSubMediaType(sessionInformation.MediaTypes))
                     {
-
-                        if ((enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.TV && sessionInformation.Isv4TV) ||
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.News && sessionInformation.Isv4NM) ||
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.PM && sessionInformation.Isv4BLPM) ||
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.SocialMedia && sessionInformation.Isv4SM) ||
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.Twitter && sessionInformation.Isv4TW) ||
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.PQ && sessionInformation.Isv4PQ) || 
-                            (enumValue == IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.TM && sessionInformation.Isv4TM)
-                           )
+                        if (Model.IQNotifationSettings.MediaTypeList != null && Model.IQNotifationSettings.MediaTypeList.Contains(mt.SubMediaType))
                         {
-
-                            if (Model.IQNotifationSettings.MediaTypeList != null && Model.IQNotifationSettings.MediaTypeList.Contains(enumValue.ToString()))
-                            {
-                        <option value="@enumValue" selected="selected">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(enumValue)</option>
-                            }
-                            else
-                            {
-                        <option value="@enumValue">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(enumValue)</option>
-                            }
+                        <option value="@mt.SubMediaType" selected="selected">@mt.DisplayName</option>
                         }
-
-                    }
+                        else
+                        {
+                        <option value="@mt.SubMediaType">@mt.DisplayName</option>
+                        }
+                    }                    
                 </select>
                 <span style="color: #FF0000; display: none; vertical-align: top" id="spanIQNotifationSettings_MediaTypeList"
                     class="help-inline"></span>

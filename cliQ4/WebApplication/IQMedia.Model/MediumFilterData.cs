@@ -5,9 +5,18 @@ using System.Text;
 
 namespace IQMedia.Model
 {
-    public class MediumFilterData
+    public class MediaTypeFilterData
     {
-        public string Medium { get; set; }
-        public string MediumValue { get; set; }
+        public string MediaType { get; set; }
+        public string MediaTypeName { get; set; }
+        public short SortOrder { get; set; }
+        public List<SubMediaTypeFilterData> SubMediaTypeFilterData { get; set; }
+    }
+
+    public class SubMediaTypeFilterData
+    {
+        public string SubMediaType { get; set; }
+        public string SubMediaTypeName { get; set; }
+        public short SortOrder { get; set; }
     }
 }

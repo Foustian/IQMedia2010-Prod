@@ -93,6 +93,11 @@
                     Customer LogIn</label>
                 <div class="controls">
                     <input type="text" name="customer.LoginID" id="customer_LoginID" value="@Model.customer.LoginID" />
+                    @if (Model.customer.CustomerKey > 0)
+                    {
+                        <input type="button" id="btnCustomerAddToAnewstip" class="button" style="margin:0px 10px; @(String.IsNullOrEmpty(Model.customer.AnewstipUserID) ? "" : "display:none")" value="Create Connect User Account" onclick="AddCustomerToAnewstip(@Model.customer.CustomerKey)" />
+                        <input type="button" id="btnCustomerAddedToAnewstip" class="button" style="margin:0px 10px; cursor:default; @(!String.IsNullOrEmpty(Model.customer.AnewstipUserID) ? "" : "display:none")" value="Connect Account Created" />
+                    }
                     <span style="color: #FF0000; display: none; vertical-align: top" id="spanLoginID"
                         class="help-inline"></span>
                 </div>
@@ -187,19 +192,19 @@
                 </label>                
                 <div class="controls" id="divCustomerRoles">
                     @{
-                        int counter = 0;
-                        foreach (string groupName in Model.Customer_DropDown.Customer_RoleList.Select(s => s.GroupName).Distinct())
-                        {        
+                    int counter = 0;
+                    foreach (string groupName in Model.Customer_DropDown.Customer_RoleList.Select(s => s.GroupName).Distinct())
+                    {        
                             <div @(counter > 0 ? "class=roleGroup" : "")>
                             @foreach (RoleModel item in Model.Customer_DropDown.Customer_RoleList.Where(w => w.GroupName == groupName).OrderBy(o => o.DisplayName))
-                            {                                
+                            {
                                 string IsSelected = "checked=\"IsSelected\"";
                                 string isDisabled = "disabled=\"disabled\"";
                                 if ((Model.customer.CustomerKey == 0 && !item.HasDefaultAccess) || (Model.chkRoles != null && Model.chkRoles.Count() > 0 && (!Model.chkRoles.Contains(@item.RoleName.ToString()) && !Model.chkRoles.Contains(@item.RoleKey.ToString()))))
                                 {
                                     IsSelected = "";
                                 }
-                                if (item.IsEnabledInSetup || (item.EnabledCustomerIDs != null && item.EnabledCustomerIDs.Contains(sessionInformation.CustomerKey.ToString()))) 
+                                if (item.IsEnabledInSetup || (item.EnabledCustomerIDs != null && item.EnabledCustomerIDs.Contains(sessionInformation.CustomerKey.ToString())))
                                 {
                                     isDisabled = "";
                                 }
@@ -211,7 +216,7 @@
                             </div>
                         
                             counter++;
-                        }
+                    }
                     }
                     <span style="color: #FF0000; display: none; vertical-align: top" id="spanCustomerRoles"
                         class="help-inline"></span>

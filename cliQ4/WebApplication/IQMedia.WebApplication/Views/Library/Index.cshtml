@@ -1,4 +1,5 @@
 ﻿@using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 @model Dictionary<string, object>
 @{
     ViewBag.Title = "iQ media Library";
@@ -27,9 +28,9 @@
 }
 
 <script language="javascript" type="text/javascript" src="~/Scripts/jstree.js"></script>
-<script language="javascript" type="text/javascript" src="~/Scripts/Library.js?v=3.9"></script>
+<script language="javascript" type="text/javascript" src="~/Scripts/Library.js?v=4.0"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/LibraryEditRecord.js?v=1.8"></script>
-<script language="javascript" type="text/javascript" src="~/Scripts/LibraryReport.js?v=2.7"></script>
+<script language="javascript" type="text/javascript" src="~/Scripts/LibraryReport.js?v=2.8"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/LibraryReportFolder.js?v=1.4"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/CustomCategory.js?v=1.2"></script>
 
@@ -43,13 +44,13 @@
 }
 @if ((sessionInformation.IsMediaRoomEditor || sessionInformation.IsMediaRoomContributor) && ViewBag.IsSuccess)
 {
-    <script language="javascript" type="text/javascript" src="~/Scripts/LibraryMCMedia.js?v=1.6"></script>    
+    <script language="javascript" type="text/javascript" src="~/Scripts/LibraryMCMedia.js?v=1.7"></script>    
 }
 <script language="javascript" type="text/javascript" src="~/Scripts/jquery.form.js?v=1.0"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/jquery-ui-timepicker-addon.js?v=1.0"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/enscroll.js?v=1.0"></script>
 <link href="~/Css/video-player.css?v=1.3" type="text/css" rel="Stylesheet" />
-<link href="~/Css/Dashboard.css?v=1.5" type="text/css" rel="Stylesheet" />
+<link href="~/Css/Dashboard.css?v=1.6" type="text/css" rel="Stylesheet" />
 <script type="text/javascript" src="~/Scripts/Player/PlayerClip.js?v=1.4"></script>
 <link type="text/css" rel="stylesheet" href="~/Css/jstree-style.css?v=1.1" />
 <link rel="stylesheet" type="text/css" href="~/Css/jquery.gridster.css">
@@ -190,21 +191,25 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="dropdown nmedium"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
-                                    id="liMediumFilter" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
-                                    <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">
+                                <li class="dropdown nmedium">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="liMediumFilter" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
+                                    <ul aria-labelledby="drop2" role="menu" class="dropdown-menu multi-level sideMenu" id="ulMediaType" style="overflow-y:visible;">
                                         @{
-            if (filter != null)
+            if (filter != null && filter.MediaTypes != null && filter.MediaTypes.Count > 0)
             {
-                foreach (IQMedia.Model.IQArchive_Filter item in filter.SubMediaTypes)
+                foreach (IQMedia.Model.IQArchive_MediaTypeFilter mediaType in filter.MediaTypes)
                 {
-                    if (!string.IsNullOrEmpty(item.SubMediaType))
-                    {
-                                            <li onclick="SetSubMediaType('@item.SubMediaType','@item.SubMediaTypeDescription');" role="presentation">
-                                                <a href="#" tabindex="-1" role="menuitem">
-                                                    @(item.SubMediaTypeDescription + " (" + item.RecordCountFormatted + ")")
-                                                </a></li>
-                    }
+                    <li class="dropdown-submenu">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">@mediaType.MediaTypeDesc (@mediaType.RecordCountFormatted)</a>
+                        <ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">
+                            @foreach (IQMedia.Model.IQArchive_SubMediaTypeFilter subMediaType in mediaType.SubMediaTypes)
+                            {
+                                <li onclick="SetSubMediaType('@subMediaType.SubMediaType', '@subMediaType.SubMediaTypeDesc');" role="presentation">
+                                    <a href="#" tabindex="-1" role="menuitem">@subMediaType.SubMediaTypeDesc (@subMediaType.RecordCountFormatted)</a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
                 }
             }
             else
@@ -449,40 +454,42 @@
                                    </li>
                                 </ul>
                              </li>
-                             <li class="dropdown nmedium">
-                                <a data-toggle="dropdown" class="dropdown-toggle" role="button"
-                                   id="liMediumFilter" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
-                                <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMCSubMediaType">
-                                   @{
-                                        if (filter != null)
-                                        {
-                                            foreach (IQMedia.Model.IQArchive_Filter item in filter.SubMediaTypes)
+                            <li class="dropdown nmedium">
+                                <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="liMediumFilter" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
+                                <ul aria-labelledby="drop2" role="menu" class="dropdown-menu multi-level sideMenu" id="ulMCMediaType" style="overflow-y:visible;">
+                                        @{
+                    if (filter != null && filter.MediaTypes != null && filter.MediaTypes.Count > 0)
+                    {
+                        foreach (IQMedia.Model.IQArchive_MediaTypeFilter mediaType in filter.MediaTypes)
+                        {
+                                    <li class="dropdown-submenu">
+                                        <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMCMediaType">@mediaType.MediaTypeDesc (@mediaType.RecordCountFormatted)</a>
+                                        <ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMCSubMediaType">
+                                            @foreach (IQMedia.Model.IQArchive_SubMediaTypeFilter subMediaType in mediaType.SubMediaTypes)
                                             {
-                                                if (!string.IsNullOrEmpty(item.SubMediaType))
-                                                {
-                                                    <li onclick="SetSubMediaType_MCMedia('@item.SubMediaType','@item.SubMediaTypeDescription');" role="presentation">
-                                                        <a href="#" tabindex="-1" role="menuitem">
-                                                        @(item.SubMediaTypeDescription + " (" + item.RecordCountFormatted + ")")
-                                                        </a>
-                                                    </li>
-                                                }
+                                                <li onclick="SetSubMediaType_MCMedia('@subMediaType.SubMediaType', '@subMediaType.SubMediaTypeDesc');" role="presentation">
+                                                    <a href="#" tabindex="-1" role="menuitem">@subMediaType.SubMediaTypeDesc (@subMediaType.RecordCountFormatted)</a>
+                                                </li>
                                             }
+                                        </ul>
+                                    </li>
+                        }
+                    }
+                    else
+                    {
+                                    <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
+                    }
                                         }
-                                        else
-                                        {
-                                            <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
-                                        }
-                                   }
                                 </ul>
-                             </li>
+                            </li>
                              <li class="ncategory">
                                 <a data-toggle="dropdown" class="dropdown-toggle" role="button"
                                    id="liMCCategoryFilter" href="#">Category<span class="spnArrow">&nbsp;</span></a>
                                 <ul aria-labelledby="drop2" role="menu" class="nav nav-stacked nav-dropdpwn" id="ulMCCategory"
                                    style="display: none;">
                                    @{
-                                        if (filter != null)
-                                        {
+                    if (filter != null)
+                    {
                                             <li role="presentation" id="liMCCategorySearch" style="padding: 0px;">
                                                 <ul class="sideMenu sub-submenu" aria-labelledby="drop2" role="menu">
                                                     <li role="presentation" style="text-align: right">
@@ -525,11 +532,11 @@
                                                     </script>
                                                 }
                                             </li>
-                                        }
-                                        else
-                                        {
+                    }
+                    else
+                    {
                                             <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
-                                        }
+                    }
                                    }
                                 </ul>
                              </li>
@@ -538,23 +545,23 @@
                                    role="button" id="liMCCustomerFilter" href="#">Created By<span class="spnArrow">&nbsp;</span></a>
                                 <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMCCustomers">
                                    @{
-                                        if (filter != null)
-                                        {
-                                            foreach (IQMedia.Model.IQArchive_Filter item in filter.Customers)
-                                            {
-                                                if (!string.IsNullOrEmpty(item.CustomerKey))
-                                                {
+                    if (filter != null)
+                    {
+                        foreach (IQMedia.Model.IQArchive_Filter item in filter.Customers)
+                        {
+                            if (!string.IsNullOrEmpty(item.CustomerKey))
+                            {
                                                     <li onclick="SetCustomer_MCMedia('@item.CustomerKey','@item.CustomerName.Replace("\'", "\\\'")');" role="presentation">
                                                     <a href="#" tabindex="-1" role="menuitem">
                                                     @(item.CustomerName + " (" + item.RecordCountFormatted + ")")
                                                     </a></li>
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
+                            }
+                        }
+                    }
+                    else
+                    {
                                             <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
-                                        }
+                    }
                                    }
                                 </ul>
                              </li>
@@ -686,6 +693,7 @@
                                             {
                                                 _PageSizeArray.Add(ViewBag.DefaultArchivePageSize.ToString());
                                             }
+                                            _PageSizeArray = _PageSizeArray.OrderBy(x => Int32.Parse(x)).ToList();
                                             }
                                             @for (int i = 0; i < _PageSizeArray.Count(); i++)
                                             {
@@ -842,48 +850,14 @@
                                             <li class="margintop5 marginleft25">
                                                 <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="Overview" onclick="javascript:void(0);" />
                                                 @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.Overview)</li>
-                                        @if (sessionInformation.Isv4TV)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="TV" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.TV)</li>
-                                        }
-                                        @if (sessionInformation.Isv4NM)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="NM" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.NM)</li>
-                                        }
-                                        @if (sessionInformation.Isv4SM)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="Blog" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.Blog)</li>
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="Forum" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.Forum)</li>
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="SocialMedia" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.SocialMedia)</li>
-                                        }
-                                        @if (sessionInformation.Isv4TW)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="TW" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.TW)</li>
-                                        }
-                                        @if (sessionInformation.Isv4BLPM || sessionInformation.Isv4PQ)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="PM" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.PM)</li>
-                                        }
-                                        @if (sessionInformation.Isv4UGCAccess)
-                                        {
-                                            <li class="margintop5 marginleft25">
-                                                <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="MS" onclick="javascript:void(0);" />
-                                                @CommonFunctions.GetEnumDescription(CommonFunctions.DashBoardMediumType.MS)</li>
-                                        }
+                                            @{
+                                                foreach (IQ_MediaTypeModel objMediaType in sessionInformation.MediaTypes.Where(m => m.TypeLevel == 1 && m.HasAccess && sessionInformation.MediaTypes.Where(sm => string.Compare(m.MediaType, sm.MediaType, true) == 0 && sm.TypeLevel == 2 && sm.HasAccess).Count() > 0).OrderBy(o => o.SortOrder))
+                                                {
+                                                    <li class="margintop5 marginleft25">
+                                                        <input type="checkbox" style="margin-top: -3px" name="chkShowHideDashboard" value="@objMediaType.MediaType" onclick="javascript:void(0);" />
+                                                        @objMediaType.DisplayName</li>
+                                                }                                                
+                                             }
                                         </ul>
                                     </div>
                                 </div>
@@ -981,6 +955,7 @@
                                     {
                                         _PageSizeArray.Add(ViewBag.DefaultArchivePageSize.ToString());
                                     }
+                                    _PageSizeArray = _PageSizeArray.OrderBy(x => Int32.Parse(x)).ToList();
                                                 }
                                                 @for (int i = 0; i < _PageSizeArray.Count(); i++)
                                                 {
@@ -1088,6 +1063,7 @@
                                                 {
                                                     _PageSizeArray.Add(ViewBag.DefaultArchivePageSize.ToString());
                                                 }
+                                                _PageSizeArray = _PageSizeArray.OrderBy(x => Int32.Parse(x)).ToList();
                                                     }
                                                     @for (int i = 0; i < _PageSizeArray.Count(); i++)
                                                     {
@@ -1129,7 +1105,7 @@
                 <input type="hidden" id="hdnLibraryMaxLibraryEmailItems" value="@ViewBag.MaxLibraryEmailItems" />
                 <div class="control-group">
                     @{
-                        bool useCustomerEmailAsDefault = Convert.ToBoolean(Model["UseCustomerEmailAsDefault"]);
+    bool useCustomerEmailAsDefault = Convert.ToBoolean(Model["UseCustomerEmailAsDefault"]);
                     <label class="control-label" for="txtFromEmail">
                         @(useCustomerEmailAsDefault ? "Your" : "From") email</label>
                     <div class="controls">
@@ -1257,49 +1233,49 @@
                     <select id="ddlReportFolder">
                     @if (Model != null && Model["ReportFolders"] != null)
                     {
-                            List<IQMedia.Model.IQReport_FolderModel> lstIQReport_FolderModel = (List<IQMedia.Model.IQReport_FolderModel>)Model["ReportFolders"];
-                            string lastParent = "THIS IS NOT A VALID ID";
-                            string lastLastParent = "THIS IS NOT A VALID ID";
-                            int spaceCount = 0;
-                            Dictionary<string, int> indents = new Dictionary<string,int>();
+                        List<IQMedia.Model.IQReport_FolderModel> lstIQReport_FolderModel = (List<IQMedia.Model.IQReport_FolderModel>)Model["ReportFolders"];
+                        string lastParent = "THIS IS NOT A VALID ID";
+                        string lastLastParent = "THIS IS NOT A VALID ID";
+                        int spaceCount = 0;
+                        Dictionary<string, int> indents = new Dictionary<string, int>();
 
-                            foreach (IQMedia.Model.IQReport_FolderModel item in lstIQReport_FolderModel)
+                        foreach (IQMedia.Model.IQReport_FolderModel item in lstIQReport_FolderModel)
+                        {
+                            if (lastParent == item.parent)
                             {
-                                if (lastParent == item.parent)
+                                spaceCount++;
+                            }
+                            else if (lastLastParent != item.parent && lastLastParent != "THIS IS NOT A VALID ID")
+                            {
+                                if (indents.ContainsKey(item.parent))
                                 {
-                                    spaceCount++;
+                                    spaceCount = indents.Where(x => x.Key == item.parent).Select(x => x.Value).First();
                                 }
-                                else if (lastLastParent != item.parent && lastLastParent != "THIS IS NOT A VALID ID")
+                                else
                                 {
-                                    if (indents.ContainsKey(item.parent))
-                                    {
-                                        spaceCount = indents.Where(x => x.Key == item.parent).Select(x => x.Value).First();
-                                    }
-                                    else
-                                    {
-                                        spaceCount--;
-                                    }
+                                    spaceCount--;
                                 }
+                            }
 
-                                if (item.parent != null && !indents.ContainsKey(item.parent))
-                                {
-                                    indents.Add(item.parent, spaceCount);
-                                }
+                            if (item.parent != null && !indents.ContainsKey(item.parent))
+                            {
+                                indents.Add(item.parent, spaceCount);
+                            }
 
-                                lastLastParent = lastParent;
-                                lastParent = item.id;   
+                            lastLastParent = lastParent;
+                            lastParent = item.id;   
                             
                                 <option value="@item.id" @(item.text == System.Configuration.ConfigurationManager.AppSettings["ClientRootFolderName"] ? "selected=selected" : string.Empty)>
                                     @{
-                                        for (int x = 0; x < spaceCount; x++)
-                                        {
+                            for (int x = 0; x < spaceCount; x++)
+                            {
                                             <p>&nbsp;</p>
-                                        }
+                            }
                                     }
                                 
                                     -@item.text
                                 </option>
-                            }
+                        }
                     }
                     </select>
                     <span class="help-inline" id="spanReportFolder" style="color: #FF0000; display: none;">
@@ -1353,8 +1329,8 @@
             </div>
         </div>
     </div>
-                        if (sessionInformation.Isv4UGCAccess && sessionInformation.Isv4UGCUploadEdit)
-                        {
+                    if (sessionInformation.Isv4UGCAccess && sessionInformation.Isv4UGCUploadEdit)
+                    {
     <div id="divCloudUGCUploadPopup" class="modal fade hide resizable modalPopupDiv">
         <div class="closemodalpopup">
             <img id="imgCloudUGCUploadPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
@@ -1570,7 +1546,7 @@
             </div>
         </div>
     </div>
-                        }
+                    }
     <div id="divLoadTMIframePopup" class="modal fade hide resizable modalPopupDiv">
         <div class="closemodalpopup">
             <img id="imgLoadTMIframePopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
@@ -1865,49 +1841,49 @@
                     <select id="ddlMergedReportFolder">
                     @if (Model != null && Model["ReportFolders"] != null)
                     {
-                            List<IQMedia.Model.IQReport_FolderModel> lstIQReport_FolderModel = (List<IQMedia.Model.IQReport_FolderModel>)Model["ReportFolders"];
-                            string lastParent = "THIS IS NOT A VALID ID";
-                            string lastLastParent = "THIS IS NOT A VALID ID";
-                            int spaceCount = 0;
-                            Dictionary<string, int> indents = new Dictionary<string,int>();
+                        List<IQMedia.Model.IQReport_FolderModel> lstIQReport_FolderModel = (List<IQMedia.Model.IQReport_FolderModel>)Model["ReportFolders"];
+                        string lastParent = "THIS IS NOT A VALID ID";
+                        string lastLastParent = "THIS IS NOT A VALID ID";
+                        int spaceCount = 0;
+                        Dictionary<string, int> indents = new Dictionary<string, int>();
 
-                            foreach (IQMedia.Model.IQReport_FolderModel item in lstIQReport_FolderModel)
+                        foreach (IQMedia.Model.IQReport_FolderModel item in lstIQReport_FolderModel)
+                        {
+                            if (lastParent == item.parent)
                             {
-                                if (lastParent == item.parent)
+                                spaceCount++;
+                            }
+                            else if (lastLastParent != item.parent && lastLastParent != "THIS IS NOT A VALID ID")
+                            {
+                                if (indents.ContainsKey(item.parent))
                                 {
-                                    spaceCount++;
+                                    spaceCount = indents.Where(x => x.Key == item.parent).Select(x => x.Value).First();
                                 }
-                                else if (lastLastParent != item.parent && lastLastParent != "THIS IS NOT A VALID ID")
+                                else
                                 {
-                                    if (indents.ContainsKey(item.parent))
-                                    {
-                                        spaceCount = indents.Where(x => x.Key == item.parent).Select(x => x.Value).First();
-                                    }
-                                    else
-                                    {
-                                        spaceCount--;
-                                    }
+                                    spaceCount--;
                                 }
+                            }
 
-                                if (item.parent != null && !indents.ContainsKey(item.parent))
-                                {
-                                    indents.Add(item.parent, spaceCount);
-                                }
+                            if (item.parent != null && !indents.ContainsKey(item.parent))
+                            {
+                                indents.Add(item.parent, spaceCount);
+                            }
 
-                                lastLastParent = lastParent;
-                                lastParent = item.id;   
+                            lastLastParent = lastParent;
+                            lastParent = item.id;   
                             
                                 <option value="@item.id" @(item.text == System.Configuration.ConfigurationManager.AppSettings["ClientRootFolderName"] ? "selected=selected" : string.Empty)>
                                     @{
-                                        for (int x = 0; x < spaceCount; x++)
-                                        {
+                            for (int x = 0; x < spaceCount; x++)
+                            {
                                             <p>&nbsp;</p>
-                                        }
+                            }
                                     }
                                 
                                     -@item.text
                                 </option>
-                            }
+                        }
                     }
                     </select>
                     <span class="help-inline" id="spanMergedReportFolder" style="color: #FF0000; display: none;">
@@ -1958,3 +1934,4 @@
     </div>
 </div>
 }
+@Html.Partial("~/Views/Shared/_DashboardMediaSparkChart.cshtml")

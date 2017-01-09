@@ -22,6 +22,7 @@ using IQMedia.Web.Logic.Base;
 using Alachisoft.NCache.Runtime.Exceptions;
 using Alachisoft.NCache.Web.Caching;
 using System.Collections;
+using IQCommon.Model;
 
 namespace IQMedia.WebApplication.Utility
 {
@@ -138,7 +139,6 @@ namespace IQMedia.WebApplication.Utility
         /*
         public static void SetSessionInformation(SessionInformation p_sessionInformation)
         {
-
             SessionInformation sessionInformation = new SessionInformation();
             sessionInformation.ClientGUID = p_sessionInformation.ClientGUID;
             sessionInformation.ClientID = p_sessionInformation.ClientID;
@@ -398,11 +398,38 @@ namespace IQMedia.WebApplication.Utility
                         case Shared.Utility.CommonFunctions.Roles.ShareTV:
                             customerModel.IsShareTV = true;
                             break;
+                        case Shared.Utility.CommonFunctions.Roles.SMOther:
+                            customerModel.IsSMOther = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.FB:
+                            customerModel.IsFB = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.IG:
+                            customerModel.IsIG = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.BL:
+                            customerModel.IsBL = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.FO:
+                            customerModel.IsFO = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.PR:
+                            customerModel.IsPR = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.LN:
+                            customerModel.IsLN = true;
+                            break;
                         case Shared.Utility.CommonFunctions.Roles.ThirdPartyData:
                             customerModel.IsThirdPartyData = true;
                             break;
                         case Shared.Utility.CommonFunctions.Roles.ClientSpecificData:
                             customerModel.IsClientSpecificData = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.ConnectAccess:
+                            customerModel.IsConnectAccess = true;
+                            break;
+                        case Shared.Utility.CommonFunctions.Roles.ExternalRuleEditor:
+                            customerModel.IsExternalRuleEditor = true;
                             break;
                         default:
                             break;
@@ -750,7 +777,7 @@ namespace IQMedia.WebApplication.Utility
                     List<DiscoveryMediaResult> listDiscoveryMediaResult = (List<DiscoveryMediaResult>)p_List;
                     listDiscoveryMediaResult.ForEach(s =>
                     {
-                        if (s.Date.HasValue && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.TV && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.PQ)
+                        if (s.Date.HasValue && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.TV.ToString() && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.PQ.ToString())
                         {
                             if (s.Date.Value.IsDaylightSavingTime())
                             {
@@ -874,7 +901,7 @@ namespace IQMedia.WebApplication.Utility
                     List<DiscoveryMediaResult> listDiscoveryMediaResult = (List<DiscoveryMediaResult>)p_List;
                     listDiscoveryMediaResult.ForEach(s =>
                     {
-                        if (s.Date.HasValue && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.TV)
+                        if (s.Date.HasValue && s.MediumType != Shared.Utility.CommonFunctions.CategoryType.TV.ToString())
                         {
                             if (s.Date.Value.IsDaylightSavingTime())
                             {
@@ -1117,6 +1144,8 @@ namespace IQMedia.WebApplication.Utility
         // Otherwise, the LibraryTextType custom setting is used. If Highlighting Text is selected and it exists, it is displayed. Else Content is displayed.
         public static List<IQArchive_MediaModel> ProcessArchiveDisplayText(List<IQArchive_MediaModel> lstArchiveMedia, Shared.Utility.CommonFunctions.LibraryTextTypes textType)
         {
+            ActiveUser sessionInfo = ActiveUserMgr.GetActiveUser();
+
             int wordsBeforeSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsBeforeSpan"]);
             int wordsAfterSpan = Convert.ToInt32(ConfigurationManager.AppSettings["HighlightWordsAfterSpan"]);
             string separator = "...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...";
@@ -1124,6 +1153,12 @@ namespace IQMedia.WebApplication.Utility
 
             foreach (IQArchive_MediaModel archiveMedia in lstArchiveMedia)
             {
+                IQ_MediaTypeModel objSubMediaType = null;
+                if (sessionInfo != null && sessionInfo.MediaTypes != null && sessionInfo.MediaTypes.Count > 0)
+                {
+                    objSubMediaType = sessionInfo.MediaTypes.First(w => archiveMedia.SubMediaType.ToString() == w.SubMediaType && w.TypeLevel == 2);
+                }
+
                 if (archiveMedia.DisplayDescription || textType == Shared.Utility.CommonFunctions.LibraryTextTypes.Description)
                 {
                     archiveMedia.DisplayText = !String.IsNullOrWhiteSpace(archiveMedia.Description) ? ProcessDisplayText_Helper(archiveMedia.Description, true) : "No Description";
@@ -1142,23 +1177,23 @@ namespace IQMedia.WebApplication.Utility
                         string highlightingText = null;
 
                         // PM, Radio, and Miscellaneous items don't have highlighting text
-                        switch (archiveMedia.SubMediaType)
+                        switch (objSubMediaType != null ? objSubMediaType.DataModelType : archiveMedia.DataModelType)
                         {
-                            case Shared.Utility.CommonFunctions.CategoryType.TV:
+                            case "TV":
                                 IQArchive_ArchiveClipModel tvModel = (IQArchive_ArchiveClipModel)archiveMedia.MediaData;
                                 if (tvModel.HighlightedOutput != null && tvModel.HighlightedOutput.CC != null)
                                 {
                                     highlightingText = String.Join(" ", tvModel.HighlightedOutput.CC.Select(s => s.Text));
                                 }
                                 break;
-                            case Shared.Utility.CommonFunctions.CategoryType.TW:
+                            case "TW":
                                 IQArchive_ArchiveTweetsModel twModel = (IQArchive_ArchiveTweetsModel)archiveMedia.MediaData;
                                 if (twModel.HighlightedOutput != null)
                                 {
                                     highlightingText = twModel.HighlightedOutput.Highlights;
                                 }
                                 break;
-                            case Shared.Utility.CommonFunctions.CategoryType.NM:
+                            case "NM":
                                 IQArchive_ArchiveNMModel nmModel = (IQArchive_ArchiveNMModel)archiveMedia.MediaData;
                                 if (nmModel.HighlightedOutput != null && nmModel.HighlightedOutput.Highlights != null)
                                 {
@@ -1171,11 +1206,7 @@ namespace IQMedia.WebApplication.Utility
                                     }
                                 }
                                 break;
-                            case Shared.Utility.CommonFunctions.CategoryType.SocialMedia:
-                            case Shared.Utility.CommonFunctions.CategoryType.Forum:
-                            case Shared.Utility.CommonFunctions.CategoryType.Blog:
-                            case Shared.Utility.CommonFunctions.CategoryType.FB:
-                            case Shared.Utility.CommonFunctions.CategoryType.IG:
+                            case "SM":
                                 IQArchive_ArchiveSMModel smModel = (IQArchive_ArchiveSMModel)archiveMedia.MediaData;
                                 if (smModel.HighlightedOutput != null && smModel.HighlightedOutput.Highlights != null)
                                 {
@@ -1188,7 +1219,7 @@ namespace IQMedia.WebApplication.Utility
                                     }
                                 }
                                 break;
-                            case Shared.Utility.CommonFunctions.CategoryType.PQ:
+                            case "PQ":
                                 IQArchive_ArchivePQModel pqModel = (IQArchive_ArchivePQModel)archiveMedia.MediaData;
                                 if (pqModel.HighlightedOutput != null && pqModel.HighlightedOutput.Highlights != null)
                                 {

@@ -12,23 +12,28 @@ namespace IQMedia.Data
 {
     public class IQDiscovery_SavedSearchDA : IDataAccess
     {
-        public string InsertDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)// string p_Title, string p_SearchTerm, DateTime? p_Date, string p_Medium, string p_TVMarket)
+        public string InsertDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)
         {
             try
             {
                 Int32 SavedSearchID = 0;
 
                 string advancedSearchIDs = discovery_SavedSearch.AdvanceSearchSettingIDsList == null ? "" : String.Join(";", discovery_SavedSearch.AdvanceSearchSettingIDsList);
+                string mediums = discovery_SavedSearch.Mediums == null ? "" : String.Join(";", discovery_SavedSearch.Mediums);
 
                 string advanceSearchSettings = "<AdvanceSearchSettingsRoot>";
                 if (discovery_SavedSearch.AdvanceSearchSettingsList != null)
                 {
                     foreach (DiscoveryAdvanceSearchModel search in discovery_SavedSearch.AdvanceSearchSettingsList)
                     {
-                        if (search.TVSettings != null
-                            || search.NewsSettings != null
-                            || search.SociaMediaSettings != null
-                            || search.ProQuestSettings != null)
+                        // Don't save the advanced search settings if they are all empty
+                        bool hasValues = false;
+                        foreach (var property in search.GetType().GetProperties())
+                        {
+                            hasValues = hasValues || property.GetValue(search, null) != null;
+                        }
+
+                        if (hasValues)
                         {
                             advanceSearchSettings += Shared.Utility.CommonFunctions.SerializeToXml(search);
                         }
@@ -43,10 +48,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SearchID", DbType.String, discovery_SavedSearch.SearchID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@AdvanceSearchSettings", DbType.Xml, advanceSearchSettings, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@AdvanceSearchSettingIDs", DbType.String, advancedSearchIDs, ParameterDirection.Input));
-                //dataTypeList.Add(new DataType("@SearchDate", DbType.String, discovery_SavedSearch.SearchDate, ParameterDirection.Input));
-                /*dataTypeList.Add(new DataType("@FromDate", DbType.Date, discovery_SavedSearch.FromDate, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@ToDate", DbType.Date, discovery_SavedSearch.ToDate, ParameterDirection.Input));*/
-                dataTypeList.Add(new DataType("@Medium", DbType.String, discovery_SavedSearch.Medium, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@Medium", DbType.String, mediums, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, discovery_SavedSearch.ClientGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CustomerGUID", DbType.Guid, discovery_SavedSearch.CustomerGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SavedSearchID", DbType.Int32, SavedSearchID, ParameterDirection.Output));
@@ -59,7 +61,6 @@ namespace IQMedia.Data
                 Shared.Utility.Log4NetLogger.Error("InsertDiscoverySavedSearch: " + ex.ToString());
                 throw;
             }
-
         }
 
         public string UpdateDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)
@@ -67,16 +68,21 @@ namespace IQMedia.Data
             try
             {
                 string advancedSearchIDs = discovery_SavedSearch.AdvanceSearchSettingIDsList == null ? "" : String.Join(";", discovery_SavedSearch.AdvanceSearchSettingIDsList);
+                string mediums = discovery_SavedSearch.Mediums == null ? "" : String.Join(";", discovery_SavedSearch.Mediums);
 
                 string advanceSearchSettings = "<AdvanceSearchSettingsRoot>";
                 if (discovery_SavedSearch.AdvanceSearchSettingsList != null)
                 {
                     foreach (DiscoveryAdvanceSearchModel search in discovery_SavedSearch.AdvanceSearchSettingsList)
                     {
-                        if (search.TVSettings != null
-                            || search.NewsSettings != null
-                            || search.SociaMediaSettings != null
-                            || search.ProQuestSettings != null)
+                        // Don't save the advanced search settings if they are all empty
+                        bool hasValues = false;
+                        foreach (var property in search.GetType().GetProperties())
+                        {
+                            hasValues = hasValues || property.GetValue(search, null) != null;
+                        }
+
+                        if (hasValues)
                         {
                             advanceSearchSettings += Shared.Utility.CommonFunctions.SerializeToXml(search);
                         }
@@ -90,19 +96,17 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SearchID", DbType.String, discovery_SavedSearch.SearchID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@AdvanceSearchSettings", DbType.Xml, advanceSearchSettings, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@AdvanceSearchSettingIDs", DbType.String, advancedSearchIDs, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@Medium", DbType.String, discovery_SavedSearch.Medium, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@Medium", DbType.String, mediums, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CustomerGUID", DbType.Guid, discovery_SavedSearch.CustomerGuid, ParameterDirection.Input));
 
 
                 string _Result = DataAccess.ExecuteNonQuery("usp_v4_IQDiscovery_SavedSearch_Update", dataTypeList);
                 return _Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
-
         }
 
         public List<Discovery_SavedSearchModel> SelectDiscoverySavedSearch(Int32? p_PageNumber, Int32 p_Pagesize, Int32? p_ID, Guid p_CustomerGUID, out Int64 totalRecords)
@@ -145,14 +149,11 @@ namespace IQMedia.Data
                 DataSet dSet = DataAccess.GetDataSet("usp_v4_IQDiscovery_SavedSearch_SelectByID", dataTypeList);
 
                 return FillSavedSearch(dSet, (Int32?)p_ID);
-
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
-
         }
 
         public string DeleteDiscoverySavedSearchByID(Int64 p_ID, Guid p_CustomerGUID)
@@ -175,13 +176,11 @@ namespace IQMedia.Data
 
         protected List<Discovery_SavedSearchModel> FillSavedSearch(DataSet dataSet, Int32? p_ID)
         {
-
             List<Discovery_SavedSearchModel> lstDiscovery_SavedSearchModel = new List<Discovery_SavedSearchModel>();
             if (dataSet != null && dataSet.Tables.Count > 0)
             {
                 if (dataSet.Tables[0] != null)
                 {
-
                     DataTable dataTable = dataSet.Tables[0];
 
                     foreach (DataRow dr in dataSet.Tables[0].Rows)
@@ -240,25 +239,11 @@ namespace IQMedia.Data
                             }
                         }
 
-                        /* if (dataTable.Columns.Contains("FromDate") && !dr["FromDate"].Equals(DBNull.Value))
-                         {
-                             discovery_SavedSearchModel.FromDate = Convert.ToDateTime(dr["FromDate"]);
-                         }
-
-                         if (dataTable.Columns.Contains("ToDate") && !dr["ToDate"].Equals(DBNull.Value))
-                         {
-                             discovery_SavedSearchModel.ToDate = Convert.ToDateTime(dr["ToDate"]);
-                         }*/
-
-                        if (dataTable.Columns.Contains("Medium") && !dr["Medium"].Equals(DBNull.Value))
+                        if (dataTable.Columns.Contains("Medium") && !dr["Medium"].Equals(DBNull.Value) && !String.IsNullOrWhiteSpace(Convert.ToString(dr["Medium"])))
                         {
-                            discovery_SavedSearchModel.Medium = Convert.ToString(dr["Medium"]);
+                            discovery_SavedSearchModel.Mediums = Convert.ToString(dr["Medium"]).Split(new char[] { ';' }).ToList();
                         }
 
-                        /*if (dataTable.Columns.Contains("TVMarket") && !dr["TVMarket"].Equals(DBNull.Value))
-                        {
-                            discovery_SavedSearchModel.TVMarket = Convert.ToString(dr["TVMarket"]);
-                        }*/
                         lstDiscovery_SavedSearchModel.Add(discovery_SavedSearchModel);
                     }
                 }

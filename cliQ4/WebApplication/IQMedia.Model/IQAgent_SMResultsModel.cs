@@ -8,7 +8,10 @@ namespace IQMedia.Model
     public class IQAgent_SMResultsModel
     {
         public Int64 ID { get; set; }
-        public string Description { get; set; }
+
+        private string _Description = "";
+
+        public string Description { get { return _Description; } set { _Description = value; } }
         public DateTime? ItemHarvestDate { get; set; }
         public string HighlightingText { get; set; }
         public HighlightedSMOutput HighlightedSMOutput { get; set; }

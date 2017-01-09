@@ -12,7 +12,7 @@ namespace IQMedia.Web.Logic
 {
     public class IQDiscovery_SavedSearchLogic : IQMedia.Web.Logic.Base.ILogic
     {
-        public string InsertDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)//string p_Title, string[] p_SearchTerm, DateTime? p_Date, string p_Medium, string p_TVMarket)
+        public string InsertDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)
         {
             try
             {
@@ -34,10 +34,8 @@ namespace IQMedia.Web.Logic
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
 
         public string UpdateDiscoverySavedSearch(Discovery_SavedSearchModel discovery_SavedSearch)
@@ -124,20 +122,12 @@ namespace IQMedia.Web.Logic
                         discovery_SavedSearchReturn.AdvanceSearchSettingIDsList = lstDiscovery_SavedSearchModel[0].AdvanceSearchSettingIDsList;
                         discovery_SavedSearchReturn.SearchTermArray = lstofSearchTerm.ToArray();
                         discovery_SavedSearchReturn.SearchIDArray = lstofSearchID.ToArray();
-                        discovery_SavedSearchReturn.Medium = lstDiscovery_SavedSearchModel[0].Medium;
-                        discovery_SavedSearchReturn.FromDate = lstDiscovery_SavedSearchModel[0].FromDate;// lstDiscovery_SavedSearchModel[0].FromDate == null ? string.Empty : Convert.ToDateTime(lstDiscovery_SavedSearchModel[0].FromDate);//.ToString("MM/dd/yyyy");
+                        discovery_SavedSearchReturn.Mediums = lstDiscovery_SavedSearchModel[0].Mediums;
+                        discovery_SavedSearchReturn.FromDate = lstDiscovery_SavedSearchModel[0].FromDate;
                         discovery_SavedSearchReturn.ToDate = lstDiscovery_SavedSearchModel[0].ToDate;
                         discovery_SavedSearchReturn.TVMarket = lstDiscovery_SavedSearchModel[0].TVMarket;
                         discovery_SavedSearchReturn.Title = lstDiscovery_SavedSearchModel[0].Title;
                         discovery_SavedSearchReturn.ID = lstDiscovery_SavedSearchModel[0].ID;
-                        if (lstDiscovery_SavedSearchModel[0].Medium == CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia))
-                        {
-                            discovery_SavedSearchReturn.MediumDesc = CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia);
-                        }
-                        else
-                        {
-                            discovery_SavedSearchReturn.MediumDesc = !string.IsNullOrWhiteSpace(lstDiscovery_SavedSearchModel[0].Medium) ? CommonFunctions.GetEnumDescription(CommonFunctions.StringToEnum<CommonFunctions.CategoryType>(lstDiscovery_SavedSearchModel[0].Medium)) : string.Empty;
-                        }
                     }
                 }
 

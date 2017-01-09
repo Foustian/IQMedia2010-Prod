@@ -193,6 +193,33 @@ namespace IQMedia.Web.Logic
                     case Shared.Utility.CommonFunctions.Roles.ClientSpecificData:
                         user.IsClientSpecificData = true;
                         break;
+                    case Shared.Utility.CommonFunctions.Roles.SMOther:
+                        user.IsSMOther = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.FB:
+                        user.IsFB = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.IG:
+                        user.IsIG = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.BL:
+                        user.IsBL = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.FO:
+                        user.IsFO = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.PR:
+                        user.IsPR = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.LN:
+                        user.IsLN = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.ConnectAccess:
+                        user.IsConnectAccess = true;
+                        break;
+                    case Shared.Utility.CommonFunctions.Roles.ExternalRuleEditor:
+                        user.IsExternalRuleEditor = true;
+                        break;
                     default:
                         break;
                 }

@@ -18,6 +18,7 @@ var _categoryData = null;
 var _clipID = null;
 var _flash = null;
 var _agentGuid = null;
+var _iqCCKey = null;
 var videotype = '';
 var xIndex = 0;
 var LastIndex = 0;
@@ -40,6 +41,7 @@ var _EvtCallbackProcessedTime = null;
 var _GetClipDetail = 0;
 // IE Version below 10
 var _IEVB10 = false;
+var _ISFScr = false;
 
 if (!window.console) {
     var console = {
@@ -201,8 +203,28 @@ var LoadPlayerbyAgentID = function (iqagentID, callback) {
         ).then(function () {
             SetPlayerMetaData();
         });
+    }).then(function () {
+        if (typeof _IsShowMTChart !== 'undefined' && _IsShowMTChart) {
+            var jsonPostData = {
+                IQ_CC_KEY: _iqCCKey,
+                RAW_MEDIA_GUID: _agentGuid,
+                sortByHitStart: true,
+                lstSearchTermHits: _searchTermHits,
+                feedsDrillDown: true
+            }
 
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: _urlCommonGetMTChart,
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(jsonPostData),
+                success: OnGetChartComplete,
+                error: OnGetChartFail
+            });
+        }
     });
+
 
     //    $.ajax({
 
@@ -276,7 +298,8 @@ var LoadPlayerbyGuidTS = function (itemGuid, title120, searchTerm, isUGC, callba
         p_Title120: _Title120,
         p_KeyValues: _KeyValues,
         p_AutoPlayback: !_xdomplayer,
-        p_ARSZ: !(typeof _Callback == "function")
+        p_ARSZ: !(typeof _Callback == "function"),
+        p_IsRadio: false
     }
 
     $.when($.ajax({
@@ -349,16 +372,102 @@ var LoadPlayerbyGuidTS = function (itemGuid, title120, searchTerm, isUGC, callba
 
     return _Player;
 }
+var LoadPlayerbyGuidTSRadio = function (p_itemGuid, p_searchTerm, p_market, p_datetime, p_timezone) {
 
+    videotype = 'rawmedia';
+    _ID = p_itemGuid;
+
+    var jsonPostData = "";
+
+    var st = "";
+
+    if (typeof (p_searchTerm) !== 'undefined' && p_searchTerm != "" && p_searchTerm != null) {
+        st = p_searchTerm;
+    }
+
+    jsonPostData = {
+        p_ItemGuid: p_itemGuid,
+        p_SearchTerm: st,
+        p_ARSZ: true,
+        p_IsRadio: true
+    }
+
+    $.when($.ajax({
+
+        type: 'POST',
+        dataType: 'json',
+        url: _urlCommonLoadBasicPlayerByGuidnSearchTerm,
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(jsonPostData),
+
+        success: LoadNPlayer,
+        error: OnFail
+    })).then(function () {
+
+        setTimeout(function () {
+            $(".video-program").html('Market: ' + p_market);
+            $(".video-aired").html("<label>Aired: </label>" + p_datetime + " " + p_timezone);
+            $(".video-views").html("NA");
+            $(".video-value").html("NA");
+            $(".video-rank").html('NA');
+        }, 1000);
+
+    });
+
+    //    $.ajax({
+
+    //        type: 'GET',
+    //        dataType: 'jsonp',
+    //        url: _urlVideoCategory,
+    //        contentType: 'application/json; charset=utf-8',
+    //        success: OnParseCategoryData,
+    //        error: OnFailCategoryData
+    //    });
+
+    if (_categoryData == null) {
+
+        if (!_IEVB10) {
+
+            $.ajax({
+
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: _urlVideoCategory,
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: OnParseCategoryData,
+                error: OnFailCategoryData,
+                crossDomain: true
+            });
+        }
+        else {
+            $.ajax({
+
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                url: _urlVideoCategoryWoXd,
+                success: OnParseCategoryData,
+                error: OnFailCategoryData
+            });
+        }
+    }
+    SetCategoryData();
+
+    return _Player;
+}
 var LoadNPlayer = function (result) {
     if (result.videoGuid != null && result.videoGuid != undefined) {
         _agentGuid = result.videoGuid;
         _ID = result.videoGuid;
+        _iqCCKey = result.iqCCKey;
     }
-
-    SetSearchTermHits(result); // Defined in VideoPlayerChart.js
-    dfdPlayerInfoLoaded.resolve("Done"); // Tells TAds.js when the search term hits have been populated
-
+    if (typeof _IsShowMTChart !== 'undefined' && _IsShowMTChart) {
+        SetSearchTermHits(result); // Defined in VideoPlayerChart.js
+        dfdPlayerInfoLoaded.resolve("Done"); // Tells TAds.js when the search term hits have been populated
+    }
     _Width = 545;
     _Height = 312;
 
@@ -591,6 +700,8 @@ var LoadNPlayer = function (result) {
     + '<audio id="audioCapture" src="/Audio/camera_flick.mp3" style="display: none;"></audio>';
 
     $(document.body).append(rawPlayer);
+    $(document.body).append("<img id='imgFPlay' src='/images/video-player/play_f.png' style='display:none;position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;z-index:2147483647;opacity:1;' />");
+    $(document.body).append("<img id='imgFPause' src='/images/video-player/pause_f.png' style='display:none;position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;z-index:2147483647;opacity:1;' />");
 
     _flash = document.getElementById('HUY');
 
@@ -680,6 +791,9 @@ var LoadNPlayer = function (result) {
         $('#divCapHighlightContent').html(result.HighlightHTML);
         $('#divCapAllContent').html(result.CaptionHTML);
 
+        // commented for now, uncomment below if need to pause by absolute time
+        //_PlaySecondsSetting = result.offset + _RawPlaySeconds
+
         if (result.HighlightHTML != null && $.trim(result.HighlightHTML) != "") {
             ChangeTabPlayer(0);
         }
@@ -701,24 +815,55 @@ var LoadNPlayer = function (result) {
 
     $(".select-text > div").css("cursor", "pointer");
 
+    $("#divCapHighlightContent").mCustomScrollbar({
+        scrollInertia: 1500,
+        theme: "light-2",
+        advanced: {
+            updateOnContentResize: true,
+            autoScrollOnFocus: false
+        },
+        mouseWheel: { scrollAmount: 100 }
+    });
+
+    $("#divCapAllContent").mCustomScrollbar({
+        scrollInertia: 1500,
+        theme: "light-2",
+        advanced: {
+            updateOnContentResize: true,
+            autoScrollOnFocus: false
+        },
+        mouseWheel: { scrollAmount: 100 }
+    });
+
+    $('#divCapDescriptionContent').mCustomScrollbar({
+        scrollInertia: 1500,
+        theme: "light-2",
+        advanced: {
+            updateOnContentResize: true,
+            autoScrollOnFocus: false
+        },
+        mouseWheel: { scrollAmount: 100 }
+    });
+    /*
+
     $("#divCapHighlightContent").enscroll({
-        verticalTrackClass: 'track4',
-        verticalHandleClass: 'handle4',
-        pollChanges: true
+    verticalTrackClass: 'track4',
+    verticalHandleClass: 'handle4',
+    pollChanges: true
     });
 
     $('#divCapAllContent').enscroll({
-        verticalTrackClass: 'track4',
-        verticalHandleClass: 'handle4',
-        pollChanges: true
+    verticalTrackClass: 'track4',
+    verticalHandleClass: 'handle4',
+    pollChanges: true
     });
-
+    
     $('#divCapDescriptionContent').enscroll({
-        verticalTrackClass: 'track4',
-        verticalHandleClass: 'handle4',
-        pollChanges: true
+    verticalTrackClass: 'track4',
+    verticalHandleClass: 'handle4',
+    pollChanges: true
     });
-
+    */
     _Player = rawPlayer;
 
     if (typeof _Callback == "function") {
@@ -891,9 +1036,12 @@ var SetFullScreen = function () {
             elem.webkitRequestFullscreen();
         }
         $('#HUY').css('width', screen.width);
-        $('#HUY').attr('width',screen.width);
+        $('#HUY').attr('width', screen.width);
         $('#HUY').css('height', screen.height);
-        $('#HUY').attr('height',screen.height);
+        $('#HUY').attr('height', screen.height);
+
+        $(document).mouseup(function (e) { FullScreenClick(); });
+        _ISFScr = true;
     }
 }
 
@@ -905,8 +1053,34 @@ $(window).resize(function () {
         $('#HUY').attr('width', _Width);
         $('#HUY').css('height', _Height);
         $('#HUY').attr('height', _Height);
+
+        _ISFScr = false;
+
+        $(document).unbind("mouseup");
+        $("#imgFPause").hide();
+        $("#imgFPlay").hide()
     }
 });
+
+var FullScreenClick = function () {
+
+    consolelog('click');
+
+    if (_ISFScr) {
+        if (_PlayState == 0) {
+
+            $("#imgFPause").show();
+            $("#imgFPause").animate({ width: "256px", height: "256px", "opacity": "0" }, 1500, function () { $(this).hide(); $("#imgFPause").css({ width: "128px", height: "128px", "opacity": "1" }); });
+        }
+        else {
+            $("#imgFPlay").show();
+            $("#imgFPlay").animate({ width: "256px", height: "256px", "opacity": "0" }, 1500, function () { $(this).hide(); $("#imgFPlay").css({ width: "128px", height: "128px", "opacity": "1" }); });
+        }
+
+        PlayPause();
+    }
+}
+
 
 var UpdateVolume = function () {
     _Vol = $("#video-vol-slider").slider("value");
@@ -1406,6 +1580,22 @@ var ClippingEvts = function () {
         var isValid = true;
 
         if (!$(".video-clip-title").val().trim().length > 0) {
+
+            $(".video-clip-title").addClass("video-input-error");
+            $(".video-clip-title").css("border", "1px solid #CB1C1C");
+
+            isValid = false;
+        }
+        else if ($(".video-clip-title").val().indexOf("\"") != -1) {
+            ShowNotification(_msgClipCreationQuotesInTitle);
+
+            $(".video-clip-title").addClass("video-input-error");
+            $(".video-clip-title").css("border", "1px solid #CB1C1C");
+
+            isValid = false;
+        }
+        else if ($(".video-clip-title").val().indexOf("\"") != -1) {
+            ShowNotification(_msgClipCreationQuotesInTitle);
 
             $(".video-clip-title").addClass("video-input-error");
             $(".video-clip-title").css("border", "1px solid #CB1C1C");
@@ -2289,6 +2479,8 @@ var ClearPlayerData = function () {
     }
 
     $("#audioCapture").remove();
+    $("#imgFPlay").remove();
+    $("#imgFPause").remove()
 }
 
 var ClearClip = function () {
@@ -3092,6 +3284,7 @@ function OnGetChartFail(result) {
 function RenderHighCharts(jsonLineChartData, chartID) {
     var JsonLineChart = JSON.parse(jsonLineChartData);
     JsonLineChart.xAxis.labels.formatter = FormatTime;
+    JsonLineChart.chart.zoomType = null; // Zoom doesn't work in iframes, so disable it for now
     if (chartID == 'ads-results') {
         // Functions for LR/Ads chart. Defined in VideoPlayerChart.js
         JsonLineChart.tooltip.formatter = FormatLRTooltip;
@@ -3229,47 +3422,57 @@ var consolelog = function (Param) {
 }
 
 var ResizeContainer = function (width, height) {
-    var diffHeight = GetDiffHeight(height);
 
-    var capInfoWidth = GetCaptionInfoWidth(width);
+    if (width != 0 && height != 0) {
+        var diffHeight = GetDiffHeight(height);
 
-    var divWidth = GetTotalWidth(width);
-    var divHeight = $(".video-about-clip").height() + diffHeight + 14;
+        var capInfoWidth = GetCaptionInfoWidth(width);
 
-    var dimension = AdjustDimension(divWidth, divHeight, width, height);
+        var divWidth = GetTotalWidth(width);
+        var divHeight = $(".video-about-clip").height() + diffHeight + 14;
 
-    width = dimension.width;
-    height = dimension.height;
+        var dimension = AdjustDimension(divWidth, divHeight, width, height);
 
-    diffHeight = GetDiffHeight(height);
-    capInfoWidth = GetCaptionInfoWidth(width);
+        width = dimension.width;
+        height = dimension.height;
 
-    divWidth = GetTotalWidth(width);   
+        diffHeight = GetDiffHeight(height);
+        capInfoWidth = GetCaptionInfoWidth(width);
 
-    var capHeight = $(".video-caption").height();
-    var capContentHeight = $(".video-caption-content > div").height();
-    var aboutHeight = $(".video-about-clip").height();
+        divWidth = GetTotalWidth(width);
 
-    $("#HUY").attr("width", width);
-    $("#HUY").attr("height", height);
+        var capHeight = $(".video-caption").height();
+        var capContentHeight = $(".video-caption-content > div").height();
+        var aboutHeight = $(".video-about-clip").height();
 
-    $("#HUY").css({ "width": width, "height": height });
-    $(".video-caption-info").css("width", capInfoWidth);
-    $(".video-form").css("width", capInfoWidth);
+        $("#HUY").attr("width", width);
+        $("#HUY").attr("height", height);
 
-    $(".video-video").animate({ height: height }, 1500, function () { });
-    $(".video-video").css( "width", width);
+        $("#HUY").css({ "width": width, "height": height });
+        $(".video-caption-info").css("width", capInfoWidth);
+        $(".video-form").css("width", capInfoWidth);
 
-    $(".video-caption-content > div").animate({ height: (capContentHeight + diffHeight) }, 1500);
-    $(".video-caption").animate({ height: (capHeight + diffHeight) }, 1500);
-    $(".video-about-clip").animate({ height: (aboutHeight + diffHeight) }, 1500);
+        $(".video-video").animate({ height: height }, 1500, function () { });
+        $(".video-video").css("width", width);
 
-    $("#divPlayer").css("max-width", divWidth);
-    $(".video-container-narrow").css("max-width", divWidth);
+        $(".video-caption-content > div").animate({ height: (capContentHeight + diffHeight) }, 1500);
+        $(".video-caption").animate({ height: (capHeight + diffHeight) }, 1500);
+        $(".video-about-clip").animate({ height: (aboutHeight + diffHeight) }, 1500);
+
+        $("#divPlayer").css("max-width", divWidth);
+        $(".video-container-narrow").css("max-width", divWidth);
 
 
-    _Width = width;
-    _Height = height;
+        _Width = width;
+        _Height = height;
+
+        if ($("#ads-results").length > 0) {
+            var playerWidth = $(".video-player-row-one").width();
+            $("#ads-results-container").css("width", playerWidth - 163);
+
+            $("#ads-results").highcharts().reflow();
+        }
+    }
 }
 
 var GetDiffHeight = function (height) {

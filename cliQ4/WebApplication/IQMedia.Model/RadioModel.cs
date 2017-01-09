@@ -20,6 +20,8 @@ namespace IQMedia.Model
         public string TimeZone { get; set; }
 
         public int Mentions { get; set; }
+
+        public TadsFilterModel Facets { get; set; }
     }
 
     public class RadioStation

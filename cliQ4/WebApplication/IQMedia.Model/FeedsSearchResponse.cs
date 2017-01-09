@@ -12,6 +12,7 @@ namespace IQMedia.Model
         public Dictionary<string, string> ChildCounts { get; set; }
         public bool IsValid { get; set; }
         public bool IsReadLimitExceeded { get; set; }
+        public List<string> ExcludedIDs { get; set; }
     }
 
     public class FeedsChildSearchResponse
@@ -19,5 +20,6 @@ namespace IQMedia.Model
         public IQAgent_MediaResultsModel MediaResult { get; set; }
         public Int64 OrigParentID { get; set; }
         public bool IsValid { get; set; }
+        public List<string> ExcludedIDs { get; set; }
     }
 }

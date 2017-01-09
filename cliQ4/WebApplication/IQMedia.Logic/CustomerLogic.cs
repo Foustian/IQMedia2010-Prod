@@ -174,5 +174,29 @@ namespace IQMedia.Web.Logic
             var custDA = (CustomerDA)DataAccessFactory.GetDataAccess(DataAccessType.Customer);
             return custDA.ResetPasswordAttempts(p_CustomerKey);
         }
+
+        public bool GroupAddSubCustomer(Int64 p_GrpID, Int64 p_MCID, Int64 p_SCID, Int64 p_MasterCustomerID, Int64 p_SubCustomerID, Guid p_CustomerGUID)
+        {
+            var custDA = (CustomerDA)DataAccessFactory.GetDataAccess(DataAccessType.Customer);
+            return custDA.GroupAddSubCustomer(p_GrpID, p_MCID, p_SCID, p_MasterCustomerID, p_SubCustomerID, p_CustomerGUID);
+        }
+
+        public List<CustomerModel> GroupGetSubCustomerByCustomer(Int64 p_MasterCustomerID)
+        {
+            var custDA = (CustomerDA)DataAccessFactory.GetDataAccess(DataAccessType.Customer);
+            return custDA.GroupGetSubCustomerByCustomer(p_MasterCustomerID);
+        }
+
+        public bool GroupRemoveSubCustomer(Int64 p_MasterCustomerID, Int64 p_SubCustomerID, Guid p_CustomerGUID)
+        {
+            var custDA = (CustomerDA)DataAccessFactory.GetDataAccess(DataAccessType.Customer);
+            return custDA.GroupRemoveSubCustomer(p_MasterCustomerID,p_SubCustomerID,p_CustomerGUID);
+        }
+
+        public void AddCustomerToAnewstip(long customerKey, string AnewstipUserID)
+        {
+            var custDA = (CustomerDA)DataAccessFactory.GetDataAccess(DataAccessType.Customer);
+            custDA.AddCustomerToAnewstip(customerKey, AnewstipUserID);
+        }
     }
 }

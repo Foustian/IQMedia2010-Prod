@@ -11,7 +11,7 @@ namespace IQMedia.Data
 {
     public class SMDA : IDataAccess
     {
-        public string InsertArchiveSM(IQAgent_SMResultsModel p_IQAgent_SMResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, Int64? MediaID, bool UseProminenceMultiplier = false)
+        public string InsertArchiveSM(IQAgent_SMResultsModel p_IQAgent_SMResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID, bool UseProminenceMultiplier = false)
         {
             try
             {
@@ -27,7 +27,6 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@Content", DbType.String, p_IQAgent_SMResultsModel.HighlightingText, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@HomeLink", DbType.String, p_IQAgent_SMResultsModel.HomeLink, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CompeteURL", DbType.String, p_IQAgent_SMResultsModel.CompeteURL, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@SourceCategory", DbType.String, p_IQAgent_SMResultsModel.SourceCategory, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@PositiveSentiment", DbType.Int32, p_IQAgent_SMResultsModel.PositiveSentiment, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@NegativeSentiment", DbType.Int32, p_IQAgent_SMResultsModel.NegativeSentiment, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@MediaID", DbType.Int64, MediaID, ParameterDirection.Input));
@@ -39,9 +38,11 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@Keywords", DbType.String, p_Keywords, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Description", DbType.String, p_Description, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ProminenceMultiplier", DbType.Decimal, UseProminenceMultiplier ? p_IQAgent_SMResultsModel.IQProminenceMultiplier : 1, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaType", DbType.String, p_MediaType, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SubMediaType", DbType.String, p_SubMediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveKey, ParameterDirection.Output));
 
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_ArchiveSM_Insert", dataTypeList);
+                string _Result = DataAccess.ExecuteNonQuery("usp_v5_ArchiveSM_Insert", dataTypeList);
                 return _Result;
 
             }

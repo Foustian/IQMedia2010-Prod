@@ -12,6 +12,7 @@ using IQMedia.Logic.Base;
 using IQMedia.Model;
 using IQMedia.Shared.Utility;
 using IQMedia.Web.Logic.Base;
+using IQCommon.Model;
 
 namespace IQMedia.Web.Logic
 {
@@ -104,16 +105,16 @@ namespace IQMedia.Web.Logic
             return iQAgentDA.SelectAllDropdown(ClientGuid);
         }
 
-        public string InsertIQAgentSearchRequest(string ClientGuid, string QueryName, string SearchXML, string v5SearchXml)
+        public string InsertIQAgentSearchRequest(string ClientGuid, string QueryName, string SearchXML)
         {
             IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
-            return iQAgentDA.InsertIQAgentSearchRequest(ClientGuid, QueryName, SearchXML, v5SearchXml);
+            return iQAgentDA.InsertIQAgentSearchRequest(ClientGuid, QueryName, SearchXML);
         }
 
-        public string UpdateIQAgentSearchRequest(string ClientGuid, long IQAgentSearchRequestID, string QueryName, string SearchXML, string v5SearchXml)
+        public string UpdateIQAgentSearchRequest(string ClientGuid, long IQAgentSearchRequestID, string QueryName, string SearchXML)
         {
             IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
-            return iQAgentDA.UpdateIQAgentSearchRequest(ClientGuid, IQAgentSearchRequestID, QueryName, SearchXML, v5SearchXml);
+            return iQAgentDA.UpdateIQAgentSearchRequest(ClientGuid, IQAgentSearchRequestID, QueryName, SearchXML);
         }
 
         public Int64 DeleteIQAgentSearchRequest(Int64 ID, Guid ClientGuid)
@@ -178,8 +179,8 @@ namespace IQMedia.Web.Logic
 
         public Dictionary<string, object> SearchMediaResults(int customerKey, Guid? clientGUID, List<string> mediaIDs, List<string> mediaCategories, List<string> excludeMediaCategories, DateTime? fromDate, DateTime? fromDateLocal, DateTime? toDate, DateTime? toDateLocal, List<string> searchRequestID, 
                                                                 string keyword, short? sentiment, string dma, string station, string competeUrl, List<string> iQDmaIDs, string handle, string publication, string author, short? prominenceValue, bool isProminenceAudience, bool isAsc,
-                                                                bool? isAudienceSort, int pageSize, long? fromRecordID, ref long? sinceID, bool isFacetingEnabled, bool isOnlyParents, bool? isRead, bool? isHeardFilter, bool? isSeenFilter, bool? isPaidFilter, bool? isEarnedFilter, bool? usePESHFilters, string pmgSearchUrl, string currentUrl, string showTitle, int? dayOfWeek, int? timeOfDay,
-                                                                Dictionary<string, string> dictChildCounts, out long? totalResults, out long? totalResultsDisplay, out bool isReadLimitExceeded)
+                                                                bool? isAudienceSort, int pageSize, long? fromRecordID, ref long? sinceID, bool isFacetingEnabled, bool isOnlyParents, bool? isRead, bool? isHeardFilter, bool? isSeenFilter, bool? isPaidFilter, bool? isEarnedFilter, bool? usePESHFilters, string pmgSearchUrl, string currentUrl, string showTitle, List<int> dayOfWeek, List<int> timeOfDay, bool? useGMT, string stationAffil, string demographic,
+                                                                Dictionary<string, string> dictChildCounts, List<IQ_MediaTypeModel> lstMediaTypes, out long? totalResults, out long? totalResultsDisplay, out bool isReadLimitExceeded)
         {
             Dictionary<string, object> dictResults = new Dictionary<string, object>();
             try
@@ -220,12 +221,20 @@ namespace IQMedia.Web.Logic
                 searchRequest.ShowTitle = showTitle;
                 searchRequest.DayOfWeek = dayOfWeek;
                 searchRequest.TimeOfDay = timeOfDay;
+                searchRequest.useGMT = useGMT;
+                searchRequest.stationAffil = stationAffil;
+                searchRequest.demographic = demographic;
 
                 isReadLimitExceeded = false;
+                List<string> excludedIDs = new List<string>();
+
                 if (clientGUID.HasValue)
                 {
-                    isReadLimitExceeded = CheckForQueuedSolrUpdates(searchRequest, clientGUID.Value, isRead);
+                    isReadLimitExceeded = CheckForQueuedSolrUpdates(searchRequest, clientGUID.Value, isRead, out excludedIDs);
                 }
+
+                // Store excluded IDs
+                dictResults.Add("ExcludedIDs", excludedIDs);
 
                 searchRequest.PageSize = pageSize;
                 searchRequest.FromRecordID = fromRecordID;
@@ -303,7 +312,7 @@ namespace IQMedia.Web.Logic
                 totalResultsDisplay = searchResult.TotalHitCount;
                 sinceID = searchResult.SinceID;
 
-                FeedsFilterModel filterModel = FillMediaResultsFilter(dictSearchResults);
+                FeedsFilterModel filterModel = FillMediaResultsFilter(dictSearchResults, lstMediaTypes);
                 dictResults.Add("Filter", filterModel);
                 
                 // If not filtering on prominence or markets (in which case rollup is disabled) and the dictionary doesn't already exist (when displaying more records), 
@@ -325,7 +334,7 @@ namespace IQMedia.Web.Logic
                 List<IQAgent_MediaResultsModel> lstIQAgent_MediaResultsModel = new List<IQAgent_MediaResultsModel>();
                 if (searchResult.Hits != null)
                 {
-                    lstIQAgent_MediaResultsModel = FillMediaResults(searchResult.Hits, dictChildCounts, currentUrl);
+                    lstIQAgent_MediaResultsModel = FillMediaResults(searchResult.Hits, dictChildCounts, currentUrl, lstMediaTypes);
                 }
 
                 dictResults.Add("Result", lstIQAgent_MediaResultsModel);
@@ -339,7 +348,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public IQAgent_MediaResultsModel SearchChildResults(int customerKey, Guid clientGUID, long parentID, string mediaType, bool isAsc, bool? isAudienceSort, bool? isRead, long sinceID, string pmgSearchUrl, string currentUrl)
+        public IQAgent_MediaResultsModel SearchChildResults(int customerKey, Guid clientGUID, long parentID, string mediaType, bool isAsc, bool? isAudienceSort, bool? isRead, long sinceID, string pmgSearchUrl, string currentUrl, List<IQ_MediaTypeModel> lstMediaTypes)
         {
             try
             {
@@ -355,7 +364,8 @@ namespace IQMedia.Web.Logic
                     searchRequest.MediaCategories = new List<string>() { mediaType };
                 }
 
-                CheckForQueuedSolrUpdates(searchRequest, clientGUID, isRead);
+                List<string> excludedIDs = new List<string>();
+                CheckForQueuedSolrUpdates(searchRequest, clientGUID, isRead, out excludedIDs);
 
                 if (isAudienceSort.HasValue)
                 {
@@ -423,12 +433,11 @@ namespace IQMedia.Web.Logic
                                     IQMedia.Shared.Utility.CommonFunctions.SearchType.Feeds_Children.ToString(),
                                     _Response);
                 #endregion
-
                 IQAgent_MediaResultsModel parent = null;
                 if (searchResult.Hits != null)
                 {
                     List<IQAgent_MediaResultsModel> lstIQAgent_MediaResultsModel = new List<IQAgent_MediaResultsModel>();
-                    lstIQAgent_MediaResultsModel = FillMediaResults(searchResult.Hits, null, currentUrl);
+                    lstIQAgent_MediaResultsModel = FillMediaResults(searchResult.Hits, null, currentUrl, lstMediaTypes);
 
                     parent = lstIQAgent_MediaResultsModel[0];
                     List<IQAgent_MediaResultsModel> children = lstIQAgent_MediaResultsModel.GetRange(1, lstIQAgent_MediaResultsModel.Count - 1);
@@ -471,7 +480,7 @@ namespace IQMedia.Web.Logic
                         (parent.MediaData as IQAgent_NewsResultsModel).ChildResults = children;
                     }
                 }
-
+                parent.ExcludedIDs = excludedIDs;
                 return parent;
             }
             catch (Exception)
@@ -481,8 +490,8 @@ namespace IQMedia.Web.Logic
         }
 
         public Dictionary<string, object> SearchDashboardResults(int customerKey, Guid clientGUID, List<string> mediaIDs, DateTime? fromDate, DateTime? toDate, List<string> searchRequestID, List<string> mediaCategories, List<string> excludeMediaCategories, string keyword, short? sentiment, short? prominenceValue,
-                                                                    bool isProminenceAudience, bool isOnlyParents, bool? isRead, long? sinceID, string pmgSearchUrl, CancellationToken token, Dictionary<string, object> dictResults, List<string> DmaIds, bool isHeardFilter, bool isSeenFilter, bool isPaidFilter, 
-                                                                    bool isEarnedFilter, bool usePESHFilters, string showTitle, int? dayOfWeek, int? timeOfDay)
+                                                                    bool isProminenceAudience, bool isOnlyParents, bool? isRead, long? sinceID, string pmgSearchUrl, CancellationToken token, Dictionary<string, object> dictResults, List<string> DmaIds, bool? isHeardFilter, bool? isSeenFilter, bool? isPaidFilter, 
+                                                                    bool? isEarnedFilter, bool? usePESHFilters, string showTitle, List<int> dayOfWeek, List<int> timeOfDay)
         {
             try
             {
@@ -515,16 +524,18 @@ namespace IQMedia.Web.Logic
                     searchRequest.IsOnlyParents = isOnlyParents && !prominenceValue.HasValue && (DmaIds == null || DmaIds.Count() <= 0);
                     searchRequest.SinceID = sinceID;
                     searchRequest.IsRead = isRead;
-                    searchRequest.IsHeardFilter = isHeardFilter;
-                    searchRequest.isSeenFilter = isSeenFilter;
-                    searchRequest.isPaidFilter = isPaidFilter;
-                    searchRequest.isEarnedFilter = isEarnedFilter;
-                    searchRequest.usePESHFilters = usePESHFilters;
+                    searchRequest.IsHeardFilter = isHeardFilter.HasValue ? isHeardFilter.Value : false;
+                    searchRequest.isSeenFilter = isSeenFilter.HasValue ? isSeenFilter.Value : false;
+                    searchRequest.isPaidFilter = isPaidFilter.HasValue ? isPaidFilter.Value : false;
+                    searchRequest.isEarnedFilter = isEarnedFilter.HasValue ? isEarnedFilter.Value : false;
+                    searchRequest.usePESHFilters = usePESHFilters.HasValue ? usePESHFilters.Value : false;
                     searchRequest.ShowTitle = showTitle;
                     searchRequest.DayOfWeek = dayOfWeek;
                     searchRequest.TimeOfDay = timeOfDay;
-                    
-                    CheckForQueuedSolrUpdates(searchRequest, clientGUID, isRead);
+
+                    // Need empty variable to hold out parameter
+                    List<string> excludedIDs = new List<string>();
+                    CheckForQueuedSolrUpdates(searchRequest, clientGUID, isRead, out excludedIDs);
                 }
 
                 SearchResult res = searchEngine.SearchForDashboard(searchRequest, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
@@ -601,16 +612,7 @@ namespace IQMedia.Web.Logic
                 foreach (XElement element in elements)
                 {
                     IQAgent_DaySummaryModel summaryModel = new IQAgent_DaySummaryModel();
-                    summaryModel.SubMediaType = element.Parent.ElementsBeforeSelf().ToList()[1].Value;
-                    if (summaryModel.SubMediaType == CommonFunctions.CategoryType.SocialMedia.ToString() || summaryModel.SubMediaType == CommonFunctions.CategoryType.Blog.ToString() || summaryModel.SubMediaType == CommonFunctions.CategoryType.Forum.ToString() || 
-                        summaryModel.SubMediaType == CommonFunctions.CategoryType.FB.ToString() || summaryModel.SubMediaType == CommonFunctions.CategoryType.IG.ToString())
-                    {
-                        summaryModel.MediaType = CommonFunctions.MediaType.SM.ToString();
-                    }
-                    else if (summaryModel.SubMediaType == CommonFunctions.CategoryType.Radio.ToString())
-                    {
-                        summaryModel.MediaType = CommonFunctions.MediaType.TM.ToString();
-                    }
+                    summaryModel.SubMediaType = element.Parent.ElementsBeforeSelf().ToList()[1].Value;                    
 
                     summaryModel.DayDate = Convert.ToDateTime(element.Descendants("date").First().Value).ToUniversalTime();
                     summaryModel.NoOfDocs = Convert.ToInt64(element.Descendants("int").First().Value);
@@ -649,8 +651,8 @@ namespace IQMedia.Web.Logic
         }
 
         public FeedsFilterModel GetFilterData(Guid? clientGUID, List<string> mediaCategories, List<string> excludeMediaCategories, DateTime? fromDate, DateTime? fromDateLocal, DateTime? toDate, DateTime? toDateLocal, List<string> searchRequestID, string keyword,
-                                                short? sentiment, string dma, string station, string competeUrl, List<string> iQDmaIDs, string handle, string publication, string author, short? prominenceValue, bool isProminenceAudience, bool? isRead, bool? isHeardFilter, 
-                                                bool? isSeenFilter, bool? isPaidFilter, bool? isEarnedFilter, bool? usePESHFilters, long? sinceID, string pmgSearchUrl, string showTitle, int? dayOfWeek, int? timeOfDay)
+                                                short? sentiment, string dma, string station, string competeUrl, List<string> iQDmaIDs, string handle, string publication, string author, short? prominenceValue, bool isProminenceAudience, bool? isRead, bool? isHeardFilter,
+                                                bool? isSeenFilter, bool? isPaidFilter, bool? isEarnedFilter, bool? usePESHFilters, long? sinceID, string pmgSearchUrl, string showTitle, List<int> dayOfWeek, List<int> timeOfDay, bool? useGMT, string stationAffil, string demographic, List<IQ_MediaTypeModel> lstMediaTypes)
         {
             try
             {
@@ -688,14 +690,18 @@ namespace IQMedia.Web.Logic
                 searchRequest.ShowTitle = showTitle;
                 searchRequest.DayOfWeek = dayOfWeek;
                 searchRequest.TimeOfDay = timeOfDay;
+                searchRequest.useGMT = useGMT;
+                searchRequest.stationAffil = stationAffil;
+                searchRequest.demographic = demographic;
 
                 if (clientGUID.HasValue)
                 {
-                    CheckForQueuedSolrUpdates(searchRequest, clientGUID.Value, isRead);
+                    List<string> excludedIDs = new List<string>();
+                    CheckForQueuedSolrUpdates(searchRequest, clientGUID.Value, isRead, out excludedIDs);
                 }
 
                 Dictionary<string, SearchResult> dictFilterResults = searchEngine.SearchFacets(searchRequest, Convert.ToInt32(ConfigurationManager.AppSettings["SolrRequestDuration"]));
-                return FillMediaResultsFilter(dictFilterResults);
+                return FillMediaResultsFilter(dictFilterResults, lstMediaTypes);
             }
             catch (Exception ex)
             {
@@ -720,7 +726,7 @@ namespace IQMedia.Web.Logic
             return iQAgentDA.QueueMediaResultsForDelete(clientGuid, customerGuid, mediaIDXml);
         }
 
-        private List<IQAgent_MediaResultsModel> FillMediaResults(List<Hit> hits, Dictionary<string, string> childCounts, string currentUrl)
+        private List<IQAgent_MediaResultsModel> FillMediaResults(List<Hit> hits, Dictionary<string, string> childCounts, string currentUrl, List<IQ_MediaTypeModel> lstMediaTypes)
         {
             IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
             List<IQAgent_MediaResultsModel> lstIQAgent_MediaResultsModel = new List<IQAgent_MediaResultsModel>();
@@ -731,8 +737,8 @@ namespace IQMedia.Web.Logic
                 IQAgent_MediaResultsModel mediaResultModel = new IQAgent_MediaResultsModel();
 
                 mediaResultModel.ID = hit.ID;
-                mediaResultModel.MediaType = hit.MediaType;
-                mediaResultModel.CategoryType = hit.MediaCategory;
+                mediaResultModel.MediaType = hit.v5MediaType;
+                mediaResultModel.CategoryType = hit.v5MediaCategory;
                 mediaResultModel.PositiveSentiment = hit.PositiveSentiment;
                 mediaResultModel.NegativeSentiment = hit.NegativeSentiment;
                 mediaResultModel.IQProminence = hit.IQProminence;
@@ -743,43 +749,45 @@ namespace IQMedia.Web.Logic
                 mediaResultModel.HasChildren = childCounts != null && childCounts.ContainsKey(hit.ID.ToString()); // childCounts will only contain counts that are greater than 0, so simply check if the item ID is present
                 mediaResultModel.NumberOfHits = hit.NumberOfHits;
 
-                CommonFunctions.MediaType mediaType = (CommonFunctions.MediaType)Enum.Parse(typeof(CommonFunctions.MediaType), hit.MediaType);
-                switch (mediaType)
+                IQ_MediaTypeModel objMediaType = lstMediaTypes.FirstOrDefault(s => s.SubMediaType == hit.v5MediaCategory && s.TypeLevel == 2);
+                if (objMediaType != null)
                 {
-                    case CommonFunctions.MediaType.TV:
-                        IQAgent_TVResultsModel tvResultModel = new IQAgent_TVResultsModel();
-                        mediaResultModel.MediaData = tvResultModel;
+                    switch (objMediaType.DataModelType)
+                    {
+                        case "TV":
+                            IQAgent_TVResultsModel tvResultModel = new IQAgent_TVResultsModel();
+                            mediaResultModel.MediaData = tvResultModel;
 
-                        tvResultModel.ID = hit.MediaID;
-                        tvResultModel._ParentID = hit.ParentID;
-                        tvResultModel.Nielsen_Audience = hit.Audience;
-                        tvResultModel.IQAdShareValue = hit.MediaValue;
-                        tvResultModel.Nielsen_Result = hit.AudienceType;
-                        tvResultModel.National_Nielsen_Audience = hit.NationalAudience > 0 ? hit.NationalAudience : (long?)null;
-                        tvResultModel.National_IQAdShareValue = hit.NationalMediaValue > 0 ? hit.NationalMediaValue : (decimal?)null;
-                        tvResultModel.National_Nielsen_Result = hit.NationalAudienceType;
-                        tvResultModel.Date = hit.MediaDate;
-                        tvResultModel.LocalDateTime = hit.LocalDate;
-                        tvResultModel.TimeZone = hit.TimeZone;
-                        tvResultModel.RL_Station = hit.StationID;
-                        tvResultModel.StationLogo = "http://" + currentUrl + "/StationLogoImages/" + hit.StationID + ".jpg";
-                        tvResultModel.Station_Call_Sign = hit.Outlet;
-                        tvResultModel.Title120 = hit.Title;
-                        tvResultModel.Market = hit.Market;
-                        tvResultModel.IQProminence = hit.IQProminence;
-                        tvResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
-                        tvResultModel.RL_VideoGUID = hit.VideoGUID;
-                        tvResultModel.RawMediaThumbUrl = !String.IsNullOrEmpty(hit.ThumbnailUrl) ? hit.ThumbnailUrl.Replace(@"\", "/") : String.Empty;
-                        tvResultModel.higlightedCC = hit.HighlightingText;
-                        if (!String.IsNullOrEmpty(hit.HighlightingText))
-                        {
-                            HighlightedCCOutput highlightedCCOutput = new HighlightedCCOutput();
-                            tvResultModel.highlightedCCOutput = (HighlightedCCOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedCCOutput);
-                        }
-                        break;
-                    case CommonFunctions.MediaType.NM:
-                        IQAgent_NewsResultsModel nmResultModel = new IQAgent_NewsResultsModel();
-                        mediaResultModel.MediaData = nmResultModel;
+                            tvResultModel.ID = hit.MediaID;
+                            tvResultModel._ParentID = hit.ParentID;
+                            tvResultModel.Nielsen_Audience = hit.Audience;
+                            tvResultModel.IQAdShareValue = hit.MediaValue;
+                            tvResultModel.Nielsen_Result = hit.AudienceType;
+                            tvResultModel.National_Nielsen_Audience = hit.NationalAudience > 0 ? hit.NationalAudience : (long?)null;
+                            tvResultModel.National_IQAdShareValue = hit.NationalMediaValue > 0 ? hit.NationalMediaValue : (decimal?)null;
+                            tvResultModel.National_Nielsen_Result = hit.NationalAudienceType;
+                            tvResultModel.Date = hit.MediaDate;
+                            tvResultModel.LocalDateTime = hit.LocalDate;
+                            tvResultModel.TimeZone = hit.TimeZone;
+                            tvResultModel.RL_Station = hit.StationID;
+                            tvResultModel.StationLogo = "http://" + currentUrl + "/StationLogoImages/" + hit.StationID + ".jpg";
+                            tvResultModel.Station_Call_Sign = hit.Outlet;
+                            tvResultModel.Title120 = hit.Title;
+                            tvResultModel.Market = hit.Market;
+                            tvResultModel.IQProminence = hit.IQProminence;
+                            tvResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
+                            tvResultModel.RL_VideoGUID = hit.VideoGUID;
+                            tvResultModel.RawMediaThumbUrl = !String.IsNullOrEmpty(hit.ThumbnailUrl) ? hit.ThumbnailUrl.Replace(@"\", "/") : String.Empty;
+                            tvResultModel.higlightedCC = hit.HighlightingText;
+                            if (!String.IsNullOrEmpty(hit.HighlightingText))
+                            {
+                                HighlightedCCOutput highlightedCCOutput = new HighlightedCCOutput();
+                                tvResultModel.highlightedCCOutput = (HighlightedCCOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedCCOutput);
+                            }
+                            break;
+                        case "NM":
+                            IQAgent_NewsResultsModel nmResultModel = new IQAgent_NewsResultsModel();
+                            mediaResultModel.MediaData = nmResultModel;
 
                         nmResultModel.ID = hit.MediaID;
                         nmResultModel.ArticleID = hit.ArticleID;
@@ -802,102 +810,111 @@ namespace IQMedia.Web.Logic
                             nmResultModel.HighlightedNewsOutput = (HighlightedNewsOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedNewsOutput);
                         }
                         break;
-                    case CommonFunctions.MediaType.SM:
+                    case "SM":
                         IQAgent_SMResultsModel smResultModel = new IQAgent_SMResultsModel();
                         mediaResultModel.MediaData = smResultModel;
 
-                        smResultModel.ID = hit.MediaID;
-                        smResultModel.ArticleID = hit.ArticleID;
-                        smResultModel.ItemHarvestDate = hit.MediaDate;
-                        smResultModel.HomeLink = Uri.TryCreate(hit.Publication, UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : hit.Publication;
-                        smResultModel.Link = hit.Url;
-                        smResultModel.Description = hit.Title;
-                        smResultModel.IQAdShareValue = hit.MediaValue;
-                        smResultModel.Compete_Audience = hit.Audience;
-                        smResultModel.Compete_Result = hit.AudienceType;
-                        smResultModel.ThumbUrl = hit.ThumbnailUrl;
-                        smResultModel.IQProminence = hit.IQProminence;
-                        smResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
-                        if (!String.IsNullOrWhiteSpace(hit.ArticleStats))
-                        {
-                            ArticleStatsModel statsModel = new ArticleStatsModel();
-                            smResultModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(hit.ArticleStats, statsModel);
-                        }
-                        smResultModel.HighlightingText = hit.HighlightingText;
-                        if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
-                        {
-                            HighlightedSMOutput highlightedSMOutput = new HighlightedSMOutput();
-                            smResultModel.HighlightedSMOutput = (HighlightedSMOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedSMOutput);
-                        }
-                        break;
-                    case CommonFunctions.MediaType.TW:
-                        IQAgent_TwitterResultsModel twResultModel = new IQAgent_TwitterResultsModel();
-                        mediaResultModel.MediaData = twResultModel;
+                            smResultModel.ID = hit.MediaID;
+                            smResultModel.ArticleID = hit.ArticleID;
+                            smResultModel.ItemHarvestDate = hit.MediaDate;
+                            smResultModel.HomeLink = Uri.TryCreate(hit.Publication, UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : hit.Publication;
+                            smResultModel.Link = hit.Url;
+                            smResultModel.Description = hit.Title;
+                            smResultModel.IQAdShareValue = hit.MediaValue;
+                            smResultModel.Compete_Audience = hit.Audience;
+                            smResultModel.Compete_Result = hit.AudienceType;
+                            smResultModel.ThumbUrl = hit.ThumbnailUrl;
+                            smResultModel.IQProminence = hit.IQProminence;
+                            smResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
+                            if (!String.IsNullOrWhiteSpace(hit.ArticleStats))
+                            {
+                                ArticleStatsModel statsModel = new ArticleStatsModel();
+                                smResultModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(hit.ArticleStats, statsModel);
+                            }
+                            smResultModel.HighlightingText = hit.HighlightingText;
+                            if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
+                            {
+                                HighlightedSMOutput highlightedSMOutput = new HighlightedSMOutput();
+                                smResultModel.HighlightedSMOutput = (HighlightedSMOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedSMOutput);
+                            }
+                            break;
+                        case "TW":
+                            IQAgent_TwitterResultsModel twResultModel = new IQAgent_TwitterResultsModel();
+                            mediaResultModel.MediaData = twResultModel;
 
-                        twResultModel.ID = hit.MediaID;
-                        twResultModel.TweetID = hit.ArticleID;
-                        twResultModel.Tweet_DateTime = hit.MediaDate;
-                        twResultModel.Actor_Link = hit.Url;
-                        twResultModel.Actor_DisplayName = hit.Title;
-                        twResultModel.Actor_PreferredName = hit.ActorPreferredName;
-                        twResultModel.Actor_Image = hit.ThumbnailUrl;
-                        twResultModel.KlOutScore = Convert.ToInt64(hit.MediaValue);
-                        twResultModel.Actor_FollowersCount = hit.Audience;
-                        twResultModel.Actor_FriendsCount = hit.ActorFriendsCount;
-                        twResultModel.IQProminence = hit.IQProminence;
-                        twResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
-                        twResultModel.Summary = hit.HighlightingText;
-                        if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
-                        {
-                            HighlightedTWOutput highlightedTWOutput = new HighlightedTWOutput();
-                            twResultModel.HighlightedOutput = (HighlightedTWOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedTWOutput);
-                        }
-                        break;
-                    case CommonFunctions.MediaType.TM:
-                        IQAgent_TVEyesResultsModel tvEyesResultModel = new IQAgent_TVEyesResultsModel();
-                        mediaResultModel.MediaData = tvEyesResultModel;
+                            twResultModel.ID = hit.MediaID;
+                            twResultModel.TweetID = hit.ArticleID;
+                            twResultModel.Tweet_DateTime = hit.MediaDate;
+                            twResultModel.Actor_Link = hit.Url;
+                            twResultModel.Actor_DisplayName = hit.Title;
+                            twResultModel.Actor_PreferredName = hit.ActorPreferredName;
+                            twResultModel.Actor_Image = hit.ThumbnailUrl;
+                            twResultModel.KlOutScore = Convert.ToInt64(hit.MediaValue);
+                            twResultModel.Actor_FollowersCount = hit.Audience;
+                            twResultModel.Actor_FriendsCount = hit.ActorFriendsCount;
+                            twResultModel.IQProminence = hit.IQProminence;
+                            twResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
+                            twResultModel.Summary = hit.HighlightingText;
+                            if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
+                            {
+                                HighlightedTWOutput highlightedTWOutput = new HighlightedTWOutput();
+                                twResultModel.HighlightedOutput = (HighlightedTWOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedTWOutput);
+                            }
+                            break;
+                        case "TM":
+                            IQAgent_TVEyesResultsModel tvEyesResultModel = new IQAgent_TVEyesResultsModel();
+                            mediaResultModel.MediaData = tvEyesResultModel;
 
-                        tvEyesResultModel.ID = hit.MediaID;
-                        tvEyesResultModel.UTCDateTime = hit.MediaDate;
-                        tvEyesResultModel.LocalDateTime = hit.LocalDate;
-                        tvEyesResultModel.TimeZone = hit.TimeZone;
-                        tvEyesResultModel.StationID = hit.StationID;
-                        tvEyesResultModel.Title = hit.Title;
-                        tvEyesResultModel.Market = hit.Market;
-                        tvEyesResultModel.TranscriptUrl = hit.Url;
-                        tvEyesResultModel.DMARank = hit.DmaID;
-                        tvEyesResultModel.HighlightingText = hit.HighlightingText;
-                        break;
-                    case CommonFunctions.MediaType.PM:
-                        IQAgent_BLPMResultsModel pmResultModel = new IQAgent_BLPMResultsModel();
-                        mediaResultModel.MediaData = pmResultModel;
+                            tvEyesResultModel.ID = hit.MediaID;
+                            tvEyesResultModel.UTCDateTime = hit.MediaDate;
+                            tvEyesResultModel.LocalDateTime = hit.LocalDate;
+                            tvEyesResultModel.TimeZone = hit.TimeZone;
+                            tvEyesResultModel.StationID = hit.StationID;
+                            tvEyesResultModel.Title = hit.Title;
+                            tvEyesResultModel.Market = hit.Market;
+                            tvEyesResultModel.TranscriptUrl = hit.Url;
+                            tvEyesResultModel.DMARank = hit.DmaID;
+                            tvEyesResultModel.HighlightingText = hit.HighlightingText;
+                            break;
+                        case "PM":
+                            IQAgent_BLPMResultsModel pmResultModel = new IQAgent_BLPMResultsModel();
+                            mediaResultModel.MediaData = pmResultModel;
 
-                        pmResultModel.ID = hit.MediaID;
-                        pmResultModel.FileLocation = hit.FileLocation;
-                        pmResultModel.Title = hit.Title;
-                        pmResultModel.Pub_Name = hit.Publication;
-                        pmResultModel.Circulation = hit.Audience;
-                        pmResultModel.HighlightingText = iQAgentDA.GetHilightedText_PM(hit.HighlightingText);
-                        break;
-                    case CommonFunctions.MediaType.PQ:
-                        IQAgent_PQResultsModel pqResultModel = new IQAgent_PQResultsModel();
-                        mediaResultModel.MediaData = pqResultModel;
+                            pmResultModel.ID = hit.MediaID;
+                            pmResultModel.FileLocation = hit.FileLocation;
+                            pmResultModel.Title = hit.Title;
+                            pmResultModel.Pub_Name = hit.Publication;
+                            pmResultModel.Circulation = hit.Audience;
+                            pmResultModel.HighlightingText = iQAgentDA.GetHilightedText_PM(hit.HighlightingText);
+                            break;
+                        case "PQ":
+                            IQAgent_PQResultsModel pqResultModel = new IQAgent_PQResultsModel();
+                            mediaResultModel.MediaData = pqResultModel;
 
-                        pqResultModel.ID = hit.MediaID;
-                        pqResultModel.ArticleID = hit.ArticleID;
-                        pqResultModel.Title = hit.Title;
-                        pqResultModel.Publication = hit.Publication;
-                        pqResultModel.Authors = hit.Authors;
-                        pqResultModel.ContentHTML = hit.Content;
-                        pqResultModel.Copyright = hit.Copyright;
-                        pqResultModel.IQProminence = hit.IQProminence;
-                        pqResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
-                        if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
-                        {
-                            HighlightedPQOutput highlightedPQOutput = new HighlightedPQOutput();
-                            pqResultModel.HighlightedPQOutput = (HighlightedPQOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedPQOutput);
-                        }
-                        break;
+                            pqResultModel.ID = hit.MediaID;
+                            pqResultModel.ArticleID = hit.ArticleID;
+                            pqResultModel.Title = hit.Title;
+                            pqResultModel.Publication = hit.Publication;
+                            pqResultModel.Authors = hit.Authors;
+                            pqResultModel.ContentHTML = hit.Content;
+                            pqResultModel.Copyright = hit.Copyright;
+                            pqResultModel.IQProminence = hit.IQProminence;
+                            pqResultModel.IQProminenceMultiplier = hit.IQProminenceMultiplier;
+                            if (!string.IsNullOrWhiteSpace(hit.HighlightingText))
+                            {
+                                HighlightedPQOutput highlightedPQOutput = new HighlightedPQOutput();
+                                pqResultModel.HighlightedPQOutput = (HighlightedPQOutput)CommonFunctions.DeserialiazeXml(hit.HighlightingText, highlightedPQOutput);
+                            }
+                            break;
+                        default:
+                            UtilityLogic.WriteException(new Exception(String.Format("Invalid DataModelType value found. DataModelType: {0}   MediaResult ID: {1}", objMediaType.DataModelType, hit.ID)));
+                            break;
+                    }
+                }
+                else
+                {
+                    UtilityLogic.WriteException(new Exception(String.Format("No IQ_MediaTypes record could be found for the following SubMediaType: {0}. MediaResult ID: {1}", hit.MediaCategory, hit.ID)));
+                    break;
                 }
 
                 lstIQAgent_MediaResultsModel.Add(mediaResultModel);
@@ -906,7 +923,7 @@ namespace IQMedia.Web.Logic
             return lstIQAgent_MediaResultsModel;
         }
 
-        private FeedsFilterModel FillMediaResultsFilter(Dictionary<string, SearchResult> dictSearchResults)
+        private FeedsFilterModel FillMediaResultsFilter(Dictionary<string, SearchResult> dictSearchResults, List<IQ_MediaTypeModel> lstMediaTypes)
         {
             SearchResult facetResult;
             XmlDocument xmlDoc;
@@ -964,18 +981,57 @@ namespace IQMedia.Web.Logic
                         hasFacets = true;
                         break;
                     case "MediaCategoryFacet":
-                        XmlNode mediaCategoryNode = xmlDoc.SelectSingleNode("/response/lst[@name='facet_counts']/lst[@name='facet_fields']/lst[@name='mediacategory']");
-                        if (mediaCategoryNode != null)
+                        XmlNodeList mediaTypeNodes = xmlDoc.SelectNodes("/response/lst[@name='facet_counts']/lst[@name='facet_pivot']/arr/lst");
+                        if (mediaTypeNodes != null && mediaTypeNodes.Count > 0)
                         {
-                            filter.FilterListCategory = new List<Category>();
-                            foreach (XmlNode node in mediaCategoryNode.ChildNodes)
+                            filter.ListOfMediaTypeFilter = new List<MediaTypeFilter>();
+                            foreach (XmlNode node in mediaTypeNodes)
                             {
-                                Category category = new Category();
-                                category.Key = CommonFunctions.GetEnumDescription((Enum)(Enum.Parse(typeof(CommonFunctions.CategoryType), node.Attributes["name"].Value)));
-                                category.Value = node.Attributes["name"].Value;
-                                category.Count = Convert.ToInt32(node.InnerText);
-                                filter.FilterListCategory.Add(category);                               
+                                // Build list of media types
+                                MediaTypeFilter mediaTypeFilter = new MediaTypeFilter();
+                                mediaTypeFilter.Value = node.SelectSingleNode("str[@name='value']").InnerText;
+                                mediaTypeFilter.Count = Convert.ToInt32(node.SelectSingleNode("int[@name='count']").InnerText);
+                                mediaTypeFilter.Key = mediaTypeFilter.Value; // Default value in case something goes wrong with lstMediaTypes
+
+                                IQ_MediaTypeModel mediaType = lstMediaTypes.FirstOrDefault(s => s.MediaType == mediaTypeFilter.Value && s.TypeLevel == 1);
+                                if (mediaType != null)
+                                {
+                                    mediaTypeFilter.Key = mediaType.DisplayName;
+                                    mediaTypeFilter.SortOrder = mediaType.SortOrder;
+
+                                    // Build list of submedia types where applicable.
+                                    if (mediaType.HasSubMediaTypes)
+                                    {
+                                        XmlNodeList subMediaTypeNodes = node.SelectNodes("arr/lst");
+                                        if (subMediaTypeNodes != null && subMediaTypeNodes.Count > 0)
+                                        {
+                                            mediaTypeFilter.SubMediaTypes = new List<SubMediaTypeFilter>();
+                                            foreach (XmlNode subMediaTypeNode in subMediaTypeNodes)
+                                            {
+                                                SubMediaTypeFilter subMediaTypeFilter = new SubMediaTypeFilter();
+                                                subMediaTypeFilter.Value = subMediaTypeNode.SelectSingleNode("str[@name='value']").InnerText;
+                                                subMediaTypeFilter.Count = Convert.ToInt32(subMediaTypeNode.SelectSingleNode("int[@name='count']").InnerText);
+                                                subMediaTypeFilter.Key = subMediaTypeFilter.Value; // Default value in case something goes wrong with lstMediaTypes
+
+                                                IQ_MediaTypeModel subMediaType = lstMediaTypes.FirstOrDefault(s => s.SubMediaType == subMediaTypeFilter.Value && s.TypeLevel == 2);
+                                                if (subMediaType != null)
+                                                {
+                                                    subMediaTypeFilter.Key = subMediaType.DisplayName;
+                                                    subMediaTypeFilter.SortOrder = subMediaType.SortOrder;
+                                                }
+
+                                                mediaTypeFilter.SubMediaTypes.Add(subMediaTypeFilter);
+                                            }
+                                        }
+
+                                        mediaTypeFilter.SubMediaTypes = mediaTypeFilter.SubMediaTypes.OrderBy(o => o.SortOrder).ToList();
+                                    }
+                                }
+
+                                filter.ListOfMediaTypeFilter.Add(mediaTypeFilter);
                             }
+
+                            filter.ListOfMediaTypeFilter = filter.ListOfMediaTypeFilter.OrderBy(o => o.SortOrder).ToList();
                         }
 
                         hasFacets = true;
@@ -1094,9 +1150,10 @@ namespace IQMedia.Web.Logic
             return hasFacets ? filter : null;
         }
 
-        private bool CheckForQueuedSolrUpdates(SearchRequest searchRequest, Guid clientGuid, bool? isRead)
+        private bool CheckForQueuedSolrUpdates(SearchRequest searchRequest, Guid clientGuid, bool? isRead, out List<string> excluded)
         {
-            Dictionary<string, List<string>> dictExclude = UtilityLogic.GetQueuedDeleteMediaResults(clientGuid);
+            excluded = new List<string>();
+            Dictionary<string, List<string>> dictExclude = IQCommon.CommonFunctions.GetQueuedDeleteMediaResults(clientGuid);
             if (dictExclude.ContainsKey("ExcludeIDs"))
             {
                 searchRequest.ExcludeIDs = dictExclude["ExcludeIDs"];
@@ -1106,7 +1163,16 @@ namespace IQMedia.Web.Logic
                 searchRequest.ExcludeSearchRequestIDs = dictExclude["ExcludeSearchRequestIDs"];
             }
 
-            Dictionary<string, bool> dictIsRead = GetQueuedIsRead(clientGuid);
+            int maxDeleted = Convert.ToInt32(ConfigurationManager.AppSettings["MaxExcludedSeqIDs"]);
+            // If the number of records to be deleted more than # of IDs allowed to included in query by themselves
+            // remove those ids from search request and pass list back to the caller
+            if (searchRequest.ExcludeIDs.Count > maxDeleted)
+            {
+                excluded = searchRequest.ExcludeIDs;
+                searchRequest.ExcludeIDs = new List<string>();
+            }
+
+            Dictionary<string, bool> dictIsRead = IQCommon.CommonFunctions.GetQueuedIsRead(clientGuid);
             List<string> readIDs = dictIsRead.Where(s => s.Value).Select(s => s.Key).ToList();
             List<string> unreadIDs = dictIsRead.Where(s => !s.Value).Select(s => s.Key).ToList();
             bool isReadLimitExceeded = readIDs.Count > 1000 || unreadIDs.Count > 1000;
@@ -1148,6 +1214,14 @@ namespace IQMedia.Web.Logic
                         if (searchRequest.ExcludeIDs != null)
                         {
                             searchRequest.ExcludeIDs = searchRequest.ExcludeIDs.Union(excludeIDs).ToList();
+                            // If the union of IDs excluded for read and IDs to be deleted are together more than max deleted
+                            if (searchRequest.ExcludeIDs.Count > maxDeleted)
+                            {
+                                // Pass the to be deleted records back since they won't be excluded in the Solr query
+                                excluded = dictExclude["ExcludeIDs"];
+                                // Only exclude the mismatched read records
+                                searchRequest.ExcludeIDs = excludeIDs;
+                            }
                         }
                         else
                         {
@@ -1175,17 +1249,105 @@ namespace IQMedia.Web.Logic
             return iQAgentDA.ResumeSuspendedAgent(p_ID, p_ClientGUID, p_CustomerGUID);
         }
 
-        public Dictionary<string, bool> GetQueuedIsRead(Guid clientGuid)
-        {
-            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
-            return iQAgentDA.GetQueuedIsRead(clientGuid);
-        }
-
         public List<IQAgent_CampaignModel> SelectIQAgentCampaignsByClientGuid(Guid clientGuid)
         {
             IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
             return iQAgentDA.SelectIQAgentCampaignsByClientGuid(clientGuid);
         }
+
+        #region Twitter Rule Settings
+
+        public string GetTwitterRuleByTrackGUID(Guid userTrackGuid)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.GetTwitterRuleByTrackGUID(userTrackGuid);
+        }
+
+        public int InsertTwitterRule(Guid clientGuid, Guid userTrackGuid, List<string> twitterRules, string agentName, long searchRequestID)
+        {
+            string twitterRuleXml = null;
+            if (twitterRules != null && twitterRules.Count > 0)
+            {
+                XDocument xdoc = new XDocument(new XElement("rules",
+                                             from ele in twitterRules
+                                             select new XElement("rules", 
+                                                        new XElement("tag", userTrackGuid),
+                                                        new XElement("value", ele))
+                                                     ));
+                twitterRuleXml = xdoc.ToString();
+            }
+
+
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.InsertTwitterRule(clientGuid, userTrackGuid, twitterRuleXml, agentName, searchRequestID);
+        }
+
+        public int UpdateTwitterRule(Guid userTrackGuid, List<string> twitterRules, string agentName)
+        {
+            string twitterRuleXml = null;
+            if (twitterRules != null && twitterRules.Count > 0)
+            {
+                XDocument xdoc = new XDocument(new XElement("rules",
+                                             from ele in twitterRules
+                                             select new XElement("rules",
+                                                        new XElement("tag", userTrackGuid),
+                                                        new XElement("value", ele))
+                                                     ));
+                twitterRuleXml = xdoc.ToString();
+            }
+
+
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.UpdateTwitterRule(userTrackGuid, twitterRuleXml, agentName);
+        }
+
+        public int DeleteTwitterRule(Guid userTrackGuid)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.DeleteTwitterRule(userTrackGuid);
+        }
+
+        public int InsertTwitterRuleJob(Guid clientGuid, Guid customerGuid, long searchRequestID)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.InsertTwitterRuleJob(clientGuid, customerGuid, searchRequestID);
+        }
+
+        #endregion
+
+        #region TVEyes Rule Settings
+
+        public string GetTVEyesRuleByID(long tvEyesSettingsKey)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.GetTVEyesRuleByID(tvEyesSettingsKey);
+        }
+
+        public int InsertTVEyesRule(Guid clientGuid, long searchRequestID, string searchTerm, string agentName)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.InsertTVEyesRule(clientGuid, searchRequestID, searchTerm, agentName);
+        }
+
+        public int UpdateTVEyesRule(long TVESettingsKey, string searchTerm, string agentName)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.UpdateTVEyesRule(TVESettingsKey, searchTerm, agentName);
+        }
+
+        public int DeleteTVEyesRule(long TVESettingsKey)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.DeleteTVEyesRule(TVESettingsKey);
+        }
+
+        public int InsertTVEyesRuleJob(Guid clientGuid, Guid customerGuid, long searchRequestID)
+        {
+            IQAgentDA iQAgentDA = (IQAgentDA)DataAccessFactory.GetDataAccess(DataAccessType.IQAgent);
+            return iQAgentDA.InsertTVEyesRuleJob(clientGuid, customerGuid, searchRequestID);
+        }
+
+        #endregion
     }
 
 

@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AnalyticsSearch">
+      <HintPath>..\..\..\AnalyticsSearch\AnalyticsSearch\bin\Debug\AnalyticsSearch.dll</HintPath>
+    </Reference>
     <Reference Include="FeedsSearch">
       <HintPath>..\..\..\FeedsSearch\bin\Debug\FeedsSearch.dll</HintPath>
     </Reference>
@@ -57,10 +60,13 @@
     <Compile Include="ArticleLogic.cs" />
     <Compile Include="Base\ILogic.cs" />
     <Compile Include="Base\LogicFactory.cs" />
+    <Compile Include="CohortLogic.cs" />
     <Compile Include="DataImportLogic.cs" />
     <Compile Include="FacebookLogic.cs" />
     <Compile Include="GoogleLogic.cs" />
     <Compile Include="InstagramLogic.cs" />
+    <Compile Include="IQService_FeedsLogic.cs" />
+    <Compile Include="IQTads_SavedSearchLogic.cs" />
     <Compile Include="MCMediaTemplateLogic.cs" />
     <Compile Include="ClientLogic.cs" />
     <Compile Include="ClipLogic.cs" />
@@ -68,7 +74,6 @@
     <Compile Include="CustomCategoryLogic.cs" />
     <Compile Include="CustomerLogic.cs" />
     <Compile Include="DashboardLogic.cs" />
-    <Compile Include="Discovery2Logic.cs" />
     <Compile Include="DiscoveryLogic.cs" />
     <Compile Include="EmailTemplateLogic.cs" />
     <Compile Include="fliq_ApplicationLogic.cs" />

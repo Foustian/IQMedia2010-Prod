@@ -30,7 +30,7 @@ namespace IQMedia.Data.MCMediaTemplate
 
             mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel()
             {
-                SubMediaTypes = new List<MCMediaReport_Filter>(),
+                MediaTypes = new List<MCMediaReport_MediaTypeFilter>(),
                 Clients = new List<MCMediaReport_Filter>(),
                 Categories = new List<MCMediaReport_Filter>(),
                 Dates = new List<string>()
@@ -83,15 +83,15 @@ namespace IQMedia.Data.MCMediaTemplate
                                 break;
                             case "SubMediaTypeFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }
-                                mcMediaReportModel.FilterResults.SubMediaTypes = GetFilterResults(dt, "SubMediaTypeFilter");
+                                GetFilterResults(dt, "SubMediaTypeFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "ClientFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }
-                                mcMediaReportModel.FilterResults.Clients = GetFilterResults(dt, "ClientFilter");
+                                GetFilterResults(dt, "ClientFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "CategoryFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }
-                                mcMediaReportModel.FilterResults.Categories = GetFilterResults(dt, "CategoryFilter");
+                                GetFilterResults(dt, "CategoryFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "DateFilter":
                                 if (mcMediaReportModel.FilterResults == null) { mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel(); }

@@ -144,32 +144,35 @@ function showCustomerNoOfRecords(result) {
     }
 }
 
-function DeleteCustomer(customerId) {
+function DeleteCustomer(customerId, firstName, lastName) {
 
-    var jsonPostData = {
-        p_CustomerKey: customerId
-    }
+    getConfirm("Confirm Delete", "Are you sure you want to delete " + EscapeHTML(firstName) + " " + EscapeHTML(lastName) + "?", "Continue", "Cancel", function (res) {
+        if (res == true) {
+            var jsonPostData = {
+                p_CustomerKey: customerId
+            }
 
-    $.ajax({
-        url: _urlGlobalAdminDeleteCustomer,
-        contentType: "application/json; charset=utf-8",
-        type: "post",
-        dataType: "json",
-        data: JSON.stringify(jsonPostData),
-        success: function (result) {
-            if (result != null && result.isSuccess) {
-                ShowNotification(_msgCustomerDeleted);
-                GetCustomers(0);
-            }
-            else {
-                ShowNotification(_msgErrorOccured);
-            }
-        },
-        error: function (a, b, c) {
-            ShowNotification(_msgErrorOccured);
+            $.ajax({
+                url: _urlGlobalAdminDeleteCustomer,
+                contentType: "application/json; charset=utf-8",
+                type: "post",
+                dataType: "json",
+                data: JSON.stringify(jsonPostData),
+                success: function (result) {
+                    if (result != null && result.isSuccess) {
+                        ShowNotification(_msgCustomerDeleted);
+                        GetCustomers(0);
+                    }
+                    else {
+                        ShowNotification(_msgErrorOccured);
+                    }
+                },
+                error: function (a, b, c) {
+                    ShowNotification(_msgErrorOccured);
+                }
+            });
         }
     });
-
 
 }
 
@@ -486,3 +489,31 @@ $('body').on('click', function (e) {
         }
     });
 });
+
+function AddCustomerToAnewstip(customerKey) {
+    var jsonPostData = {
+        customerKey: customerKey
+    }
+
+    $.ajax({
+        url: _urlGlobalAdminAddCustomerToAnewstip,
+        contentType: "application/json; charset=utf-8",
+        type: "post",
+        dataType: "json",
+        data: JSON.stringify(jsonPostData),
+        success: function (result) {
+            if (result.isSuccess) {
+                $("#btnCustomerAddToAnewstip").hide();
+                $("#btnCustomerAddedToAnewstip").show();
+                ShowNotification("Customer successfully added. Please ensure the Connect role is enabled.");
+            }
+            else {
+                ShowNotification(_msgErrorOccured);
+            }
+        },
+        error: function (a, b, c) {
+            console.error("AddCustomerToAnewstip error - " + c);
+            ShowNotification(_msgErrorOccured);
+        }
+    });
+}

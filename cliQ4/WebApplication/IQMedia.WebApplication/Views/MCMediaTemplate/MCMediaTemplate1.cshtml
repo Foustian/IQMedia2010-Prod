@@ -1,6 +1,7 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
-@model MCMediaReportModel
+@using IQCommon.Model;
+@model Dictionary<string, object>
 @{
     Layout = null;
 }
@@ -50,6 +51,7 @@
 <body id="mainBody">
     @{
         ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+        
     }
     <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: #fff;">
         <!-- from desinger-->
@@ -71,26 +73,28 @@
     <div class="container container_custom">
         <div class="row-fluid" id="divRowFluid">
             <div style="min-height: 500px; padding: 10px 25px 25px 25px;">
-                @if (Model != null)
+                @if (Model["MCMediaReport"] != null)
                 {
+                    MCMediaReportModel report = Model["MCMediaReport"] as MCMediaReportModel;
+                    
                     try
                     {
                     <div style="padding-top: 10px; text-align: center;">
-                        @if (string.IsNullOrEmpty(Model.CustomHeader))
+                        @if (string.IsNullOrEmpty(report.CustomHeader))
                         {
                             <img src="~/Images/EmailNotificationBanner.png" alt="email notification banner" />
                         }
                         else
                         {
-                            <img src="@System.Configuration.ConfigurationManager.AppSettings["UrlReportHeader"]@Model.MasterClientGuid/@Model.CustomHeader" alt="Client Banner" />
+                            <img src="@System.Configuration.ConfigurationManager.AppSettings["UrlReportHeader"]@report.MasterClientGuid/@report.CustomHeader" alt="Client Banner" />
                         }
                     </div>
                     <div id="divResultScrollContent" style="padding: 25px; height: 475px; overflow: auto;">
                         <div id="divResults" style="padding-right: 20px;">
                     @{					
-                        if (Model.HasResults)
+                        if (report.HasResults)
                         {
-                            foreach (var client in Model.GroupTier1Results)
+                            foreach (var client in report.GroupTier1Results)
                             {
                                 if (client.IsEnabled)
                                 {
@@ -103,6 +107,7 @@
                                     {
                                         foreach (IQArchive_MediaModel item in groupTier3Result.MediaResults)
                                         {
+                                            IQ_MediaTypeModel objSubMediaType = ((List<IQ_MediaTypeModel>)Model["MediaTypes"]).First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
                                             string mediaIconFormat = "../images/MediaIcon/{0}?v=1.3";
                                             string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
                                             string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
@@ -144,12 +149,6 @@
                                             if (!string.IsNullOrWhiteSpace(item.DisplayText))
                                             {
                                                 displayText = item.DisplayText.Trim();
-
-                                                /*if (displayText.Length > 300)
-                                                {
-                                                    displayText = displayText.Substring(0, 300);
-                                                    displayText = System.Text.RegularExpressions.Regex.Replace(displayText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
-                                                }*/
                                             }
                                             
                                             switch (item.SubMediaType)
@@ -228,7 +227,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@TVModel.StationLogo" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" />
+                            <img src="@TVModel.StationLogo" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="float-right FeedsVideoSpacer">
                             <div class="FeedsVideo positionRelative float-left">
@@ -377,7 +376,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent borderBoxSizing">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -450,6 +449,7 @@
 
                                                     break;
                                                 case CommonFunctions.CategoryType.NM:
+                                                case CommonFunctions.CategoryType.LN:
                                                     IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
                                                     
                                                     if (newsMediaModel.Compete_Audience.HasValue && newsMediaModel.Compete_Audience > 0)
@@ -521,7 +521,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25onlinenews.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -627,7 +627,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25social.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -695,7 +695,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25forum.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -820,7 +820,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25blog.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -895,8 +895,6 @@
                                                 case CommonFunctions.CategoryType.FB:
                                                 case CommonFunctions.CategoryType.IG:
                                                     IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
-                                                    string imgName = item.SubMediaType == CommonFunctions.CategoryType.FB ? "25facebook.png" : "instagram.png";
-                                                    string imgTooltip = item.SubMediaType == CommonFunctions.CategoryType.FB ? CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB) : CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.IG);
                                                     string contentClass = item.SubMediaType == CommonFunctions.CategoryType.IG ? "MediaRoomContentVideo" : "MediaRoomContent";
                                                     
                                                     string fLikes = string.Format("{0:N0}", fbModel.ArticleStats.Likes);
@@ -972,7 +970,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="~/images/MediaIcon/@imgName" title="@imgTooltip" alt="" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         @if (item.SubMediaType == CommonFunctions.CategoryType.IG)
                         {
@@ -1087,7 +1085,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@string.Format(mediaIconFormat, "25x25_radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="float-right tvFeedsThumbParent">
                             <div class="float-left video-thumb-width tvFeedsThumb marginRight10">
@@ -1210,7 +1208,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25x25_publicationScanned.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">
@@ -1359,7 +1357,7 @@
                             </div>
                         </div>
                         <div class="MediaTypeLogo">
-                            <img src="@String.Format(mediaIconFormat, "25x25_publicationText.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" />
+                            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                         </div>
                         <div class="MediaRoomContent">
                             <div class="media-heading float-left" title="@Html.Raw(fTitle)">

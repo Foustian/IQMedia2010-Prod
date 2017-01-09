@@ -92,6 +92,11 @@
                 {
                     MCMediaReportModel mcMediaReport = (MCMediaReportModel)Model["MCMediaReport"];
 
+                    if (mcMediaReport.FilterResults != null)
+                    {
+                        dates = string.Join("', '", mcMediaReport.FilterResults.Dates.Select(f => Convert.ToDateTime(f).ToString("MM/dd/yyyy")).ToArray());
+                    }
+
                     try
                     {
                     <div style="padding-top: 10px; text-align: center;">
@@ -128,27 +133,28 @@
                                         </li>
                                         <li class="dropdown nmedium">
                                             <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="liMediumFilter" href="#">Medium<span class="spnArrow">&nbsp;</span></a>
-                                            <ul aria-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">
+                                            <ul aria-labelledby="drop2" role="menu" class="dropdown-menu multi-level sideMenu" id="ulMediaType" style="overflow-y:visible;">
                                                 @{
-                        if (mcMediaReport.FilterResults != null)
-                        {                            
-                            dates = string.Join("', '", mcMediaReport.FilterResults.Dates.Select(f => Convert.ToDateTime(f).ToString("MM/dd/yyyy")).ToArray());
-                            
-                            foreach (MCMediaReport_Filter item in mcMediaReport.FilterResults.SubMediaTypes)
+                        if (mcMediaReport.FilterResults != null && mcMediaReport.FilterResults.MediaTypes != null && mcMediaReport.FilterResults.MediaTypes.Count > 0)
+                        {
+                            foreach (IQMedia.Model.MCMediaReport_MediaTypeFilter mediaType in mcMediaReport.FilterResults.MediaTypes)
                             {
-                                if (!string.IsNullOrEmpty(item.SubMediaType))
-                                {
-                                                                <li onclick="SetSubMediaType('@item.SubMediaType','@item.SubMediaTypeDescription');" role="presentation">
-                                                                    <a href="#" tabindex="-1" role="menuitem">
-                                                                        @(item.SubMediaTypeDescription + " (" + item.RecordCountFormatted + ")")
-                                                                    </a>
-                                                                </li>
-                                }
-                            }
+                                                <li class="dropdown-submenu">
+                                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">@mediaType.MediaTypeDesc (@mediaType.RecordCountFormatted)</a>
+                                                    <ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">
+                                                        @foreach (IQMedia.Model.MCMediaReport_SubMediaTypeFilter subMediaType in mediaType.SubMediaTypes)
+                                                        {
+                                                            <li onclick="SetSubMediaType('@subMediaType.SubMediaType', '@subMediaType.SubMediaTypeDesc');" role="presentation">
+                                                                <a href="#" tabindex="-1" role="menuitem">@subMediaType.SubMediaTypeDesc (@subMediaType.RecordCountFormatted)</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+                            }       
                         }
                         else
                         {
-                                                        <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
+                                                <li role="presentation"><a tabindex="-1" role="menuitem">No Filter Available</a></li>
                         }
                                                 }
                                             </ul>
@@ -564,19 +570,24 @@
              });
          }
 
-         if (filter != null && filter.SubMediaTypes != null) {
-             var subMediaTypeHTML = "";
-             $.each(filter.SubMediaTypes, function (eventID, eventData) {
-                 subMediaTypeHTML = subMediaTypeHTML + '<li onclick="SetSubMediaType(\'' + eventData.SubMediaType + '\',\'' + eventData.SubMediaTypeDescription + '\');" role=\"presentation\"><a href=\"#\" tabindex=\"-1\" role=\"menuitem\">';
-                 subMediaTypeHTML += eventData.SubMediaTypeDescription + ' (' + eventData.RecordCountFormatted + ') </a></li>';
+         var mediumLI = "";
+         if (filter != null && filter.MediaTypes != null) {
+             $.each(filter.MediaTypes, function (eventID, eventData) {
+                 mediumLI += '<li class="dropdown-submenu"><a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">';
+                 mediumLI += eventData.MediaTypeDesc + ' (' + eventData.RecordCountFormatted + ') </a>';
+                 mediumLI += '<ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">'
+                 $.each(eventData.SubMediaTypes, function (eventID2, eventData2) {
+                     mediumLI += '<li onclick="SetSubMediaType(\'' + eventData2.SubMediaType + '\', \'' + eventData2.SubMediaTypeDesc + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData2.SubMediaTypeDesc + ' (' + eventData2.RecordCountFormatted + ') </a></li>';
+                 });
+                 mediumLI += '</ul></li>';
              });
+         }
 
-             if (subMediaTypeHTML == '') {
-                 $('#ulSubMediaType').html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
-             }
-             else {
-                 $('#ulSubMediaType').html(subMediaTypeHTML);
-             }
+         if (mediumLI == "") {
+             $("#ulMediaType").html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
+         }
+         else {
+             $("#ulMediaType").html(mediumLI);
          }
 
          if (filter != null && filter.Categories != null) {

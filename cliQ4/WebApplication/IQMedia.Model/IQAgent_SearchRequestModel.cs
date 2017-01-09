@@ -164,6 +164,9 @@ namespace IQMedia.Model
         public string chkIQAgentSetup_PM { get; set; }
         public string chkIQAgentSetup_PQ { get; set; }
         public string chkIQAgentSetup_LR { get; set; }
+        public string chkIQAgentSetup_LN { get; set; }
+        public string chkIQAgentSetup_BL { get; set; }
+        public string chkIQAgentSetup_FO { get; set; }
 
         // TV Params
         public string txtIQAgentSetupProgramTitle { get; set; }
@@ -177,6 +180,8 @@ namespace IQMedia.Model
         public string txtIQAgentSetupSearchTerm_TV { get; set; }
         public bool? chkIQAgentSetupUserMasterSearchTerm_TV { get; set; }
         public string txtIQAgentSetupZipCodes { get; set; }
+        public List<string> ddlIQAgentSetupExcludeDMA_TV { get; set; }
+        public string txtIQAgentSetupExcludeZipCodes { get; set; }
 
         // Online News Params
         public string txtIQAgentSetupPublication_NM { get; set; }
@@ -213,16 +218,7 @@ namespace IQMedia.Model
         public bool? chkIQAgentSetupUserMasterSearchTerm_IG { get; set; }
 
         // Twitter Params
-        public string txtIQAgentSetupActor_TW { get; set; }
-        public string txtIQAgentSetupFollowersCount_From_TW { get; set; }
-        public string txtIQAgentSetupFollowersCount_To_TW { get; set; }
-        public string txtIQAgentSetupFriendsCount_From_TW { get; set; }
-        public string txtIQAgentSetupFriendsCount_To_TW { get; set; }
-        public string txtIQAgentSetupKloutScore_From_TW { get; set; }
-        public string txtIQAgentSetupKloutScore_To_TW { get; set; }
         public string txtIQAgentSetupGnipTag_TW { get; set; }
-        public string txtIQAgentSetupSearchTerm_TW { get; set; }
-        public bool? chkIQAgentSetupUserMasterSearchTerm_TW { get; set; }
 
         // ProQuest Params
         public string txtIQAgentSetupPublication_PQ { get; set; }
@@ -231,11 +227,44 @@ namespace IQMedia.Model
         public string txtIQAgentSetupSearchTerm_PQ { get; set; }
         public bool? chkIQAgentSetupUserMasterSearchTerm_PQ { get; set; }
 
+        // LexisNexis Params
+        public string txtIQAgentSetupPublication_LN { get; set; }
+        public List<string> ddlIQAgentSetupCategory_LN { get; set; }
+        public List<string> ddlIQAgentSetupPublicationCategory_LN { get; set; }
+        public List<string> ddlIQAgentSetupGenere_LN { get; set; }
+        public List<string> ddlIQAgentSetupRegion_LN { get; set; }
+        public List<string> ddlIQAgentSetupLanguage_LN { get; set; }
+        public List<string> ddlIQAgentSetupCountry_LN { get; set; }
+        public string txtIQAgentSetupSearchTerm_LN { get; set; }
+        public bool? chkIQAgentSetupUserMasterSearchTerm_LN { get; set; }
+
+        // Blog Params
+        public string txtIQAgentSetupSource_BL { get; set; }
+        public string txtIQAgentSetupAuthor_BL { get; set; }
+        public string txtIQAgentSetupTitle_BL { get; set; }
+        public string txtIQAgentSetupSearchTerm_BL { get; set; }
+        public bool? chkIQAgentSetupUserMasterSearchTerm_BL { get; set; }
+
+        // Forum Params
+        public string txtIQAgentSetupSource_FO { get; set; }
+        public string txtIQAgentSetupAuthor_FO { get; set; }
+        public string txtIQAgentSetupTitle_FO { get; set; }
+        public List<string> ddlIQAgentSetupSourceType_FO { get; set; }
+        public string txtIQAgentSetupSearchTerm_FO { get; set; }
+        public bool? chkIQAgentSetupUserMasterSearchTerm_FO { get; set; }
+
+        // TVEyes Radio Params
+        public string hdnIQAgentSetupTVEyesSettingsKey { get; set; }
+        public string txtIQAgentSetupTVEyesSearchGUID_TM { get; set; }
+
 
         public string txtIQAgentSetupSearchImageId_LR { get; set; }
         public string txtIQAgentSetupExcludeDomains_NM { get; set; }
         public string txtIQAgentSetupExcludeDomains_SM { get; set; }
         public string txtIQAgentSetupExcludeHandles_TW { get; set; }
+        public string txtIQAgentSetupExcludeDomains_LN { get; set; }
+        public string txtIQAgentSetupExcludeDomains_BL { get; set; }
+        public string txtIQAgentSetupExcludeDomains_FO { get; set; }
     }    
 
     public class IQNotifationSettingsModel
@@ -390,6 +419,7 @@ namespace IQMedia.Model.IQAgentXML
             IQ_Class_Set = new IQ_Class_Set();
             IQ_Region_Set = new IQ_Region_Set();
             IQ_Country_Set = new IQ_Country_Set();
+            Exclude_IQ_Dma_Set = new Exclude_IQ_Dma_Set();
         }
         public string ProgramTitle { get; set; }
         
@@ -417,6 +447,12 @@ namespace IQMedia.Model.IQAgentXML
 
         [XmlArrayItem("ZipCode")]
         public List<string> ZipCodes { get; set; }
+
+        [XmlElement("Exclude_IQ_Dma_Set")]
+        public Exclude_IQ_Dma_Set Exclude_IQ_Dma_Set { get; set; }
+
+        [XmlArrayItem("ExcludeZipCode")]
+        public List<string> ExcludeZipCodes { get; set; }
     }
     public class IQ_Dma_Set
     {
@@ -526,6 +562,20 @@ namespace IQMedia.Model.IQAgentXML
     {
         public string num { get; set; }
         public string name { get; set; }
+    }
+
+    public class Exclude_IQ_Dma_Set
+    {
+        public Exclude_IQ_Dma_Set()
+        {
+            Exclude_IQ_Dma = new List<IQ_Dma>();
+        }
+
+        [XmlAttribute]
+        public string SelectionMethod { get; set; }
+
+        [XmlElement("Exclude_IQ_Dma")]
+        public List<IQ_Dma> Exclude_IQ_Dma { get; set; }
     }
 
     public class News
@@ -742,52 +792,15 @@ namespace IQMedia.Model.IQAgentXML
 
     public class Twitter
     {
-        public Twitter()
-        {
-            ActorFriendsRange = new IQAgentXML.ActorFriendsRange();
-            ActorFollowersRange = new IQAgentXML.ActorFollowersRange();
-            KloutScoreRange = new KloutScoreRange();
-        }
-        public string Actor { get; set; }
-
-        public MediumSearchTerm SearchTerm { get; set; }
-
         [XmlArrayItem("GnipTag")]
         public List<Guid> GnipTagList { get; set; }
-
-        [XmlElement("ActorFriendsRange")]
-        public ActorFriendsRange ActorFriendsRange { get; set; }
-
-        [XmlElement("ActorFollowersRange")]
-        public ActorFollowersRange ActorFollowersRange { get; set; }
-
-        [XmlElement("KloutScoreRange")]
-        public KloutScoreRange KloutScoreRange { get; set; }
-
-        [XmlArrayItem("handle")]
-        public List<string> ExclusionHandles { get; set; }
-    }
-    public class ActorFriendsRange
-    {
-        public string From { get; set; }
-        public string To { get; set; }
-    }
-    public class ActorFollowersRange
-    {
-        public string From { get; set; }
-        public string To { get; set; }
-    }
-    public class KloutScoreRange
-    {
-        public string From { get; set; }
-        public string To { get; set; }
     }
 
     public class TM
     {
-        public string TVEyesSearchGUID { get; set; }
+        public string TVEyesSettingsKey { get; set; }
 
-        public string SearchTerm { get; set; }
+        public string TVEyesSearchGUID { get; set; }
     }
 
     public class PM

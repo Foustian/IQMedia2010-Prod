@@ -51,6 +51,10 @@ namespace IQMedia.Data.EmailTemplate
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
                 }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
+                }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.SubMediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
@@ -140,7 +144,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchiveClipModel.Dma_Num = Convert.ToString(dr["Dma_Num"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "TV";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveClipModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -176,6 +179,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -228,7 +235,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchiveBLPMModel.Pub_Name = Convert.ToString(dr["Pub_Name"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "PM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveBLPMModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -264,6 +270,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -347,7 +357,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchiveSMModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["ArticleStats"]), statsModel);
                 }
 
-                objIQArchive_MediaModel.MediaType = "SM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveSMModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -383,6 +392,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -462,7 +475,6 @@ namespace IQMedia.Data.EmailTemplate
                 }
 
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveNMModel;
-                objIQArchive_MediaModel.MediaType = "NM";
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
 
@@ -497,6 +509,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -583,7 +599,6 @@ namespace IQMedia.Data.EmailTemplate
                 }
 
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTweetsModel;
-                objIQArchive_MediaModel.MediaType = "TW";
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
 
@@ -618,6 +633,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -685,7 +704,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchiveTVEyesModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "TM";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTVEyesModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -721,6 +739,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -772,7 +794,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchiveMiscModel.MediaUrl = Convert.ToString(dr["MediaUrl"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "MS";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveMiscModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }
@@ -808,6 +829,10 @@ namespace IQMedia.Data.EmailTemplate
                 if (!dr["MediaDate"].Equals(DBNull.Value))
                 {
                     objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                }
+                if (!dr["MediaType"].Equals(DBNull.Value))
+                {
+                    objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                 }
                 if (!dr["SubMediaType"].Equals(DBNull.Value))
                 {
@@ -872,7 +897,6 @@ namespace IQMedia.Data.EmailTemplate
                     objIQArchive_ArchivePQModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                 }
 
-                objIQArchive_MediaModel.MediaType = "PQ";
                 objIQArchive_MediaModel.MediaData = objIQArchive_ArchivePQModel;
                 lstMediaResults.Add(objIQArchive_MediaModel);
             }

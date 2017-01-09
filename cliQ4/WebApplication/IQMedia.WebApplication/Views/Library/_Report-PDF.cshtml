@@ -1,5 +1,6 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 @model IQMedia.Model.IQArchive_DisplayLibraryReport
 @{ 
     string BaseUrl = "https://" + Request.Url.Host + "/";
@@ -58,7 +59,6 @@
         }
          .media-heading a
         {
-            color:#333333;
             font-weight: 600;
             text-decoration:none;
         }
@@ -77,85 +77,66 @@
     <div style="padding: 10px 20px 10px 3px;">
         @if (Model != null && Model.ReportDetails != null && Model.ArchiveResults != null)
         {
-
-
-
-
-
-
-
-
             ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+            List<string> lstNielsenAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            List<string> lstNielsenMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            List<string> lstCompeteAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            List<string> lstCompeteMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            List<string> lstOtherAudienceTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            List<string> lstOtherMediaValueTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+            
             string Logo = System.Configuration.ConfigurationManager.AppSettings["UrlReportHeader"];
             Logo += sessionInformation.ClientGUID + "/" + Model.ReportDetails._ReportImage;
             string mediaIconFormat = "../images/MediaIcon/{0}?v=1.3";
 
-            List<IQArchive_ArchiveClipModel> lstIQArchive_ArchiveClipModel = (List<IQArchive_ArchiveClipModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "TV", true) == 0).Select(s => new IQArchive_ArchiveClipModel()
+            Int64 totalAudience = 0;
+            decimal totalMediaValue = 0;
+            Int64 totalNationalAudience = 0;
+            decimal totalNationalMediaValue = 0;
+            List<IQArchive_MediaModel> lstMediaResults;
+
+            if (sessionInformation.IsNielsenData)
             {
-                ClipID = s.MediaData.ClipID,
-                ClosedCaption = s.MediaData.ClosedCaption,
-                IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-                Market = s.MediaData.Market,
-                Nielsen_Audience = s.MediaData.Nielsen_Audience == null ? 0 : s.MediaData.Nielsen_Audience,
-                Nielsen_Result = s.MediaData.Nielsen_Result,
-                StationLogo = s.MediaData.StationLogo,
-                National_Nielsen_Audience = s.MediaData.National_Nielsen_Audience,
-                National_IQAdShareValue = s.MediaData.National_IQAdShareValue
-            }).ToList();
+                lstMediaResults = Model.ArchiveResults.Where(w => lstNielsenAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+                if (lstMediaResults.Count > 0)
+                {
+                    totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                    totalNationalAudience += lstMediaResults.Sum(s => s.National_Nielsen_Audience.HasValue && s.National_Nielsen_Audience > 0 ? s.National_Nielsen_Audience.Value : 0);
+                }
 
-            List<IQArchive_ArchiveNMModel> lstIQArchive_ArchiveNMModel = (List<IQArchive_ArchiveNMModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "NM", true) == 0).Select(s => new IQArchive_ArchiveNMModel()
+                lstMediaResults = Model.ArchiveResults.Where(w => lstNielsenMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+                if (lstMediaResults.Count > 0)
+                {
+                    totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+                    totalNationalMediaValue += lstMediaResults.Sum(s => s.National_IQAdShareValue.HasValue && s.National_IQAdShareValue > 0 ? s.National_IQAdShareValue.Value : 0);
+                }
+            }
+            if (sessionInformation.IsCompeteData)
             {
-                Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-                Compete_Result = s.MediaData.Compete_Result,
-                IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-                Publication = s.MediaData.Publication,
-                Url = s.MediaData.Url
-            }).ToList();
+                lstMediaResults = Model.ArchiveResults.Where(w => lstCompeteAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+                if (lstMediaResults.Count > 0)
+                {
+                    totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                }
 
-            List<IQArchive_ArchiveSMModel> lstIQArchive_ArchiveSMModel = (List<IQArchive_ArchiveSMModel>)Model.ArchiveResults.Where(w => string.Compare(w.SubMediaType.ToString(), "Blog", true) == 0).Select(s => new IQArchive_ArchiveSMModel()
+                lstMediaResults = Model.ArchiveResults.Where(w => lstCompeteMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+                if (lstMediaResults.Count > 0)
+                {
+                    totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+                }
+            }
+
+            lstMediaResults = Model.ArchiveResults.Where(w => lstOtherAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
             {
-                Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-                Compete_Result = s.MediaData.Compete_Result,
-                IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-                Publication = s.MediaData.Publication,
-                Url = s.MediaData.Url
-            }).ToList();
+                totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+            }
 
-            List<IQArchive_ArchiveTweetsModel> lstIQArchive_ArchiveTweetsModel = (List<IQArchive_ArchiveTweetsModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "TW", true) == 0).Select(s => new IQArchive_ArchiveTweetsModel()
+            lstMediaResults = Model.ArchiveResults.Where(w => lstOtherMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
             {
-                ActorDisplayname = s.MediaData.ActorDisplayname,
-                ActorImage = s.MediaData.ActorImage,
-                FollowersCount = s.MediaData.FollowersCount,
-                FreiendsCount = s.MediaData.FreiendsCount,
-                KloutScore = s.MediaData.KloutScore,
-                PreferredUserName = s.MediaData.PreferredUserName
-            }).ToList();
-
-            List<IQArchive_ArchiveBLPMModel> lstIQArchive_ArchiveBLPMModel = (List<IQArchive_ArchiveBLPMModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "PM", true) == 0).Select(s => new IQArchive_ArchiveBLPMModel()
-            {
-                Circulation = s.MediaData.Circulation
-            }).ToList();
-
-            long TVNationalAudience = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_Nielsen_Audience.HasValue && sm.National_Nielsen_Audience > 0 ? Convert.ToInt64(sm.National_Nielsen_Audience.Value) : 0);
-            long TVAudience = lstIQArchive_ArchiveClipModel.Sum(sm => Convert.ToInt64(sm.Nielsen_Audience.Value));
-            long NMAudience = lstIQArchive_ArchiveNMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-            long SMAudience = lstIQArchive_ArchiveSMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-            long TWAudience = lstIQArchive_ArchiveTweetsModel.Sum(sm => Convert.ToInt64(sm.FollowersCount));
-            long PMAudience = lstIQArchive_ArchiveBLPMModel.Sum(sm => Convert.ToInt64(sm.Circulation));
-            decimal TVNationalValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_IQAdShareValue.HasValue && sm.National_IQAdShareValue > 0 ? sm.National_IQAdShareValue.Value : 0);
-            decimal TVValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.IQAdShareValue.Value);
-            decimal NMValue = lstIQArchive_ArchiveNMModel.Sum(sm => sm.IQAdShareValue.Value);
-            decimal SMValue = lstIQArchive_ArchiveSMModel.Sum(sm => sm.IQAdShareValue.Value);
-
-            Int64 totalAudience = (TVAudience < 0 || !sessionInformation.IsNielsenData ? 0 : TVAudience) +
-                (NMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : NMAudience) +
-                (SMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : SMAudience) +
-                (TWAudience < 0 ? 0 : TWAudience) +
-                (PMAudience < 0 ? 0 : PMAudience);
-
-            decimal totalMediaValue = (TVValue < 0 || !sessionInformation.IsNielsenData ? 0 : TVValue) +
-                (NMValue < 0 || !sessionInformation.IsCompeteData ? 0 : NMValue) +
-                    (SMValue < 0 || !sessionInformation.IsCompeteData ? 0 : SMValue);
+                totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+            }
 
             <!-- Generate Logo -->
 
@@ -174,13 +155,13 @@
                 {
                     <div>
                         Total National Audience :
-                        @string.Format("{0:N0}", TVNationalAudience)
+                        @string.Format("{0:N0}", totalNationalAudience)
                     </div>
                 }
                 @if (Model.ReportDetails.Settings.ShowTotalNationalMediaValue)
                 {
                     <div>
-                        National Media Value : $ @string.Format("{0:N2}", TVNationalValue)
+                        National Media Value : $ @string.Format("{0:N2}", totalNationalMediaValue)
                     </div>
                 }
                 @if (Model.ReportDetails.Settings.ShowTotalAudience)
@@ -204,14 +185,15 @@
             </div>
 
             <div id="divOverview"></div>
-            <div id="divTV"></div>
-            <div id="divNM"></div>
-            <div id="divBlog"></div>
-            <div id="divForum"></div>
-            <div id="divSocialMedia"></div>
-            <div id="divTW"></div>
-            <div id="divPM"></div>
-            <div id="divMS"></div>
+
+            foreach (IQ_MediaTypeModel mediaType in sessionInformation.MediaTypes == null ? new List<IQ_MediaTypeModel>() : sessionInformation.MediaTypes.Where(w => w.TypeLevel == 1))
+            {
+                string divID = "div" + mediaType.MediaType;
+                <div id="@divID"></div>
+            }
+            
+            <!-- Placeholder for a page break between the charts and the results -->
+            <div id="divResultsPageBreak"></div>
 
             <!-- Primary group summary -->
 
@@ -258,8 +240,8 @@
                     </div>
                     <div style="clear:both;padding-top:15px;">
                     </div>
-                    if (groupTier1.GroupTier2Counts != null && groupTier1.GroupTier2Counts.Count > 0)
-                    { 
+                        if (groupTier1.GroupTier2Counts != null && groupTier1.GroupTier2Counts.Count > 0)
+                        { 
                         <div style="padding-bottom: 15px; padding-left: 25px;">
                             @foreach (KeyValuePair<string, int> kvp in groupTier1.GroupTier2Counts)
                             {
@@ -273,164 +255,166 @@
                                 }
                             }
                         </div>
-                    }
+                        }
 
-                    foreach (IQArchive_GroupTier2Model groupTier2 in groupTier1.GroupTier2Results)
-                    {
-                        if (groupTier2.ArchiveResults.Count > 0)
+                        foreach (IQArchive_GroupTier2Model groupTier2 in groupTier1.GroupTier2Results)
                         {
-                            if (groupTier2.IsEnabled)
+                            if (groupTier2.ArchiveResults.Count > 0)
                             {
+                                if (groupTier2.IsEnabled)
+                                {
                                 <div class="categorytitlediv keepTogether">
                                     @groupTier2.GroupName
                                 </div>
-                            }
-
-                            foreach (IQMedia.Model.IQArchive_MediaModel item in groupTier2.ArchiveResults)
-                            {
-                                string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
-                                string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
-                                string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
-                                string fTitle = string.Empty;
-                                string sTitle = string.Empty;
-                                string displayText = string.Empty;
-                                string sPub = string.Empty;
-                                string fPub = string.Empty;
-
-                                if (!string.IsNullOrWhiteSpace(item.Title))
-                                {
-                                    fTitle = item.Title.Trim();
-
-                                    if (fTitle.Length > 65)
-                                    {
-                                        sTitle = fTitle.Substring(0, 62) + "...";
-                                    }
-                                    else
-                                    {
-                                        sTitle = fTitle;
-                                    }
                                 }
 
-                                if (!string.IsNullOrWhiteSpace(item.DisplayText))
+                                foreach (IQMedia.Model.IQArchive_MediaModel item in groupTier2.ArchiveResults)
                                 {
-                                    displayText = item.DisplayText.Trim();
+                                    IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
 
-                                    /*if (displayText.Length > 300)
+                                    string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                                    string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
+                                    string Time = item.MediaDate != null ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
+                                    string fTitle = string.Empty;
+                                    string sTitle = string.Empty;
+                                    string displayText = string.Empty;
+                                    string sPub = string.Empty;
+                                    string fPub = string.Empty;
+
+                                    if (!string.IsNullOrWhiteSpace(item.Title))
                                     {
-                                        displayText = displayText.Substring(0, 300);
-                                        displayText = System.Text.RegularExpressions.Regex.Replace(displayText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
-                                    }*/
-                                }
+                                        fTitle = item.Title.Trim();
 
-                                /* Time Difference Logic */
-                                string timeDifference = string.Empty;
-                                DateTime dateFrom = item.MediaDate;
-                                DateTime dateTo = DateTime.UtcNow;
-                                var diffY = dateTo.Year - dateFrom.Year;
-                                var diffM = dateTo.Month - dateFrom.Month;
-                                var diffD = dateTo.Day - dateFrom.Day;
-                                var diffH = dateTo.Hour - dateFrom.Hour;
-                                var diffMin = dateTo.Minute - dateFrom.Minute;
-
-                                //Year diff
-                                var yearDiff = diffY;
-
-                                if (yearDiff > 0 && (diffM < 0 || (diffM == 0 && (diffD < 0 || (diffD == 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))))))
-                                {
-                                    yearDiff--;
-                                }
-
-                                if (yearDiff <= 0)
-                                {
-                                    //Month diff
-                                    if (yearDiff == 0 && diffM == -11) 
-                                    { 
-                                        diffM = 1; 
-                                    }
-            
-                                    var monthDiff = diffM > 0 ? diffM : (diffY - yearDiff) * 12 + diffM;
-            
-                                    if (monthDiff > 0 && (diffD < 0 || (diffD == 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))))
-                                    { 
-                                        monthDiff--;
-                                    }
-
-                                    if (monthDiff <= 0)
-                                    {
-                                        //Day diff
-                                        int daysInMonth = dateTo.AddDays(-1 * dateTo.Day).Day;
-                                        var dayDiff = diffD > 0 ? diffD : (diffM - monthDiff) * daysInMonth + diffD;
-                
-                                        if (dayDiff > 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))
+                                        if (fTitle.Length > 65)
                                         {
-                                            dayDiff--;
+                                            sTitle = fTitle.Substring(0, 62) + "...";
+                                        }
+                                        else
+                                        {
+                                            sTitle = fTitle;
+                                        }
+                                    }
+
+                                    if (!string.IsNullOrWhiteSpace(item.DisplayText))
+                                    {
+                                        displayText = item.DisplayText.Trim();
+
+                                        /*if (displayText.Length > 300)
+                                        {
+                                            displayText = displayText.Substring(0, 300);
+                                            displayText = System.Text.RegularExpressions.Regex.Replace(displayText, "(</span(?!>)|</spa(?!n>)|</sp(?!an>)|</s(?!pan>)|</(?!span>))\\Z", "</span>");
+                                        }*/
+                                    }
+
+                                    /* Time Difference Logic */
+                                    string timeDifference = string.Empty;
+                                    DateTime dateFrom = item.MediaDate;
+                                    DateTime dateTo = DateTime.UtcNow;
+                                    var diffY = dateTo.Year - dateFrom.Year;
+                                    var diffM = dateTo.Month - dateFrom.Month;
+                                    var diffD = dateTo.Day - dateFrom.Day;
+                                    var diffH = dateTo.Hour - dateFrom.Hour;
+                                    var diffMin = dateTo.Minute - dateFrom.Minute;
+
+                                    //Year diff
+                                    var yearDiff = diffY;
+
+                                    if (yearDiff > 0 && (diffM < 0 || (diffM == 0 && (diffD < 0 || (diffD == 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))))))
+                                    {
+                                        yearDiff--;
+                                    }
+
+                                    if (yearDiff <= 0)
+                                    {
+                                        //Month diff
+                                        if (yearDiff == 0 && diffM == -11)
+                                        {
+                                            diffM = 1;
                                         }
 
-                                        if (dayDiff <= 0)
+                                        var monthDiff = diffM > 0 ? diffM : (diffY - yearDiff) * 12 + diffM;
+
+                                        if (monthDiff > 0 && (diffD < 0 || (diffD == 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))))
                                         {
-                                            //Hour diff
-                                            var hourDiff = diffH > 0 ? diffH : (diffD - dayDiff) * 24 + diffH;
-                    
-                                            if (hourDiff > 0 && diffMin < 0)
+                                            monthDiff--;
+                                        }
+
+                                        if (monthDiff <= 0)
+                                        {
+                                            //Day diff
+                                            int daysInMonth = dateTo.AddDays(-1 * dateTo.Day).Day;
+                                            var dayDiff = diffD > 0 ? diffD : (diffM - monthDiff) * daysInMonth + diffD;
+
+                                            if (dayDiff > 0 && (diffH < 0 || (diffH == 0 && (diffMin < 0))))
                                             {
-                                                hourDiff--;
+                                                dayDiff--;
                                             }
 
-                                            if (hourDiff <= 0)
+                                            if (dayDiff <= 0)
                                             {
-                                                //Minute Diff
-                                                var mntDiff = diffH == 0 ? diffMin : ((hourDiff * 60) + (diffMin < 0 ? (60 + diffMin) : diffMin));
-                        
-                                                if (mntDiff < 0)
+                                                //Hour diff
+                                                var hourDiff = diffH > 0 ? diffH : (diffD - dayDiff) * 24 + diffH;
+
+                                                if (hourDiff > 0 && diffMin < 0)
                                                 {
-                                                    mntDiff = 0;
+                                                    hourDiff--;
                                                 }
 
-                                                timeDifference = mntDiff + (mntDiff == 1 ? " minute ago" : " minutes ago");
+                                                if (hourDiff <= 0)
+                                                {
+                                                    //Minute Diff
+                                                    var mntDiff = diffH == 0 ? diffMin : ((hourDiff * 60) + (diffMin < 0 ? (60 + diffMin) : diffMin));
+
+                                                    if (mntDiff < 0)
+                                                    {
+                                                        mntDiff = 0;
+                                                    }
+
+                                                    timeDifference = mntDiff + (mntDiff == 1 ? " minute ago" : " minutes ago");
+                                                }
+                                                else
+                                                {
+                                                    timeDifference = hourDiff + (hourDiff == 1 ? " hour ago" : " hours ago");
+                                                }
                                             }
                                             else
                                             {
-                                                timeDifference = hourDiff + (hourDiff == 1 ? " hour ago" : " hours ago");
+                                                timeDifference = dayDiff + (dayDiff == 1 ? " day ago" : " days ago");
                                             }
                                         }
-                                        else 
+                                        else
                                         {
-                                            timeDifference = dayDiff + (dayDiff == 1 ? " day ago" : " days ago");
+                                            timeDifference = monthDiff + (monthDiff == 1 ? " month ago" : " months ago");
                                         }
                                     }
                                     else
                                     {
-                                        timeDifference = monthDiff + (monthDiff == 1 ? " month ago" : " months ago");
+                                        timeDifference = yearDiff + (yearDiff == 1 ? " year ago" : " years ago");
                                     }
-                                }
-                                else
-                                {
-                                    timeDifference = yearDiff + (yearDiff == 1 ? " year ago" : " years ago");
-                                }
 
-                                switch (item.SubMediaType)
-                                {
-                                    case CommonFunctions.CategoryType.TV:
-                                        IQArchive_ArchiveClipModel TVModel = item.MediaData as IQArchive_ArchiveClipModel;
-                                        string TVThumbUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_TVThumbUrl"]);
-                                        TVThumbUrl += TVModel.ClipID;
-                                        Month = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
-                                        Day = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.Day.ToString() : string.Empty;
-                                        Time = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.ToString("hh:mm tt") : string.Empty;
+                                    switch (item.SubMediaType)
+                                    {
+                                        case CommonFunctions.CategoryType.TV:
+                                            IQArchive_ArchiveClipModel TVModel = item.MediaData as IQArchive_ArchiveClipModel;
+                                            string TVThumbUrl = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_TVThumbUrl"]);
+                                            TVThumbUrl += TVModel.ClipID;
+                                            Month = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
+                                            Day = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.Day.ToString() : string.Empty;
+                                            Time = TVModel.LocalDateTime != null ? TVModel.LocalDateTime.ToString("hh:mm tt") : string.Empty;
 
-                                        if (!string.IsNullOrWhiteSpace(TVModel.Market))
-                                        {
-                                            fPub = TVModel.Market.Trim();
-
-                                            if (fPub.Length > 23)
+                                            if (!string.IsNullOrWhiteSpace(TVModel.Market))
                                             {
-                                                sPub = fPub.Substring(0, 21) + "...";
+                                                fPub = TVModel.Market.Trim();
+
+                                                if (fPub.Length > 23)
+                                                {
+                                                    sPub = fPub.Substring(0, 21) + "...";
+                                                }
+                                                else
+                                                {
+                                                    sPub = fPub;
+                                                }
                                             }
-                                            else
-                                            {
-                                                sPub = fPub;
-                                            }
-                                        }
 
             <div id="divMedia_@item.ID" class="media keepTogether">
                 <div class="MediaDate">
@@ -443,7 +427,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@TVModel.StationLogo" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" />
+                    <img src="@TVModel.StationLogo" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right FeedsVideoSpacer">
                     <div class="FeedsVideo positionRelative float-left">
@@ -520,69 +504,69 @@
                                         </div>
                                     }
                                 </div>
-                                if (Model.ReportDetails.Settings.ShowNationalValues)
-                                {
-                                    if (TVModel.National_Nielsen_Audience.HasValue)
+                                    if (Model.ReportDetails.Settings.ShowNationalValues)
                                     {
+                                        if (TVModel.National_Nielsen_Audience.HasValue)
+                                        {
                                         <div class="viewlongdetail">
                                             <div class="totalview" title="National Audience">
                                                 @(string.Format("{0:n0}", TVModel.National_Nielsen_Audience))
                                             </div>
                                         </div>
-                                    }
-                                    if (TVModel.National_IQAdShareValue.HasValue)
-                                    {
+                                        }
+                                        if (TVModel.National_IQAdShareValue.HasValue)
+                                        {
                                         <div class="viewlongdetail">
                                             <div class="totalprice" title="National Media Value">
                                                 @(string.Format("{0:n2}", TVModel.National_IQAdShareValue))
                                                 @(!string.IsNullOrWhiteSpace(TVModel.National_Nielsen_Result) ? "(" + TVModel.National_Nielsen_Result.ToUpper() + ")" : string.Empty)
                                             </div>
                                         </div>
+                                        }
                                     }
-                                }
                             }
                         </div>
                     </div>
                 </div>
             </div>
 
-                                        break;
-                                    case CommonFunctions.CategoryType.TW:
-                                        IQArchive_ArchiveTweetsModel twitterModel = item.MediaData as IQArchive_ArchiveTweetsModel;
-                                        string actorlink = string.Empty;
+                            break;
+                                        case CommonFunctions.CategoryType.TW:
+                            IQArchive_ArchiveTweetsModel twitterModel = item.MediaData as IQArchive_ArchiveTweetsModel;
+                            string actorlink = string.Empty;
 
-                                        if (CommonFunctions.Validate_url(twitterModel.ActorLink + "/status/" + twitterModel.TweetID))
-                                        {
-                                            actorlink = twitterModel.ActorLink + "/status/" + twitterModel.TweetID;
-                                        }
+                            if (CommonFunctions.Validate_url(twitterModel.ActorLink + "/status/" + twitterModel.TweetID))
+                            {
+                                actorlink = twitterModel.ActorLink + "/status/" + twitterModel.TweetID;
+                            }
 
-                                        if (!string.IsNullOrWhiteSpace(twitterModel.ActorDisplayname))
-                                        {
-                                            fTitle = twitterModel.ActorDisplayname.Trim();
+                            if (!string.IsNullOrWhiteSpace(twitterModel.ActorDisplayname))
+                            {
+                                fTitle = twitterModel.ActorDisplayname.Trim();
 
-                                            if (fTitle.Length > 65)
-                                            {
-                                                sTitle = fTitle.Substring(0, 62) + "...";
-                                            }
-                                            else
-                                            {
-                                                sTitle = fTitle;
-                                            }
-                                        }
+                                if (fTitle.Length > 65)
+                                {
+                                    sTitle = fTitle.Substring(0, 62) + "...";
+                                }
+                                else
+                                {
+                                    sTitle = fTitle;
+                                }
+                            }
 
-                                        if (!string.IsNullOrWhiteSpace(twitterModel.PreferredUserName))
-                                        {
-                                            fPub = twitterModel.PreferredUserName.Trim();
+                            if (!string.IsNullOrWhiteSpace(twitterModel.PreferredUserName))
+                            {
+                                fPub = twitterModel.PreferredUserName.Trim();
 
-                                            if (fPub.Length > 23)
-                                            {
-                                                sPub = fPub.Substring(0, 21) + "...";
-                                            }
-                                            else
-                                            {
-                                                sPub = fPub;
-                                            }
-                                        }
+                                if (fPub.Length > 23)
+                                {
+                                    sPub = fPub.Substring(0, 21) + "...";
+                                }
+                                else
+                                {
+                                    sPub = fPub;
+                                }
+                            }
                                         
             <div id="divMedia_@item.ID" class="media keepTogether">
                 <div class="MediaDate">
@@ -595,12 +579,14 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone borderBoxSizing">
                     <div class="media-heading float-left" title="@Html.Raw(fTitle)">
-                        @Html.Raw(sTitle)
+                        <a id="aActorLink_@item.ID" target="_blank" href="@actorlink">
+                            <span id="lblDisplayName_@item.ID">@Html.Raw(sTitle)</span>
+                        </a>
                     </div>
                     <div class="subheading float-left margintop1">
                         @timeDifference
@@ -670,23 +656,24 @@
                 </div>
             </div>
 
-                                                break;
-                                            case CommonFunctions.CategoryType.NM:
-                                                IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
+                                break;
+                                        case CommonFunctions.CategoryType.NM:
+                                        case CommonFunctions.CategoryType.LN:
+                                IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
 
-                                                if (!string.IsNullOrWhiteSpace(newsMediaModel.Publication))
-                                                {
-                                                    fPub = newsMediaModel.Publication.Trim();
+                                if (!string.IsNullOrWhiteSpace(newsMediaModel.Publication))
+                                {
+                                    fPub = newsMediaModel.Publication.Trim();
 
-                                                    if (fPub.Length > 23)
-                                                    {
-                                                        sPub = fPub.Substring(0, 21) + "...";
-                                                    }
-                                                    else
-                                                    {
-                                                        sPub = fPub;
-                                                    }
-                                                }
+                                    if (fPub.Length > 23)
+                                    {
+                                        sPub = fPub.Substring(0, 21) + "...";
+                                    }
+                                    else
+                                    {
+                                        sPub = fPub;
+                                    }
+                                }
 
             <div id="divMedia_@item.ID" class="media keepTogether">
                 <div class="MediaDate">
@@ -699,7 +686,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25onlinenews.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">
@@ -783,24 +770,24 @@
                 </div>
             </div>
 
-                                        break;
-                                    case CommonFunctions.CategoryType.PM:
-                                        IQArchive_ArchiveBLPMModel PMModel = item.MediaData as IQArchive_ArchiveBLPMModel;
-                                        string PMBasePath = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]);
+                        break;
+                                        case CommonFunctions.CategoryType.PM:
+                        IQArchive_ArchiveBLPMModel PMModel = item.MediaData as IQArchive_ArchiveBLPMModel;
+                        string PMBasePath = Convert.ToString(System.Configuration.ConfigurationManager.AppSettings["IQArchieve_PMBaseUrl"]);
 
-                                        if (!string.IsNullOrWhiteSpace(PMModel.Pub_Name))
-                                        {
-                                            fPub = PMModel.Pub_Name.Trim();
+                        if (!string.IsNullOrWhiteSpace(PMModel.Pub_Name))
+                        {
+                            fPub = PMModel.Pub_Name.Trim();
 
-                                            if (fPub.Length > 23)
-                                            {
-                                                sPub = fPub.Substring(0, 21) + "...";
-                                            }
-                                            else
-                                            {
-                                                sPub = fPub;
-                                            }
-                                        }
+                            if (fPub.Length > 23)
+                            {
+                                sPub = fPub.Substring(0, 21) + "...";
+                            }
+                            else
+                            {
+                                sPub = fPub;
+                            }
+                        }
 
             <div id="divMedia_@item.ID" class="media keepTogether">
                 <div class="MediaDate">
@@ -813,7 +800,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25x25_publicationScanned.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">
@@ -860,7 +847,7 @@
             </div>
 
                                 break;
-                                    case CommonFunctions.CategoryType.SocialMedia:
+                                        case CommonFunctions.CategoryType.SocialMedia:
                                 IQArchive_ArchiveSMModel socialMediaModel = item.MediaData as IQArchive_ArchiveSMModel;
 
                                 if (!string.IsNullOrWhiteSpace(socialMediaModel.Publication))
@@ -888,7 +875,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25social.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">
@@ -948,7 +935,7 @@
             </div>
 
                         break;
-                                    case CommonFunctions.CategoryType.Forum:
+                                        case CommonFunctions.CategoryType.Forum:
                         IQArchive_ArchiveSMModel forumModel = item.MediaData as IQArchive_ArchiveSMModel;
 
                         if (!string.IsNullOrWhiteSpace(forumModel.Publication))
@@ -976,7 +963,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25forum.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">
@@ -1036,7 +1023,7 @@
             </div>
 
                         break;
-                                    case CommonFunctions.CategoryType.Blog:
+                                        case CommonFunctions.CategoryType.Blog:
                         IQArchive_ArchiveSMModel blogModel = item.MediaData as IQArchive_ArchiveSMModel;
 
                         if (!string.IsNullOrWhiteSpace(blogModel.Publication))
@@ -1064,7 +1051,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25blog.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">
@@ -1147,11 +1134,9 @@
             </div>
 
                         break;
-                                    case CommonFunctions.CategoryType.FB:
-                                    case CommonFunctions.CategoryType.IG:
+                                        case CommonFunctions.CategoryType.FB:
+                                        case CommonFunctions.CategoryType.IG:
                         IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
-                        string imgName = item.SubMediaType == CommonFunctions.CategoryType.FB ? "25facebook.png" : "instagram.png";
-                        string imgTooltip = item.SubMediaType == CommonFunctions.CategoryType.FB ? CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB) : CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.IG);
                         string contentClass = item.SubMediaType == CommonFunctions.CategoryType.IG ? "PDFContent" : "PDFContentNone";
 
                         if (!string.IsNullOrWhiteSpace(fbModel.Publication))
@@ -1179,7 +1164,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="~/images/MediaIcon/@imgName" title="@imgTooltip" alt="" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 @if (item.SubMediaType == CommonFunctions.CategoryType.IG)
                 {
@@ -1267,7 +1252,7 @@
             </div>
 
                             break;
-                                    case CommonFunctions.CategoryType.Radio:
+                                        case CommonFunctions.CategoryType.Radio:
                             IQArchive_ArchiveTVEyesModel tvEyesModel = item.MediaData as IQArchive_ArchiveTVEyesModel;
                             Month = tvEyesModel.LocalDateTime != null ? tvEyesModel.LocalDateTime.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
                             Day = tvEyesModel.LocalDateTime != null ? tvEyesModel.LocalDateTime.Day.ToString() : string.Empty;
@@ -1298,7 +1283,7 @@
                         </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@string.Format(mediaIconFormat, "25x25_radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right FeedsVideoSpacer">
                     <div class="FeedsVideo positionRelative float-left">
@@ -1378,7 +1363,7 @@
             </div>
 
                     break;
-                                    case CommonFunctions.CategoryType.MS:
+                                        case CommonFunctions.CategoryType.MS:
                     IQArchive_ArchiveMiscModel miscModel = item.MediaData as IQArchive_ArchiveMiscModel;
                     Month = miscModel.CreateDT.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture);
                     Day = miscModel.CreateDT.Day.ToString();
@@ -1457,7 +1442,7 @@
             </div>
 
                             break;
-                                    case CommonFunctions.CategoryType.PQ:
+                                        case CommonFunctions.CategoryType.PQ:
                             IQArchive_ArchivePQModel pqModel = item.MediaData as IQArchive_ArchivePQModel;
                             string authors = String.Empty;
 
@@ -1498,7 +1483,7 @@
                     </div>
                 </div>
                 <div class="MediaTypeLogo">
-                    <img src="@String.Format(mediaIconFormat, "25x25_publicationText.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" />
+                    <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" />
                 </div>
                 <div class="float-right"></div>
                 <div class="PDFContentNone">

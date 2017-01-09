@@ -61,8 +61,8 @@ namespace IQMedia.Web.Logic.Base
                     return new IQ_SMSCampaignLogic();
                 case LogicType.Timeshift_SavedSearch :
                     return new IQTimeshift_SavedSearchLogic();
-                case LogicType.Discovery2:
-                    return new Discovery2Logic();
+                case LogicType.Tads_SavedSearch:
+                    return new IQTads_SavedSearchLogic();
                 case LogicType.Player:
                     return new PlayerLogic();
                 case LogicType.TVEyes:
@@ -119,10 +119,14 @@ namespace IQMedia.Web.Logic.Base
                     return new SessionLogic();
                 case LogicType.Analytics:
                     return new AnalyticsLogic();
+                case LogicType.IQService_Feeds:
+                    return new IQService_FeedsLogic();
                 case LogicType.ThirdParty:
                     return new ThirdPartyLogic();
                 case LogicType.DataImport:
                     return new DataImportLogic();
+                case LogicType.Cohort:
+                    return new CohortLogic();
                 default:
                     //If we get to this point, no logic has bee defined and the code 'SHOULD' fail...
                     throw new ArgumentException("No Logic defined for requested type: '" + logicType + "'");
@@ -154,6 +158,7 @@ namespace IQMedia.Web.Logic.Base
         IQNews,
         IQ_SMSCampaign,
         Timeshift_SavedSearch,
+        Tads_SavedSearch,
         Player,
         TVEyes,
         IQClient_CustomImage,
@@ -183,6 +188,8 @@ namespace IQMedia.Web.Logic.Base
         Instagram,
         Analytics,
         ThirdParty,
-        DataImport
+        DataImport,
+        IQService_Feeds,
+        Cohort
     }
 }

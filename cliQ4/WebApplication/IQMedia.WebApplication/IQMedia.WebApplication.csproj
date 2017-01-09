@@ -42,14 +42,11 @@
     <Reference Include="Alachisoft.NCache.Runtime">
       <HintPath>..\IQMedia.Ref\Alachisoft.NCache.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Alachisoft.NCache.SessionStateManagement">
-      <HintPath>..\IQMedia.Ref\Alachisoft.NCache.SessionStateManagement.dll</HintPath>
-    </Reference>
-    <Reference Include="Alachisoft.NCache.SessionStoreProvider">
-      <HintPath>..\IQMedia.Ref\Alachisoft.NCache.SessionStoreProvider.dll</HintPath>
-    </Reference>
     <Reference Include="Alachisoft.NCache.Web">
       <HintPath>..\IQMedia.Ref\Alachisoft.NCache.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="AnalyticsSearch">
+      <HintPath>..\..\..\AnalyticsSearch\AnalyticsSearch\bin\Debug\AnalyticsSearch.dll</HintPath>
     </Reference>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
@@ -161,15 +158,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AnalyticsController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controllers\ConnectController.cs" />
+    <Compile Include="Controllers\SignInAdminController.cs" />
     <Compile Include="Utility\ActiveUserMgr.cs" />
     <Content Include="App_Code\EndRequestModule.cs" />
+    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Config\ConfigSettings.cs" />
     <Compile Include="Config\Sections\MessageSettings.cs" />
     <Compile Include="Config\Sections\SolrUrlSettings.cs" />
@@ -219,7 +215,6 @@
     <Compile Include="Controllers\DiscoveryLiteController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
-    <Compile Include="Controllers\Discovery2Controller.cs" />
     <Compile Include="Controllers\DiscoveryController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -264,17 +259,40 @@
     <Compile Include="Utility\CommonFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Images\Analytics\40x40_daypartchart.png" />
     <Content Include="Images\Analytics\40x40_daypartchart_inactive.png" />
     <Content Include="Images\Analytics\linechart_inactive.png" />
     <Content Include="Images\Analytics\linechart.png" />
+    <Content Include="Images\brand.png" />
+    <Content Include="Images\cloud-upload.png" />
     <Content Include="Images\company.png" />
+    <Content Include="Images\connect-icon.png" />
     <Content Include="Images\Dashboard\setup.png" />
     <Content Include="Images\email_new.png" />
     <Content Include="Images\excel.png" />
     <Content Include="Images\holdingcompany.png" />
+    <Content Include="Images\industry.png" />
+    <Content Include="Images\isread.png" />
+    <Content Include="Images\klout.png" />
+    <Content Include="Images\home_new\logo_new_white.png" />
+    <Content Include="Images\home_new\Resources.png" />
+    <Content Include="Images\home_new\visitpage_btn.png" />
     <Content Include="Images\market-icon.png" />
     <Content Include="Images\MediaIcon\client-specific.png" />
+    <Content Include="Images\MediaIcon\email_white.png" />
+    <Content Include="Images\MediaIcon\facebook_white.png" />
+    <Content Include="Images\MediaIcon\instagram_white.png" />
+    <Content Include="Images\MediaIcon\linkedin_white.png" />
+    <Content Include="Images\MediaIcon\twitter_white.png" />
+    <Content Include="Images\MediaIcon\default_thumbnail_image.png" />
+    <Content Include="Images\MediaIcon\excel.png" />
+    <Content Include="Images\MediaIcon\image.png" />
+    <Content Include="Images\MediaIcon\pdf.png" />
+    <Content Include="Images\MediaIcon\radio.png" />
+    <Content Include="Images\MediaIcon\word.png" />
     <Content Include="Images\paidearned.png" />
     <Content Include="Content\EmailDisclaimer.txt" />
     <Content Include="Content\RsetPwdTemplate.txt" />
@@ -921,6 +939,7 @@
     <Content Include="Images\plus-icon.png" />
     <Content Include="Images\Plus_grey.png" />
     <Content Include="Images\pnc.png" />
+    <Content Include="Images\prominence-icon.png" />
     <Content Include="Images\publish.png" />
     <Content Include="Images\question_icon.png" />
     <Content Include="Images\queued.png" />
@@ -1316,9 +1335,13 @@
     <Content Include="Scripts\ClipPlayer.js" />
     <Content Include="Scripts\Col2D1.js" />
     <Content Include="Scripts\ConstantScript.js" />
+    <Content Include="Scripts\jsrender.min.js" />
+    <Content Include="Scripts\JSRenderViewsSupport.js" />
+    <Content Include="Scripts\jsviews.min.js" />
     <Content Include="Scripts\fusioncharts-jquery-plugin.min.js" />
     <Content Include="Scripts\highcharts.heatmap.js" />
     <Content Include="Scripts\maps\fusioncharts.canada.js" />
+    <Content Include="Scripts\TAdsRadio.js" />
     <Content Include="Scripts\TAdsVideoPlayer.js" />
     <Content Include="Scripts\CustomCategory.js" />
     <Content Include="Scripts\fusioncharts1.maps.js" />
@@ -1367,7 +1390,6 @@
     <Content Include="Scripts\Customer.js" />
     <Content Include="Scripts\Dashboard.js" />
     <Content Include="Scripts\Discovery.js" />
-    <Content Include="Scripts\Discovery2.js" />
     <Content Include="Scripts\FeedsScript.js" />
     <Content Include="Scripts\FusionCharts.HC.Charts.js" />
     <Content Include="Scripts\FusionCharts.HC.js" />
@@ -1838,7 +1860,6 @@
     <Content Include="Views\Subscription\Index.cshtml" />
     <None Include="Properties\PublishProfiles\Load1.pubxml" />
     <Content Include="Views\ProPrep\Index.cshtml" />
-    <Content Include="Views\Discovery2\Index.cshtml" />
     <Content Include="Views\IframeRawMedia\Index.cshtml" />
     <Content Include="Views\IframeServiceRawMedia\Index.cshtml" />
     <Content Include="Views\Download\TVEyes.cshtml" />
@@ -1941,7 +1962,6 @@
     <Content Include="Views\IframeServiceRawMedia\RawMediaPlayer.cshtml" />
     <Content Include="Views\ImpactVisualization\Index.cshtml" />
     <Content Include="Views\ProQuest\Index.cshtml" />
-    <Content Include="Views\Feeds\_ChildResults.cshtml" />
     <Content Include="Views\InfoAlert\Index.cshtml" />
     <Content Include="Views\ImageRecognition\Index.cshtml" />
     <Content Include="Views\Library\_MCMediaResults.cshtml" />
@@ -1973,6 +1993,22 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Home\_SignIn.cshtml" />
     <Content Include="Views\Analytics\Index.cshtml" />
+    <Content Include="Views\Feeds\_BLPMResult.cshtml" />
+    <Content Include="Views\Feeds\_FBResult.cshtml" />
+    <Content Include="Views\Feeds\_IGResult.cshtml" />
+    <Content Include="Views\Feeds\_NMChildResult.cshtml" />
+    <Content Include="Views\Feeds\_NMResult.cshtml" />
+    <Content Include="Views\Feeds\_PQResult.cshtml" />
+    <Content Include="Views\Feeds\_RadioResult.cshtml" />
+    <Content Include="Views\Feeds\_SMResult.cshtml" />
+    <Content Include="Views\Feeds\_TVChildResult.cshtml" />
+    <Content Include="Views\Feeds\_TVResult.cshtml" />
+    <Content Include="Views\Feeds\_TWResult.cshtml" />
+    <Content Include="Views\Discovery\_TVResult.cshtml" />
+    <Content Include="Views\Discovery\_NMResult.cshtml" />
+    <Content Include="Views\Discovery\_BLResult.cshtml" />
+    <Content Include="Views\Discovery\_FOResult.cshtml" />
+    <Content Include="Views\Discovery\_PQResult.cshtml" />
     <Content Include="Views\Analytics\_AnalyticsSecondary.cshtml" />
     <Content Include="Views\Analytics\_AnalyticsPrimary.cshtml" />
     <Content Include="Views\Analytics\Campaign\_CampaignFilter.cshtml" />
@@ -1981,6 +2017,15 @@
     <Content Include="Views\ContactUs\Index.cshtml" />
     <Content Include="Views\Setup\_InstagramSetup.cshtml" />
     <Content Include="Views\Dashboard\ClientData\_Sony.cshtml" />
+    <Content Include="Views\Shared\_DashboardMediaSparkChart.cshtml" />
+    <Content Include="Views\SignInAdmin\Index.cshtml" />
+    <Content Include="Views\SignInAdmin\_SignIn.cshtml" />
+    <Content Include="Views\Connect\Index.cshtml" />
+    <Content Include="Views\GlobalAdmin\_Group.cshtml" />
+    <Content Include="Views\Dashboard\Reports\_Overview.cshtml" />
+    <Content Include="Views\EmailTemplate\_EmailTemplateDevry.cshtml" />
+    <Content Include="Views\TAds\_RadioResults.cshtml" />
+    <Content Include="Views\TAds\_SavedSearch.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -2000,11 +2045,12 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50415</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost/</IISUrl>
+          <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
+          <IISAppRootUrl>https://cfurst.iqmediacorp.com/SignIn</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>True</UseCustomServer>
-          <CustomServerUrl>https://skraft.iqmediacorp.com/signin</CustomServerUrl>
+          <CustomServerUrl>https://test.iqmediacorp.com/SignIn</CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>

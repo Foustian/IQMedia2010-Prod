@@ -234,6 +234,7 @@ function GenerateLibraryReport(reportid) {
                         if (result.reportSettings.Sort != null && result.reportSettings.Sort != "") {
                             $('input:radio[name=rdSort]').filter('[value="' + result.reportSettings.Sort + '"]').prop('checked', true);
                         }
+
                         $('input:checkbox[name=chkShowHide]').filter('[value=TotalAudience]').prop('checked', result.reportSettings.ShowTotalAudience);
                         $('input:checkbox[name=chkShowHide]').filter('[value=TotalMediaValue]').prop('checked', result.reportSettings.ShowTotalMediaValue);
                         $('input:checkbox[name=chkShowHide]').filter('[value=Audience]').prop('checked', result.reportSettings.ShowAudience);
@@ -243,15 +244,13 @@ function GenerateLibraryReport(reportid) {
                         $('input:checkbox[name=chkShowHide]').filter('[value=TotalNationalAudience]').prop('checked', result.reportSettings.ShowTotalNationalAudience);
                         $('input:checkbox[name=chkShowHide]').filter('[value=TotalNationalMediaValue]').prop('checked', result.reportSettings.ShowTotalNationalMediaValue);
                         $('input:checkbox[name=chkShowHide]').filter('[value=CoverageSources]').prop('checked', result.reportSettings.ShowCoverageSources);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=Overview]').prop('checked', result.reportSettings.ShowOverviewChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=TV]').prop('checked', result.reportSettings.ShowTVChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=NM]').prop('checked', result.reportSettings.ShowNMChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=Blog]').prop('checked', result.reportSettings.ShowBlogChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=Forum]').prop('checked', result.reportSettings.ShowForumChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=SocialMedia]').prop('checked', result.reportSettings.ShowSocialMediaChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=TW]').prop('checked', result.reportSettings.ShowTwitterChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=PM]').prop('checked', result.reportSettings.ShowPrintMediaChart);
-                        $('input:checkbox[name=chkShowHideDashboard]').filter('[value=MS]').prop('checked', result.reportSettings.ShowMiscChart);
+
+                        $('input:checkbox[name=chkShowHideDashboard]').prop('checked', false);
+                        if (result.reportSettings.ChartMediaTypes != null) {
+                            $.each(result.reportSettings.ChartMediaTypes, function (index, value) {
+                                $('input:checkbox[name=chkShowHideDashboard]').filter('[value=' + value + ']').prop('checked', 'true');
+                            });
+                        }
 
                         _OrigSort = $("#divReportEditOptions input[type=radio]:checked").val();
                         _HasCustomSort = result.reportHasCustomSort;
@@ -295,6 +294,7 @@ function GenerateLibraryReport(reportid) {
                         var medium = $(this).val();
 
                         if ($(this).prop("checked")) {
+
                             jsonPostData = { p_ReportID: reportid, p_Medium: medium };
 
                             $.ajax({
@@ -690,9 +690,15 @@ function SaveReport_Helper(isSaveAs, resetSort) {
     }
 
     var showHideSettings = [];
+    var chartMediaTypes = [];
     $("#divReportEditOptions input[type=checkbox]:checked").each(function () {
         if ($(this).val() != "All") {
-            showHideSettings.push($(this).val())
+            if ($(this).attr("name") == "chkShowHideDashboard") {
+                chartMediaTypes.push($(this).val());
+            }
+            else {
+                showHideSettings.push($(this).val());
+            }
         }
     });
 
@@ -711,7 +717,8 @@ function SaveReport_Helper(isSaveAs, resetSort) {
         p_ReportTile: txtTitle.val().trim(),
         p_PrimaryGroup: $("#ddlPrimaryGroup").val(),
         p_SecondaryGroup: $("#ddlSecondaryGroup").val(),
-        p_ResetSort: resetSort
+        p_ResetSort: resetSort,
+        p_ChartMediaTypes: chartMediaTypes
     }
 
     $.ajax({

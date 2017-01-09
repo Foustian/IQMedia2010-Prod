@@ -153,59 +153,8 @@ namespace IQMedia.Model
             set { _ShowCoverageSources = value; }
         }bool _ShowCoverageSources = true;
 
-        public bool ShowOverviewChart
-        {
-            get { return _ShowOverviewChart; }
-            set { _ShowOverviewChart = value; }
-        }bool _ShowOverviewChart = false;
-
-        public bool ShowTVChart
-        {
-            get { return _ShowTVChart; }
-            set { _ShowTVChart = value; }
-        }bool _ShowTVChart = false;
-
-        public bool ShowNMChart
-        {
-            get { return _ShowNMChart; }
-            set { _ShowNMChart = value; }
-        }bool _ShowNMChart = false;
-
-        public bool ShowBlogChart
-        {
-            get { return _ShowBlogChart; }
-            set { _ShowBlogChart = value; }
-        }bool _ShowBlogChart = false;
-
-        public bool ShowForumChart
-        {
-            get { return _ShowForumChart; }
-            set { _ShowForumChart = value; }
-        }bool _ShowForumChart = false;
-
-        public bool ShowSocialMediaChart
-        {
-            get { return _ShowSocialMediaChart; }
-            set { _ShowSocialMediaChart = value; }
-        }bool _ShowSocialMediaChart = false;
-
-        public bool ShowTwitterChart
-        {
-            get { return _ShowTwitterChart; }
-            set { _ShowTwitterChart = value; }
-        }bool _ShowTwitterChart = false;
-
-        public bool ShowPrintMediaChart
-        {
-            get { return _ShowPrintMediaChart; }
-            set { _ShowPrintMediaChart = value; }
-        }bool _ShowPrintMediaChart = false;
-
-        public bool ShowMiscChart
-        {
-            get { return _ShowMiscChart; }
-            set { _ShowMiscChart = value; }
-        }bool _ShowMiscChart = false;
+        [XmlArrayItem(ElementName = "ChartMediaType")]
+        public List<string> ChartMediaTypes { get; set; }
 
         public string Sort { get; set; }
 

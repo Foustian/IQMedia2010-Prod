@@ -1,5 +1,6 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 @model List<IQArchive_MediaModel>
 @if (Model != null)
 {
@@ -8,6 +9,7 @@
 
     foreach (IQArchive_MediaModel item in Model)
     {
+        IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
         string Month = item.MediaDate != null ? item.MediaDate.ToString("MMM", System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
         string Day = item.MediaDate != null ? item.MediaDate.Day.ToString() : string.Empty;
         string Time = item.MediaDate != null && item.MediaType != CommonFunctions.CategoryType.PQ.ToString() ? item.MediaDate.ToString("hh:mm tt") : string.Empty;
@@ -190,7 +192,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo" align="center">
-            <img src="@TVModel.StationLogo" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TV)" />
+            <img src="@TVModel.StationLogo" title="@objSubMediaType.DisplayName" />
         </div>
         <div class="float-right FeedsVideoSpacer">
             <div class="FeedsVideo positionRelative float-left">
@@ -574,7 +576,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo" align="center">
-            <img src="@String.Format(mediaIconFormat, "twitter.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.TW)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="float-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0);" />
@@ -657,6 +659,7 @@
 
                 break;
             case CommonFunctions.CategoryType.NM:
+            case CommonFunctions.CategoryType.LN:
                 IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
                 
                 if (newsMediaModel.Compete_Audience.HasValue && newsMediaModel.Compete_Audience > 0)
@@ -728,7 +731,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, "25onlinenews.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.NM)" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="pull-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />
@@ -757,7 +760,7 @@
                 <div class="viewmore">
                     @if (newsMediaModel.ChildResults != null && newsMediaModel.ChildResults.Count > 0)
                     {
-                        <a href="javascript:void(0);"  title="View More" onclick="ShowChild('@item.ID', 'NM');">
+                        <a href="javascript:void(0);"  title="View More" onclick="ShowChild('@item.ID');">
                             <img alt="" id="expand_@item.ID" src="../images/expand.png" />
                         </a>
                     }
@@ -1057,7 +1060,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, "25x25_publicationScanned.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PM)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="pull-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />
@@ -1142,7 +1145,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, "25social.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.SocialMedia)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="pull-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />
@@ -1249,7 +1252,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, "25forum.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Forum)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="pull-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />
@@ -1399,7 +1402,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo" align="center">
-            <img src="@String.Format(mediaIconFormat, "25blog.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Blog)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="float-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />
@@ -1498,8 +1501,6 @@
             case CommonFunctions.CategoryType.FB:
             case CommonFunctions.CategoryType.IG:
                 IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
-                string imgName = item.SubMediaType == CommonFunctions.CategoryType.FB ? "25facebook.png" : "instagram.png";
-                string imgTooltip = item.SubMediaType == CommonFunctions.CategoryType.FB ? CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.FB) : CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.IG);
                 string contentClass = item.SubMediaType == CommonFunctions.CategoryType.IG ? "MediaRoomContentVideo2" : "FeedsContentNone";
                 string videoSpacer = item.SubMediaType == CommonFunctions.CategoryType.IG ? "FeedsVideoSpacer" : string.Empty;
                 
@@ -1576,7 +1577,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, imgName)" title="@imgTooltip" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="float-right @videoSpacer">
             @if (item.SubMediaType == CommonFunctions.CategoryType.IG)
@@ -1709,7 +1710,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@string.Format(mediaIconFormat, "25x25_radio.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.Radio)" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="float-right FeedsVideoSpacer">
             <div class="float-left FeedsVideo positionRelative">
@@ -1929,7 +1930,7 @@
             </div>
         </div>
         <div class="MediaTypeLogo">
-            <img src="@String.Format(mediaIconFormat, "25x25_publicationText.png")" title="@CommonFunctions.GetEnumDescription(CommonFunctions.CategoryType.PQ)" alt="" />
+            <img src="@objSubMediaType.MediaIconPath" title="@objSubMediaType.DisplayName" alt="" />
         </div>
         <div class="pull-right">
             <input type="checkbox" id="chkdivResults_@item.ID" value="@item.ID" onclick="javascript:void(0)" />

@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Data.SqlTypes;
 using System.Xml;
 using System.IO;
+using IQCommon.Model;
 
 namespace IQMedia.Data
 {
@@ -65,7 +66,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@TotalResults", DbType.Int64, TotalResults, ParameterDirection.Output));
                 dataTypeList.Add(new DataType("@TotalResultsDisplay", DbType.Int64, TotalResultsDisplay, ParameterDirection.Output));
 
-                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v4_IQArchive_Media_Select", dataTypeList, out p_outParameter);
+                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v5_IQArchive_Media_Select", dataTypeList, out p_outParameter);
 
                 Dictionary<string, object> dictresult = FillIQArchieveResults(dataset, currentUrl, IsEnableFilter, SortColumn, IsAsc);
 
@@ -101,7 +102,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ArchiveXML", DbType.Xml, ArchiveIDs, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@v4LibraryRollup", DbType.Boolean, IsLibraryRollup, ParameterDirection.Input));
 
-                DataSet result = DataAccess.GetDataSet("usp_v4_IQArchive_Media_Delete", dataTypeList);
+                DataSet result = DataAccess.GetDataSet("usp_v5_IQArchive_Media_Delete", dataTypeList);
 
                 lstArchiveID = new List<long>();
 
@@ -150,7 +151,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SinceID", DbType.Int64, SinceID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, IsRadioAccess, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQArchive_Media_SelectFilter", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQArchive_Media_SelectFilter", dataTypeList);
                 IQArchive_FilterModel filter = FillFilterFromDataSet(dataset.Tables[0], dataset.Tables[1], dataset.Tables[2], dataset.Tables[3]);
 
                 return filter;
@@ -193,7 +194,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ArchiveXML", DbType.Xml, ArchiveXML, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.Guid, ClientGuid, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQArchive_Media_SelectForEmail", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQArchive_Media_SelectForEmail", dataTypeList);
 
                 Dictionary<string, object> dictresult = FillIQArchieveResults(dataset, currentUrl, false);
 
@@ -404,7 +405,7 @@ namespace IQMedia.Data
             }
         }
 
-        public IQArchive_DisplayLibraryReport GetIQArchieveResultsForLibraryReport(long ReportID, string currentUrl, Guid ClientGuid, bool IsRadioAccess, bool isNielsenData, bool isCompeteData, out int totalDisplayedRecords)
+        public IQArchive_DisplayLibraryReport GetIQArchieveResultsForLibraryReport(long ReportID, string currentUrl, Guid ClientGuid, bool IsRadioAccess, bool isNielsenData, bool isCompeteData, List<IQ_MediaTypeModel> lstSubMediaTypes, out int totalDisplayedRecords)
         {
             try
             {
@@ -414,7 +415,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.Guid, ClientGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, IsRadioAccess, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQ_Report_SelectAllMediaForReportByReportID", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQ_Report_SelectAllMediaForReportByReportID", dataTypeList);
 
                 IQArchive_DisplayLibraryReport objDisplayLibraryReport = new IQArchive_DisplayLibraryReport();
                 List<IQ_ReportModel> reports = new List<IQ_ReportModel>();
@@ -462,6 +463,13 @@ namespace IQMedia.Data
 
                 if (dictResults.Count > 0 && dictResults["Result"] != null)
                 {
+                    List<string> lstNielsenAudienceTypes = lstSubMediaTypes.Where(w => w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    List<string> lstNielsenMediaValueTypes = lstSubMediaTypes.Where(w => w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    List<string> lstCompeteAudienceTypes = lstSubMediaTypes.Where(w => w.RequireCompeteAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    List<string> lstCompeteMediaValueTypes = lstSubMediaTypes.Where(w => w.RequireCompeteAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    List<string> lstOtherAudienceTypes = lstSubMediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+                    List<string> lstOtherMediaValueTypes = lstSubMediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+
                     List<IQArchive_MediaModel> archiveResults = dictResults["Result"] as List<IQArchive_MediaModel>;
                     objDisplayLibraryReport.ArchiveResults = archiveResults;
 
@@ -485,7 +493,7 @@ namespace IQMedia.Data
                     switch (primaryGroup)
                     {
                         case "SubMediaType":
-                            group1Elements = archiveResults.Select(s => new Tuple<string, string>(s.SubMediaType.ToString(), s.SubMediaType.ToString())).Distinct().ToList();
+                            group1Elements = archiveResults.Select(s => new Tuple<string, string>(s.SubMediaType.ToString(), s.SubMediaTypeDesc)).Distinct().OrderBy(o => lstSubMediaTypes.First(f => f.SubMediaType == o.Item1.ToString()).SortOrder).ToList();
                             break;
                         case "CategoryName":
                             group1Elements = archiveResults.Select(s => String.IsNullOrEmpty(s.CategoryName) ? new Tuple<string, string>("-1", "Other") : new Tuple<string, string>(s.CategoryGUID.ToString(), s.CategoryName)).Distinct().OrderBy(o => o.Item2).ToList();
@@ -501,26 +509,26 @@ namespace IQMedia.Data
                     {
                         string elementID = element.Item1;
                         string elementName = element.Item2;
-                        string elementDisplay = primaryGroup == ReportGroupType.SubMediaType.ToString() ? CommonFunctions.GetEnumDescription((CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), elementName)) : elementName;
+                        string elementValue = primaryGroup == "SubMediaType" ? element.Item1 : element.Item2;
 
                         IQArchive_GroupTier1Model groupTier1Model = new IQArchive_GroupTier1Model()
                         {
                             GroupValue = elementID,
-                            GroupName = elementDisplay,
+                            GroupName = elementName,
                             IsEnabled = true,
                             TotalAudience = 0,
                             TotalMediaValue = 0
                         };
 
                         // Get a list of results as dictated by the items' actual values, to ensure that the correct groups and subgroups are displayed
-                        List<IQArchive_MediaModel> group1ResultsBase = archiveResults.Where(w => CommonFunctions.GetPropertyValueAsString(w, primaryGroup) == elementName || (elementName == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, primaryGroup)))).ToList();
+                        List<IQArchive_MediaModel> group1ResultsBase = archiveResults.Where(w => CommonFunctions.GetPropertyValueAsString(w, primaryGroup) == elementValue || (elementValue == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, primaryGroup)))).ToList();
 
                         // Get a list of results as dictated by the custom sorting values for display.
                         // Check custom values against the group ID, since the group name may change. 
                         List<IQArchive_MediaModel> group1Results = archiveResults.Where(w => (!String.IsNullOrEmpty(w.GroupTier1Value) && w.GroupTier1Value == elementID) ||
                                                                                                 (String.IsNullOrEmpty(w.GroupTier1Value) &&
-                                                                                                    (CommonFunctions.GetPropertyValueAsString(w, primaryGroup) == elementName ||
-                                                                                                    (elementName == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, primaryGroup))))
+                                                                                                    (CommonFunctions.GetPropertyValueAsString(w, primaryGroup) == elementValue ||
+                                                                                                    (elementValue == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, primaryGroup))))
                                                                                              )
                                                                                         ).ToList();
 
@@ -542,7 +550,7 @@ namespace IQMedia.Data
                             switch (secondaryGroup)
                             {
                                 case "SubMediaType":
-                                    group2Elements = group1ResultsBase.Select(s => new Tuple<string, string>(s.SubMediaType.ToString(), s.SubMediaType.ToString())).Distinct().ToList();
+                                    group2Elements = group1ResultsBase.Select(s => new Tuple<string, string>(s.SubMediaType.ToString(), s.SubMediaTypeDesc)).Distinct().OrderBy(o => lstSubMediaTypes.First(f => f.SubMediaType == o.Item1.ToString()).SortOrder).ToList();
                                     break;
                                 case "CategoryName":
                                     group2Elements = group1ResultsBase.Select(s => String.IsNullOrEmpty(s.CategoryName) ? new Tuple<string, string>("-1", "Other") : new Tuple<string, string>(s.CategoryGUID.ToString(), s.CategoryName)).Distinct().OrderBy(o => o.Item2).ToList();
@@ -558,24 +566,24 @@ namespace IQMedia.Data
                             {
                                 string element2ID = element2.Item1;
                                 string element2Name = element2.Item2;
-                                string element2Display = secondaryGroup == ReportGroupType.SubMediaType.ToString() ? CommonFunctions.GetEnumDescription((CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), element2Name)) : element2Name;
+                                string element2Value = secondaryGroup == "SubMediaType" ? element2.Item1 : element2.Item2;
 
                                 IQArchive_GroupTier2Model groupTier2Model = new IQArchive_GroupTier2Model()
                                 {
                                     GroupValue = element2ID,
-                                    GroupName = element2Display,
+                                    GroupName = element2Name,
                                     IsEnabled = true,
                                     // Check custom values against the group ID, since the group name may change. 
                                     ArchiveResults = group1Results.Where(w => (!String.IsNullOrEmpty(w.GroupTier2Value) && w.GroupTier2Value == element2ID) ||
                                                                                 (String.IsNullOrEmpty(w.GroupTier2Value) &&
-                                                                                    (CommonFunctions.GetPropertyValueAsString(w, secondaryGroup) == element2Name ||
-                                                                                    (element2Name == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, secondaryGroup))))
+                                                                                    (CommonFunctions.GetPropertyValueAsString(w, secondaryGroup) == element2Value ||
+                                                                                    (element2Value == "Other" && String.IsNullOrEmpty(CommonFunctions.GetPropertyValueAsString(w, secondaryGroup))))
                                                                                 )
                                                                         ).ToList()
                                 };
 
                                 totalDisplayedRecords += groupTier2Model.ArchiveResults.Count;
-                                groupTier1Model.GroupTier2Counts.Add(element2Display, groupTier2Model.ArchiveResults.Count);
+                                groupTier1Model.GroupTier2Counts.Add(element2Name, groupTier2Model.ArchiveResults.Count);
                                 groupTier1Model.GroupTier2Results.Add(groupTier2Model);
                             }
                         }
@@ -586,27 +594,43 @@ namespace IQMedia.Data
                             List<IQArchive_MediaModel> lstMediaResults;
                             if (isNielsenData)
                             {
-                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => w.SubMediaType == CommonFunctions.CategoryType.TV).ToList();
+                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstNielsenAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
                                 if (lstMediaResults.Count > 0)
                                 {
                                     groupTier1Model.TotalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                                }
+
+                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstNielsenMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+                                if (lstMediaResults.Count > 0)
+                                {
                                     groupTier1Model.TotalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
                                 }
                             }
                             if (isCompeteData)
                             {
-                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => w.SubMediaType == CommonFunctions.CategoryType.Blog || w.SubMediaType == CommonFunctions.CategoryType.NM).ToList();
+                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstCompeteAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
                                 if (lstMediaResults.Count > 0)
                                 {
                                     groupTier1Model.TotalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                                }
+
+                                lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstCompeteMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+                                if (lstMediaResults.Count > 0)
+                                {
                                     groupTier1Model.TotalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
                                 }
                             }
 
-                            lstMediaResults = groupTier2Model.ArchiveResults.Where(w => w.SubMediaType == CommonFunctions.CategoryType.TW || w.SubMediaType == CommonFunctions.CategoryType.PM).ToList();
+                            lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstOtherAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
                             if (lstMediaResults.Count > 0)
                             {
                                 groupTier1Model.TotalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                            }
+
+                            lstMediaResults = groupTier2Model.ArchiveResults.Where(w => lstOtherMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+                            if (lstMediaResults.Count > 0)
+                            {
+                                groupTier1Model.TotalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
                             }
 
                             switch (sortField)
@@ -637,7 +661,7 @@ namespace IQMedia.Data
                             }
                         }
 
-                        objDisplayLibraryReport.GroupTier1Counts.Add(elementDisplay, group1Results.Count);
+                        objDisplayLibraryReport.GroupTier1Counts.Add(elementName, group1Results.Count);
                         objDisplayLibraryReport.GroupTier1Results.Add(groupTier1Model);
                     }
                 }
@@ -865,8 +889,6 @@ namespace IQMedia.Data
                     }
                 }
 
-                // dataSet.Tables[1] represents record which is selected based on ID and type like BLPM,NM,TV,SM,TW
-
                 if (dataSet.Tables[1] != null)
                 {
                     foreach (DataRow dr in dataSet.Tables[1].Rows)
@@ -990,7 +1012,7 @@ namespace IQMedia.Data
         private IQArchive_FilterModel FillFilterFromDataSet(DataTable dtMediaDate, DataTable dtSubMediaType, DataTable dtCustomer, DataTable dtCategory)
         {
             IQArchive_FilterModel filter = new IQArchive_FilterModel();
-            filter.SubMediaTypes = new List<IQArchive_Filter>();
+            filter.MediaTypes = new List<IQArchive_MediaTypeFilter>();
             filter.Customers = new List<IQArchive_Filter>();
             filter.Categories = new List<IQArchive_Filter>();
             filter.Dates = new List<string>();
@@ -1010,21 +1032,62 @@ namespace IQMedia.Data
 
             if (dtSubMediaType != null)
             {
+                Dictionary<string, IQArchive_MediaTypeFilter> dictMediaTypes = new Dictionary<string, IQArchive_MediaTypeFilter>();
                 foreach (DataRow dr in dtSubMediaType.Rows)
                 {
-                    IQArchive_Filter objSubMediaType = new IQArchive_Filter();
+                    string mediaType = String.Empty;
+                    string mediaTypeDesc = String.Empty;
+                    bool hasSubMediaTypes = false;
+                    string subMediaType = String.Empty;
+                    string subMediaTypeDesc = String.Empty;
+                    long subMediaTypeCount = 0;
+
+                    if (!dr["MediaType"].Equals(DBNull.Value))
+                    {
+                        mediaType = Convert.ToString(dr["MediaType"]);
+                    }
+                    if (!dr["MediaTypeDesc"].Equals(DBNull.Value))
+                    {
+                        mediaTypeDesc = Convert.ToString(dr["MediaTypeDesc"]);
+                    }
+                    if (!dr["HasSubMediaTypes"].Equals(DBNull.Value))
+                    {
+                        hasSubMediaTypes = Convert.ToBoolean(dr["HasSubMediaTypes"]);
+                    }
                     if (!dr["SubMediaType"].Equals(DBNull.Value))
                     {
-                        objSubMediaType.SubMediaType = Convert.ToString(dr["SubMediaType"]);
-                        CommonFunctions.CategoryType tempSubMeiaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), Convert.ToString(dr["SubMediaType"]));
-                        objSubMediaType.SubMediaTypeDescription = CommonFunctions.GetEnumDescription(tempSubMeiaType);
+                        subMediaType = Convert.ToString(dr["SubMediaType"]);
+                    }
+                    if (!dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                    {
+                        subMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
                     }
                     if (!dr["SubMediaTypeCount"].Equals(DBNull.Value))
                     {
-                        objSubMediaType.RecordCount = Convert.ToInt64(dr["SubMediaTypeCount"]);
+                        subMediaTypeCount = Convert.ToInt64(dr["SubMediaTypeCount"]);
                     }
-                    filter.SubMediaTypes.Add(objSubMediaType);
+
+                    if (!dictMediaTypes.ContainsKey(mediaType))
+                    {
+                        IQArchive_MediaTypeFilter newFilter = new IQArchive_MediaTypeFilter();
+                        newFilter.MediaType = mediaType;
+                        newFilter.MediaTypeDesc = mediaTypeDesc;
+                        newFilter.SubMediaTypes = new List<IQArchive_SubMediaTypeFilter>();
+
+                        dictMediaTypes.Add(mediaType, newFilter);
+                    }
+
+                    IQArchive_MediaTypeFilter mediaTypeFilter = dictMediaTypes[mediaType];
+                    mediaTypeFilter.RecordCount += subMediaTypeCount;
+                    mediaTypeFilter.SubMediaTypes.Add(new IQArchive_SubMediaTypeFilter()
+                    {
+                        SubMediaType = subMediaType,
+                        SubMediaTypeDesc = subMediaTypeDesc,
+                        RecordCount = subMediaTypeCount
+                    });
                 }
+
+                filter.MediaTypes.AddRange(dictMediaTypes.Values);
             }
             if (dtCustomer != null)
             {
@@ -1107,6 +1170,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -1223,7 +1290,11 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
-                        objIQArchive_MediaModel.MediaType = "PM";
+                        if (dataSet.Tables[0].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveBLPMModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -1265,6 +1336,10 @@ namespace IQMedia.Data
                         if (!drChild["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchiveChild_MediaModel.MediaDate = Convert.ToDateTime(drChild["MediaDate"]);
+                        }
+                        if (!drChild["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchiveChild_MediaModel.MediaType = Convert.ToString(drChild["MediaType"]);
                         }
                         if (!drChild["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -1352,7 +1427,6 @@ namespace IQMedia.Data
                             objIQArchiveChild_MediaModel.CreatedDate = Convert.ToDateTime(drChild["CreatedDate"]);
                         }
 
-                        objIQArchiveChild_MediaModel.MediaType = "TV";
                         objIQArchiveChild_MediaModel.MediaData = objIQArchive_ArchiveClipModel;
                         listIQArchiveChild_Media.Add(objIQArchiveChild_MediaModel);
                     }
@@ -1386,6 +1460,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -1469,11 +1547,13 @@ namespace IQMedia.Data
 
                         if (dataSet.Tables[1].Columns.Contains("National_Nielsen_Audience") && !dr["National_Nielsen_Audience"].Equals(DBNull.Value))
                         {
+                            objIQArchive_MediaModel.National_Nielsen_Audience = Convert.ToInt64(dr["National_Nielsen_Audience"]);
                             objIQArchive_ArchiveClipModel.National_Nielsen_Audience = Convert.ToInt64(dr["National_Nielsen_Audience"]);
                         }
 
                         if (dataSet.Tables[1].Columns.Contains("National_IQAdShareValue") && !dr["National_IQAdShareValue"].Equals(DBNull.Value))
                         {
+                            objIQArchive_MediaModel.National_IQAdShareValue = Convert.ToDecimal(dr["National_IQAdShareValue"]);
                             objIQArchive_ArchiveClipModel.National_IQAdShareValue = Convert.ToDecimal(dr["National_IQAdShareValue"]);
                         }
 
@@ -1565,11 +1645,15 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
+                        if (dataSet.Tables[1].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         var childs = listIQArchiveChild_Media.Where(a => (a.MediaData as IQArchive_ArchiveClipModel)._ParentID == objIQArchive_MediaModel.ID).OrderByDescending(a => (a.MediaData as IQArchive_ArchiveClipModel).LocalDateTime).ToList();
 
                         objIQArchive_ArchiveClipModel.ChildResults = childs;
 
-                        objIQArchive_MediaModel.MediaType = "TV";
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveClipModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -1614,6 +1698,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -1682,7 +1770,6 @@ namespace IQMedia.Data
                         }
 
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveNMModel;
-                        objIQArchive_MediaModel.MediaType = "NM";
                         listIQArchiveNMChild_Media.Add(objIQArchive_MediaModel);
 
                     }
@@ -1716,6 +1803,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -1864,12 +1955,16 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
+                        if (dataSet.Tables[2].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         var childs = listIQArchiveNMChild_Media.Where(a => (a.MediaData as IQArchive_ArchiveNMModel)._ParentID == objIQArchive_MediaModel.ID).OrderByDescending(a => a.MediaDate).ToList();
 
                         objIQArchive_ArchiveNMModel.ChildResults = childs;
 
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveNMModel;
-                        objIQArchive_MediaModel.MediaType = "NM";
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
                 }
@@ -1906,6 +2001,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -2061,7 +2160,11 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
-                        objIQArchive_MediaModel.MediaType = "SM";
+                        if (dataSet.Tables[3].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveSMModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -2095,6 +2198,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -2242,8 +2349,12 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
+                        if (dataSet.Tables[4].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTweetsModel;
-                        objIQArchive_MediaModel.MediaType = "TW";
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
                 }
@@ -2295,6 +2406,11 @@ namespace IQMedia.Data
                         if (dataSet.Tables[5].Columns.Contains("TimeZone") && !dr["TimeZone"].Equals(DBNull.Value))
                         {
                             objIQArchive_ArchiveTVEyesModel.TimeZone = Convert.ToString(dr["TimeZone"]);
+                        }
+
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
 
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
@@ -2410,7 +2526,11 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
-                        objIQArchive_MediaModel.MediaType = "TM";
+                        if (dataSet.Tables[5].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveTVEyesModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -2468,6 +2588,10 @@ namespace IQMedia.Data
                         if (dataSet.Tables[6].Columns.Contains("MediaUrl") && !dr["MediaUrl"].Equals(DBNull.Value))
                         {
                             objIQArchive_ArchiveMiscModel.MediaUrl = Convert.ToString(dr["MediaUrl"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -2546,7 +2670,11 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
-                        objIQArchive_MediaModel.MediaType = "MS";
+                        if (dataSet.Tables[6].Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchiveMiscModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -2581,6 +2709,10 @@ namespace IQMedia.Data
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             objIQArchive_MediaModel.MediaDate = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["MediaType"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.MediaType = Convert.ToString(dr["MediaType"]);
                         }
                         if (!dr["SubMediaType"].Equals(DBNull.Value))
                         {
@@ -2707,7 +2839,11 @@ namespace IQMedia.Data
                             objIQArchive_MediaModel.GroupTier2Value = Convert.ToString(dr["GroupTier2Value"]);
                         }
 
-                        objIQArchive_MediaModel.MediaType = "PQ";
+                        if (dt.Columns.Contains("SubMediaTypeDesc") && !dr["SubMediaTypeDesc"].Equals(DBNull.Value))
+                        {
+                            objIQArchive_MediaModel.SubMediaTypeDesc = Convert.ToString(dr["SubMediaTypeDesc"]);
+                        }
+
                         objIQArchive_MediaModel.MediaData = objIQArchive_ArchivePQModel;
                         listIQArchive_Media.Add(objIQArchive_MediaModel);
                     }
@@ -3081,7 +3217,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SinceID", DbType.Int64, SinceID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, IsRadioAccess, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQArchive_Media_SelectCategoryFilter", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQArchive_Media_SelectCategoryFilter", dataTypeList);
                 IQArchive_FilterModel filter = FillFilterFromDataSet(null, null, null, dataset.Tables[0]);
 
                 return filter.Categories;
@@ -3537,7 +3673,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@MasterClientID", DbType.Int32, MasterClientID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ReportGUID", DbType.String, reportGUID, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQArchive_MCMedia_SelectCategoryFilter", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQArchive_MCMedia_SelectCategoryFilter", dataTypeList);
                 IQArchive_FilterModel filter = FillFilterFromDataSet(null, null, null, dataset.Tables[0]);
 
                 return filter.Categories;
@@ -3580,7 +3716,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SinceID", DbType.Int64, SinceID, ParameterDirection.Output));
                 dataTypeList.Add(new DataType("@TotalResults", DbType.Int64, TotalResults, ParameterDirection.Output));
 
-                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v4_IQArchive_MCMedia_Select", dataTypeList, out p_outParameter);
+                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v5_IQArchive_MCMedia_Select", dataTypeList, out p_outParameter);
 
                 Dictionary<string, object> dictresult = FillIQArchieveResults(dataset, currentUrl, IsEnableFilter, SortColumn, IsAsc);
 

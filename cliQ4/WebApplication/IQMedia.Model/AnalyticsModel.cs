@@ -24,6 +24,7 @@ namespace IQMedia.Model
         public List<AnalyticsCampaign> Campaigns { get; set; }  // Needed to get xAxis values for line chart - caused by different date ranges
         public Dictionary<long, string> Agents { get; set; }
         public Boolean IsCompareMode { get; set; }
+        public SummationProperty SummationProperty { get; set; }
 
         public override string ToString()
         {
@@ -210,7 +211,10 @@ namespace IQMedia.Model
         Daypart,
         Market,
         Networks,
-        Shows
+        Shows,
+        Overview,
+        Stations,
+        DemoOverview
     }
 
     public enum HCChartTypes
@@ -238,5 +242,70 @@ namespace IQMedia.Model
         treemap,
         waterfall,
         fusionMap
+    }
+
+    public enum SummationProperty
+    {
+        IQMediaValue,
+        Docs,
+        Hits,
+        AdSpend
+    }
+
+    // Cohorts Models
+    [Serializable]
+    public class CohortSolrFacet
+    {
+        public string Name { get; set; }
+        public Int64 Count { get; set; }
+        public decimal AdValue { get; set; }
+        public Int64 PaidHits { get; set; }
+    }
+
+    public class CohortSolrFacetRequest
+    {
+        List<string> _SRIDs = null;
+        DateTime? _startDate = null;
+        DateTime? _endDate = null;
+        string _facet = null;
+        List<KeyValuePair<string, string>> _extraParmaeters = null;
+
+        public List<string> SearchRequestIDs
+        {
+            get { return _SRIDs; }
+            set { _SRIDs = value; }
+        }
+
+        public DateTime? StartDate
+        {
+            get { return _startDate; }
+            set { _startDate = value; }
+        }
+
+        public DateTime? EndDate
+        {
+            get { return _endDate; }
+            set { _endDate = value; }
+        }
+
+        public string Facet
+        {
+            get { return _facet; }
+            set { _facet = value; }
+        }
+
+        public List<KeyValuePair<string, string>> ExtraParameters
+        {
+            get { return _extraParmaeters; }
+            set { _extraParmaeters = value; }
+        }
+    }
+
+    public class RawCohortFacet
+    {
+        public string val { get; set; }
+        public Int64 count { get; set; }
+        public decimal totaladvalue { get; set; }
+        public Int64 totalpaidhits { get; set; }
     }
 }

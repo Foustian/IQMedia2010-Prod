@@ -75,7 +75,7 @@
                                 Edit</a>
                         </td>
                         <td style="text-align: center;">
-                            <a href="javascript:void(0);" onclick="DeleteCustomer(@item.CustomerKey)" >Delete</a>
+                            <a href="javascript:void(0);" onclick="DeleteCustomer(@item.CustomerKey, '@(item.FirstName.Replace("'", "\\'"))', '@(item.LastName.Replace("'", "\\'"))')" >Delete</a>
                         </td>
                         <td style="text-align: left;">
                             @item.FirstName @item.LastName

@@ -33,6 +33,8 @@ namespace IQMedia.Model
         public string ClientName { get; set; }
 
         public bool IsActive { get; set; }
+
+        public int TimeZoneID { get; set; }
     }
 
     public class IQClient_UGCMapPostModel
@@ -47,5 +49,13 @@ namespace IQMedia.Model
     public class IQClient_UGCMapDropDowns
     {
         public List<ClientModel> Client_DropDown { get; set; }
+
+        public List<IQTimeZone> TimeZone_DropDown { get; set; }
+    }
+    public class IQTimeZone
+    {
+        public int ID { get; set; }
+        public string Code {get; set;}
+        public string Name { get; set; }
     }
 }

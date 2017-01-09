@@ -5,7 +5,7 @@
 }
 
 <script src="~/Scripts/enscroll.js?v=1.0" type="text/javascript"></script>
-<script src="~/Scripts/chosen.jquery.js?v=1.0" type="text/javascript"></script>
+<script src="~/Scripts/chosen.jquery.js?v=1.1" type="text/javascript"></script>
 <link rel="stylesheet" href="~/Css/Chosen/chosen.css" />
 
 <style>
@@ -50,6 +50,11 @@
                     Client Name</label>
                 <div class="controls">
                     <input type="text" name="txtClientName" id="txtClientName" value="@Model.txtClientName" />
+                    @if (Model.hdnClientKey > 0)
+                    {
+                        <input type="button" id="btnClientAddToAnewstip" class="button" style="margin:0px 10px; @(Model.hdnAnewstipClientID == 0 ? "" : "display:none")" value="Create Connect Client Account" onclick="AddClientToAnewstip(@Model.hdnClientKey, '@Model.txtClientName.Replace("'", "\\'")')" />
+                        <input type="button" id="btnClientAddedToAnewstip" class="button" style="margin:0px 10px; cursor:default; @(Model.hdnAnewstipClientID > 0 ? "" : "display:none")" value="Connect Account Created" />
+                    }
                     <input type="hidden" id="hdnClientKey" name="hdnClientKey" value="@Model.hdnClientKey" />
                     <span style="color: #FF0000; display: none; vertical-align: top" id="spanClientName"
                         class="help-inline"></span>
@@ -120,7 +125,7 @@
             </div>
             <div class="control-group">
                 <label for="chkHasPremium" class="control-label">
-                    Enable Premium Content
+                    Enable LexisNexis Content
                 </label>
                 <div class="controls">
                     <input type="checkbox" checked="@Model.chkHasPremium" id="chkHasPremium" name="chkHasPremium" value="true" />

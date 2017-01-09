@@ -10,34 +10,6 @@ namespace IQMedia.Data
 {
     public class NMDA : IDataAccess
     {
-
-        public string Insert_ArchiveNM(ArchiveCommonModel archiveCommonModel)
-        {
-            try
-            {
-                List<DataType> dataTypeList = new List<DataType>();
-                dataTypeList.Add(new DataType("@Title", DbType.String, archiveCommonModel.Title, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@Keywords", DbType.String, archiveCommonModel.Keywords, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@Description", DbType.String, archiveCommonModel.Description, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@CustomerGuid", DbType.Guid, archiveCommonModel.CustomerGuid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@ClientGuid", DbType.Guid, archiveCommonModel.ClientGuid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@CategoryGuid", DbType.Guid, archiveCommonModel.CategoryGuid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@SubCategory1Guid", DbType.Guid, archiveCommonModel.SubCategory1Guid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@SubCategory2Guid", DbType.Guid, archiveCommonModel.SubCategory2Guid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@SubCategory3Guid", DbType.Guid, archiveCommonModel.SubCategory3Guid, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@MediaResultID", DbType.String, archiveCommonModel.MediaResultID, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@Rating", DbType.Int16, archiveCommonModel.Rating, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveCommonModel.ArchiveKey, ParameterDirection.Output));
-
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_Archive_Insert", dataTypeList);
-                return _Result;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
         public int SelectDownloadLimit(string CustomerGUID)
         {
             try
@@ -227,7 +199,7 @@ namespace IQMedia.Data
             return objArticleNMDownload;
         }
 
-        public string InsertArchiveNM(IQAgent_NewsResultsModel p_IQAgent_NewsResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID,string p_Event, string p_Keywords, string p_Description, Int64? MediaID, bool UseProminenceMultiplier = false)
+        public string InsertArchiveNM(IQAgent_NewsResultsModel p_IQAgent_NewsResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID,string p_Event, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID, bool UseProminenceMultiplier = false)
         {
             try
             {
@@ -254,10 +226,11 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@Keywords", DbType.String, p_Keywords, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Description", DbType.String, p_Description, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ProminenceMultiplier", DbType.Decimal, UseProminenceMultiplier ? p_IQAgent_NewsResultsModel.IQProminenceMultiplier : 1, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@FeedClass", DbType.String, p_IQAgent_NewsResultsModel.FeedClass, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaType", DbType.String, p_MediaType, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SubMediaType", DbType.String, p_SubMediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveKey, ParameterDirection.Output));
 
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_ArchiveNM_Insert", dataTypeList);
+                string _Result = DataAccess.ExecuteNonQuery("usp_v5_ArchiveNM_Insert", dataTypeList);
                 return _Result;
 
             }

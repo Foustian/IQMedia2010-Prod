@@ -7,6 +7,7 @@ using IQMedia.Web.Logic;
 using IQMedia.Web.Logic.Base;
 using IQMedia.WebApplication.Config;
 using IQMedia.WebApplication.Utility;
+using IQCommon.Model;
 
 namespace IQMedia.WebApplication.Controllers
 {
@@ -21,7 +22,7 @@ namespace IQMedia.WebApplication.Controllers
             ViewBag.IsInvalidID = false;
             ViewBag.IsError = false;
 
-            MCMediaReportModel report = new MCMediaReportModel();
+            Dictionary<string, object> dictResults = new Dictionary<string, object>();
             try
             {
                 Guid temp;
@@ -32,9 +33,10 @@ namespace IQMedia.WebApplication.Controllers
                     if (mcMediaTemplate != null)
                     {
                         MCMediaTemplateLogic mcMediaTemplateLogic = (MCMediaTemplateLogic)LogicFactory.GetLogic(LogicType.MCMediaTemplate);
-                        report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, null, mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
+                        MCMediaReportModel report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, null, mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
 
                         SetIQCustomSettings(report.MasterClientGuid.Value.ToString());
+                        SetMediaTypes();
 
                         foreach (MCMediaReport_GroupTier1Model groupTier1Result in report.GroupTier1Results)
                         {
@@ -50,6 +52,9 @@ namespace IQMedia.WebApplication.Controllers
                         }
 
                         SetMCMediaTemplate(temp, mcMediaTemplate);
+
+                        dictResults.Add("MCMediaReport", report);
+                        dictResults.Add("MediaTypes", GetMediaTypes());
                     }
                     else
                     {
@@ -67,7 +72,7 @@ namespace IQMedia.WebApplication.Controllers
                 ViewBag.IsError = true;
             }
 
-            return View(report);
+            return View(dictResults);
         }
 
         #endregion
@@ -103,6 +108,7 @@ namespace IQMedia.WebApplication.Controllers
                         report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, searchSettings, mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
 
                         SetIQCustomSettings(report.MasterClientGuid.Value.ToString());
+                        SetMediaTypes();
 
                         foreach (MCMediaReport_GroupTier1Model groupTier1Result in report.GroupTier1Results)
                         {
@@ -119,9 +125,24 @@ namespace IQMedia.WebApplication.Controllers
 
                         SetMCMediaTemplate(temp, mcMediaTemplate);
 
+                        ActiveUser sessionInfo = ActiveUserMgr.GetActiveUser();
+                        List<IQ_MediaTypeModel> lstMediaTypes;
+                        if (sessionInfo == null)
+                        {
+                            lstMediaTypes = IQCommon.CommonFunctions.GetMediaTypes(new Guid());
+                        }
+                        else
+                        {
+                            lstMediaTypes = sessionInfo.MediaTypes;
+                        }
+
+                        Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                        dictPartial.Add("Results", report.GroupTier1Results);
+                        dictPartial.Add("MediaTypes", GetMediaTypes());
+
                         Dictionary<string, object> dictResult = new Dictionary<string, object>();
                         dictResult.Add("MCMediaReport", report);
-                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results));
+                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial));
 
                         return View(dictResult);
                     }
@@ -197,11 +218,15 @@ namespace IQMedia.WebApplication.Controllers
                     }
                 }
 
+                Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                dictPartial.Add("Results", report.GroupTier1Results);
+                dictPartial.Add("MediaTypes", GetMediaTypes());
+
                 return Json(new
                 {
                     isSuccess = true,
                     filter = report.FilterResults,
-                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results)
+                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial)
                 });
             }
             catch (Exception ex)
@@ -283,6 +308,7 @@ namespace IQMedia.WebApplication.Controllers
                         report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, searchSettings, mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
 
                         SetIQCustomSettings(report.MasterClientGuid.Value.ToString());
+                        SetMediaTypes();
 
                         foreach (MCMediaReport_GroupTier1Model groupTier1Result in report.GroupTier1Results)
                         {
@@ -299,9 +325,13 @@ namespace IQMedia.WebApplication.Controllers
 
                         SetMCMediaTemplate(temp, mcMediaTemplate);
 
+                        Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                        dictPartial.Add("Results", report.GroupTier1Results);
+                        dictPartial.Add("MediaTypes", GetMediaTypes());
+
                         Dictionary<string, object> dictResult = new Dictionary<string, object>();
                         dictResult.Add("MCMediaReport", report);
-                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results));
+                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial));
 
                         return View(dictResult);
                     }
@@ -369,11 +399,15 @@ namespace IQMedia.WebApplication.Controllers
                     }
                 }
 
+                Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                dictPartial.Add("Results", report.GroupTier1Results);
+                dictPartial.Add("MediaTypes", GetMediaTypes());
+
                 return Json(new
                 {
                     isSuccess = true,
                     filter = report.FilterResults,
-                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results)
+                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial)
                 });
             }
             catch (Exception ex)
@@ -447,6 +481,7 @@ namespace IQMedia.WebApplication.Controllers
                         report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, searchSettings, mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
 
                         SetIQCustomSettings(report.MasterClientGuid.Value.ToString());
+                        SetMediaTypes();
 
                         foreach (MCMediaReport_GroupTier1Model groupTier1Result in report.GroupTier1Results)
                         {
@@ -463,9 +498,13 @@ namespace IQMedia.WebApplication.Controllers
 
                         SetMCMediaTemplate(temp, mcMediaTemplate);
 
+                        Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                        dictPartial.Add("Results", report.GroupTier1Results);
+                        dictPartial.Add("MediaTypes", GetMediaTypes());
+
                         Dictionary<string, object> dictResult = new Dictionary<string, object>();
                         dictResult.Add("MCMediaReport", report);
-                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results));
+                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial));
 
                         return View(dictResult);
                     }
@@ -542,11 +581,15 @@ namespace IQMedia.WebApplication.Controllers
                     }
                 }
 
+                Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                dictPartial.Add("Results", report.GroupTier1Results);
+                dictPartial.Add("MediaTypes", GetMediaTypes());
+
                 return Json(new
                 {
                     isSuccess = true,
                     filter = report.FilterResults,
-                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results)
+                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial)
                 });
             }
             catch (Exception ex)
@@ -583,6 +626,7 @@ namespace IQMedia.WebApplication.Controllers
                         report = mcMediaTemplateLogic.GetMCMediaResultsForReport(temp, new MCMediaSearchModel(), mcMediaTemplate.Settings, Request.ServerVariables["HTTP_HOST"]);
 
                         SetIQCustomSettings(report.MasterClientGuid.Value.ToString());
+                        SetMediaTypes();
 
                         foreach (MCMediaReport_GroupTier1Model groupTier1Result in report.GroupTier1Results)
                         {
@@ -599,9 +643,13 @@ namespace IQMedia.WebApplication.Controllers
 
                         SetMCMediaTemplate(temp, mcMediaTemplate);
 
+                        Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                        dictPartial.Add("Results", report.GroupTier1Results);
+                        dictPartial.Add("MediaTypes", GetMediaTypes());
+
                         Dictionary<string, object> dictResult = new Dictionary<string, object>();
                         dictResult.Add("MCMediaReport", report);
-                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results));
+                        dictResult.Add("HTML", RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial));
 
                         return View(dictResult);
                     }
@@ -677,11 +725,15 @@ namespace IQMedia.WebApplication.Controllers
                     }
                 }
 
+                Dictionary<string, object> dictPartial = new Dictionary<string, object>();
+                dictPartial.Add("Results", report.GroupTier1Results);
+                dictPartial.Add("MediaTypes", GetMediaTypes());
+
                 return Json(new
                 {
                     isSuccess = true,
                     filter = report.FilterResults,
-                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, report.GroupTier1Results)
+                    HTML = RenderPartialToString(mcMediaTemplate.Settings.ResultsViewPath, dictPartial)
                 });
             }
             catch (Exception ex)
@@ -814,6 +866,47 @@ namespace IQMedia.WebApplication.Controllers
                     ClientLogic clientLogic = (ClientLogic)LogicFactory.GetLogic(LogicType.Client);
                     IQClient_CustomSettingsModel customSettings = clientLogic.GetClientCustomSettings(clientGuid);
                     TempData["IQClientCustom_Settings"] = customSettings;
+                }
+            }
+            catch (Exception _Exception)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(_Exception);
+            }
+            finally { TempData.Keep(); }
+        }
+
+        private List<IQ_MediaTypeModel> GetMediaTypes()
+        {
+            List<IQ_MediaTypeModel> mediaTypes = null;
+            try
+            {
+                mediaTypes = TempData["MediaTypes"] as List<IQ_MediaTypeModel>;
+            }
+            catch (Exception _Exception)
+            {
+                IQMedia.WebApplication.Utility.CommonFunctions.WriteException(_Exception);
+            }
+            finally { TempData.Keep(); }
+
+            return mediaTypes;
+        }
+
+        private void SetMediaTypes()
+        {
+            try
+            {
+                if (TempData["MediaTypes"] == null)
+                {
+                    ActiveUser sessionInfo = ActiveUserMgr.GetActiveUser();
+                    if (sessionInfo != null && sessionInfo.MediaTypes != null && sessionInfo.MediaTypes.Count > 0)
+                    {
+                        TempData["MediaTypes"] = sessionInfo.MediaTypes;
+                    }
+                    else
+                    {
+                        // The customer guid is only needed to determine the user's access to the media type roles. Media Room functionality doesn't use any of those roles.
+                        TempData["MediaTypes"] = IQCommon.CommonFunctions.GetMediaTypes(new Guid());
+                    }
                 }
             }
             catch (Exception _Exception)

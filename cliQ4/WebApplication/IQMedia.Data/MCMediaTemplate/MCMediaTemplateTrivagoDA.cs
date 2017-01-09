@@ -40,7 +40,7 @@ namespace IQMedia.Data.MCMediaTemplate
                 dataTypeList.Add(new DataType("@SentimentFlag", DbType.Int32, SentimentFlag, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CategoryXml", DbType.Xml, CategoryXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ReportGUID", DbType.String, reportGUID, ParameterDirection.Input));
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQ_Report_MCMediaTemplateTrivago_SelectCategoryFilter", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQ_Report_MCMediaTemplateTrivago_SelectCategoryFilter", dataTypeList);
 
                 List<IQArchive_Filter> lstCategories = new List<IQArchive_Filter>();
                 if (dataset != null && dataset.Tables.Count > 0)
@@ -77,7 +77,7 @@ namespace IQMedia.Data.MCMediaTemplate
 
             mcMediaReportModel.FilterResults = new MCMediaReport_FilterModel()
             {
-                SubMediaTypes = new List<MCMediaReport_Filter>(),
+                MediaTypes = new List<MCMediaReport_MediaTypeFilter>(),
                 Categories = new List<MCMediaReport_Filter>(),
                 Dates = new List<string>()
             };
@@ -128,10 +128,10 @@ namespace IQMedia.Data.MCMediaTemplate
                                 lstMediaResults.AddRange(GetMSResults(dt));
                                 break;
                             case "SubMediaTypeFilter":
-                                mcMediaReportModel.FilterResults.SubMediaTypes = GetFilterResults(dt, "SubMediaTypeFilter");
+                                GetFilterResults(dt, "SubMediaTypeFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "CategoryFilter":
-                                mcMediaReportModel.FilterResults.Categories = GetFilterResults(dt, "CategoryFilter");
+                                GetFilterResults(dt, "CategoryFilter", mcMediaReportModel.FilterResults);
                                 break;
                             case "DateFilter":
                                 mcMediaReportModel.FilterResults.Dates = new List<string>();

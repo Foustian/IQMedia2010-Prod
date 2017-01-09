@@ -32,5 +32,7 @@ namespace IQMedia.Model
         public string Country { get; set; }
 
         public string Country_Num { get; set; }
+
+        public string SubMediaType { get; set; }
     }
 }

@@ -38,6 +38,12 @@ namespace IQMedia.WebApplication.Controllers
                     if (searchResult.newsResults != null && searchResult.newsResults.Count == 1)
                     {
                         NewsResult newsResult = searchResult.newsResults[0];
+
+                        if (!String.IsNullOrWhiteSpace(newsResult.Content))
+                        {
+                            newsResult.Content = newsResult.Content.Replace(ConfigurationManager.AppSettings["LexisNexisLineBreakPlaceholder"], "<br/>");
+                        }
+
                         if ((DateTime.Now - DateTime.Parse(newsResult.date)).Days <= 90 || (!String.IsNullOrEmpty(source) && source.ToLower() == "library"))
                         {
                             ViewBag.IsExpired = false;

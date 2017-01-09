@@ -130,6 +130,10 @@ body {
     background:url(../images/library-icon.png) no-repeat center 13px;
 }
 
+.nav .connect {
+    background:url(../images/connect-icon.png) no-repeat center 13px;
+}
+
 .nav .fliq {
     background:url(../images/fliq-icon.png) no-repeat center 15px;
 }
@@ -188,6 +192,10 @@ body {
 
 .nav .library:hover, .nav li.active a.library{
     background:url(../images/library-icon.png) no-repeat center -51px;
+}
+
+.nav .connect:hover, .nav li.active a.connect {
+    background:url(../images/connect-icon.png) no-repeat center -60px;
 }
 
 .nav .fliq:hover, .nav li.active a.fliq{
@@ -5447,4 +5455,77 @@ td.bottomAlign
 {
     max-height: 100%;
     max-width: 100%;
+}
+
+/* New class to disable feeds recoreds */
+.disabledRecord
+{
+    background-color: #d0d0d0;
+    opacity: 0.75;
+}
+
+/* New classes for Cohort Reports */
+.cohortReportsChartHeader
+{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.cohortReportsChartHeaderBorderDiv
+{
+    border-bottom: 2px solid black;
+    height: 50%;
+}
+
+.cohortReportsChartHeaderSpan
+{
+    padding: 3px 5px 3px 5px;
+    background: black;
+    color: White;
+    font-weight: bold;
+    width: 100px;
+    text-align: center;
+}
+
+.cohortReportsChartDiv
+{
+    height: 300px;
+    width: 97%;
+    clear: both;
+}
+
+.cohortReportsCentralDiv
+{
+    display: inline-block;
+    border-right: 2px solid black;
+    height: 350px;
+    /*align-self: end;*/
+    margin-top: 13px;
+}
+
+.cohortEarnedHighlights
+{
+    display: flex;
+    justify-content: space-between;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Used to override the positioning of standard arrow spans for cohort header */
+.cohortArrowSpanOverride
+{
+    position: unset !important;
+    float: right;
+    padding-left: 5px;
+}
+
+.cohortDropList
+{
+    left: 105%;
+    top: 0%;
+    width: 250px;
+    max-height: 340px;
+    overflow-y: auto;
 }

@@ -8,6 +8,7 @@ using System.Data;
 using IQMedia.Shared.Utility;
 using System.Xml.Linq;
 using System.Configuration;
+using System.Data.SqlClient;
 
 namespace IQMedia.Data
 {
@@ -48,7 +49,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ID", DbType.Int64, ID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.Guid, ClientGuid, ParameterDirection.Input));
 
-                DataSet dataset = DataAccess.GetDataSet("usp_v4_IQAgent_MediaResults_SelectByID", dataTypeList);
+                DataSet dataset = DataAccess.GetDataSet("usp_v5_IQAgent_MediaResults_SelectByID", dataTypeList);
 
                 IQAgent_MediaResultsModel objIQAgent_MediaResultsModel = new IQAgent_MediaResultsModel();
                 IQAgent_NewsResultsModel objIQAgent_NewsResultsModel = new IQAgent_NewsResultsModel();
@@ -58,9 +59,20 @@ namespace IQMedia.Data
                 {
                     foreach (DataRow dr in dataset.Tables[0].Rows)
                     {
+                        string dataModelType = string.Empty;
+                        if (!dr["DataModelType"].Equals(DBNull.Value))
+                        {
+                            dataModelType = Convert.ToString(dr["DataModelType"]);
+                        }
+
                         if (!dr["MediaType"].Equals(DBNull.Value))
                         {
                             objIQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["MediaType"]);
+                        }
+
+                        if (!dr["SubMediaType"].Equals(DBNull.Value))
+                        {
+                            objIQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["SubMediaType"]);
                         }
 
                         if (!dr["ArticleID"].Equals(DBNull.Value))
@@ -79,7 +91,7 @@ namespace IQMedia.Data
                         }
 
 
-                        if (objIQAgent_MediaResultsModel.MediaType == "NM")
+                        if (dataModelType == "NM")
                         {
                             if (!dr["ArticleID"].Equals(DBNull.Value))
                             {
@@ -125,7 +137,7 @@ namespace IQMedia.Data
                             {
                                 objIQAgent_NewsResultsModel.IQProminenceMultiplier = Convert.ToDecimal(dr["IQProminenceMultiplier"]);
                             }
-                            
+
                             objIQAgent_NewsResultsModel.PositiveSentiment = Convert.ToInt32(objIQAgent_MediaResultsModel.PositiveSentiment);
                             objIQAgent_NewsResultsModel.NegativeSentiment = Convert.ToInt32(objIQAgent_MediaResultsModel.NegativeSentiment);
 
@@ -135,7 +147,7 @@ namespace IQMedia.Data
                             }
                             objIQAgent_MediaResultsModel.MediaData = objIQAgent_NewsResultsModel;
                         }
-                        else if (objIQAgent_MediaResultsModel.MediaType == "SM")
+                        else if (dataModelType == "SM")
                         {
                             if (!dr["ArticleID"].Equals(DBNull.Value))
                             {
@@ -257,7 +269,7 @@ namespace IQMedia.Data
             {
                 MediaType = string.IsNullOrEmpty(MediaType) ? null : MediaType;
                 string useRollupStr = "false";
-
+                
                 List<DataType> dataTypeList = new List<DataType>();
                 dataTypeList.Add(new DataType("@ReportGUID", DbType.String, ReportGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@MaxDisplayRecord", DbType.Int32, IQAgentReportMaxRecordDisplay, ParameterDirection.Input));
@@ -265,8 +277,8 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@MediaType", DbType.String, MediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@IsSourceEmail", DbType.Boolean, IsSourceEmail, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@UseRollUp", DbType.Boolean, false, ParameterDirection.Output));
-
-                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v4_IQ_Report_SelectIQAgentReportByReportGUID", dataTypeList,out useRollupStr);
+                
+                DataSet dataset = DataAccess.GetDataSetWithOutParam("usp_v5_IQ_Report_SelectIQAgentReportByReportGUID", dataTypeList,out useRollupStr);               
 
                 IQAgentReport objIQAgentReport_WithoutAuthentication = FillIQAgent_ResultForReport(dataset);
 
@@ -443,7 +455,7 @@ namespace IQMedia.Data
             }
         }
 
-        public string InsertIQAgentSearchRequest(string ClientGuid, string QueryName, string SearchXML, string v5SearchXML)
+        public string InsertIQAgentSearchRequest(string ClientGuid, string QueryName, string SearchXML)
         {
             try
             {
@@ -451,10 +463,9 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.String, ClientGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Query_Name", DbType.String, QueryName, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SearchTerm", DbType.Xml, SearchXML, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@v5SearchTerm", DbType.Xml, v5SearchXML, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Output", DbType.Int32, 0, ParameterDirection.Output));
 
-                string result = DataAccess.ExecuteNonQuery("usp_v4_IQAgent_SearchRequest_Insert", dataTypeList);
+                string result = DataAccess.ExecuteNonQuery("usp_v5_IQAgent_SearchRequest_Insert", dataTypeList);
 
                 return result;
             }
@@ -464,7 +475,7 @@ namespace IQMedia.Data
             }
         }
 
-        public string UpdateIQAgentSearchRequest(string ClientGuid, long IQAgentSearchRequestID, string QueryName, string SearchXML, string v5SearchXML)
+        public string UpdateIQAgentSearchRequest(string ClientGuid, long IQAgentSearchRequestID, string QueryName, string SearchXML)
         {
             try
             {
@@ -474,10 +485,9 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.String, ClientGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Query_Name", DbType.String, QueryName, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SearchTerm", DbType.Xml, SearchXML, ParameterDirection.Input));
-                dataTypeList.Add(new DataType("@v5SearchTerm", DbType.Xml, v5SearchXML, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Output", DbType.Int32, 0, ParameterDirection.Output));
 
-                string result = DataAccess.ExecuteNonQuery("usp_v4_IQAgent_SearchRequest_Update", dataTypeList);
+                string result = DataAccess.ExecuteNonQuery("usp_v5_IQAgent_SearchRequest_Update", dataTypeList);
 
                 return result;
             }
@@ -1398,7 +1408,7 @@ namespace IQMedia.Data
 
                         if (dataSet.Tables[2].Columns.Contains("LocalDate") && !dr["LocalDate"].Equals(DBNull.Value))
                         {
-                            iQAgent_TVResultsModel.LocalDateTime = Convert.ToDateTime(dr["LocalDate"]).AddHours(Convert.ToInt16(dr["LocalTime"])/100);
+                            iQAgent_TVResultsModel.LocalDateTime = Convert.ToDateTime(dr["LocalDate"]).AddHours(Convert.ToInt16(dr["LocalTime"]) / 100);
                         }
 
                         if (dataSet.Tables[2].Columns.Contains("ParentID") && !dr["ParentID"].Equals(DBNull.Value))
@@ -1406,7 +1416,7 @@ namespace IQMedia.Data
                             iQAgent_TVResultsModel._ParentID = Convert.ToInt32(dr["ParentID"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "TV";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_TVResultsModel;
 
                         if (iQAgent_MediaResultsModel.ID > 0)
@@ -1508,7 +1518,7 @@ namespace IQMedia.Data
                             iQAgent_NewsResultsModel._ParentID = Convert.ToInt32(dr["ParentID"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "NM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_NewsResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1601,7 +1611,7 @@ namespace IQMedia.Data
                         }
 
 
-                        iQAgent_MediaResultsModel.MediaType = "SM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_SMResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1610,10 +1620,11 @@ namespace IQMedia.Data
                     }
                 }
 
+
                 if (dataSet.Tables.Count > 5 && dataSet.Tables[5] != null)
                 {
 
-                    // Represents Blog
+                    // Represents FB
 
                     foreach (DataRow dr in dataSet.Tables[5].Rows)
                     {
@@ -1631,22 +1642,28 @@ namespace IQMedia.Data
                         {
                             iQAgent_MediaResultsModel.ID = Convert.ToInt64(dr["ID"]);
                         }
+                        if (!dr["Category"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
+                        }
+                        if (dataSet.Tables[5].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
+                        }
+                        if (dataSet.Tables[5].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
+                        }
 
                         if (!dr["Title"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.Description = Convert.ToString(dr["Title"]);
                         }
-
                         if (!dr["MediaDate"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.ItemHarvestDate = Convert.ToDateTime(dr["MediaDate"]);
                             iQAgent_MediaResultsModel.MediaDateTime = Convert.ToDateTime(dr["MediaDate"]);
                         }
-                        if (!dr["Category"].Equals(DBNull.Value))
-                        {
-                            iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
-                        }
-
                         if (!dr["HighlightingText"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
@@ -1656,43 +1673,39 @@ namespace IQMedia.Data
                                 iQAgent_SMResultsModel.HighlightedSMOutput = (HighlightedSMOutput)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["HighlightingText"]), highlightedSMOutput);
                             }
                         }
+                        if (!dr["ThumbUrl"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.ThumbUrl = Convert.ToString(dr["ThumbUrl"]);
+                        }
                         if (!dr["Url"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.Link = Convert.ToString(dr["Url"]);
                         }
-
                         if (dataSet.Tables[5].Columns.Contains("homelink") && !dr["homelink"].Equals(DBNull.Value))
                         {
                             Uri aPublisherUri;
                             iQAgent_SMResultsModel.HomeLink = Uri.TryCreate(Convert.ToString(dr["homelink"]), UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : Convert.ToString(dr["homelink"]);
                         }
-
                         if (!dr["Compete_Audience"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.Compete_Audience = Convert.ToInt32(dr["Compete_Audience"]);
                         }
-
                         if (!dr["IQAdShareValue"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.IQAdShareValue = Convert.ToDecimal(dr["IQAdShareValue"]);
                         }
-
                         if (!dr["Compete_Result"].Equals(DBNull.Value))
                         {
                             iQAgent_SMResultsModel.Compete_Result = Convert.ToString(dr["Compete_Result"]);
                         }
-
-                        if (dataSet.Tables[5].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        if (!dr["ArticleStats"].Equals(DBNull.Value) && !String.IsNullOrWhiteSpace(Convert.ToString(dr["ArticleStats"])))
                         {
-                            iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
+                            ArticleStatsModel statsModel = new ArticleStatsModel();
+                            iQAgent_SMResultsModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["ArticleStats"]), statsModel);
                         }
 
-                        if (dataSet.Tables[5].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
-                        {
-                            iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
-                        }
 
-                        iQAgent_MediaResultsModel.MediaType = "SM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_SMResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1704,9 +1717,103 @@ namespace IQMedia.Data
                 if (dataSet.Tables.Count > 6 && dataSet.Tables[6] != null)
                 {
 
-                    // Represents Forum
+                    // Represents IG
 
                     foreach (DataRow dr in dataSet.Tables[6].Rows)
+                    {
+
+                        IQAgent_SMResultsModel iQAgent_SMResultsModel = new IQAgent_SMResultsModel();
+                        IQAgent_MediaResultsModel iQAgent_MediaResultsModel = new IQAgent_MediaResultsModel();
+
+                        Int64 searchRequestID = 0;
+                        if (!dr["SearchRequestID"].Equals(DBNull.Value))
+                        {
+                            searchRequestID = Convert.ToInt64(dr["SearchRequestID"]);
+                        }
+
+                        if (!dr["ID"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.ID = Convert.ToInt64(dr["ID"]);
+                        }
+                        if (!dr["Category"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
+                        }
+                        if (dataSet.Tables[6].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
+                        }
+                        if (dataSet.Tables[6].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
+                        }
+
+                        if (!dr["Title"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Description = Convert.ToString(dr["Title"]);
+                        }
+                        if (!dr["MediaDate"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.ItemHarvestDate = Convert.ToDateTime(dr["MediaDate"]);
+                            iQAgent_MediaResultsModel.MediaDateTime = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["HighlightingText"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
+                            if (!string.IsNullOrWhiteSpace(iQAgent_SMResultsModel.HighlightingText))
+                            {
+                                HighlightedSMOutput highlightedSMOutput = new HighlightedSMOutput();
+                                iQAgent_SMResultsModel.HighlightedSMOutput = (HighlightedSMOutput)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["HighlightingText"]), highlightedSMOutput);
+                            }
+                        }
+                        if (!dr["ThumbUrl"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.ThumbUrl = Convert.ToString(dr["ThumbUrl"]);
+                        }
+                        if (!dr["Url"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Link = Convert.ToString(dr["Url"]);
+                        }
+                        if (dataSet.Tables[6].Columns.Contains("homelink") && !dr["homelink"].Equals(DBNull.Value))
+                        {
+                            Uri aPublisherUri;
+                            iQAgent_SMResultsModel.HomeLink = Uri.TryCreate(Convert.ToString(dr["homelink"]), UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : Convert.ToString(dr["homelink"]);
+                        }
+                        if (!dr["Compete_Audience"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Compete_Audience = Convert.ToInt32(dr["Compete_Audience"]);
+                        }
+                        if (!dr["IQAdShareValue"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.IQAdShareValue = Convert.ToDecimal(dr["IQAdShareValue"]);
+                        }
+                        if (!dr["Compete_Result"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Compete_Result = Convert.ToString(dr["Compete_Result"]);
+                        }
+                        if (!dr["ArticleStats"].Equals(DBNull.Value) && !String.IsNullOrWhiteSpace(Convert.ToString(dr["ArticleStats"])))
+                        {
+                            ArticleStatsModel statsModel = new ArticleStatsModel();
+                            iQAgent_SMResultsModel.ArticleStats = (ArticleStatsModel)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["ArticleStats"]), statsModel);
+                        }
+
+
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
+                        iQAgent_MediaResultsModel.MediaData = iQAgent_SMResultsModel;
+                        if (iQAgent_MediaResultsModel.ID > 0)
+                        {
+                            objIQAgentReport_WithoutAuthentication.Results.FirstOrDefault(a => a.SearchRequestID == searchRequestID).MediaResults.Add(iQAgent_MediaResultsModel);
+                        }
+                    }
+                }
+
+
+                if (dataSet.Tables.Count > 7 && dataSet.Tables[7] != null)
+                {
+
+                    // Represents Blog
+
+                    foreach (DataRow dr in dataSet.Tables[7].Rows)
                     {
 
                         IQAgent_SMResultsModel iQAgent_SMResultsModel = new IQAgent_SMResultsModel();
@@ -1752,7 +1859,7 @@ namespace IQMedia.Data
                             iQAgent_SMResultsModel.Link = Convert.ToString(dr["Url"]);
                         }
 
-                        if (dataSet.Tables[6].Columns.Contains("homelink") && !dr["homelink"].Equals(DBNull.Value))
+                        if (dataSet.Tables[7].Columns.Contains("homelink") && !dr["homelink"].Equals(DBNull.Value))
                         {
                             Uri aPublisherUri;
                             iQAgent_SMResultsModel.HomeLink = Uri.TryCreate(Convert.ToString(dr["homelink"]), UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : Convert.ToString(dr["homelink"]);
@@ -1773,17 +1880,17 @@ namespace IQMedia.Data
                             iQAgent_SMResultsModel.Compete_Result = Convert.ToString(dr["Compete_Result"]);
                         }
 
-                        if (dataSet.Tables[6].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[7].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
                         }
 
-                        if (dataSet.Tables[6].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[7].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "SM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_SMResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1792,11 +1899,102 @@ namespace IQMedia.Data
                     }
                 }
 
-                if (dataSet.Tables.Count > 7 && dataSet.Tables[7] != null)
+                if (dataSet.Tables.Count > 8 && dataSet.Tables[8] != null)
+                {
+
+                    // Represents Forum
+
+                    foreach (DataRow dr in dataSet.Tables[8].Rows)
+                    {
+
+                        IQAgent_SMResultsModel iQAgent_SMResultsModel = new IQAgent_SMResultsModel();
+                        IQAgent_MediaResultsModel iQAgent_MediaResultsModel = new IQAgent_MediaResultsModel();
+
+                        Int64 searchRequestID = 0;
+                        if (!dr["SearchRequestID"].Equals(DBNull.Value))
+                        {
+                            searchRequestID = Convert.ToInt64(dr["SearchRequestID"]);
+                        }
+
+                        if (!dr["ID"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.ID = Convert.ToInt64(dr["ID"]);
+                        }
+
+                        if (!dr["Title"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Description = Convert.ToString(dr["Title"]);
+                        }
+
+                        if (!dr["MediaDate"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.ItemHarvestDate = Convert.ToDateTime(dr["MediaDate"]);
+                            iQAgent_MediaResultsModel.MediaDateTime = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+                        if (!dr["Category"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
+                        }
+
+                        if (!dr["HighlightingText"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
+                            if (!string.IsNullOrWhiteSpace(iQAgent_SMResultsModel.HighlightingText))
+                            {
+                                HighlightedSMOutput highlightedSMOutput = new HighlightedSMOutput();
+                                iQAgent_SMResultsModel.HighlightedSMOutput = (HighlightedSMOutput)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["HighlightingText"]), highlightedSMOutput);
+                            }
+                        }
+                        if (!dr["Url"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Link = Convert.ToString(dr["Url"]);
+                        }
+
+                        if (dataSet.Tables[8].Columns.Contains("homelink") && !dr["homelink"].Equals(DBNull.Value))
+                        {
+                            Uri aPublisherUri;
+                            iQAgent_SMResultsModel.HomeLink = Uri.TryCreate(Convert.ToString(dr["homelink"]), UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : Convert.ToString(dr["homelink"]);
+                        }
+
+                        if (!dr["Compete_Audience"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Compete_Audience = Convert.ToInt32(dr["Compete_Audience"]);
+                        }
+
+                        if (!dr["IQAdShareValue"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.IQAdShareValue = Convert.ToDecimal(dr["IQAdShareValue"]);
+                        }
+
+                        if (!dr["Compete_Result"].Equals(DBNull.Value))
+                        {
+                            iQAgent_SMResultsModel.Compete_Result = Convert.ToString(dr["Compete_Result"]);
+                        }
+
+                        if (dataSet.Tables[8].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
+                        }
+
+                        if (dataSet.Tables[8].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
+                        }
+
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
+                        iQAgent_MediaResultsModel.MediaData = iQAgent_SMResultsModel;
+                        if (iQAgent_MediaResultsModel.ID > 0)
+                        {
+                            objIQAgentReport_WithoutAuthentication.Results.FirstOrDefault(a => a.SearchRequestID == searchRequestID).MediaResults.Add(iQAgent_MediaResultsModel);
+                        }
+                    }
+                }
+
+                if (dataSet.Tables.Count > 9 && dataSet.Tables[9] != null)
                 {
                     // Represents TW
 
-                    foreach (DataRow dr in dataSet.Tables[7].Rows)
+                    foreach (DataRow dr in dataSet.Tables[9].Rows)
                     {
                         IQAgent_TwitterResultsModel iQAgent_TwitterResultsModel = new IQAgent_TwitterResultsModel();
                         IQAgent_MediaResultsModel iQAgent_MediaResultsModel = new IQAgent_MediaResultsModel();
@@ -1830,6 +2028,10 @@ namespace IQMedia.Data
                         {
                             iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
                         }
+                        if (!dr["TweetID"].Equals(DBNull.Value))
+                        {
+                            iQAgent_TwitterResultsModel.TweetID = Convert.ToString(dr["TweetID"]);
+                        }
                         if (!dr["actor_link"].Equals(DBNull.Value))
                         {
                             iQAgent_TwitterResultsModel.Actor_Link = Convert.ToString(dr["actor_link"]);
@@ -1859,17 +2061,17 @@ namespace IQMedia.Data
                             iQAgent_TwitterResultsModel.Actor_FriendsCount = Convert.ToInt64(dr["actor_friendsCount"]);
                         }
 
-                        if (dataSet.Tables[7].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[9].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
                         }
 
-                        if (dataSet.Tables[7].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[9].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "TW";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_TwitterResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1878,12 +2080,12 @@ namespace IQMedia.Data
                     }
                 }
 
-                if (dataSet.Tables.Count > 8 && dataSet.Tables[8] != null)
+                if (dataSet.Tables.Count > 10 && dataSet.Tables[10] != null)
                 {
 
                     // Represents Radio
 
-                    foreach (DataRow dr in dataSet.Tables[8].Rows)
+                    foreach (DataRow dr in dataSet.Tables[10].Rows)
                     {
 
                         IQAgent_TVEyesResultsModel iQAgent_TVEyesResultsModel = new IQAgent_TVEyesResultsModel();
@@ -1915,40 +2117,40 @@ namespace IQMedia.Data
                             iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
                         }
 
-                        if (dataSet.Tables[8].Columns.Contains("HighlightingText") && !dr["HighlightingText"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("HighlightingText") && !dr["HighlightingText"].Equals(DBNull.Value))
                         {
                             iQAgent_TVEyesResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
                             iQAgent_TVEyesResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
                         }
 
-                        if (dataSet.Tables[8].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
                         }
 
-                        if (dataSet.Tables[8].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
                         {
                             iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
                         }
 
 
-                        if (dataSet.Tables[8].Columns.Contains("StationID") && !dr["StationID"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("StationID") && !dr["StationID"].Equals(DBNull.Value))
                         {
                             iQAgent_TVEyesResultsModel.StationID = Convert.ToString(dr["StationID"]);
                         }
 
 
-                        if (dataSet.Tables[8].Columns.Contains("Market") && !dr["Market"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("Market") && !dr["Market"].Equals(DBNull.Value))
                         {
                             iQAgent_TVEyesResultsModel.Market = Convert.ToString(dr["Market"]);
                         }
 
-                        if (dataSet.Tables[8].Columns.Contains("DMARank") && !dr["DMARank"].Equals(DBNull.Value))
+                        if (dataSet.Tables[10].Columns.Contains("DMARank") && !dr["DMARank"].Equals(DBNull.Value))
                         {
                             iQAgent_TVEyesResultsModel.DMARank = Convert.ToString(dr["DMARank"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "TM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_TVEyesResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
@@ -1957,12 +2159,12 @@ namespace IQMedia.Data
                     }
                 }
 
-                if (dataSet.Tables.Count > 9 && dataSet.Tables[9] != null)
+                if (dataSet.Tables.Count > 11 && dataSet.Tables[11] != null)
                 {
 
-                    DataTable pmDataTable = dataSet.Tables[9];
+                    DataTable pmDataTable = dataSet.Tables[11];
 
-                    foreach (DataRow dr in dataSet.Tables[9].Rows)
+                    foreach (DataRow dr in dataSet.Tables[11].Rows)
                     {
 
                         IQAgent_BLPMResultsModel iQAgent_BLPMResultsModel = new IQAgent_BLPMResultsModel();
@@ -2024,7 +2226,7 @@ namespace IQMedia.Data
                             iQAgent_BLPMResultsModel.Pub_Name = Convert.ToString(dr["Pub_Name"]);
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "PM";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_BLPMResultsModel;
 
                         if (iQAgent_MediaResultsModel.ID > 0)
@@ -2034,12 +2236,12 @@ namespace IQMedia.Data
                     }
                 }
 
-                if (dataSet.Tables.Count > 10 && dataSet.Tables[10] != null)
+                if (dataSet.Tables.Count > 12 && dataSet.Tables[12] != null)
                 {
 
-                    DataTable pqDataTable = dataSet.Tables[10];
+                    DataTable pqDataTable = dataSet.Tables[12];
 
-                    foreach (DataRow dr in dataSet.Tables[10].Rows)
+                    foreach (DataRow dr in dataSet.Tables[12].Rows)
                     {
 
                         IQAgent_PQResultsModel iQAgent_PQResultsModel = new IQAgent_PQResultsModel();
@@ -2097,9 +2299,110 @@ namespace IQMedia.Data
                             iQAgent_PQResultsModel.Authors = XDocument.Parse(Convert.ToString(dr["Authors"])).Descendants("author").Select(n => n.Value).ToList();
                         }
 
-                        iQAgent_MediaResultsModel.MediaType = "PQ";
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
                         iQAgent_MediaResultsModel.MediaData = iQAgent_PQResultsModel;
 
+                        if (iQAgent_MediaResultsModel.ID > 0)
+                        {
+                            objIQAgentReport_WithoutAuthentication.Results.FirstOrDefault(a => a.SearchRequestID == searchRequestID).MediaResults.Add(iQAgent_MediaResultsModel);
+                        }
+                    }
+                }
+
+                if (dataSet.Tables.Count > 13 && dataSet.Tables[13] != null)
+                {
+
+                    // Represents LN
+
+                    foreach (DataRow dr in dataSet.Tables[13].Rows)
+                    {
+                        IQAgent_NewsResultsModel iQAgent_NewsResultsModel = new IQAgent_NewsResultsModel();
+                        IQAgent_MediaResultsModel iQAgent_MediaResultsModel = new IQAgent_MediaResultsModel();
+
+                        Int64 searchRequestID = 0;
+                        if (!dr["SearchRequestID"].Equals(DBNull.Value))
+                        {
+                            searchRequestID = Convert.ToInt64(dr["SearchRequestID"]);
+                        }
+
+                        if (!dr["ID"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.ID = Convert.ToInt64(dr["ID"]);
+                        }
+
+                        if (!dr["Title"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.Title = Convert.ToString(dr["Title"]);
+                        }
+
+                        if (!dr["MediaDate"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.Harvest_Time = Convert.ToDateTime(dr["MediaDate"]);
+                            iQAgent_MediaResultsModel.MediaDateTime = Convert.ToDateTime(dr["MediaDate"]);
+                        }
+
+                        if (!dr["HighlightingText"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.HighlightingText = Convert.ToString(dr["HighlightingText"]);
+                            if (!string.IsNullOrWhiteSpace(iQAgent_NewsResultsModel.HighlightingText))
+                            {
+                                HighlightedNewsOutput highlightedNewsOutput = new HighlightedNewsOutput();
+                                iQAgent_NewsResultsModel.HighlightedNewsOutput = (HighlightedNewsOutput)CommonFunctions.DeserialiazeXml(Convert.ToString(dr["HighlightingText"]), highlightedNewsOutput);
+                            }
+                        }
+                        if (!dr["Category"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.CategoryType = Convert.ToString(dr["Category"]);
+                        }
+
+                        if (!dr["Url"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.Url = Convert.ToString(dr["Url"]);
+                        }
+
+                        if (dataSet.Tables[13].Columns.Contains("Publication") && !dr["Publication"].Equals(DBNull.Value))
+                        {
+                            Uri aPublisherUri;
+                            iQAgent_NewsResultsModel.Publication = Uri.TryCreate(Convert.ToString(dr["Publication"]), UriKind.Absolute, out aPublisherUri) ? aPublisherUri.Host.Replace("www.", string.Empty) : Convert.ToString(dr["Publication"]);
+                        }
+
+                        if (!dr["Compete_Audience"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.Compete_Audience = Convert.ToInt32(dr["Compete_Audience"]);
+                        }
+
+                        if (!dr["IQAdShareValue"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.IQAdShareValue = Convert.ToDecimal(dr["IQAdShareValue"]);
+                        }
+
+                        if (!dr["Compete_Result"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.Compete_Result = Convert.ToString(dr["Compete_Result"]);
+                        }
+
+                        if (dataSet.Tables[13].Columns.Contains("PositiveSentiment") && !dr["PositiveSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.PositiveSentiment = Convert.ToInt16(dr["PositiveSentiment"]);
+                        }
+
+                        if (dataSet.Tables[13].Columns.Contains("NegativeSentiment") && !dr["NegativeSentiment"].Equals(DBNull.Value))
+                        {
+                            iQAgent_MediaResultsModel.NegativeSentiment = Convert.ToInt16(dr["NegativeSentiment"]);
+                        }
+
+                        if (dataSet.Tables[13].Columns.Contains("IQLicense") && !dr["IQLicense"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel.IQLicense = Convert.ToInt16(dr["IQLicense"]);
+                        }
+
+                        if (dataSet.Tables[13].Columns.Contains("ParentID") && !dr["ParentID"].Equals(DBNull.Value))
+                        {
+                            iQAgent_NewsResultsModel._ParentID = Convert.ToInt32(dr["ParentID"]);
+                        }
+
+                        iQAgent_MediaResultsModel.MediaType = Convert.ToString(dr["Category"]);
+                        iQAgent_MediaResultsModel.MediaData = iQAgent_NewsResultsModel;
                         if (iQAgent_MediaResultsModel.ID > 0)
                         {
                             objIQAgentReport_WithoutAuthentication.Results.FirstOrDefault(a => a.SearchRequestID == searchRequestID).MediaResults.Add(iQAgent_MediaResultsModel);
@@ -2153,7 +2456,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArticleXml", DbType.Xml, p_MediaXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SearchRequestXml", DbType.Xml, p_SearchRequestXml, ParameterDirection.Input));
-                string result = DataAccess.ExecuteNonQuery("usp_v4_IQAgent_MediaResults_ExcludeDomains", dataTypeList);
+                string result = DataAccess.ExecuteNonQuery("usp_v5_IQAgent_MediaResults_ExcludeDomains", dataTypeList);
                 return Convert.ToInt64(result);
             }
             catch (Exception)
@@ -2295,7 +2598,7 @@ namespace IQMedia.Data
             }
         }
 
-        public Int16 SuspendAgentSearchRequest(long p_ID, Guid p_ClientGUID,Guid p_CustomerGUID)
+        public Int16 SuspendAgentSearchRequest(long p_ID, Guid p_ClientGUID, Guid p_CustomerGUID)
         {
             List<DataType> dataTypeList = new List<DataType>();
 
@@ -2319,35 +2622,6 @@ namespace IQMedia.Data
             string result = Convert.ToString(DataAccess.ExecuteScalar("usp_v4_IQAgent_SearchRequest_ResumeSuspendedRequest", dataTypeList));
 
             return Convert.ToInt16(result);
-        }
-
-        public Dictionary<string, bool> GetQueuedIsRead(Guid clientGuid)
-        {
-            try
-            {
-                List<DataType> dataTypeList = new List<DataType>();
-                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGuid, ParameterDirection.Input));
-                DataSet dataSet = DataAccess.GetDataSet("usp_v4_IQAgent_MediaResults_SelectQueuedIsRead", dataTypeList);
-
-                Dictionary<string, bool> dictMediaIDs = new Dictionary<string, bool>();
-                if (dataSet != null && dataSet.Tables.Count == 1)
-                {
-                    DataTable dt = dataSet.Tables[0];
-                    foreach (DataRow dr in dt.Rows)
-                    {
-                        if (!dr["ID"].Equals(DBNull.Value) && !dr["IsRead"].Equals(DBNull.Value))
-                        {
-                            dictMediaIDs.Add(Convert.ToString(dr["ID"]), Convert.ToBoolean(dr["IsRead"]));
-                        }
-                    }
-                }
-
-                return dictMediaIDs;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
         }
 
         public List<IQAgent_CampaignModel> SelectIQAgentCampaignsByClientGuid(Guid clientGuid)
@@ -2407,5 +2681,180 @@ namespace IQMedia.Data
                 throw;
             }
         }
+
+        #region Twitter Rule Settings
+
+        public string GetTwitterRuleByTrackGUID(Guid userTrackGuid)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@UserTrackGUID", DbType.Guid, userTrackGuid, ParameterDirection.Input));
+                return Convert.ToString(DataAccess.ExecuteScalar("usp_v5_IQTwitterSettings_SelectByTrackGUID", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }   
+        }
+
+        public int InsertTwitterRule(Guid clientGuid, Guid userTrackGuid, string twitterRuleXml, string agentName, long searchRequestID)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@UserTrackGUID", DbType.Guid, userTrackGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@TwitterRule", DbType.String, twitterRuleXml, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@AgentName", DbType.String, agentName, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchRequestID", DbType.Int64, searchRequestID, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTwitterSettings_Insert", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int UpdateTwitterRule(Guid userTrackGuid, string twitterRuleXml, string agentName)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@UserTrackGUID", DbType.Guid, userTrackGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@TwitterRule", DbType.String, twitterRuleXml, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@AgentName", DbType.String, agentName, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTwitterSettings_Update", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int DeleteTwitterRule(Guid userTrackGuid)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@UserTrackGUID", DbType.Guid, userTrackGuid, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTwitterSettings_Delete", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int InsertTwitterRuleJob(Guid clientGuid, Guid customerGuid, long searchRequestID)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@CustomerGUID", DbType.Guid, customerGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchRequestID", DbType.Int64, searchRequestID, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@CreateJobRecord", DbType.Boolean, true, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQService_TwitterSettings_Insert", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region TVEyes Rule Settings
+
+        public string GetTVEyesRuleByID(long tvEyesSettingsKey)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@TVESettingsKey", DbType.Int64, tvEyesSettingsKey, ParameterDirection.Input));
+                return Convert.ToString(DataAccess.ExecuteScalar("usp_v5_IQTVEyesSettings_SelectByID", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int InsertTVEyesRule(Guid clientGuid, long searchRequestID, string searchTerm, string agentName)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchRequestID", DbType.Int64, searchRequestID, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@AgentName", DbType.String, agentName, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchTerm", DbType.String, searchTerm, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTVEyesSettings_Insert", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int UpdateTVEyesRule(long TVESettingsKey, string searchTerm, string agentName)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@TVESettingsKey", DbType.Int64, TVESettingsKey, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchTerm", DbType.String, searchTerm, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@AgentName", DbType.String, agentName, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTVEyesSettings_Update", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int DeleteTVEyesRule(long TVESettingsKey)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@TVESettingsKey", DbType.Int64, TVESettingsKey, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQTVEyesSettings_Delete", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        public int InsertTVEyesRuleJob(Guid clientGuid, Guid customerGuid, long searchRequestID)
+        {
+            try
+            {
+                List<DataType> dataTypeList = new List<DataType>();
+                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, clientGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@CustomerGUID", DbType.Guid, customerGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SearchRequestID", DbType.Int64, searchRequestID, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@CreateJobRecord", DbType.Boolean, true, ParameterDirection.Input));
+                return Convert.ToInt32(DataAccess.ExecuteScalar("usp_v5_IQService_TVEyesSettings_Insert", dataTypeList));
+            }
+            catch (Exception ex)
+            {
+                Log4NetLogger.Error(ex);
+                throw;
+            }
+        }
+
+        #endregion
     }
 }

@@ -379,7 +379,7 @@ function CollapseExpandLeftSection(sectionid)
     $.getScript('/Scripts/VideoPlayer.js?v=1.20');
 }
 else {
-    $.getScript('/Player/Scripts/Player/PlayerClip.js?v=1.3');
+    $.getScript('/Scripts/Player/PlayerClip.js?v=1.3');
 }
 
     if(sectionid == 1)
@@ -1121,21 +1121,25 @@ function ModifyFilters(filter) {
             disabledDays.push(date);
         });
     }
-  
-    if (filter != null && filter.SubMediaTypes != null) {
 
-        var subMediaTypeHTML = "";
-        $.each(filter.SubMediaTypes, function (eventID, eventData) {
-            subMediaTypeHTML = subMediaTypeHTML + '<li onclick="SetSubMediaType(\'' + eventData.SubMediaType + '\',\'' + eventData.SubMediaTypeDescription + '\');" role=\"presentation\"><a href=\"#\" tabindex=\"-1\" role=\"menuitem\">';
-            subMediaTypeHTML += eventData.SubMediaTypeDescription + ' (' + eventData.RecordCountFormatted + ') </a></li>';
+    var mediumLI = "";
+    if (filter != null && filter.MediaTypes != null) {
+        $.each(filter.MediaTypes, function (eventID, eventData) {
+            mediumLI += '<li class="dropdown-submenu"><a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">';
+            mediumLI += eventData.MediaTypeDesc + ' (' + eventData.RecordCountFormatted + ') </a>';
+            mediumLI += '<ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMediaType">'
+            $.each(eventData.SubMediaTypes, function (eventID2, eventData2) {
+                mediumLI += '<li onclick="SetSubMediaType(\'' + eventData2.SubMediaType + '\', \'' + eventData2.SubMediaTypeDesc + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData2.SubMediaTypeDesc + ' (' + eventData2.RecordCountFormatted + ') </a></li>';                    
+            });
+            mediumLI += '</ul></li>';
         });
+    }
 
-        if (subMediaTypeHTML == '') {
-            $('#ulSubMediaType').html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
-        }
-        else {
-            $('#ulSubMediaType').html(subMediaTypeHTML);
-        }
+    if (mediumLI == "") {
+        $("#ulMediaType").html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
+    }
+    else {
+        $("#ulMediaType").html(mediumLI);
     }
 
      if (filter != null && filter.Categories != null) {

@@ -14,10 +14,10 @@ namespace IQMedia.Web.Logic
     public class TWLogic : ILogic
     {
 
-        public string InsertArchiveTW(IQAgent_TwitterResultsModel p_IQAgent_TwitterResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, Int64? MediaID = null)
+        public string InsertArchiveTW(IQAgent_TwitterResultsModel p_IQAgent_TwitterResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID = null)
         {
             TWDA twDA = (TWDA)DataAccessFactory.GetDataAccess(DataAccessType.TW);
-            string result = twDA.InsertArchiveTW(p_IQAgent_TwitterResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Keywords, p_Description, MediaID);
+            string result = twDA.InsertArchiveTW(p_IQAgent_TwitterResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Keywords, p_Description, p_MediaType, p_SubMediaType, MediaID);
             return result;
         }
 

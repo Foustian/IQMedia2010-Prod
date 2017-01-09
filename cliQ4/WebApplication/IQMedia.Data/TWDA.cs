@@ -10,7 +10,7 @@ namespace IQMedia.Data
 {
     public class TWDA : IDataAccess
     {
-        public string InsertArchiveTW(IQAgent_TwitterResultsModel p_IQAgent_TwitterResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, Int64? MediaID)
+        public string InsertArchiveTW(IQAgent_TwitterResultsModel p_IQAgent_TwitterResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID)
         {
             try
             {
@@ -37,9 +37,11 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@Number_Hits", DbType.Int32, p_IQAgent_TwitterResultsModel.Number_Hits, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Keywords", DbType.String, p_Keywords, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Description", DbType.String, p_Description, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaType", DbType.String, p_MediaType, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SubMediaType", DbType.String, p_SubMediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveKey, ParameterDirection.Output));
 
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_ArchiveTW_Insert", dataTypeList);
+                string _Result = DataAccess.ExecuteNonQuery("usp_v5_ArchiveTW_Insert", dataTypeList);
                 return _Result;
             }
             catch (Exception ex)

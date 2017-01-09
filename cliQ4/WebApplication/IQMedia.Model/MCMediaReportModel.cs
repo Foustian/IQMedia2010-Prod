@@ -55,7 +55,7 @@ namespace IQMedia.Model
 
     public class MCMediaReport_FilterModel
     {
-        public List<MCMediaReport_Filter> SubMediaTypes { get; set; }
+        public List<MCMediaReport_MediaTypeFilter> MediaTypes { get; set; }
 
         public List<MCMediaReport_Filter> Clients { get; set; }
 
@@ -107,10 +107,6 @@ namespace IQMedia.Model
 
     public class MCMediaReport_Filter
     {
-        public string SubMediaType { get; set; }
-
-        public string SubMediaTypeDescription { get; set; }
-
         public string ClientName { get; set; }
 
         public string ClientGuid { get; set; }
@@ -129,6 +125,50 @@ namespace IQMedia.Model
                 return string.Format("{0:n0}", RecordCount);
             }
             set { }
+        }
+    }
+
+    public class MCMediaReport_MediaTypeFilter
+    {
+        public string MediaType { get; set; }
+
+        public string MediaTypeDesc { get; set; }
+
+        public List<MCMediaReport_SubMediaTypeFilter> SubMediaTypes { get; set; }
+
+        public long RecordCount { get; set; }
+
+        /// <summary>
+        /// Just returned formatted record count. i.e. 12,345 instead of 12345.
+        /// </summary>
+        public string RecordCountFormatted
+        {
+            set { RecordCountFormatted = value; }
+            get
+            {
+                return string.Format("{0:n0}", RecordCount);
+            }
+        }
+    }
+
+    public class MCMediaReport_SubMediaTypeFilter
+    {
+        public string SubMediaType { get; set; }
+
+        public string SubMediaTypeDesc { get; set; }
+
+        public long RecordCount { get; set; }
+
+        /// <summary>
+        /// Just returned formatted record count. i.e. 12,345 instead of 12345.
+        /// </summary>
+        public string RecordCountFormatted
+        {
+            set { RecordCountFormatted = value; }
+            get
+            {
+                return string.Format("{0:n0}", RecordCount);
+            }
         }
     }
 }

@@ -107,6 +107,9 @@ namespace IQMedia.WebApplication.Models.TempData
         public List<string> IQTVStations { get; set; }
         public List<string> VisibleLRIndustries { get; set; }
         public List<string> VisibleLRBrands { get; set; }
+        public Dictionary<string, object> SSPData { get; set; }
+        public int CurrentSavedSearchPageNumber { get; set; }
+        public Tads_SavedSearchModel ActiveSearch { get; set; }
     }
 
     [Serializable]

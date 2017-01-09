@@ -635,18 +635,23 @@ function ModifyFilters_MCMedia(filter) {
         });
     }
 
-    if (filter != null && filter.SubMediaTypes != null) {
+    if (filter != null && filter.MediaTypes != null) {
         var subMediaTypeHTML = "";
-        $.each(filter.SubMediaTypes, function (eventID, eventData) {
-            subMediaTypeHTML = subMediaTypeHTML + '<li onclick="SetSubMediaType_MCMedia(\'' + eventData.SubMediaType + '\',\'' + eventData.SubMediaTypeDescription + '\');" role=\"presentation\"><a href=\"#\" tabindex=\"-1\" role=\"menuitem\">';
-            subMediaTypeHTML += eventData.SubMediaTypeDescription + ' (' + eventData.RecordCountFormatted + ') </a></li>';
+        $.each(filter.MediaTypes, function (eventID, eventData) {
+            subMediaTypeHTML += '<li class="dropdown-submenu"><a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMCMediaType">';
+            subMediaTypeHTML += eventData.MediaTypeDesc + ' (' + eventData.RecordCountFormatted + ') </a>';
+            subMediaTypeHTML += '<ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulMCSubMediaType">'
+            $.each(eventData.SubMediaTypes, function (eventID2, eventData2) {
+                subMediaTypeHTML += '<li onclick="SetSubMediaType_MCMedia(\'' + eventData2.SubMediaType + '\', \'' + eventData2.SubMediaTypeDesc + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData2.SubMediaTypeDesc + ' (' + eventData2.RecordCountFormatted + ') </a></li>';
+            });
+            subMediaTypeHTML += '</ul></li>';
         });
 
         if (subMediaTypeHTML == '') {
-            $('#ulMCSubMediaType').html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
+            $('#ulMCMediaType').html('<li role="presentation"><a tabindex="-1" role="menuitem">' + _msgNoFilterAvailable + '</a></li>');
         }
         else {
-            $('#ulMCSubMediaType').html(subMediaTypeHTML);
+            $('#ulMCMediaType').html(subMediaTypeHTML);
         }
     }
 

@@ -52,7 +52,11 @@ namespace IQMedia.Model
 
         public NewsAdvanceSearchSettings NewsSettings { get; set; }
 
-        public SociaMediaAdvanceSearchSettings SociaMediaSettings { get; set; }
+        public LexisNexisAdvanceSearchSettings LexisNexisSettings { get; set; }
+
+        public BlogAdvanceSearchSettings BlogSettings { get; set; }
+
+        public ForumAdvanceSearchSettings ForumSettings { get; set; }
 
         public ProQuestAdvanceSearchSettings ProQuestSettings { get; set; }
     }
@@ -119,7 +123,53 @@ namespace IQMedia.Model
     }
 
     [Serializable]
-    public class SociaMediaAdvanceSearchSettings
+    public class LexisNexisAdvanceSearchSettings
+    {
+        public string SearchTerm { get; set; }
+
+        [XmlArrayItem(ElementName = "Publication")]
+        public List<string> PublicationList { get; set; }
+
+        [XmlArrayItem(ElementName = "Category")]
+        public List<string> CategoryList { get; set; }
+
+        [XmlArrayItem(ElementName = "PublicationCategory")]
+        public List<int> PublicationCategoryList { get; set; }
+
+        [XmlArrayItem(ElementName = "Genre")]
+        public List<string> GenreList { get; set; }
+
+        [XmlArrayItem(ElementName = "Region")]
+        public List<string> RegionList { get; set; }
+
+        [XmlArrayItem(ElementName = "Country")]
+        public List<string> CountryList { get; set; }
+
+        [XmlArrayItem(ElementName = "Language")]
+        public List<string> LanguageList { get; set; }
+
+        [XmlArrayItem(ElementName = "ExcludeDomain")]
+        public List<string> ExcludeDomainList { get; set; }
+    }
+
+    [Serializable]
+    public class BlogAdvanceSearchSettings
+    {
+        public string SearchTerm { get; set; }
+
+        public string Author { get; set; }
+
+        public string Title { get; set; }
+
+        [XmlArrayItem(ElementName = "Source")]
+        public List<string> SourceList { get; set; }
+
+        [XmlArrayItem(ElementName = "ExcludeDomain")]
+        public List<string> ExcludeDomainList { get; set; }
+    }
+
+    [Serializable]
+    public class ForumAdvanceSearchSettings
     {
         public string SearchTerm { get; set; }
 

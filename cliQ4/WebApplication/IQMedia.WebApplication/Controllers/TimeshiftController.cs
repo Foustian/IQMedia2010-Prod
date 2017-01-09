@@ -713,7 +713,8 @@ namespace IQMedia.WebApplication.Controllers
                         p_ToDate = new DateTime(p_ToDate.Value.Year, p_ToDate.Value.Month, p_ToDate.Value.Day, 23, 59, 59);
                     }
 
-                    List<RadioModel> lstRadio = radioLogic.SelectRadioResults(p_FromDate, p_ToDate, marketList, stationList, CommonFunctions.GeneratePMGUrl("QR", p_FromDate, p_ToDate), Convert.ToInt32(ConfigurationManager.AppSettings["IQRadioFragOffset"]), Convert.ToInt32(ConfigurationManager.AppSettings["IQRadioFragSize"]), true, !p_IsPrevNext, Convert.ToBoolean(ConfigurationManager.AppSettings["IQRadioIsLogging"]), ConfigurationManager.AppSettings["IQRadioLogFileLocation"], false, p_SearchTerm, ConfigurationManager.AppSettings["IQRadioSolrFL"], p_IsAsc, CurrentPage, PageSize, ref sinceID, out totalResults);
+                    Dictionary<string, object> radioSearchResults = radioLogic.SelectRadioResults(p_FromDate, p_ToDate, marketList, stationList, CommonFunctions.GeneratePMGUrl("QR", p_FromDate, p_ToDate), Convert.ToInt32(ConfigurationManager.AppSettings["IQRadioFragOffset"]), Convert.ToInt32(ConfigurationManager.AppSettings["IQRadioFragSize"]), true, !p_IsPrevNext, Convert.ToBoolean(ConfigurationManager.AppSettings["IQRadioIsLogging"]), ConfigurationManager.AppSettings["IQRadioLogFileLocation"], false, p_SearchTerm, ConfigurationManager.AppSettings["IQRadioSolrFL"], p_IsAsc, CurrentPage, PageSize, ref sinceID, out totalResults);
+                    List<RadioModel> lstRadio = (List<RadioModel>)radioSearchResults["RadioList"];
                     //  radioLogic.SelectRadioResults(p_FromDate, p_ToDate, p_Market, p_IsAsc, CurrentPage, PageSize, ref sinceID, out totalResults);
 
                     string resultHTML = RenderPartialToString(PATH_TimeshiftRadioResults, lstRadio);

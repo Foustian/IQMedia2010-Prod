@@ -8,15 +8,9 @@ namespace IQMedia.Model
 {
     public class FeedsFilterModel
     {
-        //public List<IQAgent_SearchRequestModel> listIQAgent_SearchRequestModel { get; set; }
         public List<DmaFilter> DMAFilter { get; set; }
         public List<SearchRequestFilter> ListOfSearchRequestFilter { get; set; }
-        public List<String> FilterListMediaType { get; set; }
-        //public List<String> FilterListCategory { get; set; }
-        //public Dictionary<string, string> FilterListCategory { get; set; }
-
-        public List<Category> FilterListCategory { get; set; }
-
+        public List<MediaTypeFilter> ListOfMediaTypeFilter { get; set; }
         public List<string> FilterMediaDate { get; set; }
 
         public long PositiveSentiment { get; set; }
@@ -147,11 +141,33 @@ namespace IQMedia.Model
         }
     }
 
-    public class Category
+    public class MediaTypeFilter
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+        public List<SubMediaTypeFilter> SubMediaTypes { get; set; }
+        public int Count { get; set; }
+        public int SortOrder { get; set; }
+
+        /// <summary>
+        /// Just returned formatted record count. i.e. 12,345 instead of 12345.
+        /// </summary>
+        public string CountFormatted
+        {
+            set { CountFormatted = value; }
+            get
+            {
+                return string.Format("{0:n0}", Count);
+            }
+        }
+    }
+
+    public class SubMediaTypeFilter
     {
         public string Key { get; set; }
         public string Value { get; set; }
         public int Count { get; set; }
+        public int SortOrder { get; set; }
 
         /// <summary>
         /// Just returned formatted record count. i.e. 12,345 instead of 12345.

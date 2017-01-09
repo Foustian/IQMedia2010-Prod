@@ -1,11 +1,14 @@
 ﻿@using IQMedia.Shared.Utility
+@using IQMedia.Model;
 @using IQMedia.WebApplication.Models.TempData;
+@using IQCommon.Model;
 @{
     ViewBag.Title = "iQ media Feeds";
 
     List<String> FilterMediaDate = new List<String>();
     List<string> lstMediums = new List<string>();
-    List<string> lstMediumDescriptions = new List<string>();
+    List<IQ_MediaTypeModel> MasterMediaTypes = new List<IQ_MediaTypeModel>();
+    List<string> exludedRecords = new List<string>();
     var fDate = string.Empty;
     var tDate = string.Empty;
     var defaultToUnread = 0;
@@ -17,13 +20,17 @@
     {
         lstMediums = Model["Medium"];
     }
-    if (Model != null && Model["MediumDescription"] != null)
+    if (Model != null && Model["MasterMediaTypes"] != null)
     {
-        lstMediumDescriptions = Model["MediumDescription"];
+        MasterMediaTypes = Model["MasterMediaTypes"];
+    }
+    if (Model != null && Model["ExcludedIDs"] != null)
+    {
+        exludedRecords = Model["ExcludedIDs"];
     }
 
     FeedsTempData feedsTempData = ((IQMedia.WebApplication.Controllers.FeedsController)this.ViewContext.Controller).GetTempData();
-    if (!string.IsNullOrEmpty(Request.QueryString["date"]) || !string.IsNullOrEmpty(Request.QueryString["medium"]) || !string.IsNullOrEmpty(Request.QueryString["fromDate"]))
+    if (!string.IsNullOrEmpty(Request.QueryString["date"]) || !string.IsNullOrEmpty(Request.QueryString["mediatype"]) || !string.IsNullOrEmpty(Request.QueryString["submediatype"]) || !string.IsNullOrEmpty(Request.QueryString["fromDate"]))
     {
         Layout = null;
 	<!doctype html>
@@ -42,7 +49,7 @@
 
     <script src="~/Scripts/jquery-ui.min.js?v=1.0" type="text/javascript"></script>
     <script src="~/Scripts/ConstantScript.js?v=1.6" type="text/javascript"></script>
-    <script src="~/Scripts/IQMediaCommon.js?v=2.7" type="text/javascript"></script>
+    <script src="~/Scripts/IQMediaCommon.js?v=3.0" type="text/javascript"></script>
     
     <script type ="text/javascript" >
         var _urlVideoMetaData = '@System.Configuration.ConfigurationManager.AppSettings["UrlGetVideoMetaData"]';
@@ -145,12 +152,12 @@
     
     IQMedia.Model.ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
 }
-<script src="~/Scripts/FeedsScript.js?v=4.4" type="text/javascript"></script>
-<script type="text/javascript" src="~/Scripts/VideoPlayer.js?v=1.20"></script>
-<script src="~/Scripts/VideoPlayerChart.js?v=1.0" type="text/javascript"></script>
+<script src="~/Scripts/FeedsScript.js?v=4.9" type="text/javascript"></script>
+<script type="text/javascript" src="~/Scripts/VideoPlayer.js?v=1.23"></script>
+<script src="~/Scripts/VideoPlayerChart.js?v=1.3" type="text/javascript"></script>
 <link href="~/Css/video-player.css?v=1.3" rel="stylesheet" type="text/css" />
 <script src="~/Scripts/enscroll.js?v=1.0" type="text/javascript"></script>
-<script src="~/Scripts/ArticleScript.js?v=1.3" type="text/javascript"></script>
+<script src="~/Scripts/ArticleScript.js?v=1.4" type="text/javascript"></script>
 <script src="~/Scripts/highcharts.js?v=1.1" type="text/javascript"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/jquery-ui-timepicker-addon.js?v=1.0"></script>
 <style type="text/css">
@@ -214,7 +221,7 @@
     }
 </style>
 @if (ViewBag.IsSuccess)
-{    
+{
     fDate = Model["FromDate"];
     tDate = Model["ToDate"];
     defaultToUnread = Model["DefaultToUnread"];
@@ -224,15 +231,24 @@
     {        
     <script type="text/javascript">
         $(document).ready(function () {
-            _Medium = ['@Html.Raw(string.Join("', '", @lstMediums))'];
-            _MediumDescription = ['@Html.Raw(string.Join("', '", @lstMediumDescriptions))'];
+            _SubMediaTypes = ['@Html.Raw(string.Join("', '", @lstMediums))'];
             SetActiveFilter();
         });
     </script>
     }
+    if (exludedRecords != null && exludedRecords.Count > 0)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                _excludedIDs = ['@Html.Raw(string.Join("', '", @exludedRecords))'];
+                DisableExcludedRecords(_excludedIDs);
+            });
+        </script>
+    }
     <script type="text/javascript">
         _fromDate = '@fDate';
         _toDate = '@tDate';
+        _MasterMediaTypes = [@Html.Raw(string.Join(", ", MasterMediaTypes.Where(w => w.TypeLevel == 2).Select(s => "['" + s.MediaType + "','" + s.SubMediaType + "','" + s.DisplayName + "']").ToArray()))];
 
         var disabledDays = ['@Html.Raw(string.Join("', '", @FilterMediaDate.Select(f => Convert.ToDateTime(f).ToString("MM/dd/yyyy")).ToArray()))'];
         var _clipLimit = @Model["ManualClipDuration"];
@@ -354,31 +370,10 @@
                                     }
                                 </ul>
                             </li>
-                            <li class="dropdown nmedium"><a class="dropdown-toggle" role="button"
-                                id="A1" href="#" onclick="toggleDiv('ulMedium')">Medium<span class="spnArrow">&nbsp;</span></a>
-                                <ul aria-labelledby="drop2" role="menu" class="nav-dropdpwn sideMenu hideDiv" id="ulMedium">
-                                    @{
-            List<IQMedia.Model.Category> listCategory = new List<IQMedia.Model.Category>();
-
-            if (Model != null && Model["FeedFilter"] != null && Model["FeedFilter"].FilterListCategory != null)
-            {
-
-                listCategory = (List<IQMedia.Model.Category>)(Model["FeedFilter"].FilterListCategory);
-            }
-            if (listCategory != null && listCategory.Count > 0)
-            {
-                foreach (IQMedia.Model.Category item in listCategory)
-                {
-                                        <li onclick="SetMedium('@item.Value','@item.Key');" role="presentation"><a href="#"
-                                            tabindex="-1" role="menuitem">@(item.Key + " (" + item.CountFormatted + ")")
-                                        </a></li>
-                }
-            }
-            else
-            {
-                                        <li role="presentation"><a tabindex="-1" role="menuitem">Loading...</a></li>
-            }
-                                    }
+                            <li class="dropdown nmedium">
+                                <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="A1" href="#" onclick="toggleDiv('ulMedium')">Medium<span class="spnArrow">&nbsp;</span></a>
+                                <ul aria-labelledby="drop2" role="menu" class="dropdown-menu multi-level sideMenu hideDiv" id="ulMedium" style="overflow-y:visible;">
+                                    <li role="presentation"><a tabindex="-1" role="menuitem">Loading...</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown nsentiment"><a class="dropdown-toggle"
@@ -673,10 +668,10 @@
                                 <li><a class="cursorPointer" onclick="ShowSaveReportPopup();">Create Report</a></li>
                                 <li><a class="cursorPointer" onclick="ShowAddToReportPopup();">Add to Report</a></li>
                                 <li><a class="cursorPointer" onclick="ShowAddToLibraryPopup();">Add to Library</a></li>
-                                <li><a class="cursorPointer" onclick="ExportFeedsToCSV();">Export to CSV</a></li>
+                                <li><a class="cursorPointer" onclick="ShowExportCSVPopup();">Export to CSV</a></li>
                                 <li><a class="cursorPointer" onclick="ExcludeDomains();">Exclude Domains</a></li>
                                 <li><a class="cursorPointer" onclick="ShowSaveMissingArticlePopup()">Add Missing Article</a></li>
-	                            <li><a class="cursorPointer" onclick="BuildDashboard();">Build Dashboard</a></li>
+	                            <li id="liBuildDashboard"><a class="cursorPointer" onclick="BuildDashboard();">Build Dashboard</a></li>
                                 <li><a class="cursorPointer" onclick="UpdateIsRead(true);">Mark as Read</a></li>
                                 <li><a class="cursorPointer" onclick="UpdateIsRead(false);">Mark as Unread</a></li>
                             </ul>
@@ -1216,12 +1211,58 @@
             </div>
         </div>
     </div>
+    <div id="divJobStatusExportedPopup" class="modal fade hide resizable modalPopupDiv">
+            <div class="closemodalpopup">
+            <img id="imgdivJobStatusExportedPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
+                onclick="ClosePopUp('divJobStatusExportedPopup');" /></div>
+            <div style="padding-top: 20px;" class="modalBody">
+            <div style="padding-bottom: 5px; border-bottom: 1px solid #dadada; margin: 1px 15px 1px 15px;
+                font-weight: bold;">
+                Job Status
+            </div>
+            <div class="divconfirmationpop-content">
+                <p><a href="/Setup?JS=true" style="cursor:pointer;">Click here</a> to view your job status and download your file.</p>
+            </div>
+        </div>
+    </div>
+    <div id="divExportCSVPopup" class="modal fade hide resizable modalPopupDiv">
+        <div class="closemodalpopup">
+            <img id="imgExportCSVPopup" src="~/images/close-icon.png" alt="close" class="popup-top-close" onclick="ClosePopUp('divExportCSVPopup');" />
+        </div>
+        <div style="padding-top: 20px;" class="modalBody">
+            <form class="form-horizontal">
+                <div style="padding-bottom: 5px; border-bottom: 1px solid #dadada; margin: 1px 15px 1px 15px; font-weight: bold;">
+                    Export To CSV
+                </div>
+                <br />
+                <div class="control-group">
+                    <label class="control-label" for="txtExportCSVTitle">Title</label>
+                    <div class="controls">
+                        <input type="text" id="txtExportCSVTitle" placeholder="Export Title (Optional)" style="width: 85%;" />
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="chkGetTVUrl">Include TV Urls</label>
+                    <div class="controls">
+                        <input type="checkbox" id="chkGetTVUrl" checked="checked" style="margin-top:-1px;" />
+                        <span style="margin-left:3px; margin-top:3px; display:inline-block;">(This adds additional processing time to generate the csv file)</span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <button type="button" id="btnCancelExportCSV" onclick="ClosePopUp('divExportCSVPopup');" class="cancelButton">Cancel</button>
+                        <button type="button" id="btnExportCSV" onclick="ExportFeedsToCSV(); ClosePopUp('divExportCSVPopup');" class="button">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <script type="text/javascript">
         //this is called at last becasue , default filter for date can be set after HTML is rendered
         SetActiveFilter();    
     </script>
-    if (!string.IsNullOrEmpty(Request.QueryString["date"]) || !string.IsNullOrEmpty(Request.QueryString["medium"]) || !string.IsNullOrEmpty(Request.QueryString["fromDate"]))
-                        {
+            if (!string.IsNullOrEmpty(Request.QueryString["date"]) || !string.IsNullOrEmpty(Request.QueryString["fromDate"]) || !string.IsNullOrEmpty(Request.QueryString["mediatype"]) || !string.IsNullOrEmpty(Request.QueryString["submediatype"]))
+            {
     <!-- Placed at the end of the document so the pages load faster -->
     
     <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-transition.js?v=1.0")" type="text/javascript"></script>

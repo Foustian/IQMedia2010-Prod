@@ -1,7 +1,8 @@
 ﻿var IsUGCFileInit = false;
 var _UGC_Map_ClientName = '';
 var _UGC_Map_SearchTerm = '';
-
+var _LogoWidth = 0;
+var _LogoHeight = 0;
 $(document).ready(function () {
     
 });
@@ -147,6 +148,28 @@ function EditClientUGCSettings(id) {
         }
     });
 }
+
+function readURL(submission) {
+    _LogoHeight = 0;
+    _LogoWidth = 0;
+    if (submission.files && submission.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+            var image = new Image();
+            image.src = event.target.result;
+            image.onload = function () {
+                _LogoHeight = this.height;
+                _LogoWidth = this.width;
+                $("#logoPreviewDiv").show();
+                $("#uploadedLogoPreview")
+            .attr('src', event.target.result)
+            .width(_LogoWidth)
+            .height(_LogoHeight);
+            }
+        };
+        reader.readAsDataURL(submission.files[0])
+     }
+ }
 
 function SetUGCFileSelection() {
 
@@ -315,8 +338,12 @@ function ValidateUGCMapSettings() {
     $("#spanIQClient_UGCMapModel_URL").hide();
     $("#spanIQClient_UGCMapModel_Logo").hide();
     $("#spanIQClient_UGCMapModel_ClientGuid").hide();
+    $('#spanIQClient_UGCMapModel_TimeZone').hide();
 
-
+    if ($('#IQClient_UGCMapModel_TimeZone').val().trim() == '0') {
+        $('#spanIQClient_UGCMapModel_TimeZone').html(_msgCustomerRegistrationTimeZoneRequiredField).show();
+        isValid = false;
+    }
     if ($("#IQClient_UGCMapModel_ClientGuid").val().trim() == '0') {
         $("#spanIQClient_UGCMapModel_ClientGuid").html(_msgCustomerRegistrationClientRequiredField).show();
         isValid = false;
@@ -331,25 +358,10 @@ function ValidateUGCMapSettings() {
         isValid = false;
     }
 
-    if ($("#IQClient_UGCMapModel_BroadcastLocation").val().trim() == '') {
-        $("#spanIQClient_UGCMapModel_BroadcastLocation").html(_msgBroadcastLocationRequired).show();
-        isValid = false;
-    }
-
     if ($("#IQClient_UGCMapModel_BroadcastType").val().trim() == '0') {
         $("#spanIQClient_UGCMapModel_BroadcastType").html(_msgBroadcastTypeRequired).show();
         isValid = false;
     }
-
-    if ($("#IQClient_UGCMapModel_RetentionDays").val().trim() == '') {
-        $("#spanIQClient_UGCMapModel_RetentionDays").html(_msgRetentionDaysRequired).show();
-        isValid = false;
-    }
-    else if (isNaN($("#IQClient_UGCMapModel_RetentionDays").val().trim()) || !(eval($("#IQClient_UGCMapModel_RetentionDays").val().trim()) === parseInt($("#IQClient_UGCMapModel_RetentionDays").val().trim()))) {
-        $("#spanIQClient_UGCMapModel_RetentionDays").html(_msgRetentionDaysInvalid).show();
-        isValid = false;
-    }
-
     if ($("#IQClient_UGCMapModel_Title").val().trim() == '') {
         $("#spanIQClient_UGCMapModel_Title").html(_msgTitleRequired).show();
         isValid = false;
@@ -364,7 +376,6 @@ function ValidateUGCMapSettings() {
         isValid = false;
     }
 
-
     if ($("#flUGCMapLogo").val().trim() == "") {
         if ($("#aUGCLogo").length == 0) {
             $("#spanIQClient_UGCMapModel_Logo").html(_msgNoFileToUpload).show();
@@ -373,7 +384,8 @@ function ValidateUGCMapSettings() {
     }
     else if ($("#flUGCMapLogo").val().trim() != "") {
         var selectedfileType = $("#flUGCMapLogo").val().substring($("#flUGCMapLogo").val().lastIndexOf('.') + 1).toLowerCase();
-        if ($.inArray(selectedfileType, imageFileTypes) == -1) {
+        imageFileTypes = ["jpeg", "jpg"];
+        if ($.inArray(selectedfileType, imageFileTypes) == -1 || (_LogoHeight>50 && _LogoWidth>50)) {
             $("#txtUGCMapLogoSelectedFileDisplay").val("");
             $("#spanIQClient_UGCMapModel_Logo").html(_msgSelectValidUGCFileType).show();
             isValid = false;

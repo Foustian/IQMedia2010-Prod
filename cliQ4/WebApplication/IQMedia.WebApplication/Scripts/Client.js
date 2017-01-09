@@ -132,35 +132,37 @@ function showNoOfRecords(result) {
     }
 }
 
-function DeleteClient(clientId) {
+function DeleteClient(clientId, clientName) {
 
-    var jsonPostData = {
-        p_ClientKey: clientId
-    }
+    getConfirm("Confirm Delete", "Are you sure you want to delete the " + EscapeHTML(clientName) + " client?", "Continue", "Cancel", function (res) {
+        if (res == true) {
+            var jsonPostData = {
+                p_ClientKey: clientId
+            }
 
-    $.ajax({
-        url: _urlGlobalAdminGetDeleteClient,
-        contentType: "application/json; charset=utf-8",
-        type: "post",
-        dataType: "json",
-        data: JSON.stringify(jsonPostData),
-        success: function (result) {
-            if (result != null && result.isSuccess) {
-                ShowNotification(_msgClientDeleted);
-                GetClients(0);
-                FillClientList();
-                FillFliqClientList();
-            }
-            else {
-                ShowNotification(_msgErrorOccured);
-            }
-        },
-        error: function (a, b, c) {
-            ShowNotification(_msgErrorOccured);
+            $.ajax({
+                url: _urlGlobalAdminGetDeleteClient,
+                contentType: "application/json; charset=utf-8",
+                type: "post",
+                dataType: "json",
+                data: JSON.stringify(jsonPostData),
+                success: function (result) {
+                    if (result != null && result.isSuccess) {
+                        ShowNotification(_msgClientDeleted);
+                        GetClients(0);
+                        FillClientList();
+                        FillFliqClientList();
+                    }
+                    else {
+                        ShowNotification(_msgErrorOccured);
+                    }
+                },
+                error: function (a, b, c) {
+                    ShowNotification(_msgErrorOccured);
+                }
+            });
         }
     });
-
-
 }
 
 function GetClientRegistration(clientId) {
@@ -960,4 +962,33 @@ function ClearClient() {
     $("#divRoles input[type=checkbox]").each(function () {
         $(this).prop("checked", true);
     });
+}
+
+function AddClientToAnewstip(clientKey, clientName) {
+    var jsonPostData = {
+        clientKey: clientKey,
+        clientName: clientName
+    }
+
+    $.ajax({
+        url: _urlGlobalAdminAddClientToAnewstip,
+        contentType: "application/json; charset=utf-8",
+        type: "post",
+        dataType: "json",
+        data: JSON.stringify(jsonPostData),
+        success: function (result) {
+            if (result.isSuccess) {
+                $("#btnClientAddToAnewstip").hide();
+                $("#btnClientAddedToAnewstip").show();
+                ShowNotification("Client successfully added. Please ensure the Connect role is enabled.");
+            }
+            else {
+                ShowNotification(_msgErrorOccured);
+            }
+        },
+        error: function (a, b, c) {
+            console.error("AddClientToAnewstip error - " + c);
+            ShowNotification(_msgErrorOccured);
+        }
+    });    
 }

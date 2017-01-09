@@ -9,23 +9,23 @@
 }
 .primaryNavTabs > a.active
 {
-    background-color: #F3F3F3 !important;
-    font-weight: bold;
+    /*background-color: #F3F3F3 !important;*/
+    /*font-weight: bold;*/
 }
 .primaryNavTabsPE > a.active
 {
-    background-color: #dde4a5 !important;
-    font-weight: bold;
+    /*background-color: #dde4a5 !important;*/
+    /*font-weight: bold;*/
 }
 .primaryNavTabsSHR > a.active
 {
-    background-color: #cddde2 !important;
-    font-weight: bold;
+    /*background-color: #cddde2 !important;*/
+    /*font-weight: bold;*/
 }
 /* Bold active results in primary nav bar */
 .navBorderedTabs > li > a.active .font14Pt
 {
-    font-weight: bold !important;
+    /*font-weight: bold !important;*/
 }
 #primaryContentSideNav li > a.active
 {
@@ -453,6 +453,14 @@
     width: 11px;
 }
 
+.quickFilterCB
+{
+    float: right;
+    vertical-align: bottom;
+    margin-right: 2px !important;
+    opacity: 0.5;
+}
+
 /* Class for secondary tables */
 .secondaryHeaderRow
 {
@@ -555,4 +563,17 @@
     overflow: hidden;
     padding: 0px !important;
     float: left !important;
+}
+
+/* Quick Filter Classes */
+.active .QFCheck:before
+{
+    content: "\2713";   /* UTF-8 Dingbat for checkmark */
+}
+
+.QFCheck
+{
+    float: right;
+    height: 15px;
+    width: 15px;
 }

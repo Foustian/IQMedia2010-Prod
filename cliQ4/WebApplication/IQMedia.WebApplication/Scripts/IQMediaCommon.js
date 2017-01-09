@@ -1,7 +1,7 @@
 ﻿// Global Variable to give height of current window. This variable is used in all the othe js files to calculate height
 var documentHeight = $(window).height();
 var ajaxRequestCount = 0;
-var _KeyValues='';
+var _KeyValues = '';
 
 function removeActiveFilter(span) {
     //$(span).parent("div").remove();
@@ -641,20 +641,20 @@ function OpenDashboardPopup(source, isOnlyParents, sinceID) {
     });
 
     $("#divDashboardPopup").resizable({
-        handles : 's',
+        handles: 's',
         iframeFix: true,
-        start: function(){
+        start: function () {
             ifr = $('#iFrameDashboard');
             var d = $('<div></div>');
 
             $('#divDashboardPopup').append(d[0]);
             d[0].id = 'temp_div';
-            d.css({position:'absolute'});
-            d.css({top: ifr.position().top, left:0});
+            d.css({ position: 'absolute' });
+            d.css({ top: ifr.position().top, left: 0 });
             d.height(ifr.height());
             d.width('100%');
         },
-        stop: function(){
+        stop: function () {
             $('#temp_div').remove();
         },
         resize: function (event, ui) {
@@ -664,35 +664,34 @@ function OpenDashboardPopup(source, isOnlyParents, sinceID) {
         }
     }).draggable({
         iframeFix: true,
-        start: function(){
+        start: function () {
             ifr = $('#iFrameDashboard');
             var d = $('<div></div>');
 
             $('#divDashboardPopup').append(d[0]);
             d[0].id = 'temp_div';
-            d.css({position:'absolute'});
-            d.css({top: ifr.position().top, left:0});
+            d.css({ position: 'absolute' });
+            d.css({ top: ifr.position().top, left: 0 });
             d.height(ifr.height());
             d.width('100%');
         },
-        stop: function(){
+        stop: function () {
             $('#temp_div').remove();
         }
     });
 
     var queryParams = "?source=" + source;
-    if (isOnlyParents != undefined && sinceID != undefined)
-    {
+    if (isOnlyParents != undefined && sinceID != undefined) {
         queryParams += "&isOnlyParents=" + isOnlyParents + "&sinceID=" + sinceID;
     }
     $('#iFrameDashboard').attr("src", "//" + window.location.hostname + "/Dashboard" + queryParams);
-    
+
     $('#divDashboardPopup').css("position", "");
     $('#divDashboardPopup').css("height", documentHeight - 200);
     $('#iFrameDashboard').css("height", documentHeight - 200);
 }
 
-function CloseDashboardPopup() {    
+function CloseDashboardPopup() {
     $("#divDashboardPopup").css({ "display": "none" });
     $("#divDashboardPopup").modal("hide");
     $('#iFrameDashboard').attr("src", "");
@@ -705,114 +704,105 @@ function SetDashboardOverviewHTML(result, divChartDataID, onClickFunction, paren
     else {
         parentDivID = '';
     }
-        
+
     $('#' + divChartDataID).html('');
     $('#' + divChartDataID).html(result.HTML);
-    
-    $('#' + parentDivID + 'divLineChartMedia').html('');    
+
+    $('#' + parentDivID + 'divLineChartMedia').html('');
     RenderLineChartHighCharts(result.jsonMediaRecord, parentDivID + 'divLineChartMedia', 'MediaLineChart', onClickFunction);
 
     $('#' + parentDivID + 'divLineChartSubMedia').html('');
     RenderLineChartHighCharts(result.jsonSubMediaRecord, parentDivID + 'divLineChartSubMedia', 'SubMediaLineChart', onClickFunction);
     RenderPieChartHighChart(result.jsonPieChartSubMedia, result.totalHits);
 
-    if(result.jsonTVRecord != null)
-    {
+    $.each(result.ReportMediumList, function (i, v) {
+
+        v.IsprevSummaryEnoughData = result.IsprevSummaryEnoughData;
+
+    });
+
+    var sparkCharts = $("#tmplSparkChart").render(result.ReportMediumList);
+
+    $("#ulOvSubMediaCharts li:first-child").before(sparkCharts);
+
+    /*
+    if (result.jsonTVRecord != null) {
         $('#divTVLineChart').html('');
         RenderSparkHighChart(result.jsonTVRecord, 'divTVLineChart', 'TVLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liTVChart").hide();
     }
-    
-    if(result.jsonNMRecord != null)
-    {
+
+    if (result.jsonNMRecord != null) {
         $('#divNMLineChart').html('');
         RenderSparkHighChart(result.jsonNMRecord, 'divNMLineChart', 'NMLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liNMChart").hide();
     }
-    
-    if(result.jsonTWRecord != null)
-    {
+
+    if (result.jsonTWRecord != null) {
         $('#divTWLineChart').html('');
         RenderSparkHighChart(result.jsonTWRecord, 'divTWLineChart', 'TWLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liTWChart").hide();
     }
-    
-    if(result.jsonForumRecord != null)
-    {
+
+    if (result.jsonForumRecord != null) {
         $('#divForumLineChart').html('');
         RenderSparkHighChart(result.jsonForumRecord, 'divForumLineChart', 'ForumLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liForumChart").hide();
     }
-    
-    if(result.jsonSocialMRecord != null)
-    {
+
+    if (result.jsonSocialMRecord != null) {
         $('#divSocialMediaLineChart').html('');
         RenderSparkHighChart(result.jsonSocialMRecord, 'divSocialMediaLineChart', 'SocialMediaLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liSocialMediaChart").hide();
     }
-    
-    if(result.jsonBlogRecord != null)
-    {
+
+    if (result.jsonBlogRecord != null) {
         $('#divBlogLineChart').html('');
         RenderSparkHighChart(result.jsonBlogRecord, 'divBlogLineChart', 'BlogLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liBlogChart").hide();
     }
-    
-    if(result.jsonAudienceRecord != null)
-    {
+    */
+    if (result.jsonAudienceRecord != null) {
         $('#divAudienceLineChart').html('');
         RenderSparkHighChart(result.jsonAudienceRecord, 'divAudienceSparkChart', 'AudienceSparkChart');
     }
-    else
-    {
+    else {
         $("#liAudienceChart").hide();
     }
 
-    if(result.jsonIQMediaValueRecords != null)
-    {
+    if (result.jsonIQMediaValueRecords != null) {
         $('#divIQMediaValueLineChart').html('');
         RenderSparkHighChart(result.jsonIQMediaValueRecords, 'divIQMediaValueSparkChart', 'IQMediaValueSparkChart');
     }
-    else
-    {
+    else {
         $("#liMediaValueChart").hide();
     }
 
-    if(result.jsonPMRecord != null)
-    {
+    if (result.jsonPMRecord != null) {
         $('#divPMLineChart').html('');
         RenderSparkHighChart(result.jsonPMRecord, 'divPMLineChart', 'PMLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liPMChart").hide();
     }
 
-    if(result.jsonTMRecord != null)
-    {
+    if (result.jsonTMRecord != null) {
         $('#divTMLineChart').html('');
         RenderSparkHighChart(result.jsonTMRecord, 'divTMLineChart', 'TMLineChart', onClickFunction);
     }
-    else
-    {
+    else {
         $("#liRadioChart").hide();
     }
 
@@ -832,11 +822,11 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
     else {
         parentDivID = '';
     }
-            
+
     RenderLineChartHighCharts(result.noOfDocsJson, parentDivID + 'divLineChartMedia', 'DocChart');
 
     if (result.noOfHitsJson) {
-        RenderSparkHighChart(result.noOfHitsJson,  parentDivID + 'divNoOfHitsChart', 'HitsChart');
+        RenderSparkHighChart(result.noOfHitsJson, parentDivID + 'divNoOfHitsChart', 'HitsChart');
         $('#' + parentDivID + 'liNumberOfHits').show();
     }
     else {
@@ -845,19 +835,12 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
 
     if (result.noOfViewJson) {
         RenderSparkHighChart(result.noOfViewJson, parentDivID + 'divNoOfViewsChart', 'ViewChart');
-        $('#' + parentDivID + 'liViews').show();
-
-        if (medium == 'TW') {
-            $('#' + parentDivID + 'tdViewsHeader').html('Reach');
-        }
-        else {
-            $('#' + parentDivID + 'tdViewsHeader').html('Total Audience');
-        }
+        $('#' + parentDivID + 'liViews').show();        
     }
     else {
         $('#' + parentDivID + 'liViews').hide();
     }
-            
+
     if (result.sentimentChart) {
         RenderSmallLineChartHighCharts(result.sentimentChart, parentDivID + 'divSentimentChart', 'SentiMentChart');
         $('#' + parentDivID + 'divSentimentChart span').css('top', '7px');
@@ -866,12 +849,69 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
         $('#' + parentDivID + 'liSentiment').hide();
     }
 
-    $('#' + parentDivID + 'liMinutesOfAiring').hide();
+    if (result.noOfMinOfAiringJson) {
+        RenderSparkHighChart(result.noOfMinOfAiringJson, parentDivID + 'divMinOfAiringChart', 'AiringChart');
+        $('#' + parentDivID + 'liMinutesOfAiring').show();
+    }
+    else {
+        $('#' + parentDivID + 'liMinutesOfAiring').hide();
+    }
+
+    if (result.noOfAdJson) {
+        RenderSparkHighChart(result.noOfAdJson, parentDivID + 'divAdChart', 'AdChart');
+        $('#' + parentDivID + 'liAd').show();
+    }
+    else {
+        $('#' + parentDivID + 'liAd').hide();
+    }
+
+    $("#" + parentDivID + "divTVDmaMain").hide();
+    $("#" + parentDivID + "imgCountryList").hide();
+    $("#" + parentDivID + "divCommonList").hide();
+
+    if (result.DataLists) {
+
+        $(result.DataLists).each(function (i, v) {
+
+            switch (v.Item1) {
+                case "TVDMA":
+                    $("#" + parentDivID + "divTopDmas").html(v.Item2);
+                    $("#" + parentDivID + "divTVDmaMain").show();
+                    break;
+                case "TVStation":
+                    $("#" + parentDivID + "divTopStations").html(v.Item2);
+                    $("#" + parentDivID + "divTVDmaMain").show();
+                    break;
+                case "TVCountry":
+                    $("#" + parentDivID + "divTopCountries").html(v.Item2);
+                    $("#" + parentDivID + "divTVDmaMain").show();
+                    $("#" + parentDivID + "imgCountryList").show();
+                    break;
+                case "NMDMA":
+                    $("#" + parentDivID + "divTopDmas").html(v.Item2);
+                    $("#" + parentDivID + "divTVDmaMain").show();
+                    break;
+                case "Common":
+                    $("#" + parentDivID + "divCommonList").append("<div>" + v.Item2 + "</div>");
+                    $("#" + parentDivID + "divCommonList").show();
+                    break;
+            }
+
+        });
+
+    }
+
+    if (result.dmaMapJson) {
+        RenderDmaMapChart(result.dmaMapJson, parentDivID + 'divUsaMap', 'cUsaMap');
+    }
+
+    if (result.canadaMapJson) {
+        RenderCanadaMapChart(result.canadaMapJson, parentDivID + 'divCanadaMap', 'cCanadaMap');
+    }
+        
+    /*
     if (medium == 'TV') {
-        if (result.noOfMinOfAiringJson) {
-            RenderSparkHighChart(result.noOfMinOfAiringJson, parentDivID + 'divMinOfAiringChart', 'AiringChart');
-            $('#' + parentDivID + 'liMinutesOfAiring').show();
-        }
+        
         $("#" + parentDivID + "marketHeader").html('Top Broadcast Markets');
         $("#" + parentDivID + "divTopDmas").html(result.p_TopDmasHTML);
         $("#" + parentDivID + "divTopStations").html(result.p_TopStationsHTML);
@@ -882,7 +922,7 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
         }
 
         if (result.canadaMapJson) {
-            RenderCanadaMapChart(result.canadaMapJson, parentDivID + 'divCanadaMap', 'cCanadaMap'); 
+            RenderCanadaMapChart(result.canadaMapJson, parentDivID + 'divCanadaMap', 'cCanadaMap');
         }
     }
     else if (medium == 'PM') {
@@ -908,9 +948,9 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
         }
         $("#" + parentDivID + "divTopStations").html(result.p_TopOnlineNewsSitesHTML)
     }
-
-    if (medium != 'TV' && medium != 'NM') 
-    {
+    */
+    /*
+    if (medium != 'TV' && medium != 'NM') {
         $("#" + parentDivID + "divTVDmaMain").hide();
     }
     else if (medium != 'TV') {
@@ -919,20 +959,22 @@ function SetDashboardMediumHTML(result, medium, parentDivID) {
     if (medium != 'PM') {
         $("#" + parentDivID + "divTopAuthors").hide();
     }
+    */
 
+    /*
     if (medium == 'TV' || medium == 'NM' || medium == 'Blog') {
         if (result.noOfAdJson) {
             RenderSparkHighChart(result.noOfAdJson, parentDivID + 'divAdChart', 'AdChart');
             $('#' + parentDivID + 'liAd').show();
         }
-        else
-        {
+        else {
             $('#' + parentDivID + 'liAd').hide();
         }
     }
     else {
         $('#' + parentDivID + 'liAd').hide();
     }
+    */
 }
 
 function RenderPieChartHighChart(jsonPieChartData, totalHits) {
@@ -942,8 +984,8 @@ function RenderPieChartHighChart(jsonPieChartData, totalHits) {
 
     _PieChartTotalHits = totalHits;
 
-    $($("#divPieChartData").highcharts().series[0].data).each(function(i, e) {
-        e.legendItem.on("click", function() {
+    $($("#divPieChartData").highcharts().series[0].data).each(function (i, e) {
+        e.legendItem.on("click", function () {
             if (e.sliced) {
                 _PieChartTotalHits = Number(_PieChartTotalHits) + Number(e.y);
             }
@@ -981,8 +1023,7 @@ function RenderSparkHighChart(jsonIQMediaValueRecords, divSparkChartID, ChartID,
 }
 
 function SetPieChartInnerText(divPieChartID, divPieChartTextID, textID, totalHits, fontSizeOverride) {
-    if (totalHits > 0)
-    {
+    if (totalHits > 0) {
         var chart = $('#' + divPieChartID).highcharts();
         var fontSize = 13;
         if (fontSizeOverride) {
@@ -1059,4 +1100,12 @@ function EscapeHTML(input) {
     else {
         return input;
     }
+}
+
+function ChangeMediumType() {
+    GetDataMediumWise(this.options.series[0].data[0].Value, this.options.series[0].data[0].SearchTerm);
+}
+
+function ChangeMediumTypeOnPointClick() {
+    GetDataMediumWise(this.options.Value, this.options.SearchTerm);
 }

@@ -52,7 +52,7 @@
                             <a href="javascript:void(0);" onclick="GetClientRegistration(@item.ClientKey)">Edit</a>
                         </td>
                         <td style="text-align: center;">
-                            <a href="javascript:void(0);" onclick="DeleteClient(@item.ClientKey)" >Delete</a>
+                            <a href="javascript:void(0);" onclick="DeleteClient(@item.ClientKey, '@(item.ClientName.Replace("'", "\\'"))')" >Delete</a>
                         </td>
                         <td style="text-align: left;">
                             @item.ClientName

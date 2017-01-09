@@ -13,10 +13,10 @@ namespace IQMedia.Web.Logic
 {
     public class SMLogic : ILogic
     {
-        public string InsertArchiveSM(IQAgent_SMResultsModel p_IQAgent_SMResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, Int64? MediaID = null, bool UseProminenceMultiplier = false)
+        public string InsertArchiveSM(IQAgent_SMResultsModel p_IQAgent_SMResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID = null, bool UseProminenceMultiplier = false)
         {
             SMDA smDA = (SMDA)DataAccessFactory.GetDataAccess(DataAccessType.SM);
-            string result = smDA.InsertArchiveSM(p_IQAgent_SMResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Keywords, p_Description, MediaID, UseProminenceMultiplier);
+            string result = smDA.InsertArchiveSM(p_IQAgent_SMResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Keywords, p_Description, p_MediaType, p_SubMediaType, MediaID, UseProminenceMultiplier);
             return result;
         }
 

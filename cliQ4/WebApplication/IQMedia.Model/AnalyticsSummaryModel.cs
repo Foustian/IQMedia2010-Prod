@@ -10,6 +10,8 @@ namespace IQMedia.Model
     {
         public Int64 Number_Docs { get; set; }
         public DateTime SummaryDateTime { get; set; }
+        public DateTime LocalDateTime { get; set; }
+        public DateTime GMTDateTime { get; set; }
         public string DayTimeDisplay { get; set; }
         public string DayTimeID { get; set; }
         public string DayPartDisplay { get; set; }
@@ -52,5 +54,28 @@ namespace IQMedia.Model
         public Int64? MarketID { get; set; }
         public string Networks { get; set; }
         public string Shows { get; set; }
+        public decimal AdSpend
+        {
+            get { return this._SeenAdSpend + this._HeardAdSpend; }
+        }
+
+        decimal _SeenAdSpend
+        {
+            get
+            {
+                if (this.SeenPaid == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return ((this.SeenPaid / 30) * this.IQMediaValue * (decimal)1.15);
+                }
+            }
+        }
+        decimal _HeardAdSpend
+        {
+            get { return (this.IQMediaValue * (decimal)0.85); }
+        }
     }
 }

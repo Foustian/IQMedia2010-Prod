@@ -24,6 +24,8 @@ namespace IQMedia.Data.EmailTemplate
                     return new EmailTemplate1DA();
                 case EmailTemplateType.EmailTemplate2:
                     return new EmailTemplate2DA();
+                case EmailTemplateType.EmailTemplateDevry:
+                    return new EmailTemplateDevryDA();
                 default:
                     //If we get to this point, no logic has been defined and the code 'SHOULD' fail...
                     throw new ArgumentException("No logic defined for requested type: '" + etType + "'");
@@ -34,6 +36,7 @@ namespace IQMedia.Data.EmailTemplate
     public enum EmailTemplateType
     {
         EmailTemplate1,
-        EmailTemplate2
+        EmailTemplate2,
+        EmailTemplateDevry
     }
 }

@@ -10,7 +10,7 @@
 <script src="~/Scripts/jstree.js"></script>
 @if (sessionInformation.Isv4IQAgentAccess)
 {
-    <script src="~/Scripts/IQAgentSetup.js?v=3.7" type="text/javascript"></script>
+    <script src="~/Scripts/IQAgentSetup.js?v=4.2" type="text/javascript"></script>
     <script src="~/Scripts/IQNotification.js?v=1.2" type="text/javascript"></script>
 }
 @if (sessionInformation.Isv5AnalyticsAccess)
@@ -23,7 +23,7 @@
 <script src="~/Scripts/JobStatus.js?v=1.3" type="text/javascript"></script>
 <script src="~/Scripts/jquery.multi-select.js?v=1.0" type="text/javascript"></script>
 @*<script src="~/Scripts/chosen.jquery.min.js?v=1.0" type="text/javascript"></script>*@
-<script src="~/Scripts/chosen.jquery.js?v=1.0" type="text/javascript"></script>
+<script src="~/Scripts/chosen.jquery.js?v=1.1" type="text/javascript"></script>
 <script src="~/Scripts/jquery.form.js?v=1.0" type="text/javascript"></script>
 <script type="text/javascript" src="~/Scripts/jquery.ui.rlightbox.min.js?v=1.0"></script>
 <script language="javascript" type="text/javascript" src="~/Scripts/enscroll.js?v=1.0"></script>
@@ -48,6 +48,35 @@
     .row-custom .dropdown-menu
     {
         width: 190px !important;
+    }
+    
+    .twitterRuleTxt
+    {
+        display: block;
+        margin-left: 30px;
+        width:90%;
+    }
+    
+    .twitterRuleError
+    {
+        border: 1px solid red;
+    }
+    
+    .twitterRuleOptions li
+    {
+        display: inline-block;
+    }
+    
+    .twitterRuleOptions input
+    {
+        margin: -3px 3px 0px 15px;
+    }
+    
+    .tvEyesRuleTxt
+    {
+        display: block;
+        margin-left: 30px;
+        width:90%;
     }
 </style>
 @{
@@ -166,7 +195,7 @@
 {
     <div id="divIQAgentSetupAddEditPopup" class="modal fade hide resizable modalPopupDiv">
         <div class="closemodalpopup">
-            <img src="~/images/close-icon.png" alt="close" class="popup-top-close" onclick="CancelIQAgentPopup('divIQAgentSetupAddEditPopup');" /></div>
+            <img src="~/images/close-icon.png" alt="close" class="popup-top-close" onclick="CloseIQAgentSetupPopup();" /></div>
         <div style="padding: 20px;">
             @{ Html.RenderAction("_FillDropDownIQAgentSetup", "Setup"); }
         </div>

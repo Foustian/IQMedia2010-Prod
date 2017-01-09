@@ -11,7 +11,7 @@ namespace IQMedia.Data
 {
     public class PQDA : IDataAccess
     {
-        public string InsertArchivePQ(IQAgent_PQResultsModel iQAgent_PQResultsModel, Guid customerGUID, Guid clientGUID, Guid categoryGUID, string p_Keywords, string p_Description, Int64? mediaID)
+        public string InsertArchivePQ(IQAgent_PQResultsModel iQAgent_PQResultsModel, Guid customerGUID, Guid clientGUID, Guid categoryGUID, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? mediaID)
         {
             try
             {
@@ -45,9 +45,11 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SearchTerm", DbType.String, iQAgent_PQResultsModel.SearchTerm, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Keywords", DbType.String, p_Keywords, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Description", DbType.String, p_Description, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@MediaType", DbType.String, p_MediaType, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@SubMediaType", DbType.String, p_SubMediaType, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ArchiveKey", DbType.Int32, archiveKey, ParameterDirection.Output));
 
-                string _Result = DataAccess.ExecuteNonQuery("usp_v4_ArchivePQ_Insert", dataTypeList);
+                string _Result = DataAccess.ExecuteNonQuery("usp_v5_ArchivePQ_Insert", dataTypeList);
                 return _Result;
             }
             catch (Exception ex)

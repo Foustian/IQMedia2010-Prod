@@ -187,7 +187,7 @@ namespace IQMedia.Data
         }
 
 
-        public IQAgent_DashBoardModel GetDaySummaryDataDayWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetDaySummaryDataDayWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, string p_MediaTypeXml, string p_ListSPName)
         {
 
             IQAgent_DashBoardModel objIQAgent_DashBoardModel = new IQAgent_DashBoardModel();
@@ -196,26 +196,26 @@ namespace IQMedia.Data
             dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@FromDate", DbType.Date, p_FromDate, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@ToDate", DbType.Date, p_ToDate, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, p_IsRadioAccess, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));            
             dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, p_SearchRequestXml, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTVAccess", DbType.Boolean, p_Isv4TVAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsNMAccess", DbType.Boolean, p_Isv4NMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsSMAccess", DbType.Boolean, p_Isv4SMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTWAccess", DbType.Boolean, p_Isv4TWAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsBLPMAccess", DbType.Boolean, p_Isv4BLPMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsPQAccess", DbType.Boolean, p_Isv4PQAccess, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
 
             Dictionary<string, object> dicSummaryReport = new Dictionary<string, object>();
-            DataSet dsSSP = DataAccess.GetDataSet("usp_v4_IQAgent_DaySummary_SelectByDay", dataTypeList);
+            DataSet dsSSP = DataAccess.GetDataSet("usp_v5_IQAgent_DaySummary_SelectByDay", dataTypeList);
 
             objIQAgent_DashBoardModel = FillIQAgentSummary(dsSSP, p_Medium);
+
+            // Can make both DB request parallely using Task. Or can make separate request for list separately, so chart response loads first.
+            if (!string.IsNullOrEmpty(p_Medium) && !string.IsNullOrEmpty(p_ListSPName))
+            {
+                GetMediaTypeResults(objIQAgent_DashBoardModel, p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, p_MediaTypeXml, p_ListSPName); 
+            }
 
             return objIQAgent_DashBoardModel;
 
         }
 
-        public IQAgent_DashBoardModel GetDaySummaryDataMonthWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetDaySummaryDataMonthWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, string p_MediaTypeXml, string p_ListSPName)
         {
             IQAgent_DashBoardModel objIQAgent_DashBoardModel = new IQAgent_DashBoardModel();
 
@@ -223,27 +223,25 @@ namespace IQMedia.Data
             dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@FromDate", DbType.Date, p_FromDate, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@ToDate", DbType.Date, p_ToDate, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, p_IsRadioAccess, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));            
             dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, p_SearchRequestXml, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTVAccess", DbType.Boolean, p_Isv4TVAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsNMAccess", DbType.Boolean, p_Isv4NMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsSMAccess", DbType.Boolean, p_Isv4SMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTWAccess", DbType.Boolean, p_Isv4TWAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsBLPMAccess", DbType.Boolean, p_Isv4BLPMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsPQAccess", DbType.Boolean, p_Isv4PQAccess, ParameterDirection.Input));
-            
+            dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));            
 
             Dictionary<string, object> dicSummaryReport = new Dictionary<string, object>();
-            DataSet dsSSP = DataAccess.GetDataSet("usp_v4_IQAgent_DaySummary_SelectByMonth", dataTypeList);
+            DataSet dsSSP = DataAccess.GetDataSet("usp_v5_IQAgent_DaySummary_SelectByMonth", dataTypeList);
 
             objIQAgent_DashBoardModel = FillIQAgentSummary(dsSSP, p_Medium);
+
+            if (!string.IsNullOrEmpty(p_Medium) && !string.IsNullOrEmpty(p_ListSPName))
+            {
+                GetMediaTypeResults(objIQAgent_DashBoardModel, p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, p_MediaTypeXml, p_ListSPName);
+            }
 
             return objIQAgent_DashBoardModel;
 
         }
 
-        public IQAgent_DashBoardModel GetHourSummaryDataHourWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, bool p_IsRadioAccess, string p_SearchRequestXml, bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess)
+        public IQAgent_DashBoardModel GetHourSummaryDataHourWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, string p_MediaTypeXml, string p_ListSPName)
         {
             IQAgent_DashBoardModel objIQAgent_DashBoardModel = new IQAgent_DashBoardModel();
 
@@ -251,24 +249,23 @@ namespace IQMedia.Data
             dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@FromDate", DbType.Date, p_FromDate, ParameterDirection.Input));
             dataTypeList.Add(new DataType("@ToDate", DbType.Date, p_ToDate, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsRadioAccess", DbType.Boolean, p_IsRadioAccess, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));            
             dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, p_SearchRequestXml, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTVAccess", DbType.Boolean, p_Isv4TVAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsNMAccess", DbType.Boolean, p_Isv4NMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsSMAccess", DbType.Boolean, p_Isv4SMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsTWAccess", DbType.Boolean, p_Isv4TWAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsBLPMAccess", DbType.Boolean, p_Isv4BLPMAccess, ParameterDirection.Input));
-            dataTypeList.Add(new DataType("@IsPQAccess", DbType.Boolean, p_Isv4PQAccess, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
 
             Dictionary<string, object> dicSummaryReport = new Dictionary<string, object>();
-            DataSet dsSSP = DataAccess.GetDataSet("usp_v4_IQAgent_HourSummary_SelectByHour", dataTypeList);
+            DataSet dsSSP = DataAccess.GetDataSet("usp_v5_IQAgent_HourSummary_SelectByHour", dataTypeList);
 
             objIQAgent_DashBoardModel = FillIQAgentSummary(dsSSP, p_Medium);
 
+            if (!string.IsNullOrEmpty(p_Medium) && !string.IsNullOrEmpty(p_ListSPName))
+            {
+                GetMediaTypeResults(objIQAgent_DashBoardModel, p_ClientGUID, p_FromDate, p_ToDate, p_Medium, p_SearchRequestXml, p_MediaTypeXml, p_ListSPName);
+            }
+
             return objIQAgent_DashBoardModel;
 
-        }
+        }        
 
         public IQAgent_DashBoardModel FillIQAgentSummary(DataSet dsSSP, string p_Medium)
         {
@@ -342,291 +339,16 @@ namespace IQMedia.Data
                 }
             }
 
-            if (!string.IsNullOrEmpty(p_Medium) && dsSSP != null && dsSSP.Tables.Count > 1)
-            {
-                objIQAgent_DashBoardModel.ListOfTopStationBroadCast = new List<DashboardTopResultsModel>();
-                foreach (DataRow datarow in dsSSP.Tables[1].Rows)
-                {
-                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
-                    if (dsSSP.Tables[1].Columns.Contains("IQ_Station_ID") && !datarow["IQ_Station_ID"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["IQ_Station_ID"]);
-                    }
-                    else if (dsSSP.Tables[1].Columns.Contains("CompeteURL") && !datarow["CompeteURL"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["CompeteURL"]);
-                    }
-                    else if (dsSSP.Tables[1].Columns.Contains("actor_preferredname") && !datarow["actor_preferredname"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["actor_preferredname"]);
-                    }
-                    else if (dsSSP.Tables[1].Columns.Contains("Publication") && !datarow["Publication"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["Publication"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.DMA_Name = Convert.ToString(datarow["DMA_Name"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.DMA_Num = Convert.ToString(datarow["DMA_Num"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("_IQDmaID") && !datarow["_IQDmaID"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel._IQDmaIDs = Convert.ToInt32(datarow["_IQDmaID"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("MediaValue") && !datarow["MediaValue"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.MediaValue = Convert.ToDecimal(datarow["MediaValue"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("Audience") && !datarow["Audience"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Audience = Convert.ToInt64(datarow["Audience"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("FriendsCount") && !datarow["FriendsCount"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.FriendsCount = Convert.ToInt64(datarow["FriendsCount"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
-                    }
-
-                    if (dsSSP.Tables[1].Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
-                    }
-
-                    objIQAgent_DashBoardModel.ListOfTopStationBroadCast.Add(iQAgent_TVResultsBroadCastModel);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(p_Medium) && dsSSP != null && dsSSP.Tables.Count > 2 && 
-                    (p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString() ||
-                     p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.NM.ToString() ||
-                     p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.PM.ToString())
-                )
-            {
-                objIQAgent_DashBoardModel.ListOfTopDMABroadCast = new List<DashboardTopResultsModel>();
-                foreach (DataRow datarow in dsSSP.Tables[2].Rows)
-                {
-                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
-                    if (dsSSP.Tables[2].Columns.Contains("Author") && !datarow["Author"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["Author"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.DMA_Name = Convert.ToString(datarow["DMA_Name"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.DMA_Num = Convert.ToString(datarow["DMA_Num"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("_IQDmaID") && !datarow["_IQDmaID"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel._IQDmaIDs = Convert.ToInt32(datarow["_IQDmaID"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("MediaValue") && !datarow["MediaValue"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.MediaValue = Convert.ToDecimal(datarow["MediaValue"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("Audience") && !datarow["Audience"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Audience = Convert.ToInt64(datarow["Audience"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
-                    }
-
-                    if (dsSSP.Tables[2].Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
-                    }
-
-                    objIQAgent_DashBoardModel.ListOfTopDMABroadCast.Add(iQAgent_TVResultsBroadCastModel);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(p_Medium) && dsSSP != null && dsSSP.Tables.Count > 3 && (p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString() || p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.NM.ToString()))
-            {
-                objIQAgent_DashBoardModel.DmaMentionMapList = new Dictionary<string, long>();
-                foreach (DataRow datarow in dsSSP.Tables[3].Rows)
-                {
-
-                    string key = string.Empty;
-                    string dma = string.Empty;
-                    long mention = 0;
-
-                    if (dsSSP.Tables[3].Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
-                    {
-                        dma = Convert.ToString(datarow["DMA_Name"]);
-                    }
-
-                    if (dsSSP.Tables[3].Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
-                    {
-                        key = Convert.ToString(datarow["DMA_Num"]);
-                    }
-
-                    if (dsSSP.Tables[3].Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
-                    {
-                        mention = Convert.ToInt64(datarow["Mentions"]);
-                    }
-
-                    objIQAgent_DashBoardModel.DmaMentionMapList.Add(dma, mention);
-                }
-            }
-
-            if (p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString() && dsSSP != null && dsSSP.Tables.Count > 4)
-            {
-                objIQAgent_DashBoardModel.ListOfTopCountryBroadCast = new List<DashboardTopResultsModel>();
-                foreach (DataRow datarow in dsSSP.Tables[4].Rows)
-                {
-                    DataTable dt = dsSSP.Tables[4];
-                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
-
-                    if (dt.Columns.Contains("Country") && !datarow["Country"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Country = Convert.ToString(datarow["Country"]);
-                    }
-
-                    if (dt.Columns.Contains("Country_Num") && !datarow["Country_Num"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Country_Num = Convert.ToString(datarow["Country_Num"]);
-                    }
-
-                    if (dt.Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
-                    }
-
-                    if (dt.Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
-                    }
-
-                    if (dt.Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
-                    }
-
-                    if (dt.Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
-                    {
-                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
-                    }
-
-                    objIQAgent_DashBoardModel.ListOfTopCountryBroadCast.Add(iQAgent_TVResultsBroadCastModel);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(p_Medium) && dsSSP != null && 
-                (
-                    (dsSSP.Tables.Count > 5 && p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                    (dsSSP.Tables.Count > 4 && p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.NM.ToString())
-                )
-               )
-            {
-                DataTable dt;
-                if (p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString())
-                {
-                    dt = dsSSP.Tables[5];
-                }
-                else
-                {
-                    dt = dsSSP.Tables[4];
-                }
-
-                objIQAgent_DashBoardModel.CanadaMentionMapList = new Dictionary<string, long>();
-                foreach (DataRow dr in dt.Rows)
-                {
-                    string province = String.Empty;
-                    long mentions = 0;
-
-                    if (dt.Columns.Contains("Province") && !dr["Province"].Equals(DBNull.Value))
-                    {
-                        province = Convert.ToString(dr["Province"]);
-                    }
-                    if (dt.Columns.Contains("Mentions") && !dr["Mentions"].Equals(DBNull.Value))
-                    {
-                        mentions = Convert.ToInt64(dr["Mentions"]);
-                    }
-
-                    objIQAgent_DashBoardModel.CanadaMentionMapList.Add(province, mentions);
-                }
-            }
-
             if (dsSSP != null)
             {
                 objIQAgent_DashBoardModel.PrevIQAgentSummary = new IQAgent_DashBoardPrevSummaryModel();
                 DataTable dtPrevDashboardSummary = new DataTable();
-                if (string.IsNullOrEmpty(p_Medium) && dsSSP.Tables.Count > 1 && dsSSP.Tables[1].Rows.Count > 0)
+                if (dsSSP.Tables.Count > 1 && dsSSP.Tables[1].Rows.Count > 0)
                 {
                     dtPrevDashboardSummary = dsSSP.Tables[1];
                     objIQAgent_DashBoardModel.PrevIQAgentSummary.IsEnoughData = true;
                 }
-                else if (p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString() || p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.NM.ToString() || p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.PM.ToString())
-                {
-                    if (dsSSP.Tables.Count > 6 && dsSSP.Tables[6].Rows.Count > 0)
-                    {
-                        // TV
-                        dtPrevDashboardSummary = dsSSP.Tables[6];
-                        objIQAgent_DashBoardModel.PrevIQAgentSummary.IsEnoughData = true;
-                    }
-                    else if (dsSSP.Tables.Count > 5 && dsSSP.Tables[5].Rows.Count > 0)
-                    {
-                        // NM
-                        dtPrevDashboardSummary = dsSSP.Tables[5];
-                        objIQAgent_DashBoardModel.PrevIQAgentSummary.IsEnoughData = true;
-                    }
-                    else if (dsSSP.Tables.Count > 3 && dsSSP.Tables[3].Rows.Count > 0)
-                    {
-                        // PM
-                        dtPrevDashboardSummary = dsSSP.Tables[3];
-                        objIQAgent_DashBoardModel.PrevIQAgentSummary.IsEnoughData = true;
-                    }
-                }
-                else if ((p_Medium != Shared.Utility.CommonFunctions.DashBoardMediumType.TV.ToString() && p_Medium != Shared.Utility.CommonFunctions.DashBoardMediumType.NM.ToString() && p_Medium == Shared.Utility.CommonFunctions.DashBoardMediumType.PM.ToString()) && dsSSP.Tables.Count > 2)
-                {
-                    dtPrevDashboardSummary = dsSSP.Tables[2];
-                    objIQAgent_DashBoardModel.PrevIQAgentSummary.IsEnoughData = true;
-                }
-                
-                
+
                 if (dtPrevDashboardSummary.Rows.Count > 0)
                 {
                     List<IQAgent_ComparisionValues> ListOfIQAgent_ComparisionValues = new List<IQAgent_ComparisionValues>();
@@ -679,11 +401,289 @@ namespace IQMedia.Data
 
                     objIQAgent_DashBoardModel.PrevIQAgentSummary.ListOfIQAgentPrevSummary = ListOfIQAgent_ComparisionValues;
                 }
-            }
+            }       
 
             return objIQAgent_DashBoardModel;
         }
 
+        private void GetMediaTypeResults(IQAgent_DashBoardModel objIQAgent_DashBoardModel, Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, string p_MediaTypeXml, string p_ListSPName)
+        {
+            List<DataType> dataTypeList = new List<DataType>();
+            dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@FromDate", DbType.Date, p_FromDate, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@ToDate", DbType.Date, p_ToDate, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@MediaType", DbType.String, p_Medium, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@SearchRequestIDXml", DbType.Xml, p_SearchRequestXml, ParameterDirection.Input));
+            dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
+
+            Dictionary<string, object> dicSummaryReport = new Dictionary<string, object>();
+            DataSet dsSSP = DataAccess.GetDataSet(p_ListSPName, dataTypeList);
+
+            FillMediaTypeResults(dsSSP,objIQAgent_DashBoardModel);            
+        }
+
+        private void FillMediaTypeResults(DataSet dsSSP, IQAgent_DashBoardModel objIQAgent_DashBoardModel)
+        {
+            if (dsSSP != null && dsSSP.Tables.Count > 0)
+            {
+                objIQAgent_DashBoardModel.ListOfTopStationBroadCast = new List<DashboardTopResultsModel>();
+                DataTable dt2 = dsSSP.Tables[0];
+
+                foreach (DataRow datarow in dt2.Rows)
+                {
+                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
+                    if (dt2.Columns.Contains("IQ_Station_ID") && !datarow["IQ_Station_ID"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["IQ_Station_ID"]);
+                    }
+                    else if (dt2.Columns.Contains("CompeteURL") && !datarow["CompeteURL"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["CompeteURL"]);
+                    }
+                    else if (dt2.Columns.Contains("actor_preferredname") && !datarow["actor_preferredname"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["actor_preferredname"]);
+                    }
+                    else if (dt2.Columns.Contains("Publication") && !datarow["Publication"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["Publication"]);
+                    }
+
+                    if (dt2.Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.DMA_Name = Convert.ToString(datarow["DMA_Name"]);
+                    }
+
+                    if (dt2.Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.DMA_Num = Convert.ToString(datarow["DMA_Num"]);
+                    }
+
+                    if (dt2.Columns.Contains("_IQDmaID") && !datarow["_IQDmaID"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel._IQDmaIDs = Convert.ToInt32(datarow["_IQDmaID"]);
+                    }
+
+                    if (dt2.Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
+                    }
+
+                    if (dt2.Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
+                    }
+
+                    if (dt2.Columns.Contains("MediaValue") && !datarow["MediaValue"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.MediaValue = Convert.ToDecimal(datarow["MediaValue"]);
+                    }
+
+                    if (dt2.Columns.Contains("Audience") && !datarow["Audience"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Audience = Convert.ToInt64(datarow["Audience"]);
+                    }
+
+                    if (dt2.Columns.Contains("FriendsCount") && !datarow["FriendsCount"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.FriendsCount = Convert.ToInt64(datarow["FriendsCount"]);
+                    }
+
+                    if (dt2.Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
+                    }
+
+                    if (dt2.Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
+                    }
+
+                    if (dt2.Columns.Contains("SubMediaType") && !datarow["SubMediaType"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.SubMediaType = Convert.ToString(datarow["SubMediaType"]);
+                    }
+
+                    objIQAgent_DashBoardModel.ListOfTopStationBroadCast.Add(iQAgent_TVResultsBroadCastModel);
+                }
+            }
+
+            if (dsSSP != null && dsSSP.Tables.Count > 1)
+            {
+                objIQAgent_DashBoardModel.ListOfTopDMABroadCast = new List<DashboardTopResultsModel>();
+                DataTable dt3 = dsSSP.Tables[1];
+
+                foreach (DataRow datarow in dt3.Rows)
+                {
+                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
+                    if (dt3.Columns.Contains("Author") && !datarow["Author"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = Convert.ToString(datarow["Author"]);
+                    }
+
+                    if (dt3.Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.DMA_Name = Convert.ToString(datarow["DMA_Name"]);
+                    }
+
+                    if (dt3.Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.DMA_Num = Convert.ToString(datarow["DMA_Num"]);
+                    }
+
+                    if (dt3.Columns.Contains("_IQDmaID") && !datarow["_IQDmaID"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel._IQDmaIDs = Convert.ToInt32(datarow["_IQDmaID"]);
+                    }
+
+                    if (dt3.Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
+                    }
+
+                    if (dt3.Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
+                    }
+
+                    if (dt3.Columns.Contains("MediaValue") && !datarow["MediaValue"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.MediaValue = Convert.ToDecimal(datarow["MediaValue"]);
+                    }
+
+                    if (dt3.Columns.Contains("Audience") && !datarow["Audience"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Audience = Convert.ToInt64(datarow["Audience"]);
+                    }
+
+                    if (dt3.Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
+                    }
+
+                    if (dt3.Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
+                    }
+
+                    if (dt3.Columns.Contains("actor_preferredname") && !datarow["actor_preferredname"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Outlet_Name = "@" + Convert.ToString(datarow["actor_preferredname"]);
+                    }
+
+                    if (dt3.Columns.Contains("SubMediaType") && !datarow["SubMediaType"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.SubMediaType = Convert.ToString(datarow["SubMediaType"]);
+                    }
+
+                    objIQAgent_DashBoardModel.ListOfTopDMABroadCast.Add(iQAgent_TVResultsBroadCastModel);
+                }
+            }
+
+            if (dsSSP != null && dsSSP.Tables.Count > 2)
+            {
+                objIQAgent_DashBoardModel.DmaMentionMapList = new Dictionary<string, long>();
+                DataTable dt4 = dsSSP.Tables[2];
+
+                foreach (DataRow datarow in dt4.Rows)
+                {
+
+                    string key = string.Empty;
+                    string dma = string.Empty;
+                    long mention = 0;
+
+                    if (dt4.Columns.Contains("DMA_Name") && !datarow["DMA_Name"].Equals(DBNull.Value))
+                    {
+                        dma = Convert.ToString(datarow["DMA_Name"]);
+                    }
+
+                    if (dt4.Columns.Contains("DMA_Num") && !datarow["DMA_Num"].Equals(DBNull.Value))
+                    {
+                        key = Convert.ToString(datarow["DMA_Num"]);
+                    }
+
+                    if (dt4.Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
+                    {
+                        mention = Convert.ToInt64(datarow["Mentions"]);
+                    }
+
+                    objIQAgent_DashBoardModel.DmaMentionMapList.Add(dma, mention);
+                }
+            }
+
+            if (dsSSP != null && dsSSP.Tables.Count > 3)
+            {
+                DataTable dt;
+
+                dt = dsSSP.Tables[3];
+
+                objIQAgent_DashBoardModel.CanadaMentionMapList = new Dictionary<string, long>();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    string province = String.Empty;
+                    long mentions = 0;
+
+                    if (dt.Columns.Contains("Province") && !dr["Province"].Equals(DBNull.Value))
+                    {
+                        province = Convert.ToString(dr["Province"]);
+                    }
+                    if (dt.Columns.Contains("Mentions") && !dr["Mentions"].Equals(DBNull.Value))
+                    {
+                        mentions = Convert.ToInt64(dr["Mentions"]);
+                    }
+
+                    objIQAgent_DashBoardModel.CanadaMentionMapList.Add(province, mentions);
+                }
+            }
+
+            if (dsSSP != null && dsSSP.Tables.Count > 4)
+            {
+                objIQAgent_DashBoardModel.ListOfTopCountryBroadCast = new List<DashboardTopResultsModel>();
+                DataTable dt5 = dsSSP.Tables[4];
+
+                foreach (DataRow datarow in dt5.Rows)
+                {
+                    DashboardTopResultsModel iQAgent_TVResultsBroadCastModel = new DashboardTopResultsModel();
+
+                    if (dt5.Columns.Contains("Country") && !datarow["Country"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Country = Convert.ToString(datarow["Country"]);
+                    }
+
+                    if (dt5.Columns.Contains("Country_Num") && !datarow["Country_Num"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Country_Num = Convert.ToString(datarow["Country_Num"]);
+                    }
+
+                    if (dt5.Columns.Contains("NoOfDocs") && !datarow["NoOfDocs"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NoOfDocs = Convert.ToInt32(datarow["NoOfDocs"]);
+                    }
+
+                    if (dt5.Columns.Contains("Mentions") && !datarow["Mentions"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.Mentions = Convert.ToInt64(datarow["Mentions"]);
+                    }
+
+                    if (dt5.Columns.Contains("PositiveSentiment") && !datarow["PositiveSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.PositiveSentiment = Convert.ToInt32(datarow["PositiveSentiment"]);
+                    }
+
+                    if (dt5.Columns.Contains("NegativeSentiment") && !datarow["NegativeSentiment"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.NegativeSentiment = Convert.ToInt32(datarow["NegativeSentiment"]);
+                    }
+
+                    if (dt5.Columns.Contains("SubMediaType") && !datarow["SubMediaType"].Equals(DBNull.Value))
+                    {
+                        iQAgent_TVResultsBroadCastModel.SubMediaType = Convert.ToString(datarow["SubMediaType"]);
+                    }
+
+                    objIQAgent_DashBoardModel.ListOfTopCountryBroadCast.Add(iQAgent_TVResultsBroadCastModel);
+                }
+            }
+        }
 
         public List<IQAgent_DaySummaryModel> GetDmaSummaryDataDayWise(Guid p_ClientGUID, DateTime p_FromDate, DateTime p_ToDate, string p_Medium, string p_SearchRequestXml, string p_DmaXml)
         {
@@ -835,7 +835,7 @@ namespace IQMedia.Data
             }
         }
 
-        public IQAgent_DashBoardModel GetAdhocSummaryData(string p_MediaIDXml, string p_Source, string p_Medium)
+        public IQAgent_DashBoardModel GetAdhocSummaryData(string p_MediaIDXml, string p_Source, string p_Medium, Guid p_ClientGUID, string p_ListSPName, string p_MediaTypeXml)
         {
             try
             {
@@ -843,9 +843,20 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@MediaIDXml", DbType.Xml, p_MediaIDXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Source", DbType.String, p_Source, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@Medium", DbType.String, p_Medium, ParameterDirection.Input));
-                DataSet ds = DataAccess.GetDataSet("usp_v4_IQDashboard_AdhocSummary_SelectByID", dataTypeList);
+                dataTypeList.Add(new DataType("@ClientGUID", DbType.Guid, p_ClientGUID, ParameterDirection.Input));
+                DataSet ds = DataAccess.GetDataSet("usp_v5_IQDashboard_AdhocSummary_SelectByID", dataTypeList);
 
-                return FillIQAgentSummary(ds, p_Medium);
+                IQAgent_DashBoardModel objIQAgent_DashBoardModel = FillIQAgentSummary(ds, p_Medium);                               
+
+                if (!string.IsNullOrEmpty(p_Medium) && !string.IsNullOrEmpty(p_ListSPName))
+                {
+                    dataTypeList.Add(new DataType("@MediaTypeAccessXml", DbType.Xml, p_MediaTypeXml, ParameterDirection.Input));
+
+                    DataSet dsSSP = DataAccess.GetDataSet(p_ListSPName, dataTypeList);
+                    FillMediaTypeResults(dsSSP, objIQAgent_DashBoardModel); 
+                }
+
+                return objIQAgent_DashBoardModel;
             }
             catch (Exception)
             {

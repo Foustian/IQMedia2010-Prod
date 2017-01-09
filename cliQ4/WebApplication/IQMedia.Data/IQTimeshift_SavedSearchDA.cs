@@ -22,6 +22,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@SearchTerm", DbType.Xml, SearchTermXml, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@ClientGuid", DbType.Guid, timeshift_SavedSearchModel.ClientGuid, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CustomerGuid", DbType.Guid, timeshift_SavedSearchModel.CustomerGuid, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@ComponentType", DbType.String, "TIME", ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@SavedSearchID", DbType.Int32, SavedSearchID, ParameterDirection.Output));
 
                 string _Result = DataAccess.ExecuteNonQuery("usp_v4_IQTimeshift_SavedSearch_Insert", dataTypeList);
@@ -70,6 +71,7 @@ namespace IQMedia.Data
                 dataTypeList.Add(new DataType("@PageNumber", DbType.String, p_PageNumber, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@PageSize", DbType.String, p_Pagesize, ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@CustomerGuid", DbType.Guid, p_CustomerGUID, ParameterDirection.Input));
+                dataTypeList.Add(new DataType("@ComponentType", DbType.String, "TIME", ParameterDirection.Input));
                 dataTypeList.Add(new DataType("@TotalRecords", DbType.Int64, totalRecords, ParameterDirection.Output));
                 DataSet dSet = DataAccess.GetDataSetWithOutParam("usp_v4_IQTimeshift_SavedSearch_Select", dataTypeList, out p_outParameter);
 
@@ -140,25 +142,24 @@ namespace IQMedia.Data
 
                     foreach (DataRow dr in dataSet.Tables[0].Rows)
                     {
-                        Timeshift_SavedSearchModel timeshift_SavedSearchModel = new Timeshift_SavedSearchModel();
-
-                        if (dataTable.Columns.Contains("ID") && !dr["ID"].Equals(DBNull.Value))
-                        {
-                            timeshift_SavedSearchModel.ID = Convert.ToInt32(dr["ID"]);
-                        }
-
-                        if (dataTable.Columns.Contains("Title") && !dr["Title"].Equals(DBNull.Value))
-                        {
-                            timeshift_SavedSearchModel.Title = Convert.ToString(dr["Title"]);
-                        }
-
                         if (dataTable.Columns.Contains("SearchTerm") && !dr["SearchTerm"].Equals(DBNull.Value))
                         {
+                            Timeshift_SavedSearchModel timeshift_SavedSearchModel = new Timeshift_SavedSearchModel();
+
+                            if (dataTable.Columns.Contains("ID") && !dr["ID"].Equals(DBNull.Value))
+                            {
+                                 timeshift_SavedSearchModel.ID = Convert.ToInt32(dr["ID"]);
+                             }
+
+                            if (dataTable.Columns.Contains("Title") && !dr["Title"].Equals(DBNull.Value))
+                            {
+                                timeshift_SavedSearchModel.Title = Convert.ToString(dr["Title"]);
+                            }
+
                             timeshift_SavedSearchModel.SearchTerm = new TimeShiftSearchTerm();
                             timeshift_SavedSearchModel.SearchTerm = IQMedia.Shared.Utility.CommonFunctions.DeserialiazeXml(Convert.ToString(dr["SearchTerm"]),timeshift_SavedSearchModel.SearchTerm) as TimeShiftSearchTerm;
+                            lstTimeshift_SavedSearchModel.Add(timeshift_SavedSearchModel);
                         }
-
-                        lstTimeshift_SavedSearchModel.Add(timeshift_SavedSearchModel);
                     }
                 }
             }

@@ -1,4 +1,5 @@
-﻿@model @IQMedia.Model.IQAgentSearchRequest_DropDown
+﻿@using IQCommon.Model;
+@model @IQMedia.Model.IQAgentSearchRequest_DropDown
 @{
     
     IQMedia.Model.ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
@@ -10,7 +11,7 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
         Create IQAgent</div>
     <div style="float: right;">
         <input type="button" id="btnCancelIQAgentSetupAddEditForm" name="btnCancelIQAgentSetupAddEditForm"
-            value="Cancel" onclick="CancelIQAgentPopup('divIQAgentSetupAddEditPopup');" class="cancelButton"
+            value="Cancel" onclick="CloseIQAgentSetupPopup();" class="cancelButton"
             style="margin: 0px;" />
         <input type="button" id="btnSubmitIQAgentSetupAddEditForm" name="btnSubmitIQAgentSetupAddEditForm"
             value="Submit" onclick="SubmitIQAgentSetup();" class="button" style="margin: 0px;" />
@@ -44,13 +45,18 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
         <div>
             <div id="divIQAgentSetupTabs" class="clear" style="border-top: 1px solid grey;">
                 @{
-                    if (sessionInformation.Isv4TV)
-                    {                 
+                    foreach (IQ_MediaTypeModel objSubMediaType in sessionInformation.MediaTypes.Where(w => w.TypeLevel == 2 && w.HasAccess && !w.IsArchiveOnly))
+                    {
+                        IQMedia.Shared.Utility.CommonFunctions.CategoryType subMediaType = (IQMedia.Shared.Utility.CommonFunctions.CategoryType)Enum.Parse(typeof(IQMedia.Shared.Utility.CommonFunctions.CategoryType), objSubMediaType.SubMediaType);
+
+                        switch (subMediaType)
+                        {
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV:                
                     <div id="divTVSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(0);"
                         style="margin-top: 15px;">
                         <div class="float-left">
                             <img alt="" id="imgShowHide" src="../images/show.png">                            
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.TV)
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_TV" name="chkIQAgentSetup_TV" value="TV"
@@ -144,6 +150,36 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                         <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupExcludeDMA_TV">
+                                Exclude Markets</label>
+                            <div class="controls">
+                                @if (Model.TV_DMAList != null)
+                                {
+                                    <div style="width:60%;" class="float-left">
+                                        <select id="ddlIQAgentSetupExcludeDMA_TV" name="ddlIQAgentSetupExcludeDMA_TV" class="chosen-select ddlwidth93per"
+                                            multiple="multiple" data-placeholder="Exclude Markets">
+                                            <option value="0">None</option>
+                                            @foreach (IQMedia.Model.IQ_Dma item in Model.TV_DMAList)
+                                            {
+                                                <option value="@item.Name">@item.Name</option>
+                                            }
+                                        </select>
+                                        <span class="help-inline" id="spantxtIQAgentSetupExcludeDMA_TV" style="color: #FF0000; display: none;
+                                            vertical-align: top"></span>
+                                    </div>
+                                    <div style="width:39%;" class="float-left">
+                                        <label class="control-label" style="width:65px;" for="txtIQAgentSetupExcludeZipCodes">Zip Codes</label>
+                                        <div style="margin-left:70px;">
+                                            <input type="text" id="txtIQAgentSetupExcludeZipCodes" name="txtIQAgentSetupExcludeZipCodes" 
+                                                placeholder="Exclude Zip Codes (separate multiple zip codes with semicolon)" style="width:77%" />
+                                            <span class="help-inline" id="spantxtIQAgentSetupExcludeZipCodes" style="color: #FF0000;
+                                                display: none; vertical-align: top"></span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="control-group">
                             <label class="control-label" for="ddlIQAgentSetupAffiliate_TV">
                                 Station Affiliates</label>
                             <div class="controls">
@@ -220,15 +256,13 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>
-                    }
-                }
-                @{if (sessionInformation.Isv4NM)
-                  {
+                                break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM:
                     <div id="divNMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(1);"
                         style="margin-top: 15px;">
                         <div class="float-left">
                             <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.NM)
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_NM" name="chkIQAgentSetup_NM" value="NM"
@@ -386,16 +420,13 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>      
-                  }
-                }
-                @{if (sessionInformation.Isv4SM)
-                  {
-                    <!-- SM Section -->
+                                break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.SocialMedia:
                     <div id="divSMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(2);"
                         style="margin-top: 15px;">
                         <div class="float-left">
                             <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.SM)
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_SM" name="chkIQAgentSetup_SM" value="SM"
@@ -459,7 +490,7 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                                     <select id="ddlIQAgentSetupSourceType_SM" name="ddlIQAgentSetupSourceType_SM" class="chosen-select ddlwidth93per"
                                         multiple="multiple" data-placeholder="Source Types">
                                         <option value="0">All</option>
-                                        @foreach (IQMedia.Model.IQAgentDropDown_SM_SourceType item in Model.SM_SourceTypeList)
+                                        @foreach (IQMedia.Model.IQAgentDropDown_SM_SourceType item in Model.SM_SourceTypeList.Where(w => objSubMediaType.SourceTypes.Contains(w.Label)))
                                         {
                                             <option value="@item.Label">@item.Label</option>
                                         }
@@ -480,13 +511,176 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>
-                    <!-- End SM Section -->
-                    <!-- Facebook Section -->
-                    <div id="divFBSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(7);"
+                                break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Blog:
+                    <div id="divBLSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(11);"
                         style="margin-top: 15px;">
                         <div class="float-left">
                             <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB)
+                            @objSubMediaType.DisplayName
+                        </div>
+                        <div class="float-right marginRight10">
+                            <input type="checkbox" id="chkIQAgentSetup_BL" name="chkIQAgentSetup_BL" value="Blog"
+                                style="margin-bottom: 5px; margin-left: 5px;" checked="checked" />
+                        </div>
+                    </div> 
+                    <div id="divBLTabContent" class="margin10" style="display: none;">
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupSearchTerm_BL">
+                                Search Term</label>
+                            <div class="controls">
+                                <div class="float-left width64p">
+                                    <input type="text" id="txtIQAgentSetupSearchTerm_BL" name="txtIQAgentSetupSearchTerm_BL"
+                                        class="txtwidth90per" placeholder="Search Term" />
+                                </div>
+                                <div class="float-left">
+                                    <input type="checkbox" checked="checked" id="chkIQAgentSetupUserMasterSearchTerm_BL" name="chkIQAgentSetupUserMasterSearchTerm_BL"
+                                        value="true" style="margin-bottom: 5px; margin-left: 5px;" />
+                                    Use Master Search Term
+                                </div>
+                                <span class="help-inline width100p" id="spantxtIQAgentSetupSearchTerm_BL" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupSMSource_BL">
+                                Sources</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupSource_BL" name="txtIQAgentSetupSource_BL"
+                                    class="txtwidth90per" placeholder="Sources (separate multiple sources with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupSource_BL" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupAuthor_BL">
+                                Author</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupAuthor_BL" name="txtIQAgentSetupAuthor_BL"
+                                    class="txtwidth90per" placeholder="Author" />
+                                <span class="help-inline" id="spanIQAgentSetupAuthor_BL" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupTitle_BL">
+                                Title</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupTitle_BL" name="txtIQAgentSetupTitle_BL" class="txtwidth90per"
+                                    placeholder="Title" />
+                                <span class="help-inline" id="spanIQAgentSetupTitle_BL" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupExcludeDomains_BL">
+                                Exclude Domains</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupExcludeDomains_BL" name="txtIQAgentSetupExcludeDomains_BL"
+                                    class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupExcludeDomains_BL" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                    </div>
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Forum:
+                    <div id="divFOSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(12);"
+                        style="margin-top: 15px;">
+                        <div class="float-left">
+                            <img alt="" id="imgShowHide" src="../images/show.png">
+                            @objSubMediaType.DisplayName
+                        </div>
+                        <div class="float-right marginRight10">
+                            <input type="checkbox" id="chkIQAgentSetup_FO" name="chkIQAgentSetup_FO" value="Blog"
+                                style="margin-bottom: 5px; margin-left: 5px;" checked="checked" />
+                        </div>
+                    </div> 
+                    <div id="divFOTabContent" class="margin10" style="display: none;">
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupSearchTerm_FO">
+                                Search Term</label>
+                            <div class="controls">
+                                <div class="float-left width64p">
+                                    <input type="text" id="txtIQAgentSetupSearchTerm_FO" name="txtIQAgentSetupSearchTerm_FO"
+                                        class="txtwidth90per" placeholder="Search Term" />
+                                </div>
+                                <div class="float-left">
+                                    <input type="checkbox" checked="checked" id="chkIQAgentSetupUserMasterSearchTerm_FO" name="chkIQAgentSetupUserMasterSearchTerm_FO"
+                                        value="true" style="margin-bottom: 5px; margin-left: 5px;" />
+                                    Use Master Search Term
+                                </div>
+                                <span class="help-inline width100p" id="spantxtIQAgentSetupSearchTerm_FO" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupSMSource_FO">
+                                Sources</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupSource_FO" name="txtIQAgentSetupSource_FO"
+                                    class="txtwidth90per" placeholder="Sources (separate multiple sources with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupSource_FO" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupAuthor_FO">
+                                Author</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupAuthor_FO" name="txtIQAgentSetupAuthor_FO"
+                                    class="txtwidth90per" placeholder="Author" />
+                                <span class="help-inline" id="spanIQAgentSetupAuthor_FO" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupTitle_FO">
+                                Title</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupTitle_FO" name="txtIQAgentSetupTitle_FO" class="txtwidth90per"
+                                    placeholder="Title" />
+                                <span class="help-inline" id="spanIQAgentSetupTitle_FO" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupSourceType_FO">
+                                Source Types</label>
+                            <div class="controls">
+                                @if (Model.SM_SourceTypeList != null)
+                                {
+                                    <select id="ddlIQAgentSetupSourceType_FO" name="ddlIQAgentSetupSourceType_FO" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Source Types">
+                                        <option value="0">All</option>
+                                        @foreach (IQMedia.Model.IQAgentDropDown_SM_SourceType item in Model.SM_SourceTypeList.Where(w => objSubMediaType.SourceTypes.Contains(w.Label)))
+                                        {
+                                            <option value="@item.Label">@item.Label</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupSourceType_FO" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupExcludeDomains_FO">
+                                Exclude Domains</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupExcludeDomains_FO" name="txtIQAgentSetupExcludeDomains_FO"
+                                    class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupExcludeDomains_FO" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                    </div>
+                                break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB:
+                    <div id="divFBSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(7);"
+                        style="margin-top: 15px;">
+                        <div class="float-left">
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_FB" name="chkIQAgentSetup_FB"
@@ -554,13 +748,13 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>   
-                    <!-- End Facebook Section -->
-                    <!-- Instagram Section -->
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.IG:
                     <div id="divIGSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(8);"
                         style="margin-top: 15px;">
                         <div class="float-left">
-                            <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.IG)
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_IG" name="chkIQAgentSetup_IG"
@@ -593,139 +787,71 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>   
-                    <!-- End Instagram Section -->
-                  }
-                }
-                @{if (sessionInformation.Isv4TW)
-                  {
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.TW:
                     <div id="divTWSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(3);"
                         style="margin-top: 15px;">
                         <div class="float-left">
-                            <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.TW)
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_TW" name="chkIQAgentSetup_TW" value="TW"
-                                style="margin-bottom: 5px; margin-left: 5px;" />
+                                style="margin-bottom: 5px; margin-left: 5px;" onclick="ShowHideEditTwitterRule();" />
                         </div>
                     </div>
                     <div id="divTwitterTabContent" class="margin10" style="display: none;">
                         <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupSearchTerm_TW">
-                                Search Term</label>
-                            <div class="controls">
-                                <div class="float-left width64p">
-                                    <input type="text" id="txtIQAgentSetupSearchTerm_TW" name="txtIQAgentSetupSearchTerm_TW"
-                                        class="txtwidth90per" placeholder="Search Term" readonly="readonly" />
-                                </div>
-                                <div class="float-left">
-                                    <input type="checkbox" checked="checked" id="chkIQAgentSetupUserMasterSearchTerm_TW" name="chkIQAgentSetupUserMasterSearchTerm_TW"
-                                        value="true" style="margin-bottom: 5px; margin-left: 5px;" onclick="return false;" />
-                                    Use Master Search Term
-                                </div>
-                                <span class="help-inline width100p" id="spantxtIQAgentSetupSearchTerm_TW" style="color: #FF0000;
-                                    display: none; vertical-align: top"></span>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label" for="txtIQAgentSetupActor_TW">
-                                Twitter Handle</label>
-                            <div class="controls">
-                                <input type="text" id="txtIQAgentSetupActor_TW" name="txtIQAgentSetupActor_TW" class="txtwidth90per"
-                                    placeholder="Actor" readonly="readonly" />
-                                <span class="help-inline" id="spanIQAgentSetupActor_TW" style="color: #FF0000; display: none;
-                                    vertical-align: top"></span>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupActor_TW">
-                                Gnip Tags</label>
+                                Gnip Tag</label>
                             <div class="controls">
                                 <input type="text" id="txtIQAgentSetupGnipTag_TW" name="txtIQAgentSetupGnipTag_TW"
-                                    class="txtwidth90per" placeholder="Gnip Tags (separate multiple GUIDs with semicolon)" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupFollowersCount_TW">
-                                Followers Count</label>
-                            <div class="controls">
-                                <input type="text" id="txtIQAgentSetupFollowersCount_From_TW" name="txtIQAgentSetupFollowersCount_From_TW" readonly="readonly" />
-                                <span style="padding-left: 5px; padding-right: 5px;">To</span>
-                                <input type="text" id="txtIQAgentSetupFollowersCount_To_TW" name="txtIQAgentSetupFollowersCount_To_TW" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupFriendsCount_TW">
-                                Following Count</label>
-                            <div class="controls">
-                                <input type="text" id="txtIQAgentSetupFriendsCount_From_TW" name="txtIQAgentSetupFriendsCount_From_TW" readonly="readonly" />
-                                <span style="padding-left: 5px; padding-right: 5px;">To</span>
-                                <input type="text" id="txtIQAgentSetupFriendsCount_To_TW" name="txtIQAgentSetupFriendsCount_To_TW" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupKloutScore_TW">
-                                Klout Score</label>
-                            <div class="controls">
-                                <input type="text" id="txtIQAgentSetupKloutScore_From_TW" name="txtIQAgentSetupKloutScore_From_TW" readonly="readonly" />
-                                <span style="padding-left: 5px; padding-right: 5px;">To</span>
-                                <input type="text" id="txtIQAgentSetupKloutScore_To_TW" name="txtIQAgentSetupKloutScore_To_TW" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupExcludeHandles_TW">
-                                Exclude Handles</label>
-                            <div class="controls">
-                                <input type="text" id="txtIQAgentSetupExcludeHandles_TW" name="txtIQAgentSetupExcludeHandles_TW"
-                                    class="txtwidth90per" placeholder="Exclude Handles (separate multiple handles with semicolon)" readonly="readonly" />
-                                <span class="help-inline" id="spanIQAgentSetupExcludeHandles_TW" style="color: #FF0000;
-                                    display: none; vertical-align: top"></span>
+                                    class="txtwidth90per" placeholder="Gnip Tag" readonly="readonly" />
+                                @{           
+                                    string imgSrc = sessionInformation.IsExternalRuleEditor ? "edit_icon.png" : "view.png";
+                                    string title = sessionInformation.IsExternalRuleEditor ? "Edit Rule" : "View Rule";       
+                                    <img id="imgEditTwitterRule" src="../images/@imgSrc" style="margin-left:10px; margin-bottom:4px; cursor:pointer;" class="displayNone" title="@title" onclick="ShowEditTwitterRulePopup(@sessionInformation.IsExternalRuleEditor);" />
+                                }                                
+                                <span class="help-inline" id="spanIQAgentSetupGnipTag" style="color: #FF0000; display: none; vertical-align: top"></span>
                             </div>
                         </div>
                     </div>
-                  }
-                }
-                @{if (sessionInformation.Isv4TM)
-                  {
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.Radio:
                     <div id="divTMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(4);"
                         style="margin-top: 15px;">
                         <div class="float-left">
-                            <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.TM)
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
-                            <input type="checkbox" id="chkIQAgentSetup_TM" onclick="return false;" name="chkIQAgentSetup_TM"
+                            <input type="checkbox" id="chkIQAgentSetup_TM" onclick="ShowHideEditTVEyesRule();" name="chkIQAgentSetup_TM"
                                 value="TM" style="margin-bottom: 5px; margin-left: 5px;" /></div>
                     </div>
                     <div id="divTMTabContent" class="margin10" style="display: none;">
                         <div class="control-group">
-                            <label class="control-label" for="txtIQAgentSetupSearchTerm_TM">
-                                Search Term</label>
-                            <div class="controls">
-                                <input type="text" readonly="readonly" id="txtIQAgentSetupSearchTerm_TM" name="txtIQAgentSetupSearchTerm_TM"
-                                    class="txtwidth90per" placeholder="Search Term" />
-                                <span class="help-inline" id="spantxtIQAgentSetupSearchTerm_TM" style="color: #FF0000;
-                                    display: none; vertical-align: top"></span>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label" for="txtIQAgentSetupTVEyesSearchGUID_TM">
                                 Search Guid</label>
                             <div class="controls">
+                                <input type="hidden" id="hdnIQAgentSetupTVEyesSettingsKey" name="hdnIQAgentSetupTVEyesSettingsKey" value="0" />
                                 <input type="text" readonly="readonly" id="txtIQAgentSetupTVEyesSearchGUID_TM" name="txtIQAgentSetupTVEyesSearchGUID_TM"
                                     class="txtwidth90per" placeholder="TVEyes Search Guid" />
+                                @{           
+                                    string tvEyesImgSrc = sessionInformation.IsExternalRuleEditor ? "edit_icon.png" : "view.png";
+                                    string tvEyesImgTitle = sessionInformation.IsExternalRuleEditor ? "Edit Rule" : "View Rule";       
+                                    <img id="imgEditTVEyesRule" src="../images/@tvEyesImgSrc" style="margin-left:10px; margin-bottom:4px; cursor:pointer;" class="displayNone" title="@tvEyesImgTitle" onclick="ShowEditTVEyesRulePopup();" />
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupTVEyesSearchGUID" style="color: #FF0000; display: none; vertical-align: top"></span>
                             </div>
                         </div>
                     </div>   
-                  }
-                }
-                @if (sessionInformation.Isv4BLPM)
-                {
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM:
                     <div id="divPMSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(5);"
                         style="margin-top: 15px;">
                         <div class="float-left">
-                            <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.PM)
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_PM" onclick="return false;" name="chkIQAgentSetup_PM"
@@ -742,14 +868,13 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>
-                }
-                @if (sessionInformation.Isv4PQ)
-                {
+                       break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.PQ:
                     <div id="divPQSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(6);"
                         style="margin-top: 15px;">
                         <div class="float-left">
-                            <img alt="" id="imgShowHide" src="../images/show.png">
-                            @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.MediaType.PQ)
+                            <img alt="" id="imgShowHide" src="../images/show.png">                     
+                            @objSubMediaType.DisplayName
                         </div>
                         <div class="float-right marginRight10">
                             <input type="checkbox" id="chkIQAgentSetup_PQ" name="chkIQAgentSetup_PQ"
@@ -811,6 +936,173 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
                             </div>
                         </div>
                     </div>                   
+                                break;
+                            case IQMedia.Shared.Utility.CommonFunctions.CategoryType.LN:
+                    <div id="divLNSetup" class="show-hide cursorPointer" onclick="ShowHideTabdiv(10);"
+                        style="margin-top: 15px;">
+                        <div class="float-left">
+                            <img alt="" id="imgShowHide" src="../images/show.png">
+                            @objSubMediaType.DisplayName
+                        </div>
+                        <div class="float-right marginRight10">
+                            <input type="checkbox" id="chkIQAgentSetup_LN" name="chkIQAgentSetup_LN" value="LN"
+                                style="margin-bottom: 5px; margin-left: 5px;" checked="checked" /></div>
+                    </div> 
+                    <div id="divLNTabContent" class="margin10" style="display: none;">
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupSearchTerm_LN">
+                                Search Term</label>
+                            <div class="controls">
+                                <div class="float-left width64p">
+                                    <input type="text" id="txtIQAgentSetupSearchTerm_LN" name="txtIQAgentSetupSearchTerm_LN"
+                                        class="txtwidth90per" placeholder="Search Term" />
+                                </div>
+                                <div class="float-left">
+                                    <input type="checkbox" checked="checked" id="chkIQAgentSetupUserMasterSearchTerm_LN" name="chkIQAgentSetupUserMasterSearchTerm_LN"
+                                        value="true" style="margin-bottom: 5px; margin-left: 5px;" /> Use Master Search Term 
+                                </div>
+                                <span class="help-inline width100p" id="spantxtIQAgentSetupSearchTerm_LN"
+                                    style="color: #FF0000; display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupPublication_LN">
+                                Publications</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupPublication_LN" name="txtIQAgentSetupPublication_LN"
+                                    class="txtwidth90per" placeholder="Publications (separate multiple publications with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupPublication_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupCategory_LN">
+                                Categories</label>
+                            <div class="controls">
+                                @if (Model.NM_CategoryList != null)
+                                {
+                                    <select id="ddlIQAgentSetupCategory_LN" name="ddlIQAgentSetupCategory_LN" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Categories">
+                                        <option value="0">All</option>
+                                        @foreach (IQMedia.Model.IQAgentDropDown_NM_Category item in Model.NM_CategoryList)
+                                        {
+                                            <option value="@item.Label">@item.Label</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupCategory_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupPublicationCategory_LN">
+                                Publication Categories</label>
+                            <div class="controls">
+                                @if (Model.NM_PublicationCategoryList != null)
+                                {
+                                    <select id="ddlIQAgentSetupPublicationCategory_LN" name="ddlIQAgentSetupPublicationCategory_LN"
+                                        class="chosen-select ddlwidth93per" multiple="multiple" data-placeholder="Publication Categories">
+                                        <option value="0">All</option>
+                                        @foreach (IQMedia.Model.IQAgentDropDown_NM_PublicationCategory item in Model.NM_PublicationCategoryList)
+                                        {
+                                            <option value="@item.ID">@item.Label</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupPublicationCategory_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupGenere_LN">
+                                Genres</label>
+                            <div class="controls">
+                                @if (Model.NM_GenereList != null)
+                                {
+                                    <select id="ddlIQAgentSetupGenere_LN" name="ddlIQAgentSetupGenere_LN" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Genres">
+                                        <option value="0">All</option>
+                                        @foreach (IQMedia.Model.IQAgentDropDown_NM_Genere item in Model.NM_GenereList)
+                                        {
+                                            <option value="@item.Label">@item.Label</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupGenere_LN" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupRegion_LN">
+                                Regions</label>
+                            <div class="controls">
+                                @if (Model.NM_RegionList != null)
+                                {
+                                    <select id="ddlIQAgentSetupRegion_LN" name="ddlIQAgentSetupRegion_LN" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Regions">
+                                        <option value="0">All</option>
+                                        @foreach (IQMedia.Model.IQAgentDropDown_NM_Region item in Model.NM_RegionList)
+                                        {
+                                            <option value="@item.Label">@item.Label</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupRegion_LN" style="color: #FF0000; display: none;
+                                    vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupCountry_LN">
+                                Countries</label>
+                            <div class="controls">
+                                @if (Model.CountryList != null)
+                                {
+                                    <select id="ddlIQAgentSetupCountry_LN" name="ddlIQAgentSetupCountry_LN" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Countries">
+                                        <option value="0">All</option>
+                                        @foreach (var item in Model.CountryList)
+                                        {
+                                            <option value="@item.Value">@item.Key</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupCountry_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="ddlIQAgentSetupLanguage_LN">
+                                Languages</label>
+                            <div class="controls">
+                                @if (Model.LanguageList != null)
+                                {
+                                    <select id="ddlIQAgentSetupLanguage_LN" name="ddlIQAgentSetupLanguage_LN" class="chosen-select ddlwidth93per"
+                                        multiple="multiple" data-placeholder="Languages">
+                                        <option value="0">All</option>
+                                        @foreach (var item in Model.LanguageList)
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                    </select>
+                                }
+                                <span class="help-inline" id="spanIQAgentSetupLanguage_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="txtIQAgentSetupExcludeDomains_LN">
+                                Exclude Domains</label>
+                            <div class="controls">
+                                <input type="text" id="txtIQAgentSetupExcludeDomains_LN" name="txtIQAgentSetupExcludeDomains_LN"
+                                    class="txtwidth90per" placeholder="Exclude Domains (separate multiple domains with semicolon)" />
+                                <span class="help-inline" id="spanIQAgentSetupExcludeDomains_LN" style="color: #FF0000;
+                                    display: none; vertical-align: top"></span>
+                            </div>
+                        </div>
+                    </div>      
+                                break;
+                        }
+                    }
                 }
                 @if (sessionInformation.isv5LRAccess)
                 {
@@ -856,3 +1148,79 @@ id="frmIQAgentSetupAddEdit" name="frmIQAgentSetupAddEdit">
     </div>
 </div>
 </form>
+
+<div id="divEditTwitterRulePopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img src="~/images/close-icon.png" alt="close" class="popup-top-close" onclick="CancelIQAgentPopup('divEditTwitterRulePopup');" /></div>
+    <div style="padding:20px;">     
+        @if (sessionInformation.IsExternalRuleEditor)
+        {   
+        <div class="modalpopheadertitle" style="width: 100%;">
+            <div style="float: right;">
+                <input type="button" id="btnCancelTWRuleEdit" name="btnCancelTWRuleEdit"
+                    value="Cancel" onclick="CancelIQAgentPopup('divEditTwitterRulePopup');" class="cancelButton"
+                    style="margin: 0px;" />
+                <input type="button" id="btnSubmitTWRuleEdit" name="btnSubmitTWRuleEdit"
+                    value="Submit" onclick="SaveTwitterRules();" class="button" style="margin: 0px;" />
+            </div>
+            <div style="clear: both;">
+            </div>
+        </div>
+        }
+        <div class="modalBody">
+            <div style="padding:10px 0px;">
+                <span style="float:left; margin-right:10px; margin-top:5px;">Gnip Tag:</span>
+                <input id="txtTwitterRuleTag" type="text" readonly="readonly" style="float:left; width:300px;" />                
+                @if (sessionInformation.IsExternalRuleEditor)
+                {
+                <a id="aAddTWRule" href="#" onclick="AddTwitterRuleSection();" style="float:right;">Add Rule Section</a>
+                }
+            </div>
+            <div id="divTwitterRuleMsg" style="width:99%; text-align:center; color:Red; clear:both; margin-bottom:10px;"></div>
+            <div id="divTwitterRules"></div>            
+            <div>
+                <ul class="ul-line-none twitterRuleOptions">
+                    @{
+                        string disabled = sessionInformation.IsExternalRuleEditor ? "" : "disabled=\"disabled\"";
+                    <li><input type="checkbox" id="chkFollowers" name="chkTwitterRuleOption" @disabled />Followers &gt;15k</li>
+                    <li><input type="checkbox" id="chkFollowing" name="chkTwitterRuleOption" @disabled />Following &gt;100</li>
+                    <li><input type="checkbox" id="chkEnglish" name="chkTwitterRuleOption" @disabled />English Only</li>
+                    <li><input type="checkbox" id="chkTimeZones" name="chkTwitterRuleOption" @disabled />US Time Zones Only</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divEditTVEyesRulePopup" class="modal fade hide resizable modalPopupDiv">
+    <div class="closemodalpopup">
+        <img src="~/images/close-icon.png" alt="close" class="popup-top-close" onclick="CancelIQAgentPopup('divEditTVEyesRulePopup');" /></div>
+    <div style="padding:20px;">     
+        @if (sessionInformation.IsExternalRuleEditor)
+        {   
+        <div class="modalpopheadertitle" style="width: 100%;">
+            <div style="float: right;">
+                <input type="button" id="btnCancelTVEyesRuleEdit" name="btnCancelTVEyesRuleEdit"
+                    value="Cancel" onclick="CancelIQAgentPopup('divEditTVEyesRulePopup');" class="cancelButton"
+                    style="margin: 0px;" />
+                <input type="button" id="btnSubmitTVEyesRuleEdit" name="btnSubmitTVEyesRuleEdit"
+                    value="Submit" onclick="SaveTVEyesRule();" class="button" style="margin: 0px;" />
+            </div>
+            <div style="clear: both;">
+            </div>
+        </div>
+        }
+        <div class="modalBody">
+            <div style="padding:10px 0px;">
+                <span style="float:left; margin-right:10px; margin-top:5px;">Search Guid:</span>
+                <input id="txtTVEyesSearchGuid" type="text" readonly="readonly" style="float:left; width:300px;" />                
+            </div>
+            <div id="divTVEyesRuleMsg" style="width:99%; text-align:center; color:Red; clear:both; margin-bottom:10px;"></div>
+            @{
+                string tvEyesReadOnly = sessionInformation.IsExternalRuleEditor ? "" : "readOnly=\"readOnly\"";
+                <textarea id="txtTVEyesSearchTerm" rows="4" cols="40" class="tvEyesRuleTxt" @tvEyesReadOnly></textarea>
+            }
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@
     if (!string.IsNullOrEmpty(Request.QueryString["source"]))
     {
         Layout = null;
-	
+    
     <script src="~/Scripts/jquery-1.9.1.min.js?v=1.0" type="text/javascript"></script>
     <script src="~/Scripts/jquery.placeholder.min.js?v=1.0" type="text/javascript"></script>
     <link href="~/Css/jquery-ui.css" rel="stylesheet" type="text/css" />
@@ -19,9 +19,9 @@
     <script src="~/Scripts/jquery-ui.min.js?v=1.0" type="text/javascript"></script>
     <script src="~/Scripts/ConstantScript.js?v=1.7" type="text/javascript"></script>
     
-    <script src="~/Scripts/IQMediaCommon.js?v=2.8" type="text/javascript"></script>
-    
-    <script type ="text/javascript" >
+    <script src="~/Scripts/IQMediaCommon.js?v=3.0" type="text/javascript"></script>
+
+    <script type="text/javascript">
         var _urlVideoMetaData = '@System.Configuration.ConfigurationManager.AppSettings["UrlGetVideoMetaData"]';
         var _urlVideoNielsenData = '@System.Configuration.ConfigurationManager.AppSettings["UrlGetVideoNielSenData"]';
         var _urlVideoThumb = '@System.Configuration.ConfigurationManager.AppSettings["UrlGenerateVideoRawMediaThumb"]';
@@ -58,39 +58,39 @@
         }
     </style>
     <!--[if IE 7]>
-	<style>
-	.container {
-	width:1280px;
-	}
-	.btn-group {
-	float:left;
-	}
-	
-	.action {
-	float:right;
-	}
-	.media-heading {
-	width:95%;
-	display:block;
-	}
-	</style>
+    <style>
+    .container {
+    width:1280px;
+    }
+    .btn-group {
+    float:left;
+    }
+    
+    .action {
+    float:right;
+    }
+    .media-heading {
+    width:95%;
+    display:block;
+    }
+    </style>
 <!--<![endif]-->
     <!--[if IE 8]>
 <style>
-	.container {
-		width:1280px;
-	}
-	.media-heading {
-	width:90%;
-	}
+    .container {
+        width:1280px;
+    }
+    .media-heading {
+    width:90%;
+    }
 </style>
 <!--<![endif]-->
     <link href="~/Css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js?v=1.0"></script>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js?v=1.0"></script>
       <script src="~/Scripts/respond.min.js"></script>
-	<!--<![endif]-->
+    <!--<![endif]-->
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png" />
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png" />
@@ -109,10 +109,11 @@
     IQMedia.Model.ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
 }
 
-<script type="text/javascript" src="~/Scripts/Dashboard.js?v=3.6"></script>
-<link href="~/Css/Dashboard.css?v=1.5" type="text/css" rel="Stylesheet" />
+<script type="text/javascript" src="~/Scripts/Dashboard.js?v=4.2"></script>
+<link href="~/Css/Dashboard.css?v=1.6" type="text/css" rel="Stylesheet" />
 <script src="~/Scripts/highcharts.js?v=1.1" type="text/javascript"></script>
 <script src="~/Scripts/fusioncharts.js?v=1.0" type="text/javascript"></script>
+
 
 <div class="container container_custom">
     <div class="row-fluid" id="divRowFluid">
@@ -127,10 +128,11 @@
                         Narrow Results</h5>
                     <div class="navbar">
                         <ul role="navigation" class="nav floatNone sideMenuUl width100p">
-                            <li class="nagent"><a data-toggle="dropdown" class="dropdown-toggle" role="button"
-                                id="liSearchRequestFilter" href="#">Agent<span class="spnArrow">&nbsp;</span></a>
-                                <ul aria-labelledby="drop2" role="menu" class="nav nav-stacked nav-dropdpwn top0"
-                                    id="ulSearchRequest" style="display: none;">
+                            <li class="nagent">
+                                <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="liSearchRequestFilter" href="#">
+                                    Agent<span class="spnArrow">&nbsp;</span>
+                                </a>
+                                <ul aria-labelledby="drop2" role="menu" class="nav nav-stacked nav-dropdpwn top0" id="ulSearchRequest" style="display: none;">
                                     @{
                                         <li role="presentation" style="padding: 0px;">
                                             <ul class="sideMenu sub-submenu" aria-labelledby="drop2" role="menu">
@@ -163,49 +165,18 @@
                         <ul role="navigation" class="nav floatNone sideMenuUl width100p" id="ulMenu">
                             <li id="liOverview" class="dropdown Overview" onclick="GetDataMediumWise('Overview','Overview');">
                                 <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">
-                                    Overview<span class="spnArrow">&nbsp;</span></a> </li>
-                            @if (sessionInformation.Isv4TV)
-                            {
-                                <li id="liTV" class="dropdown Broadcast" onclick="GetDataMediumWise('TV','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.TV)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.TV)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
-                            }
-                            @if (sessionInformation.Isv4NM)
-                            {
-                                <li id="liNM" class="dropdown News" onclick="GetDataMediumWise('NM','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.NM)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
-                            }
-                            @if (sessionInformation.Isv4SM)
-                            {
-                                <li id="liBlog" class="dropdown Blog" onclick="GetDataMediumWise('Blog','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Blog)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.Blog)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
-                            
-                                <li id="liForum" class="dropdown Forum" onclick="GetDataMediumWise('Forum','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Forum)');"><a
-                                    data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">
-                                    @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.Forum)<span class="spnArrow">&nbsp;</span></a> </li>
-                                <li id="liSM" class="dropdown SocialMedia" onclick="GetDataMediumWise('SocialMedia','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.SocialMedia)');">
-                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="drop2" href="#">
-                                        @IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.SocialMedia)<span class="spnArrow">&nbsp;</span></a> </li>
-                            }
-                            @if (sessionInformation.Isv4TW)
-                            {
-                                <li id="liTW" class="dropdown Twitter" onclick="GetDataMediumWise('TW','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.TW)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.TW)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
-                            }
-                            @if (sessionInformation.Isv4TM)
-                            {
-                                <li id="liTM" class="dropdown Radio" onclick="GetDataMediumWise('Radio','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.Radio)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.Radio)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
-                            }
-                            @if (sessionInformation.Isv4BLPM || sessionInformation.Isv4PQ)
-                            {                                
-                                <li id="liPM" class="dropdown PrintMedia" onclick="GetDataMediumWise('PM','@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.PM)');"><a data-toggle="dropdown"
-                                    class="dropdown-toggle" role="button" id="drop2" href="#">@IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.DashBoardMediumType.PM)<span class="spnArrow">&nbsp;</span></a>
-                                </li>
+                                    Overview<span class="spnArrow">&nbsp;</span>
+                                </a>
+                            </li>
+                            @{
+                                                var mtList = sessionInformation.MediaTypes.Where(m => m.TypeLevel == 1 && m.HasAccess && !m.IsArchiveOnly && (sessionInformation.MediaTypes.Where(sm => sm.TypeLevel == 2 && string.Compare(sm.MediaType, m.MediaType, true) == 0 && sm.HasAccess).Count() > 0)).OrderBy(mts=>mts.SortOrder);
+                                                foreach (var mt in mtList)
+                                                {
+                                <li class="dropdown" onclick="GetDataMediumWise('@mt.MediaType','@mt.DisplayName');" data-c-mt="@mt.MediaType" style="background:url('@mt.MediaIconPath') no-repeat 10px center;">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" href="javascript:void(0);">@mt.DisplayName<span
+                                        class="spnArrow">&nbsp;</span></a> </li>
+                                                }
+                                
                             }
                             @if (Convert.ToBoolean(Model["UseClientSpecificData"]))
                             {
@@ -217,7 +188,47 @@
                                 </li>
                             }
                         </ul>
+                        <div style="clear:both;"></div>
                     </div>
+                    @*Only display new dashboard reports for IQ client or Kye/JDerham logins*@
+                    @if ((string.Compare(sessionInformation.ClientGUID.ToString(), "7722A116-C3BC-40AE-8070-8C59EE9E3D2A", true) == 0) || sessionInformation.CustomerKey == 1435 || sessionInformation.CustomerKey == 19)
+                    {
+                        <h5>Reports</h5>
+                        <div class="navbar">
+                            <ul id="ulReports" role="navigation" class="nav floatNone sideMenuUl width100p">
+                                <li id="Cohorts_Overview" class="dropdown" onclick="GetOverviewReport(this);">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="" href="#">
+                                        Overview
+                                    </a>
+                                </li>
+                                <li id="Cohorts_Market" class="dropdown" onclick="GetOverviewReport(this)">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="" href="#">
+                                        Markets
+                                    </a>
+                                </li>
+                                <li id="Cohorts_Network" class="dopdown" onclick="GetOverviewReport(this)">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="" href="#">
+                                        Networks
+                                    </a>
+                                </li>
+                                <li id="Cohorts_Station" class="dropdown" onclick="GetOverviewReport(this)">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="" href="#">
+                                        Stations
+                                    </a>
+                                </li>
+                                <li id="Cohorts_Program" class="dropdown" onclick="GetOverviewReport(this)">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" id="" href="#">
+                                        Programs
+                                    </a>
+                                </li>
+                                <li id="Cohorts_Brand" class="dropdown" onclick="GetOverviewReport(this)">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" role="button" href="#">
+                                        Brand
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
                 </div>
                 <!--/.well -->
                 @*<input type="button" value="Search" id="btnSearchTimeshift" />*@
@@ -265,11 +276,64 @@
                 </div>
                 <div id="divActiveFilter" class="row-fluid filter">
                 </div>
-                <div style="clear: both;">
+                @*<div style="clear: both;"></div>*@
+                <div id="secondaryCohortNav" class="navbar" style="display:none;margin-bottom:0px;width:50%;float:left">
+                    <span id="cohortIndsutryText" style="font-weight:bold;float:left;padding:5px;">Industry:&nbsp;</span>
+                    <div id="cohortIndustryDrop" class="dropdown" style="float:left;padding-top:5px;">
+                        <span id="cohortIndustryLink" class="cursorPointer" data-toggle="dropdown" role="button">
+                            <span id="displayedIndustry">
+                                @Model["DefaultCohort"]
+                            </span>
+                            <span class="spnArrow cohortArrowSpanOverride">&nbsp;</span>
+                        </span>
+                        <ul id="cohortList" class="dropdown-menu" style="margin-left:0px;left:105%;top:0%;width:200px;text-align:center;">
+                            @foreach (var KvP in (Dictionary<long, string>)Model["IndustryCohorts"])
+                            {
+                                if (KvP.Value.Equals(Model["DefaultCohort"]))
+                                {
+                                    <li role="presentation" id='@string.Format("cohort_{0}", KvP.Key)' class="highlightedli cursorPointer" onclick="ChangeCohort(this)">@KvP.Value</li>
+                                }
+                                else
+                                {
+                                    <li role="presentation" id='@string.Format("cohort_{0}", KvP.Key)' class="cursorPointer" onclick="ChangeCohort(this)">@KvP.Value</li>
+                                }
+                            }
+                        </ul>
+                    </div>
                 </div>
+                <div style="clear: both;"></div>
                 <div class="dashboardHeaderMainDiv">
                     <div class="pull-left dashboardHeader" id="divHeader">
                         @*Source Overview*@
+                    </div>
+                    <!-- Cohort List for Reports -->
+                    <div id="cohortNavBar" class="navbar" style="display:none;margin-bottom:0px;width:50%;float:left;">
+                        <div id="mainCohortNav" style="font-size:16px;">
+                            <span id="cohortReportText" style="font-weight:bold;float:left;padding:5px;">Industry Overview:&nbsp;</span>
+                            <div id="cohortReportDrop" class="dropdown" style="float:left;padding-top:5px;">
+                                <span id="cohortReportLink" class="cursorPointer" data-toggle="dropdown" role="button">
+                                    <span id="displayedReport">
+                                        @Model["DefaultCohort"]
+                                    </span>
+                                    <span class="spnArrow cohortArrowSpanOverride">&nbsp;</span>
+                                </span>
+                                <div class="dropdown-menu cohortDropList">
+                                    <ul id="cohortReportList" style="list-style:none;margin:0px;">
+                                        @*@foreach (var KvP in (Dictionary<long, string>)Model["IndustryCohorts"])
+                                        {
+                                            if (KvP.Value.Equals(Model["DefaultCohort"]))
+                                            {
+                                                <li role="presentation" id='@string.Format("cohort_{0}", KvP.Key)' class="highlightedli cursorPointer" onclick="ChangeCohort(this)">@KvP.Value</li>
+                                            }
+                                            else
+                                            {
+                                                <li role="presentation" id='@string.Format("cohort_{0}", KvP.Key)' class="cursorPointer" onclick="ChangeCohort(this)">@KvP.Value</li>
+                                            }
+                                        }*@
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="pull-right">
                         <div class="float-left dashboardHeader" id="divDashboardUtility">
@@ -410,12 +474,14 @@
             </div>
         </div>
     </div>
-    <div id="divFeedsPage" class="modal fade hide resizable modalPopupDiv" style="width: 65%;height: 70%;">
+    <div id="divFeedsPage" class="modal fade hide resizable modalPopupDiv" style="width: 65%;
+        height: 70%;">
         <div class="closemodalpopup">
             <img id="imgCloseIFramePopup" src="~/images/close-icon.png" alt="close" class="popup-top-close"
                 onclick="CancelIFramePopup();" /></div>
-        <div style="width: 99.5%; height: 99.5%;margin-left:10px;" id="divFrameResize" >
-            <iframe id="iFrameFeeds" style="width: 100%; height: 100%;" src="" frameborder="0" ></iframe>
+        <div style="width: 99.5%; height: 99.5%; margin-left: 10px;" id="divFrameResize">
+            <iframe id="iFrameFeeds" style="width: 100%; height: 100%;" src="" frameborder="0">
+            </iframe>
         </div>
     </div>
     <div id="divThirdPartyPopup" class="modal fade hide resizable modalPopupDiv">
@@ -468,19 +534,21 @@
     </div>
     if (!string.IsNullOrEmpty(Request.QueryString["source"]))
     {
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-transition.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-alert.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-modal.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-dropdown.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-scrollspy.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-tab.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-tooltip.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-popover.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-button.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-collapse.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-carousel.js?v=1.0")" type="text/javascript"></script>
-        <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-typeahead.js?v=1.0")" type="text/javascript"></script>
-        <script src="~/Scripts/jquery.mCustomScrollbar.concat.min.js?v=1.1" type="text/javascript"></script>
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-transition.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-alert.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-modal.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-dropdown.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-scrollspy.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-tab.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-tooltip.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-popover.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-button.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-collapse.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-carousel.js?v=1.0")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/Bootstrap/bootstrap-typeahead.js?v=1.0")" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.mCustomScrollbar.concat.min.js?v=1.1" type="text/javascript"></script>
     }
 }
+@Html.Partial("~/Views/Shared/_DashboardMediaSparkChart.cshtml")
+

@@ -2,12 +2,11 @@
 var _fromDate = null;
 var _toDate = null;
 var _QueryName = [];
-var _Medium = [];
-var _MediumDescription = [];
 var _Paid = false;
 var _Earned = false;
 var _Seen = false;
 var _Heard = false;
+var _SubMediaTypes = [];
 var _RequestID = [];
 var _OldRequestID = [];
 var _Sentiment = null;
@@ -37,14 +36,21 @@ var _MediaIDs = [];
 var _PieChartTotalHits = 0; // Used by IQMediaCommon.js for Dashboard popup
 var _CurrentNumPages = 1;
 var _ScrollToTop = true;
-var _VideoParentID = true; // Holds the parent ID of the video being viewed, for use in marking clipped videos as read
+var _VideoParentID = 0; // Holds the parent ID of the video being viewed, for use in marking clipped videos as read
+var _MasterMediaTypes = []; // Array of submedia type objects with the structure [MediaType, SubMediaType, SubMediaType Display Name]
 
 // Analytics Drilldown parameters
-var _dayOfWeek = "";
-var _timeOfDay = "";
+var _dayOfWeek = [];
+var _timeOfDay = [];
 var _showTitle = "";
 var _isMonthInterval = false;
 var _isHourInterval = false;
+var _useGMT = false;    // Used to distinguish between daypart/daytime tabs; daytime will use GMT and daypart will use local time
+var _stationAffil = "";
+var _demographic = "";
+var _isDrilldown = false;
+var _daypart = "";
+var _excludedIDs = [];
 
 var _PositiveSentimentActiveFilter = '<div id="divSentimentAF" class="clear"><div class="right" id="divSentimentAF"><div class="divSentimentMain"><div class="divSentimentNeg"><div class="width0">&nbsp;</div></div><div class="divSentimentPos"><div class="width74">&nbsp;</div></div></div></div></div>';
 var _NegativeSentimentActiveFilter = '<div id="divSentimentAF" class="clear"><div class="right" id="divSentimentAF"><div class="divSentimentMain"><div class="divSentimentNeg width50p"><div class="width74">&nbsp;</div></div><div class="divSentimentPos"><div class="width0"></div></div></div></div></div>';
@@ -110,7 +116,7 @@ $(document).ready(function () {
     //documentHeight = $(window).height();
     if (screen.height >= 768)
     {
-        if (getParameterByName("medium") == '' && getParameterByName("date") == '')
+        if (getParameterByName("mediatype") == '' && getParameterByName("submediatype") == '' && getParameterByName("date") == '')
         {
             $('#divMainContent').css({ 'height': documentHeight - 250 });
         }
@@ -269,15 +275,21 @@ $(document).ready(function () {
     GetFeedsReportLimit();
 
 
-    var qryMedium = getParameterByName("medium")
-    _Medium = [];
-    _MediumDescription = [];
+    var qryMediaType = getParameterByName("mediatype");
+    var qrySubMediaType = getParameterByName("submediatype");
+    _SubMediaTypes = [];
 
-    if (qryMedium != '')
+    if (qryMediaType != '')
     {
-
-        _Medium = $.parseJSON(qryMedium);
-        _MediumDescription = $.parseJSON(getParameterByName("mediumDesc"));
+        _SubMediaTypes = $.map($.grep(_MasterMediaTypes, function (obj) {
+            return obj[0] == qryMediaType;
+        }), function (obj1, index) {
+            return obj1[1]; // SubMedia Type abbreviations (TV, NM, Blog, PQ, etc.)
+        });
+    }
+    else if (qrySubMediaType != '')
+    {
+        _SubMediaTypes = $.parseJSON(qrySubMediaType);
     }
 
     var qryHeard = getParameterByName("heard");
@@ -310,7 +322,6 @@ $(document).ready(function () {
 
     var qryDma = getParameterByName("dma")
     _Dma = '';
-
     if (qryDma != '')
     {
         _Dma = qryDma;
@@ -366,22 +377,56 @@ $(document).ready(function () {
         _Author = qryAuthor;
     }
 
-    var dayOfWeek = getParameterByName("dayOfWeek");
-    if (dayOfWeek != '')
+    var dow = getParameterByName("dayOfWeek");
+    if (dow !== '')
     {
-        _dayOfWeek = dayOfWeek;
+        _dayOfWeek = $.parseJSON(getParameterByName("dayOfWeek"));
     }
 
-    var timeOfDay = getParameterByName("timeOfDay");
-    if (timeOfDay != '')
+    var tod = getParameterByName("timeOfDay");
+    if (tod !== '')
     {
-        _timeOfDay = timeOfDay;
+        _timeOfDay = $.parseJSON(getParameterByName("timeOfDay"));
+    }
+
+    var dp = getParameterByName("daypart");
+    if (dp !== '')
+    {
+        _daypart = dp;
+    }
+
+    var useGMT = getParameterByName("useGMT")
+    if (useGMT != '')
+    {
+        _useGMT = useGMT;
     }
 
     var showTitle = getParameterByName("showTitle");
     if (showTitle != '')
     {
         _showTitle = showTitle;
+    }
+
+    var stationAffil = getParameterByName("stationAffil");
+    if (stationAffil != '')
+    {
+        _stationAffil = stationAffil;
+    }
+
+    var demographic = getParameterByName("demo");
+    if (demographic != '')
+    {
+        _demographic = demographic;
+    }
+
+    var drilldown = getParameterByName("isDD");
+    if (drilldown != '')
+    {
+        _isDrilldown = drilldown;
+        if (_isDrilldown)
+        {
+            $("#liBuildDashboard").hide();
+        }
     }
 
     var isMonth = getParameterByName("isMonth");
@@ -445,7 +490,7 @@ $(document).ready(function () {
 
 
     // When drilling down from Dashboard, sort by Outlet Weight by default  
-    if (getParameterByName("date") != '' || getParameterByName("medium") != '')
+    if (getParameterByName("date") != '' || getParameterByName("mediatype") != '' || getParameterByName("submediatype") != '')
     {
         _IsAsc = false;
         _IsAudienceSort = true;
@@ -483,7 +528,8 @@ $(document).ready(function () {
 
 $(window).resize(function () {
     if (screen.height >= 768) {
-        if (getParameterByName("medium") == '' && getParameterByName("date") == '') {
+        if (getParameterByName("mediatype") == '' && getParameterByName("submediatype") == '' && getParameterByName("date") == '')
+        {
             $('#divMainContent').css({ 'height': documentHeight - 250 });
         }
         else {
@@ -498,7 +544,7 @@ function GetFilterData() {
         fromDate: _fromDate,
         ToDate: _toDate,
         searchRequestID: _RequestID,
-        mediumTypes: _Medium,
+        mediumTypes: _SubMediaTypes,
         keyword: _Keyword,
         sentiment: _Sentiment,
         Dma: _Dma,
@@ -518,7 +564,10 @@ function GetFilterData() {
         usePESHFilters: _Seen || _Heard || _Paid || _Earned,
         showTitle: _showTitle,
         dayOfWeek: _dayOfWeek,
-        timeOfDay: _timeOfDay
+        timeOfDay: _timeOfDay,
+        useGMT: _useGMT,
+        stationAffil: _stationAffil,
+        demographic: _demographic
     }
 
     $.ajax({
@@ -657,11 +706,35 @@ function SearchAgent() {
     }
 }
 
-function SetMedium(p_Medium, p_MediumDescription) {
+// When filtering on a media type, set the actual filter as every submedia type associated to it
+function SetMediaType(event, p_MediaType) {
     $('#ulMedium').addClass('hideDiv');
-    if (_Medium.length == 0 || _Medium.length > 1 || _Medium[0] != p_Medium) {
-        _Medium = [p_Medium];
-        _MediumDescription = [p_MediumDescription];
+
+    // This event is fired whenever a child submedia type is selected. Only run it if a media type was selected.
+    var event = window.event || event;
+    var target = event.target || event.srcElement;
+
+    if (target.name == "aMediaType") {
+        var subMediaTypes = $.map($.grep(_MasterMediaTypes, function (obj) {
+            return obj[0] == p_MediaType;
+        }), function (obj1, index) {
+            return obj1[1]; // SubMedia Type abbreviations (TV, NM, Blog, PQ, etc.)
+        });
+
+        if (_SubMediaTypes.length == 0 ||
+            $.grep(subMediaTypes, function (obj) { return $.inArray(obj, _SubMediaTypes) < 0 }).length > 0 ||
+            $.grep(_SubMediaTypes, function (obj) { return $.inArray(obj, subMediaTypes) < 0 }).length > 0
+           ) {
+            _SubMediaTypes = subMediaTypes;
+            CallHandler();
+        }
+    }
+}
+
+function SetSubMediaType(p_SubMediaType) {
+    $('#ulMedium').addClass('hideDiv');
+    if (_SubMediaTypes.length == 0 || _SubMediaTypes.length > 1 || _SubMediaTypes[0] != p_SubMediaType) {
+        _SubMediaTypes = [p_SubMediaType];
         CallHandler();
     }
 }
@@ -785,7 +858,7 @@ function CallHandler(numPages, resultMsg) {
             fromDate: _fromDate,
             ToDate: _toDate,
             searchRequestID: _RequestID,
-            mediumTypes: _Medium,
+            mediumTypes: _SubMediaTypes,
             keyword: _Keyword,
             sentiment: _Sentiment,
             isAsc: _IsAsc,
@@ -810,8 +883,11 @@ function CallHandler(numPages, resultMsg) {
             showTitle: _showTitle,
             dayOfWeek: _dayOfWeek,
             timeOfDay: _timeOfDay,
+            useGMT: _useGMT,
             isHour: _isHourInterval,
-            isMonth: _isMonthInterval
+            isMonth: _isMonthInterval,
+            stationAffil: _stationAffil,
+            demographic: _demographic
         }
 
         $.ajax({
@@ -826,11 +902,14 @@ function CallHandler(numPages, resultMsg) {
                 // Set filter irrespective of success or failure
                 SetActiveFilter();
 
-                if (result.isSuccess) {
-                    if (result.isValidResponse) {
+                if (result.isSuccess)
+                {
+                    if (result.isValidResponse)
+                    {
                         $("#divNoData").hide();
                     }
-                    else {
+                    else
+                    {
                         $("#divNoData").show();
                     }
 
@@ -840,10 +919,12 @@ function CallHandler(numPages, resultMsg) {
                     ModifyFilters(result.filter);
 
 
-                    if (result.filter.ListOfSearchRequestFilter != null) {
+                    if (result.filter.ListOfSearchRequestFilter != null)
+                    {
                         _CurrentRequestFilter = result.filter.ListOfSearchRequestFilter.slice(0);
                     }
-                    else {
+                    else
+                    {
                         _CurrentRequestFilter = [];
                     }
                     _CurrentProminenceValue = _ProminenceValue;
@@ -854,12 +935,14 @@ function CallHandler(numPages, resultMsg) {
 
                     $("#chkInputAll").prop("checked", false);
 
-                    if (screen.height >= 768 && _ScrollToTop) {
+                    if (screen.height >= 768 && _ScrollToTop)
+                    {
                         setTimeout(function () {
                             $("#divMainContent").mCustomScrollbar("scrollTo", "top");
                         }, 200);
                     }
-                    else {
+                    else
+                    {
                         _ScrollToTop = true;
                     }
 
@@ -870,18 +953,32 @@ function CallHandler(numPages, resultMsg) {
                     SetImageSrc();
 
                     // If reloading the page after an action, display the action's result message once the load is complete
-                    if (resultMsg != undefined) {
+                    if (resultMsg != undefined)
+                    {
                         ShowNotification(resultMsg);
                     }
 
-                    if (_IsRead != null && result.isReadLimitExceeded) {
+                    if (_IsRead != null && result.isReadLimitExceeded)
+                    {
                         $("#divIsReadMsg").show();
                     }
-                    else {
+                    else
+                    {
                         $("#divIsReadMsg").hide();
                     }
+
+                    if (result.excludedIDs != null && result.excludedIDs.length > 0)
+                    {
+                        _excludedIDs = result.excludedIDs;
+                        DisableExcludedRecords(result.excludedIDs);
+                    }
+                    else
+                    {
+                        _excludedIDs = [];
+                    }
                 }
-                else {
+                else
+                {
                     ShowErrorMessage();
                     ClearResultsOnError('ulMediaResults', 'divRecordCount', 'divShowResult', _msgErrorOnSearch.replace(/@@MethodName@@/g, "CallHandler()"));
                 }
@@ -909,7 +1006,7 @@ function GetMoreResults() {
         fromDate: _fromDate,
         ToDate: _toDate,
         searchRequestID: _RequestID,
-        mediumTypes: _Medium,
+        mediumTypes: _SubMediaTypes,
         keyword: _Keyword,
         sentiment: _Sentiment,
         isAsc: _IsAsc,
@@ -933,8 +1030,11 @@ function GetMoreResults() {
         showTitle: _showTitle,
         dayOfWeek: _dayOfWeek,
         timeOfDay: _timeOfDay,
+        useGMT: _useGMT,
         isHour: _isHourInterval,
-        isMonth: _isMonthInterval
+        isMonth: _isMonthInterval,
+        stationAffil: _stationAffil,
+        demographic: _demographic
     }
 
 
@@ -952,8 +1052,10 @@ function GetMoreResults() {
             $("#btnShowMoreResults").removeAttr("disabled");
             $("#btnShowMoreResults").attr("class", "loadmore");
 
-            if (result.isSuccess) {
-                if (result.isValidResponse) {
+            if (result.isSuccess)
+            {
+                if (result.isValidResponse)
+                {
                     $("#ulMediaResults").append(result.html);
                     ShowHideMoreResults(result);
                     ShowNoofRecords(result);
@@ -961,24 +1063,39 @@ function GetMoreResults() {
 
                     SetImageSrc();
 
-                    if ($("#chkInputAll").is(":checked")) {
+                    if (result.excludedIDs != null && result.excludedIDs.length > 0)
+                    {
+                        _excludedIDs = result.excludedIDs;
+                        DisableExcludedRecords(result.excludedIDs);
+                    }
+                    else
+                    {
+                        _excludedIDs = [];
+                    }
+
+                    if ($("#chkInputAll").is(":checked"))
+                    {
                         checkUncheckAll('ulMediaResults', 'chkInputAll');
                     }
 
-                    if (_IsRead != null && result.isReadLimitExceeded) {
+                    if (_IsRead != null && result.isReadLimitExceeded)
+                    {
                         $("#divIsReadMsg").show();
                     }
-                    else {
+                    else
+                    {
                         $("#divIsReadMsg").hide();
                     }
 
                     _CurrentNumPages++;
                 }
-                else {
+                else
+                {
                     ShowNotification(_msgFeedsSolrTimeout);
                 }
             }
-            else {
+            else
+            {
                 ShowErrorMessage();
             }
         },
@@ -1077,7 +1194,7 @@ function SetActiveFilter() {
                 dateStr = GetMonthDateString(_fromDate) + " To " + GetMonthDateString(_toDate);
             }
         }
-        else if (_isHourInterval && _dayOfWeek === '')
+        else if (_isHourInterval && _dayOfWeek.length === 0)
         {
             dateStr = new Date(_fromDate).toLocaleString("en-US");
         }
@@ -1090,8 +1207,17 @@ function SetActiveFilter() {
         isFilterActive = true;
     }
 
-    if (_MediumDescription != "") {
-        $('#divActiveFilter').append('<div id="divMediumActiveFilter" class="filter-in">' + _MediumDescription + '<span class="cancel" onclick="RemoveFilter(3);"></span></div>');
+    // Display individual filters for each submedia type, so that they can be disabled independently
+    if (_SubMediaTypes != null && _SubMediaTypes.length > 0) {
+        var filterHTML = "";
+        var subMediaTypes = $.grep(_MasterMediaTypes, function (obj) {
+            return $.inArray(obj[1], _SubMediaTypes) > -1;
+        });
+
+        $.each(subMediaTypes, function (index, obj) { // See _MasterMediaTypes declaration for structure
+            filterHTML += '<div id="divSubMediaTypeActiveFilter_' + obj[1] + '" class="filter-in">' + obj[2] + '<span class="cancel" onclick="RemoveFilter(3, \'' + obj[1] + '\');"></span></div>';
+        });
+        $('#divActiveFilter').append(filterHTML);
         isFilterActive = true;
     }
 
@@ -1147,121 +1273,142 @@ function SetActiveFilter() {
         isFilterActive = true;
     }
 
-    if (_dayOfWeek !== "")
+    if (_dayOfWeek.length > 0 && _daypart === "")
     {
         var day = "";
-        switch (_dayOfWeek)
+        switch (Number(_dayOfWeek))
         {
-            case "0":
+            case 0:
                 day = "Sunday";
                 break;
-            case "6":
+            case 6:
                 day = "Saturday";
                 break;
-            case "5":
+            case 5:
                 day = "Friday";
                 break;
-            case "4":
+            case 4:
                 day = "Thursday";
                 break;
-            case "3":
+            case 3:
                 day = "Wednesday";
                 break;
-            case "2":
+            case 2:
                 day = "Tuesday";
                 break;
-            case "1":
+            case 1:
                 day = "Monday";
                 break;
         }
 
         $("#divActiveFilter").append('<div id="divDayOfWeekActiveFilter" class="filter-in">' + day + '<span class="cancel" onclick="RemoveFilter(19);"></span></div>');
+        isFilterActive = true;
     }
 
-    if (_timeOfDay !== "")
+    if (_timeOfDay.length > 0 && _daypart === "")
     {
         var time = "";
-        switch (_timeOfDay)
+        switch (Number(_timeOfDay))
         {
-            case "0":
+            case 0:
                 time = "12:00 AM";
                 break;
-            case "1":
+            case 1:
                 time = "01:00 AM";
                 break;
-            case "2":
+            case 2:
                 time = "02:00 AM";
                 break;
-            case "3":
+            case 3:
                 time = "03:00 AM";
                 break;
-            case "4":
+            case 4:
                 time = "04:00 AM";
                 break;
-            case "5":
+            case 5:
                 time = "05:00 AM";
                 break;
-            case "6":
+            case 6:
                 time = "06:00 AM";
                 break;
-            case "7":
+            case 7:
                 time = "07:00 AM";
                 break;
-            case "8":
+            case 8:
                 time = "08:00 AM";
                 break;
-            case "9":
+            case 9:
                 time = "09:00 AM";
                 break;
-            case "10":
+            case 10:
                 time = "10:00 AM";
                 break;
-            case "11":
+            case 11:
                 time = "11:00 AM";
                 break;
-            case "12":
+            case 12:
                 time = "12:00 PM";
                 break;
-            case "13":
+            case 13:
                 time = "01:00 PM";
                 break;
-            case "14":
+            case 14:
                 time = "02:00 PM";
                 break;
-            case "15":
+            case 15:
                 time = "03:00 PM";
                 break;
-            case "16":
+            case 16:
                 time = "04:00 PM";
                 break;
-            case "17":
+            case 17:
                 time = "05:00 PM";
                 break;
-            case "18":
+            case 18:
                 time = "06:00 PM";
                 break;
-            case "19":
+            case 19:
                 time = "07:00 PM";
                 break;
-            case "20":
+            case 20:
                 time = "08:00 PM";
                 break;
-            case "21":
+            case 21:
                 time = "09:00 PM";
                 break;
-            case "22":
+            case 22:
                 time = "10:00 PM";
                 break;
-            case "23":
+            case 23:
                 time = "11:00 PM";
                 break;
         }
         $("#divActiveFilter").append('<div id="divTimeOfDayActiveFilter" class="filter-in">' + time + '<span class="cancel" onclick="RemoveFilter(20);"></span></div>');
+        isFilterActive = true;
     }
 
     if (_showTitle !== "")
     {
         $("#divActiveFilter").append('<div id="divShowTitleActiveFilter" class="filter-in">' + _showTitle + '<span class="cancel" onclick="RemoveFilter(21);"></span></div>');
+        isFilterActive = true;
+    }
+
+    if (_stationAffil !== "")
+    {
+        $("#divActiveFilter").append('<div id="divStationAffilActiveFilter" class="filter-in">' + _stationAffil + '<span class="cancel" onclick="RemoveFIlter(22);"></span></div>');
+        isFilterActive = true;
+    }
+
+    if (_demographic !== "")
+    {
+        $("#divActiveFilter").append('<div id="divDemographicActiveFilter" class="filter-in">' + _demographic + '<span class="cancel" onclick="RemoveFilter(23);"></span></div>');
+        isFilterActive = true;
+    }
+
+    if (_daypart !== "")
+    {
+        $("#divActiveFilter").append('<div id="divDaypartActiveFilter" class="filter-in">' + _daypart + '<span class="cancel" onclick="RemoveFilter(24);"></span></div>');
+        isFilterActive = true;
     }
 
     if (_IsRead != null) {
@@ -1308,7 +1455,8 @@ function SetActiveFilter() {
 
     if (screen.height >= 768) {
         if ($('#divActiveFilter').children().length > 0) {
-            if (getParameterByName("medium") == '' && getParameterByName("date") == '') {
+            if (getParameterByName("mediatype") == '' && getParameterByName("submediatype") == '' && getParameterByName("date") == '')
+            {
                 $('#divMainContent').css({ 'height': $(window).height() - 250 });
             }
             else {
@@ -1375,12 +1523,20 @@ function ModifyFilters(filter) {
     }
 
     var mediumLI = "";
-    if (filter.FilterListCategory != null) {
-        $.each(filter.FilterListCategory, function (eventID, eventData) {
-
-            mediumLI = mediumLI + '<li onclick="SetMedium(\'' + eventData.Value + '\',\'' + eventData.Key + '\');" role=\"presentation\"><a href=\"#\" tabindex=\"-1\" role=\"menuitem\">';
-            mediumLI += eventData.Key + ' (' + eventData.CountFormatted + ') </a></li>';
-
+    if (filter.ListOfMediaTypeFilter != null) {
+        $.each(filter.ListOfMediaTypeFilter, function (eventID, eventData) {
+            var mediaTypeClass = eventData.SubMediaTypes != null && eventData.SubMediaTypes.length > 0 ? ' class="dropdown-submenu"' : "";
+            mediumLI += '<li onclick="SetMediaType(event, \'' + eventData.Value + '\');"' + mediaTypeClass + '><a data-toggle="dropdown" class="dropdown-toggle" href="#" role="button" name="aMediaType">';
+            mediumLI += eventData.Key + ' (' + eventData.CountFormatted + ') </a>';
+            if (eventData.SubMediaTypes != null && eventData.SubMediaTypes.length > 0) {
+                mediumLI += '<ul aris-labelledby="drop2" role="menu" class="dropdown-menu sideMenu" id="ulSubMedium">'
+                $.each(eventData.SubMediaTypes, function (eventID2, eventData2) {
+                    mediumLI += '<li onclick="SetSubMediaType(\'' + eventData2.Value + '\');" role="presentation"><a href="#" tabindex="-1" role="menuitem">' + eventData2.Key + ' (' + eventData2.CountFormatted + ') </a></li>';
+                    
+                });
+                mediumLI += '</ul>';
+            }
+            mediumLI += '</li>';
         });
     }
 
@@ -1442,7 +1598,7 @@ function ModifyFilters(filter) {
     }
 }
 
-function RemoveFilter(filtertype) {
+function RemoveFilter(filtertype, genParam) {
 
     // Represent SearchKeyword
     if (filtertype == 1) {
@@ -1465,10 +1621,14 @@ function RemoveFilter(filtertype) {
         _toDate = $("#dpTo").val();
     }
 
-    // Represent Category/Medium Filter
+    // Represent MediaType Filter
     if (filtertype == 3) {
-        _Medium = [];
-        _MediumDescription = [];
+        if (_SubMediaTypes.length > 1) {
+            _SubMediaTypes.splice($.inArray(genParam, _SubMediaTypes), 1);
+        }
+        else {
+            _SubMediaTypes = [];
+        }
     }
 
     // Represent SearchRequest Filter
@@ -1546,17 +1706,34 @@ function RemoveFilter(filtertype) {
 
     if (filtertype === 19)
     {
-        _dayOfWeek = '';
+        _dayOfWeek = [];
     }
 
     if (filtertype === 20)
     {
-        _timeOfDay = '';
+        _timeOfDay = [];
     }
 
     if (filtertype === 21)
     {
         _showTitle = '';
+    }
+
+    if (filtertype === 22)
+    {
+        _stationAffil = '';
+    }
+
+    if (filtertype === 23)
+    {
+        _demographic = '';
+    }
+
+    if (filtertype === 24)
+    {
+        _daypart = '';
+        _timeOfDay = [];
+        _dayOfWeek = [];
     }
 
     CallHandler();
@@ -1603,27 +1780,31 @@ function RemoveTVResult() {
 }
 
 function checkUncheckAll(divID, mainCheckBox) {
-
     var checkBoxValue = false;
     checkBoxValue = $("#" + mainCheckBox).is(":checked");
-    if (_IsSelectAll) {
-        $("#" + divID + " input[type=checkbox]").each(function () {
+    if (_IsSelectAll)
+    {
+        $("#" + divID + " input[type=checkbox]:not(:disabled)").each(function () {
             this.checked = checkBoxValue;
-            if (checkBoxValue) {
+            if (checkBoxValue)
+            {
                 $(this).closest('.media').css('background', '#F4F4F4');
             }
-            else {
+            else
+            {
                 $(this).closest('.media').css('background', '');
             }
         });
     }
     else {
-        $("#" + divID + " input[type=checkbox][id^='chkdivResults_']").each(function () {
+        $("#" + divID + " input[type=checkbox][id^='chkdivResults_']:not(:disabled)").each(function () {
             this.checked = checkBoxValue;
-            if (checkBoxValue) {
+            if (checkBoxValue)
+            {
                 $(this).closest('.media').css('background', '#F4F4F4');
             }
-            else {
+            else
+            {
                 $(this).closest('.media').css('background', '');
             }
         });
@@ -1639,7 +1820,6 @@ function ClearCheckboxSelection() {
 }
 
 function CheckUncheckMasterCheckBox(checkboxID, divID, mainCheckBox) {
-
     if (_IsSelectAll) {
         if (!$('#' + checkboxID).is(":checked")) {
             $("#" + mainCheckBox).prop("checked", false);
@@ -1650,7 +1830,7 @@ function CheckUncheckMasterCheckBox(checkboxID, divID, mainCheckBox) {
             var isChecked = true;
             $("#" + checkboxID).closest('.media').find('input').prop("checked", true);
             $("#" + checkboxID).closest('.media').css('background', '#F4F4F4');
-            $("#" + divID + " input[type=checkbox]").each(function () {
+            $("#" + divID + " input[type=checkbox]:not(:disabled)").each(function () {
                 if (!this.checked) {
                     isChecked = false;
                 }
@@ -1673,7 +1853,7 @@ function CheckUncheckMasterCheckBox(checkboxID, divID, mainCheckBox) {
             else {
                 $("#" + checkboxID).closest('.media').css('background', '#F4F4F4');
                 var isChecked = true;
-                $("#" + divID + " input[type=checkbox][id^='chkdivResults_']").each(function () {
+                $("#" + divID + " input[type=checkbox][id^='chkdivResults_']:not(:disabled)").each(function () {
                     if (!this.checked) {
                         isChecked = false;
                     }
@@ -2224,7 +2404,7 @@ function GetFeedsReportLimit() {
         fromDate: _fromDate,
         ToDate: _toDate,
         searchRequestID: _RequestID,
-        mediumType: _Medium,
+        mediumTypes: _SubMediaTypes,
         keyword: _Keyword,
         sentiment: _Sentiment,
         isAsc: _IsAsc
@@ -2600,6 +2780,35 @@ function LoadTMPopup(IframeUrl) {
     $("#iFrameFeedsTM").css('height', documentHeight - 250);
 }
 
+function ShowExportCSVPopup() {
+    if ($("#chkInputAll").is(":checked") && _excludedIDs.length > 0)
+    {
+        getConfirm("Export to CSV", "Exporting now will include records that are pending deletion. Continue with export or wait until deletes are processed?", "Continue", "Cancel", function (res) {
+            if (res)
+            {
+                $('#txtExportCSVTitle').val("");
+                $('#chkGetTVUrl').prop("checked", true);
+                $('#divExportCSVPopup').modal({
+                    backdrop: 'static',
+                    keyboard: true,
+                    dynamic: true
+                });
+            }
+        });
+    }
+    else
+    {
+        $('#txtExportCSVTitle').val("");
+        $('#chkGetTVUrl').prop("checked", true);
+        $('#divExportCSVPopup').modal({
+            backdrop: 'static',
+            keyboard: true,
+            dynamic: true
+        });
+    }
+}
+
+
 function ExportFeedsToCSV() {
     if (ValidateCheckBoxSelection()) {
         var mediaID = new Array();
@@ -2631,7 +2840,7 @@ function ExportFeedsToCSV() {
             fromDate: _fromDate,
             ToDate: _toDate,
             searchRequestID: _RequestID,
-            mediumTypes: _Medium,
+            mediumTypes: _SubMediaTypes,
             keyword: _Keyword,
             sentiment: _Sentiment,
             isAsc: _IsAsc,
@@ -2650,10 +2859,14 @@ function ExportFeedsToCSV() {
             isHeardFilter: _Heard,
             isPaidFilter: _Paid,
             isEarnedFilter: _Earned,
-            usePESHFilters: _Seen || _Heard || _Paid || _Earned,
             showTitle: _showTitle,
             dayOfWeek: _dayOfWeek,
-            timeOfDay: _timeOfDay
+            timeOfDay: _timeOfDay,
+            isHour: _isHourInterval,
+            isMonth: _isMonthInterval,
+            title: $("#txtExportCSVTitle").val(),
+            getTVUrl: $("#chkGetTVUrl").is(":checked"),
+            useGMT: _useGMT
         }
 
         if ((isSelectAll || isSelectAllParent) || ((isSelectAll == false && isSelectAllParent == false) && mediaID.length > parseInt($("#hdnMaxFeedsExportCSVLimit").val()))) {
@@ -2669,8 +2882,6 @@ function ExportFeedsToCSV() {
             }
             getConfirm(confirmTitleExport, confirmMsgExport.replace(/@@MaxFeedsExportItems@@/g, parseInt($("#hdnMaxFeedsExportCSVLimit").val())), "Confirm", "Cancel", function (res) {
                 if (res) {
-                    ShowLoading();
-
                     $.ajax({
 
                         type: 'POST',
@@ -2680,17 +2891,19 @@ function ExportFeedsToCSV() {
                         data: JSON.stringify(jsonPostData),
                         global: false,
                         success: function (result) {
-                            HideLoading();
                             if (result.isSuccess) {
-                                ClearCheckboxSelection()
-                                window.location = "/Feeds/DownloadCSVFile/";
+                                ClearCheckboxSelection();
+                                $('#divJobStatusExportedPopup').modal({
+                                    backdrop: 'static',
+                                    keyboard: true,
+                                    dynamic: true
+                                });
                             }
                             else {
                                 ShowNotification(result.errorMessage);
                             }
                         },
                         error: function (a, b, c) {
-                            HideLoading();
                             ShowErrorMessage();
                         }
                     });
@@ -2698,8 +2911,6 @@ function ExportFeedsToCSV() {
             });
         }
         else {
-            ShowLoading();
-
             $.ajax({
 
                 type: 'POST',
@@ -2709,17 +2920,19 @@ function ExportFeedsToCSV() {
                 data: JSON.stringify(jsonPostData),
                 global: false,
                 success: function (result) {
-                    HideLoading();
                     if (result.isSuccess) {
-                        ClearCheckboxSelection()
-                        window.location = "/Feeds/DownloadCSVFile/";
+                        ClearCheckboxSelection();
+                        $('#divJobStatusExportedPopup').modal({
+                            backdrop: 'static',
+                            keyboard: true,
+                            dynamic: true
+                        });
                     }
                     else {
                         ShowNotification(result.errorMessage);
                     }
                 },
                 error: function (a, b, c) {
-                    HideLoading();
                     ShowErrorMessage();
                 }
             });
@@ -2858,28 +3071,52 @@ function ShowChild(parentid, mediaType) {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(jsonPostData),
             success: function (result) {
-                if (result.isSuccess) {
-                    if (result.isValidResponse) {
+                if (result.isSuccess)
+                {
+                    if (result.isValidResponse)
+                    {
                         $("#divMedia_" + parentid).html("");
                         $("#divMedia_" + parentid).html(result.html);
 
-                        if ($("#chkInputAll").is(":checked")) {
-                            if (_IsSelectAllParent) {
-                                $("#divMedia_" + parentid + " input[type=checkbox][id^='chkdivResults_']").prop("checked", true);
+                        if (result.excludedIDs != null && result.excludedIDs.length > 0)
+                        {
+                            _excludedIDs = result.excludedIDs;
+                            DisableExcludedRecords(result.excludedIDs);
+                        }
+                        else
+                        {
+                            _excludedIDs = [];
+                        }
+
+                        if ($("#chkInputAll").is(":checked"))
+                        {
+                            if (_IsSelectAllParent)
+                            {
+                                $("#divMedia_" + parentid + " input[type=checkbox][id^='chkdivResults_']:not(:disabled)").prop("checked", true);
                             }
-                            else if (_IsSelectAll) {
-                                $("#divMedia_" + parentid + " input[type=checkbox]").prop("checked", true);
+                            else if (_IsSelectAll)
+                            {
+                                $("#divMedia_" + parentid + " input[type=checkbox]:not(:disabled)").prop("checked", true);
                             }
                         }
-                        else if (isParentChecked) {
-                            $("#divMedia_" + parentid + " input[type=checkbox][id^='chkdivResults_']").prop("checked", true);
+                        else if (isParentChecked)
+                        {
+                            $("#divMedia_" + parentid + " input[type=checkbox][id^='chkdivResults_']:not(:disabled)").prop("checked", true);
+                        }
+
+                        if (result.excludedIDs !== null && result.excludedIDs.length > 0)
+                        {
+                            _excludedIDs = result.excludedIDs;
+                            DisableExcludedRecords(_excludedIDs);
                         }
                     }
-                    else {
+                    else
+                    {
                         ShowNotification(_msgFeedsSolrTimeout);
                     }
                 }
-                else {
+                else
+                {
                     ShowErrorMessage();
                 }
             },
@@ -3026,14 +3263,17 @@ function ValidateMissingArticle() {
 
 function SetMediaClickEvent() {
     $("#divMainContent .media").click(function (e) {
-        if ($(e.target).closest("a").length <= 0 && e.target.type != "checkbox") {
+        if ($(e.target).closest("a:not(:disabled)").length <= 0 && e.target.type != "checkbox")
+        {
             e.stopPropagation();
-            if ($(e.target).closest('.media').find('input').is(':checked')) {
+            if ($(e.target).closest('.media').find('input').is(':checked'))
+            {
                 $(e.target).closest('.media').find('input').removeAttr('checked');
                 $(this).css("background", "");
             }
-            else {
-                $(e.target).closest('.media').find('input').prop('checked', true);
+            else
+            {
+                $(e.target).closest('.media').find('input:not(:disabled)').prop('checked', true);
                 $(this).css("background", "#F4F4F4");
             }
         }
@@ -3041,28 +3281,65 @@ function SetMediaClickEvent() {
 }
 
 function BuildDashboard() {
-    if (ValidateCheckBoxSelection()) {
-        if ($("#chkInputAll").is(":checked")) {
-            _MediaIDs = null;
+    if (ValidateCheckBoxSelection())
+    {
+        if ($("#chkInputAll").is(":checked"))
+        {
+            if (_excludedIDs.length > 0)
+            {
+                getConfirm("Build Dashboard", "Building a dashboard now will include records that are pending deletion. Continue with build or wait until deletes are processed?", "Continue", "Cancel", function (res) {
+                    if (res)
+                    {
+                        _MediaIDs = null;
 
-            $.ajax({
-                type: 'POST',
-                dataType: 'json',
-                url: _urlFeedsGetSinceID,
-                contentType: 'application/json; charset=utf-8',
-                global: false,
-                success: function (result) {
-                    if (result.isSuccess) {
-                        OpenDashboardPopup("Feeds", _IsSelectAllParent, result.sinceID);
+                        $.ajax({
+                            type: 'POST',
+                            dataType: 'json',
+                            url: _urlFeedsGetSinceID,
+                            contentType: 'application/json; charset=utf-8',
+                            global: false,
+                            success: function (result) {
+                                if (result.isSuccess)
+                                {
+                                    OpenDashboardPopup("Feeds", _IsSelectAllParent, result.sinceID);
+                                }
+                                else
+                                {
+                                    ShowErrorMessage();
+                                }
+                            },
+                            error: function (a, b, c) {
+                                ShowErrorMessage();
+                            }
+                        });
                     }
-                    else {
+                });
+            }
+            else
+            {
+                _MediaIDs = null;
+
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: _urlFeedsGetSinceID,
+                    contentType: 'application/json; charset=utf-8',
+                    global: false,
+                    success: function (result) {
+                        if (result.isSuccess)
+                        {
+                            OpenDashboardPopup("Feeds", _IsSelectAllParent, result.sinceID);
+                        }
+                        else
+                        {
+                            ShowErrorMessage();
+                        }
+                    },
+                    error: function (a, b, c) {
                         ShowErrorMessage();
                     }
-                },
-                error: function (a, b, c) {
-                    ShowErrorMessage();
-                }
-            });
+                });
+            }
         }
         else {
             _MediaIDs = $.map($("#ulMediaResults input[type=checkbox]:checked"), function (n, i) {
@@ -3363,4 +3640,32 @@ function OnSelectFeedsCategory(ddl_id) {
             $("#divCommonErrorMsg").html(_msgFirstSelectPrecedingCat).show();
         }
     }
+}
+
+function DisableExcludedRecords(excludedIDs) {
+    // Disable any "excluded" records that are in the process of being deleted
+    excludedIDs.forEach(function (id, i) {
+        var record = $("#divMedia_" + id);
+        $(record).off("click");
+        record.addClass("disabledRecord");
+        record.find("a").each(function (i, a) {
+            $(a).removeAttr("onclick");
+            $(a).on("click", function () { return false; });
+            $(a).css("cursor", "not-allowed");
+        });
+        var chkdiv = record.find("[id^='chkdivResults_']");
+        if (chkdiv.length > 0)
+        {
+            $(chkdiv).attr("disabled", "disabled");
+            $(chkdiv).removeAttr("onclick");
+            $(chkdiv).css("cursor", "not-allowed");
+        }
+        var chkdivchild = record.find("[id^='chkdivChildResults_']");
+        if (chkdivchild.length > 0)
+        {
+            $(chkdivchild).attr("disabled", "disabled");
+            $(chkdivchild).removeAttr("onclick");
+            $(chkdivchild).css("cursor", "not-allowed");
+        }
+    });
 }

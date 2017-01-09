@@ -102,6 +102,12 @@ namespace IQMedia.Data
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
+                // Prevent SP from using new Analytics Table
+                //if (string.Compare(clientGUID.ToString(), "7722A116-C3BC-40AE-8070-8C59EE9E3D2A", true) == 0)
+                //{
+                //    clientGUID = new Guid();
+                //}
+
                 //Log4NetLogger.Debug(string.Format("DA.GetDaySummaryData"));
                 //Log4NetLogger.Debug(string.Format("-SP: usp_v5_IQAgent_Analytics_DaySummary"));
                 //Log4NetLogger.Debug(string.Format("-@ClientGUID: {0}", clientGUID));
@@ -143,7 +149,7 @@ namespace IQMedia.Data
             return new AnalyticsDataModel();
         }
 
-        public List<string> GetTopTenData(Guid clientGUID, string searchRequestXml, SecondaryTabID tab)
+        public List<string> GetTopNetworkShows(Guid clientGUID, string searchRequestXml, SecondaryTabID tab)
         {
             try
             {
@@ -279,6 +285,12 @@ namespace IQMedia.Data
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
+
+                // Prevent SP from using new Analytics Table
+                //if (string.Compare(clientGUID.ToString(), "7722A116-C3BC-40AE-8070-8C59EE9E3D2A", true) == 0)
+                //{
+                //    clientGUID = new Guid();
+                //}
 
                 //Log4NetLogger.Debug(string.Format("DA.GetHourSummaryData"));
                 //Log4NetLogger.Debug(string.Format("-SP: usp_v5_IQAgent_Analytics_HourSummary"));
@@ -547,7 +559,7 @@ namespace IQMedia.Data
                 //Log4NetLogger.Debug(string.Format("dsSSP != null && dsSSP.Tables.Count > 0"));
                 foreach (DataTable dt in dsSSP.Tables)
                 {
-                    //Log4NetLogger.Debug(string.Format("dt.Rows.Count: {0}", dt.Rows.Count));
+                    Log4NetLogger.Debug(string.Format("dt.Rows.Count: {0}", dt.Rows.Count));
                     //Log4NetLogger.Debug(string.Format("dt.Columns {0} contain tabletype", dt.Columns.Contains("TableType") ? "does" : "does not"));
                     if (dt.Rows.Count > 0 && dt.Columns.Contains("TableType"))
                     {
@@ -567,25 +579,86 @@ namespace IQMedia.Data
                                     {
                                         summaryModel.SummaryDateTime = Convert.ToDateTime(row["DayDate"]);
 
+                                        // If table does not contain GMT column or it does and contains a NULL value
+                                        if (!dt.Columns.Contains("GMTDateTime") || (dt.Columns.Contains("GMTDateTime") && row["GMTDateTime"].Equals(DBNull.Value)))
+                                        {
+                                            DateTime gmtDT = summaryModel.SummaryDateTime;
+                                            if (gmtDT.IsDaylightSavingTime())
+                                            {
+                                                gmtDT = gmtDT.AddHours(Convert.ToDouble(gmtAdjustment) + Convert.ToDouble(dstAdjustment));
+                                            }
+                                            else
+                                            {
+                                                gmtDT = gmtDT.AddHours(Convert.ToDouble(gmtAdjustment));
+                                            }
+
+                                            summaryModel.DayTimeDisplay = string.Format("{0} {1}", gmtDT.DayOfWeek, gmtDT.ToShortTimeString());
+                                            summaryModel.DayTimeID = string.Format("{0}_{1}", gmtDT.DayOfWeek, gmtDT.Hour);
+                                        }
+
+                                        if (!dt.Columns.Contains("LocalDateTime") || (dt.Columns.Contains("LocalDateTime") && row["LocalDateTime"].Equals(DBNull.Value)))
+                                        {
+                                            DateTime localDT = summaryModel.SummaryDateTime;
+                                            if (localDT.IsDaylightSavingTime())
+                                            {
+                                                localDT = localDT.AddHours(Convert.ToDouble(gmtAdjustment) + Convert.ToDouble(dstAdjustment));
+                                            }
+                                            else
+                                            {
+                                                localDT = localDT.AddHours(Convert.ToDouble(gmtAdjustment));
+                                            }
+                                            summaryModel.LocalDateTime = localDT;
+                                            // Get Day Specific Day Part Data
+                                            List<DayPartDataItem> dayPartItem = dayPartData == null ? new List<DayPartDataItem>() : dayPartData.Where(w => w.DayOfWeek == localDT.DayOfWeek && localDT.Hour == w.HourOfDay).ToList();
+                                            summaryModel.DayPartDisplay = (dayPartItem.Any() && !string.IsNullOrEmpty(dayPartItem.First().DayPartName)) ? dayPartItem.First().DayPartName : "Other";
+                                            summaryModel.DayPartID = (dayPartItem.Any() && !string.IsNullOrEmpty(dayPartItem.First().DayPartCode)) ? dayPartItem.First().DayPartCode : "Other";
+                                        }
+
+                                        // LOCAL DATE TIME BELOW ACTUALLY REFERS TO CLIENT TIME
                                         // The SummaryDateTime values are convert to local time in the controller, but the DayTime and DayPart values require the conversion here as well
-                                        DateTime localDateTime = summaryModel.SummaryDateTime;
-                                        if (localDateTime.IsDaylightSavingTime())
+                                        //DateTime localDateTime = summaryModel.SummaryDateTime;
+                                        //if (localDateTime.IsDaylightSavingTime())
+                                        //{
+                                        //    localDateTime = localDateTime.AddHours(Convert.ToDouble(gmtAdjustment) + Convert.ToDouble(dstAdjustment));
+                                        //}
+                                        //else
+                                        //{
+                                        //    localDateTime = localDateTime.AddHours(Convert.ToDouble(gmtAdjustment));
+                                        //}
+
+                                        //summaryModel.DayTimeDisplay = string.Format("{0} {1}", localDateTime.DayOfWeek, localDateTime.ToShortTimeString());
+                                        //summaryModel.DayTimeID = string.Format("{0}_{1}", localDateTime.DayOfWeek, localDateTime.Hour);
+
+                                        ////Get Specific Day Part Data
+                                        //List<DayPartDataItem> dayPartItem = dayPartData == null ? new List<DayPartDataItem>() : dayPartData.Where(x => x.DayOfWeek == localDateTime.DayOfWeek && localDateTime.Hour == x.HourOfDay).ToList();
+
+                                        //summaryModel.DayPartDisplay = (dayPartItem.Any() && !String.IsNullOrEmpty(dayPartItem.First().DayPartName)) ? dayPartItem.First().DayPartName : "Other";
+                                        //summaryModel.DayPartID = (dayPartItem.Any() && !String.IsNullOrEmpty(dayPartItem.First().DayPartCode)) ? dayPartItem.First().DayPartCode : "Other";
+                                    }
+
+                                    if (dt.Columns.Contains("GMTDateTime") && !row["GMTDateTime"].Equals(DBNull.Value))
+                                    {
+                                        var gmtDT = Convert.ToDateTime(row["GMTDateTime"]);
+                                        summaryModel.GMTDateTime = gmtDT;
+
+                                        if (dt.Columns.Contains("DayDate") && row["DayDate"].Equals(DBNull.Value))
                                         {
-                                            localDateTime = localDateTime.AddHours(Convert.ToDouble(gmtAdjustment) + Convert.ToDouble(dstAdjustment));
-                                        }
-                                        else
-                                        {
-                                            localDateTime = localDateTime.AddHours(Convert.ToDouble(gmtAdjustment));
+                                            summaryModel.SummaryDateTime = Convert.ToDateTime(row["GMTDateTime"]);
                                         }
 
-                                        summaryModel.DayTimeDisplay = string.Format("{0} {1}", localDateTime.DayOfWeek, localDateTime.ToShortTimeString());
-                                        summaryModel.DayTimeID = string.Format("{0}_{1}", localDateTime.DayOfWeek, localDateTime.Hour);
+                                        summaryModel.DayTimeDisplay = string.Format("{0} {1}", gmtDT.DayOfWeek, gmtDT.ToShortTimeString());
+                                        summaryModel.DayTimeID = string.Format("{0}_{1}", gmtDT.DayOfWeek, gmtDT.Hour);
+                                    }
 
-                                        //Get Specific Day Part Data
-                                        List<DayPartDataItem> dayPartItem = dayPartData == null ? new List<DayPartDataItem>() : dayPartData.Where(x => x.DayOfWeek == localDateTime.DayOfWeek && localDateTime.Hour == x.HourOfDay).ToList();
+                                    if (dt.Columns.Contains("LocalDateTime") && !row["LocalDateTime"].Equals(DBNull.Value))
+                                    {
+                                        var localDT = Convert.ToDateTime(row["LocalDateTime"]);
+                                        summaryModel.LocalDateTime = localDT;
 
-                                        summaryModel.DayPartDisplay = (dayPartItem.Any() && !String.IsNullOrEmpty(dayPartItem.First().DayPartName)) ? dayPartItem.First().DayPartName : "Other";
-                                        summaryModel.DayPartID = (dayPartItem.Any() && !String.IsNullOrEmpty(dayPartItem.First().DayPartCode)) ? dayPartItem.First().DayPartCode : "Other";
+                                        List<DayPartDataItem> dpItem = dayPartData == null ? new List<DayPartDataItem>() : dayPartData.Where(w =>
+                                            w.DayOfWeek == localDT.DayOfWeek && w.HourOfDay == localDT.Hour).ToList();
+                                        summaryModel.DayPartDisplay = (dpItem.Any() && !string.IsNullOrEmpty(dpItem.First().DayPartName)) ? dpItem.First().DayPartName : "Other";
+                                        summaryModel.DayPartID = (dpItem.Any() && !string.IsNullOrEmpty(dpItem.First().DayPartCode)) ? dpItem.First().DayPartCode : "Other";
                                     }
 
                                     if (dt.Columns.Contains("CampaignID") && !row["CampaignID"].Equals(DBNull.Value))

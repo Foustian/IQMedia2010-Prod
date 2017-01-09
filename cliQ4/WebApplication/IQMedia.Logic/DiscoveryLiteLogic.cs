@@ -1503,12 +1503,14 @@ namespace IQMedia.Web.Logic
                     distinctDateFilter.AddRange(distinctFeedClass);
                 }
                 //distinctDateFilter = distinctDateFilter.Distinct().ToList();
+                /* TODO: Update to use MediaTypeFilterData
                 List<MediumFilterData> lstMediumFilterData = distinctDateFilter.Select(s => new MediumFilterData()
                 {
                     Medium = s.Medium,
                     MediumValue = CommonFunctions.GetEnumDescription(CommonFunctions.StringToEnum<CommonFunctions.CategoryType>(s.Medium.Replace(" ", string.Empty))),
                 }).ToList();
-                return lstMediumFilterData;
+                 */
+                return new List<MediaTypeFilterData>();// lstMediumFilterData;
             }
             catch (Exception)
             {

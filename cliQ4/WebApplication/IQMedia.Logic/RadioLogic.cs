@@ -18,9 +18,14 @@ namespace IQMedia.Web.Logic
             RadioDA radioDA = (RadioDA)DataAccessFactory.GetDataAccess(DataAccessType.Radio);
             return radioDA.SelectRadioStations();
         }
-
-        public List<RadioModel> SelectRadioResults(DateTime? p_FromDate, DateTime? p_ToDate, List<string> p_DMAList, List<string> p_StationList, string p_SolrURL, int? p_FragOffset, int? p_FragSize, bool p_IsHighlighting, bool p_IsInitialSearch, bool p_IsLogging, string p_LogFileLocation, bool p_IsShowCC, string p_SearchTerm, string p_SolrFL, bool p_IsAsc, int p_PageNo, int p_PageSize, ref long p_SinceID, out long p_TotalResults)
+        public Dictionary<string, object> SelectRadioStationFilters()
         {
+            RadioDA radioDA = (RadioDA)DataAccessFactory.GetDataAccess(DataAccessType.Radio);
+            return radioDA.SelectRadioStationFilters();
+        }
+        public Dictionary<string, object> SelectRadioResults(DateTime? p_FromDate, DateTime? p_ToDate, List<string> p_DMAList, List<string> p_StationList, string p_SolrURL, int? p_FragOffset, int? p_FragSize, bool p_IsHighlighting, bool p_IsInitialSearch, bool p_IsLogging, string p_LogFileLocation, bool p_IsShowCC, string p_SearchTerm, string p_SolrFL, bool p_IsAsc, int p_PageNo, int p_PageSize, ref long p_SinceID, out long p_TotalResults)
+        {
+            Dictionary<string, object> returnDictionary = new Dictionary<string, object>();
             p_TotalResults = 0;
 
             Uri solrRequestURL = new Uri(p_SolrURL);
@@ -80,7 +85,10 @@ namespace IQMedia.Web.Logic
                 sr.StationIDList = p_StationList;
             }
 
-            SearchResult sresult = se.Search(sr, CustomSolrFl: p_SolrFL);
+            Dictionary<string, object> searchEngineSearch = se.Search(sr, CustomSolrFl: p_SolrFL);
+            SearchResult sresult = (SearchResult)searchEngineSearch["SearchResult"];
+            Dictionary<string, Dictionary<string, string>> facetResults = (Dictionary<string, Dictionary<string, string>>)searchEngineSearch["Facet"];
+            TadsFilterModel radioFilter = mapFacets(facetResults);
 
             List<RadioModel> radioResultList = new List<RadioModel>();
 
@@ -105,9 +113,47 @@ namespace IQMedia.Web.Logic
                 }
             }
 
-            return radioResultList;
+            returnDictionary.Add("RadioList", radioResultList);
+            returnDictionary.Add("Facets", radioFilter);
+            return returnDictionary;
         }
+        public TadsFilterModel mapFacets(Dictionary<string, Dictionary<string, string>> facets)
+        {
+            TadsFilterModel model = new TadsFilterModel();
+            List<TadsDma> radioDmaList = new List<TadsDma>();
+            List<TadsStation> radioStationList = new List<TadsStation>();
 
+            foreach (var hit in facets)
+            {
+                switch (hit.Key)
+                {
+                    case "RadioMarketFacet":
+                        foreach (var element in hit.Value)
+                        {
+                            TadsDma tadsDma = new TadsDma();
+                            tadsDma.ID = element.Key;
+                            tadsDma.Counts = Convert.ToInt32(element.Value);
+                            radioDmaList.Add(tadsDma);
+                        }
+                        break;
+                    case "RadioStationFacet":
+                        foreach (var element in hit.Value)
+                        {
+                            TadsStation tadsStation = new TadsStation();
+                            tadsStation.Name = "";
+                            tadsStation.ID = element.Key;
+                            tadsStation.Counts = Convert.ToInt32(element.Value);
+                            radioStationList.Add(tadsStation);
+                        }
+                        break;
+                }
+            }
+
+            model.RadioMarket = radioDmaList;
+            model.RadioStation = radioStationList;
+
+            return model;
+        }
         public static string GetRawMediaCaption(string searchTerm, Guid rawMediaID, int? p_FragOffset, int? p_FragSize, bool p_IsLogging, string p_LogFileLocation, string p_SolrFl, out Int32? offset, out string fullCaption, string pmgurl, out List<int> lstSearchTermHits)
         {
             offset = null;
@@ -141,7 +187,8 @@ namespace IQMedia.Web.Logic
 
             sr.PageSize = 1;
 
-            SearchResult sresult = se.Search(sr, CustomSolrFl: p_SolrFl);
+            Dictionary<string, object> searchEngingSearch = se.Search(sr, CustomSolrFl: p_SolrFl);
+            SearchResult sresult = (SearchResult)searchEngingSearch["SearchResult"];
 
             if (sresult.Status == 0 && sresult.TotalHitCount > 0)
             {

@@ -27,7 +27,7 @@ namespace IQMedia.WebApplication.Controllers
             try
             {
                 setupTempData = GetTempData();
-                ActiveUser  sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
+                ActiveUser sessionInformation = Utility.ActiveUserMgr.GetActiveUser();
                 if (p_IsNext != null)
                 {
                     if (p_IsNext == true)
@@ -134,6 +134,11 @@ namespace IQMedia.WebApplication.Controllers
                 else
                 {
                     objIQAgent_DailyDigestPostModel.IQNotifationSettings = iQNotificationSettingsLogic.SelectIQNotifcationsByID(p_ID);
+
+                    if (IQCommon.CommonFunctions.GetAccessibleSubMediaType(sessionInformation.MediaTypes).Select(m => m.SubMediaType).Except(objIQAgent_DailyDigestPostModel.IQNotifationSettings.MediaTypeList).Count() == 0)
+                    {
+                        objIQAgent_DailyDigestPostModel.IQNotifationSettings.MediaTypeList = null;
+                    }
                 }
 
                 return Json(new
@@ -173,45 +178,15 @@ namespace IQMedia.WebApplication.Controllers
                 p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address = (p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address != null && p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address.Count > 0) ? p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address[0].Split(';').Where(a => !string.IsNullOrWhiteSpace(a)).Select(a => a.Trim()).ToList() : null;
 
 
-                if(p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address.Count <= Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["MaxDefaultEmailAddress"]))
+                if (p_IQNotifationSettingsPostModel.IQNotifationSettings.Notification_Address.Count <= Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["MaxDefaultEmailAddress"]))
                 {
                     if (p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList == null || p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Contains("0"))
                     {
-                        if (sessionInformation.Isv4TV && sessionInformation.Isv4NM && sessionInformation.Isv4SM && sessionInformation.Isv4TW && sessionInformation.Isv4BLPM && sessionInformation.Isv4PQ && sessionInformation.Isv4TM)
+                        p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList = new List<string>();
+
+                        foreach (var mt in IQCommon.CommonFunctions.GetAccessibleSubMediaType(sessionInformation.MediaTypes))
                         {
-                            p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList = null;
-                        }
-                        else
-                        {
-                            p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList = new List<string>();
-                            if (sessionInformation.Isv4TV)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.TV.ToString());
-                            }
-                            if (sessionInformation.Isv4SM)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.SocialMedia.ToString());
-                            }
-                            if (sessionInformation.Isv4NM)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.News.ToString());
-                            }
-                            if (sessionInformation.Isv4TW)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.Twitter.ToString());
-                            }
-                            if (sessionInformation.Isv4BLPM)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.PM.ToString());
-                            }
-                            if (sessionInformation.Isv4PQ)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.PQ.ToString());
-                            }
-                            if (sessionInformation.Isv4TM)
-                            {
-                                p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType.TM.ToString());
-                            }
+                            p_IQNotifationSettingsPostModel.IQNotifationSettings.MediaTypeList.Add(mt.SubMediaType);
                         }
                     }
 
@@ -248,7 +223,7 @@ namespace IQMedia.WebApplication.Controllers
                 {
                     ErrorMessage = Config.ConfigSettings.Settings.MaxEmailAdressLimitExceeds.Replace("@@MaxLimit@@", System.Configuration.ConfigurationManager.AppSettings["MaxDefaultEmailAddress"]);
                 }
-                
+
 
 
 
@@ -269,8 +244,10 @@ namespace IQMedia.WebApplication.Controllers
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Utility.CommonFunctions.WriteException(ex);
+
                 return Json(new
                 {
                     isSuccess = false,
@@ -299,7 +276,7 @@ namespace IQMedia.WebApplication.Controllers
                         isSuccess = true
                     });
                 }
-                else 
+                else
                 {
                     return Json(new
                     {

@@ -1,7 +1,9 @@
-﻿@model List<IQMedia.Model.IQNotifationSettingsModel>
+﻿@using IQMedia.Model;
+@model List<IQMedia.Model.IQNotifationSettingsModel>
 @{
     List<string> timeOfDay = System.Configuration.ConfigurationManager.AppSettings["TimeOfDay"].Split(new char[] { ',' }).ToList();
     Dictionary<short, string> daysOfWeek = System.Configuration.ConfigurationManager.AppSettings["DaysOfWeek"].Split(',').ToDictionary(a => Convert.ToInt16(a.Split('|')[1]), b => b.Split('|')[0]);
+    var activeUser = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
 }
 <style type="text/css">
     .topResult
@@ -111,11 +113,11 @@
                          <td class="alignLeft wordBreak">
                             @if (item.MediaTypeList != null && item.MediaTypeList.Count > 0)
                             {
-                                <text>@string.Join(", ", item.MediaTypeList)</text>
+                                <text>@string.Join(", ", IQCommon.CommonFunctions.GetAccessibleSubMediaType(item.MediaTypeList, activeUser.MediaTypes).Select(mt=>mt.DisplayName))</text>
                             }
                             else
                             {
-                                <text>@string.Join(", ", Enum.GetValues(typeof(IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType)).Cast<IQMedia.Shared.Utility.CommonFunctions.SearchRequestMediaType>())</text>
+                                <text>@string.Join(", ", IQCommon.CommonFunctions.GetAccessibleSubMediaType(activeUser.MediaTypes).Select(mt=>mt.DisplayName))</text>
                             }
                         </td>
                         <td class="alignLeft wordBreak">

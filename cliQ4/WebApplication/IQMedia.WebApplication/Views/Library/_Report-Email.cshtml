@@ -1,4 +1,5 @@
 ﻿@using IQMedia.Model;
+@using IQCommon.Model;
 @model IQMedia.Model.IQArchive_DisplayLibraryReport
 @{ 
     string BaseUrl = Request.Url.Scheme + "://" + Request.Url.Host + "/";
@@ -29,79 +30,64 @@
     @if (Model != null && Model.ReportDetails != null && Model.ArchiveResults != null)
     {
         ActiveUser sessionInformation = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+        List<string> lstNielsenAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstNielsenMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstCompeteAudienceTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstCompeteMediaValueTypes = sessionInformation.MediaTypes.Where(w => w.RequireCompeteAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstOtherAudienceTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseAudience && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        List<string> lstOtherMediaValueTypes = sessionInformation.MediaTypes.Where(w => !w.RequireCompeteAccess && !w.RequireNielsenAccess && w.UseMediaValue && w.TypeLevel == 2).Select(s => s.SubMediaType).ToList();
+        
         string Logo = System.Configuration.ConfigurationManager.AppSettings["UrlReportHeader"];
         Logo += sessionInformation.ClientGUID + "/" + Model.ReportDetails._ReportImage;
-
-        List<IQArchive_ArchiveClipModel> lstIQArchive_ArchiveClipModel = (List<IQArchive_ArchiveClipModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "TV", true) == 0).Select(s => new IQArchive_ArchiveClipModel()
+        
+        Int64 totalAudience = 0;
+        decimal totalMediaValue = 0;
+        Int64 totalNationalAudience = 0;
+        decimal totalNationalMediaValue = 0;
+        List<IQArchive_MediaModel> lstMediaResults;
+        
+        if (sessionInformation.IsNielsenData)
         {
-            ClipID = s.MediaData.ClipID,
-            ClosedCaption = s.MediaData.ClosedCaption,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Market = s.MediaData.Market,
-            Nielsen_Audience = s.MediaData.Nielsen_Audience == null ? 0 : s.MediaData.Nielsen_Audience,
-            Nielsen_Result = s.MediaData.Nielsen_Result,
-            StationLogo = s.MediaData.StationLogo,
-            National_Nielsen_Audience = s.MediaData.National_Nielsen_Audience,
-            National_IQAdShareValue = s.MediaData.National_IQAdShareValue
-        }).ToList();
+            lstMediaResults = Model.ArchiveResults.Where(w => lstNielsenAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+                totalNationalAudience += lstMediaResults.Sum(s => s.National_Nielsen_Audience.HasValue && s.National_Nielsen_Audience > 0 ? s.National_Nielsen_Audience.Value : 0);
+            }
 
-        List<IQArchive_ArchiveNMModel> lstIQArchive_ArchiveNMModel = (List<IQArchive_ArchiveNMModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "NM", true) == 0).Select(s => new IQArchive_ArchiveNMModel()
+            lstMediaResults = Model.ArchiveResults.Where(w => lstNielsenMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+                totalNationalMediaValue += lstMediaResults.Sum(s => s.National_IQAdShareValue.HasValue && s.National_IQAdShareValue > 0 ? s.National_IQAdShareValue.Value : 0);
+            }
+        }
+        if (sessionInformation.IsCompeteData)
         {
-            Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-            Compete_Result = s.MediaData.Compete_Result,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Publication = s.MediaData.Publication,
-            Url = s.MediaData.Url
-        }).ToList();
+            lstMediaResults = Model.ArchiveResults.Where(w => lstCompeteAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+            }
 
-        List<IQArchive_ArchiveSMModel> lstIQArchive_ArchiveSMModel = (List<IQArchive_ArchiveSMModel>)Model.ArchiveResults.Where(w => string.Compare(w.SubMediaType.ToString(), "Blog", true) == 0).Select(s => new IQArchive_ArchiveSMModel()
+            lstMediaResults = Model.ArchiveResults.Where(w => lstCompeteMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+            if (lstMediaResults.Count > 0)
+            {
+                totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+            }
+        }
+
+        lstMediaResults = Model.ArchiveResults.Where(w => lstOtherAudienceTypes.Contains(w.SubMediaType.ToString())).ToList();
+        if (lstMediaResults.Count > 0)
         {
-            Compete_Audience = s.MediaData.Compete_Audience == null ? 0 : s.MediaData.Compete_Audience,
-            Compete_Result = s.MediaData.Compete_Result,
-            IQAdShareValue = s.MediaData.IQAdShareValue == null ? 0 : s.MediaData.IQAdShareValue,
-            Publication = s.MediaData.Publication,
-            Url = s.MediaData.Url
-        }).ToList();
+            totalAudience += lstMediaResults.Sum(s => s.Audience < 0 ? 0 : s.Audience);
+        }
 
-        List<IQArchive_ArchiveTweetsModel> lstIQArchive_ArchiveTweetsModel = (List<IQArchive_ArchiveTweetsModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "TW", true) == 0).Select(s => new IQArchive_ArchiveTweetsModel()
+        lstMediaResults = Model.ArchiveResults.Where(w => lstOtherMediaValueTypes.Contains(w.SubMediaType.ToString())).ToList();
+        if (lstMediaResults.Count > 0)
         {
-            ActorDisplayname = s.MediaData.ActorDisplayname,
-            ActorImage = s.MediaData.ActorImage,
-            FollowersCount = s.MediaData.FollowersCount,
-            FreiendsCount = s.MediaData.FreiendsCount,
-            KloutScore = s.MediaData.KloutScore,
-            PreferredUserName = s.MediaData.PreferredUserName
-        }).ToList();
-
-        List<IQArchive_ArchiveBLPMModel> lstIQArchive_ArchiveBLPMModel = (List<IQArchive_ArchiveBLPMModel>)Model.ArchiveResults.Where(w => string.Compare(w.MediaType, "PM", true) == 0).Select(s => new IQArchive_ArchiveBLPMModel()
-        {
-            Circulation = s.MediaData.Circulation
-        }).ToList();
-
-
-        long TVNationalAudience = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_Nielsen_Audience.HasValue && sm.National_Nielsen_Audience > 0 ? Convert.ToInt64(sm.National_Nielsen_Audience.Value) : 0);
-        long TVAudience = lstIQArchive_ArchiveClipModel.Sum(sm => Convert.ToInt64(sm.Nielsen_Audience.Value));
-        long NMAudience = lstIQArchive_ArchiveNMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-        long SMAudience = lstIQArchive_ArchiveSMModel.Sum(sm => Convert.ToInt64(sm.Compete_Audience.Value));
-        long TWAudience = lstIQArchive_ArchiveTweetsModel.Sum(sm => Convert.ToInt64(sm.FollowersCount));
-        long PMAudience = lstIQArchive_ArchiveBLPMModel.Sum(sm => Convert.ToInt64(sm.Circulation));
-
-        decimal TVNationalValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.National_IQAdShareValue.HasValue && sm.National_IQAdShareValue > 0 ? sm.National_IQAdShareValue.Value : 0);
-        decimal TVValue = lstIQArchive_ArchiveClipModel.Sum(sm => sm.IQAdShareValue.Value);
-        decimal NMValue = lstIQArchive_ArchiveNMModel.Sum(sm => sm.IQAdShareValue.Value);
-        decimal SMValue = lstIQArchive_ArchiveSMModel.Sum(sm => sm.IQAdShareValue.Value);
-
-
-        Int64 totalAudience = (TVAudience < 0 || !sessionInformation.IsNielsenData ? 0 : TVAudience) +
-            (NMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : NMAudience) +
-            (SMAudience < 0 || !sessionInformation.IsCompeteData ? 0 : SMAudience) +
-            (TWAudience < 0 ? 0 : TWAudience) +
-            (PMAudience < 0 ? 0 : PMAudience);
-
-
-        decimal totalMediaValue = (TVValue < 0 || !sessionInformation.IsNielsenData ? 0 : TVValue) +
-            (NMValue < 0 || !sessionInformation.IsCompeteData ? 0 : NMValue) +
-                (SMValue < 0 || !sessionInformation.IsCompeteData ? 0 : SMValue);
+            totalMediaValue += lstMediaResults.Sum(s => !s.MediaValue.HasValue || s.MediaValue.Value < 0 ? 0 : s.MediaValue.Value);
+        }
                 
         <table id="mainTable" style="background-color: #FFFFFF;  width: 650px;  border: solid 1px #A0A0A0;  padding: 3px 3px 3px 3px;" width="650px" align="center">
             <tr>
@@ -124,14 +110,14 @@
                                 @if (Model.ReportDetails.Settings.ShowTotalNationalAudience)
                                 {
                                     <text>Total National Audience :
-                                    @string.Format("{0:N0}", TVNationalAudience)
+                                    @string.Format("{0:N0}", totalNationalAudience)
                                     <br />
                                     </text>
                                 }
                                 @if (Model.ReportDetails.Settings.ShowTotalNationalMediaValue)
                                 {
                                     <text> National Media Value : $ 
-                                    @string.Format("{0:N2}", TVNationalValue)
+                                    @string.Format("{0:N2}", totalNationalMediaValue)
                                     <br />
                                     </text>
                                 }
@@ -264,6 +250,8 @@
                                                         }
                                                         @foreach (IQMedia.Model.IQArchive_MediaModel item in groupTier2.ArchiveResults)
                                                         {
+                                                            IQ_MediaTypeModel objSubMediaType = sessionInformation.MediaTypes.First(w => w.SubMediaType == item.SubMediaType.ToString() && w.TypeLevel == 2);
+                                                            string mediaIconPath = BaseUrl + objSubMediaType.EmailMediaIconPath;
 
                                             <tr>
                                                 <td style="border-top:1pt solid black; padding-bottom:10px;">
@@ -309,7 +297,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img alt="TV" src="@TVModel.StationLogo" style="width: 25px;" />
+                                                                <img alt="@objSubMediaType.DisplayName" src="@TVModel.StationLogo" style="width: 25px;" />
                                                             </td>
                                                             <td id="mediaTVBody" style="text-align: left; vertical-align: top; width: 445px;">
 									                            <table style="width: 100%;">
@@ -507,7 +495,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/twitter.png")" alt="Twitter" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
                                                                 @{
@@ -623,6 +611,7 @@
 
 
                                                                   case IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM:
+                                                                  case IQMedia.Shared.Utility.CommonFunctions.CategoryType.LN:
 
                                                                        IQArchive_ArchiveNMModel newsMediaModel = item.MediaData as IQArchive_ArchiveNMModel;
                 
@@ -651,7 +640,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/News.png")" alt="News" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -818,7 +807,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/print-media.png")" alt="Publication (scanned)" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -928,7 +917,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/social-media.png")" alt="social media" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -1038,7 +1027,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/forum.png")" alt="forum" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -1149,7 +1138,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/blog.png")"  alt="blog" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -1288,9 +1277,6 @@
 
                                                             IQArchive_ArchiveSMModel fbModel = item.MediaData as IQArchive_ArchiveSMModel;
 
-                                                            string imgName = item.SubMediaType == IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB ? "facebook.png" : "instagram.png";
-                                                            string imgTooltip = item.SubMediaType == IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB ? IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.FB) : IQMedia.Shared.Utility.CommonFunctions.GetEnumDescription(IQMedia.Shared.Utility.CommonFunctions.CategoryType.IG);
-
  			                            <table style="width: 100%;">
 				                            <tr>
 					                            <td id="mediaEntry" style="padding-top: 5px;  padding-bottom: 10px;">
@@ -1316,7 +1302,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/" + imgName)" alt="@imgTooltip" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaTVBody" style="text-align: left; vertical-align: top; width: 445px;">
 									                            <table style="width: 100%;">
@@ -1449,7 +1435,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/radio.png")" alt="radio" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">
@@ -1696,7 +1682,7 @@
                                                                 </table>
                                                             </td>
                                                             <td id="mediaTypeLogo" style="width: 40px; min-height: 32px; float: center; vertical-align: top;" align="center">
-                                                                <img src="@(ImageBaseUrl + "MediaIcon/print-media_T.png")" alt="Publications (text)" />
+                                                                <img src="@mediaIconPath" alt="@objSubMediaType.DisplayName" />
                                                             </td>
                                                             <td id="mediaBody" style="text-align: left; vertical-align: top; width: 545px;">
 									                            <table style="width: 100%;">

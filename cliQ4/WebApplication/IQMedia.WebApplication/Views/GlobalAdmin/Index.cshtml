@@ -6,15 +6,15 @@
 @using IQMedia.Shared.Utility;
 @model IEnumerable<ActiveUser>
 <link rel="stylesheet" href="~/Css/Chosen/chosen.css" />
-<script src="~/Scripts/chosen.jquery.js?v=1.0" type="text/javascript"></script>
-<script type="text/javascript" src="~/Scripts/GlobalAdminScript.js?v=1.5"></script>
-<script type="text/javascript" src="~/Scripts/Client.js?v=1.5"></script>
-<script type="text/javascript" src="~/Scripts/Customer.js?v=1.5"></script>
+<script src="~/Scripts/chosen.jquery.js?v=1.1" type="text/javascript"></script>
+<script type="text/javascript" src="~/Scripts/GlobalAdminScript.js?v=1.6"></script>
+<script type="text/javascript" src="~/Scripts/Client.js?v=1.8"></script>
+<script type="text/javascript" src="~/Scripts/Customer.js?v=1.8"></script>
 <script type="text/javascript" src="~/Scripts/fliq_Customer.js?v=1.2"></script>
 <script type="text/javascript" src="~/Scripts/fliq_Application.js?v=1.0"></script>
 <script type="text/javascript" src="~/Scripts/fliq_CustomerApplication.js?v=1.2"></script>
 <script type="text/javascript" src="~/Scripts/fliq_ClientApplication.js?v=1.1"></script>
-<script type="text/javascript" src="~/Scripts/UGCMapSettings.js?v=1.1" ></script>
+<script type="text/javascript" src="~/Scripts/UGCMapSettings.js?v=1.2" ></script>
 <script type="text/javascript" src="~/Scripts/jquery.ui.rlightbox.min.js?v=1.0"></script>
 @*<link type="text/css" rel="stylesheet" href="~/Css/jquery-ui-1.8.16.custom.css" />*@
 <link type="text/css" rel="stylesheet" href="~/Css/lightbox.min.css" />
@@ -64,7 +64,10 @@
                                 <a class="sideMenuUlPad" role="button" href="#">fliQ Customer App Mapping</a>
                             </li>
                             <li onclick="GetUGCSetupSettings();" class="customer-registration" id="liUGCMap">
-                                <a class="sideMenuUlPad" role="button" href="#">Client UGC Map Settings</a>
+                                <a class="sideMenuUlPad" role="button" href="#">Cloud Settings</a>
+                            </li>
+                            <li onclick="GetGroupSettings();" class="customer-registration" id="liGroupAdmin">
+                                <a class="sideMenuUlPad" role="button" href="javascript:void(0);">Group Settings</a>
                             </li>
                         </ul>
                     </div>
@@ -491,6 +494,7 @@
                 </div>
                 <div id="divRegistration" class="displayNone">
                 </div>
+                <div id="divGroup" class="displayNone"></div>
             </div>
         }
         else

@@ -71,6 +71,13 @@ namespace IQMedia.Model
         public bool Isv4SM { get; set; }
         public bool Isv4TW { get; set; }
         public bool Isv4TM { get; set; }
+        public bool IsSMOther { get; set; }
+        public bool IsFB { get; set; }
+        public bool IsIG { get; set; }
+        public bool IsBL { get; set; }
+        public bool IsFO { get; set; }
+        public bool IsPR { get; set; }
+        public bool IsLN { get; set; }
         public bool Isv4CustomImage { get; set; }
         public bool IsNielsenData { get; set; }
         public bool IsCompeteData { get; set; }
@@ -87,6 +94,8 @@ namespace IQMedia.Model
         public bool IsShareTV { get; set; }
         public bool IsThirdPartyData { get; set; }
         public bool IsClientSpecificData { get; set; }
+        public bool IsConnectAccess { get; set; }
+        public bool IsExternalRuleEditor { get; set; }
 
         public String TimeZone { get; set; }
         public decimal gmt { get; set; }

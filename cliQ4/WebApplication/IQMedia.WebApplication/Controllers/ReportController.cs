@@ -88,17 +88,16 @@ namespace IQMedia.WebApplication.Controllers
                 if (!string.IsNullOrEmpty(id) && Guid.TryParse(id, out temp))
                 {
                     int IQAgentReportMaxRecordDisplay = Convert.ToInt32(ConfigurationManager.AppSettings["IQAgentReportMaxRecordDisplay"]);
-                    bool IsSourceEmail = false;
+
+                    
                     if (!string.IsNullOrWhiteSpace(Source) && Source.ToLower() == "email")
                     {
-                        IsSourceEmail = true;
+                        IQMedia.WebApplication.Utility.CommonFunctions.WriteException(new ArgumentException("DailyDigest-Email"));
+                        ViewBag.IsError = true;
                     }
-                    else
-                    {
-                        IsSourceEmail = false;
-                    }
+                    
                     IQAgentLogic iqAgentLogic = (IQAgentLogic)LogicFactory.GetLogic(LogicType.IQAgent);
-                    objIQAgentReport_WithoutAuthentication = iqAgentLogic.GetIQAgent_MediaResultReportByReportGuid(id, searchrequest, mediatype, IQAgentReportMaxRecordDisplay, IsSourceEmail);
+                    objIQAgentReport_WithoutAuthentication = iqAgentLogic.GetIQAgent_MediaResultReportByReportGuid(id, searchrequest, mediatype, IQAgentReportMaxRecordDisplay, false);
                     foreach (IQAgentReport_SearchRequestModel reqModel in objIQAgentReport_WithoutAuthentication.Results)
                     {
                         reqModel.MediaResults.ToList().ForEach(x => x.timeDifference = WebApplication.Utility.CommonFunctions.GetTimeDifference(x.MediaDateTime));
@@ -107,7 +106,7 @@ namespace IQMedia.WebApplication.Controllers
                     }
                     objIQAgentReport_WithoutAuthentication.ReportID = id;
 
-
+                    /*
                     if (IsSourceEmail)
                     {
                         string reportHTML = RenderPartialToString(PATH_IQAgentReportPDFPartialView, objIQAgentReport_WithoutAuthentication);
@@ -115,6 +114,7 @@ namespace IQMedia.WebApplication.Controllers
                         Response.ContentType = "text/html";
                         Response.End();
                     }
+                     */ 
                 }
                 else
                 {
@@ -511,11 +511,11 @@ namespace IQMedia.WebApplication.Controllers
                 string highlightedText = string.Empty;
                 string highlightedCCOutput = string.Empty;
 
-                CommonFunctions.MediaType mediaType = (CommonFunctions.MediaType)Enum.Parse(typeof(CommonFunctions.MediaType), item.MediaType);
+                CommonFunctions.CategoryType mediaType = (CommonFunctions.CategoryType)Enum.Parse(typeof(CommonFunctions.CategoryType), item.MediaType);
 
                 switch (mediaType)
                 {
-                    case CommonFunctions.MediaType.TV:
+                    case CommonFunctions.CategoryType.TV:
 
                         IQAgent_TVResultsModel iQAgent_TVResultsModel = (IQAgent_TVResultsModel)item.MediaData;
                         if (iQAgent_TVResultsModel.highlightedCCOutput != null && iQAgent_TVResultsModel.highlightedCCOutput.CC != null)
@@ -536,8 +536,8 @@ namespace IQMedia.WebApplication.Controllers
 
                         break;
 
-                    case CommonFunctions.MediaType.NM:
-
+                    case CommonFunctions.CategoryType.NM:
+                    case CommonFunctions.CategoryType.LN:
                         IQAgent_NewsResultsModel iQAgent_NewsResultsModel = (IQAgent_NewsResultsModel)item.MediaData;
 
                         if (iQAgent_NewsResultsModel.HighlightedNewsOutput != null && iQAgent_NewsResultsModel.HighlightedNewsOutput.Highlights != null)
@@ -557,8 +557,11 @@ namespace IQMedia.WebApplication.Controllers
                         iQAgent_NewsResultsModel.HighlightingText = CommonFunctions.ProcessHighlightingText(highlightedCCOutput, highlightedText);
 
                         break;
-                    case CommonFunctions.MediaType.SM:
-
+                    case CommonFunctions.CategoryType.SocialMedia:
+                    case CommonFunctions.CategoryType.FB:
+                    case CommonFunctions.CategoryType.IG:
+                    case CommonFunctions.CategoryType.Blog:
+                    case CommonFunctions.CategoryType.Forum:
                         IQAgent_SMResultsModel iQAgent_SMResultsModel = (IQAgent_SMResultsModel)item.MediaData;
 
                         if (iQAgent_SMResultsModel.HighlightedSMOutput != null && iQAgent_SMResultsModel.HighlightedSMOutput.Highlights != null)
@@ -577,7 +580,7 @@ namespace IQMedia.WebApplication.Controllers
                         iQAgent_SMResultsModel.HighlightingText = CommonFunctions.ProcessHighlightingText(highlightedCCOutput, highlightedText);
 
                         break;
-                    case CommonFunctions.MediaType.TM:
+                    case CommonFunctions.CategoryType.Radio:
                         IQAgent_TVEyesResultsModel iQAgent_TVEyesResultsModel = (IQAgent_TVEyesResultsModel)item.MediaData;
                         highlightedCCOutput = iQAgent_TVEyesResultsModel.HighlightingText.Replace("&gt;", ">").Replace("&lt;", "<");
 
@@ -592,7 +595,7 @@ namespace IQMedia.WebApplication.Controllers
 
                          iQAgent_TVEyesResultsModel.HighlightingText = CommonFunctions.ProcessHighlightingText(highlightedCCOutput, highlightedText);
                         break;
-                    case CommonFunctions.MediaType.PQ:
+                    case CommonFunctions.CategoryType.PQ:
 
                         IQAgent_PQResultsModel iQAgent_PQResultsModel = (IQAgent_PQResultsModel)item.MediaData;
 

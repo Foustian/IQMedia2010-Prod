@@ -23,6 +23,7 @@ namespace IQMedia.Model
         public string timeDifference { get; set; }
         public string SearchAgentName { get; set; }
         public long NumberOfHits { get; set; }
+        public List<string> ExcludedIDs { get; set; }
 
         public IQAgent_MediaResultsModel ShallowCopy()
         {

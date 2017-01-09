@@ -9,7 +9,7 @@ using IQMedia.Data;
 using IQMedia.Logic.Base;
 using IQMedia.Model;
 using IQMedia.Shared.Utility;
-//using AnalyticsSearch;
+using AnalyticsSearch;
 
 namespace IQMedia.Web.Logic
 {
@@ -77,11 +77,11 @@ namespace IQMedia.Web.Logic
             return dataModel;
         }
 
-        public List<string> GetTopTenData(Guid clientGUID, string searchRequestXml, SecondaryTabID tab)
+        public List<string> GetTopNetworkShows(Guid clientGUID, string searchRequestXml, SecondaryTabID tab)
         {
             AnalyticsDA analyticsDA = new AnalyticsDA();
 
-            List<string> topTen = analyticsDA.GetTopTenData(clientGUID, searchRequestXml, tab);
+            List<string> topTen = analyticsDA.GetTopNetworkShows(clientGUID, searchRequestXml, tab);
             return topTen;
         }
 
@@ -312,62 +312,47 @@ namespace IQMedia.Web.Logic
             return filters;
         }
 
-        private long GetSumsFromSummaries(List<string> PESHTypes, List<IQ_MediaTypeModel> lstSubMediaTypes, AnalyticsPESHFilters peshFilters, IEnumerable<AnalyticsSummaryModel> summaries)
+        private decimal GetSumsFromSummaries(AnalyticsRequest request, List<IQ_MediaTypeModel> lstSubMediaTypes, AnalyticsPESHFilters peshFilters, IEnumerable<AnalyticsSummaryModel> summaries)
         {
             List<string> onAirSubMediaTypes = lstSubMediaTypes.Where(w => w.AnalyticsDataType.Equals("OnAir")).Select(s => s.SubMediaType).ToList();
             List<string> onlineSubMediaTypes = lstSubMediaTypes.Where(w => w.AnalyticsDataType.Equals("Online")).Select(s => s.SubMediaType).ToList();
             List<string> printSubMediaTypes = lstSubMediaTypes.Where(w => w.AnalyticsDataType.Equals("Print")).Select(s => s.SubMediaType).ToList();
 
-            long returnSum = 0;
+            decimal returnSum = 0;
 
-            // Neither a PESH type nor a source group was selected
-            if (!peshFilters.isFiltering)
+            if (request.Tab != SecondaryTabID.Overview)
             {
-                returnSum = summaries.Sum(summary => summary.Number_Of_Hits);
-            }
-            else
-            {
-                if (peshFilters.isOnAir || peshFilters.isOnline || peshFilters.isPrint)
+                // Neither a PESH type nor a source group was selected
+                if (!peshFilters.isFiltering)
                 {
-                    var partialSummaries = new List<AnalyticsSummaryModel>();
-                    if (peshFilters.isOnAir)
-                    {
-                        partialSummaries.AddRange(summaries.Where(w => onAirSubMediaTypes.Contains(w.SubMediaType)));
-                    }
-                    if (peshFilters.isOnline)
-                    {
-                        partialSummaries.AddRange(summaries.Where(w => onlineSubMediaTypes.Contains(w.SubMediaType)));
-                    }
-                    if (peshFilters.isPrint)
-                    {
-                        partialSummaries.AddRange(summaries.Where(w => printSubMediaTypes.Contains(w.SubMediaType)));
-                    }
-
-                    summaries = partialSummaries;
+                    returnSum = summaries.Sum(summary => summary.Number_Of_Hits);
                 }
-
-                // If filtering to source groups but NOT to PESH types
-                if (PESHTypes == null || PESHTypes.Count == 0)
-                {
-                    returnSum = summaries.Sum(s => s.Number_Of_Hits);
-                }
-                /*if (!peshFilters.isEarned )
-                {
-                    Log4NetLogger.Debug(string.Format("!isEarned"));
-                }
-                // Filtering to source groups and PESH types
                 else
                 {
-                    // Read is a subset of Earned, so if Read is selected then Earned doesn't matter.
-                    if (peshFilters.isRead)
+                    if (peshFilters.isOnAir || peshFilters.isOnline || peshFilters.isPrint)
                     {
-                        returnSum += summaries.Sum(s => s.Number_Of_Hits - s.SeenEarned - s.SeenPaid - s.HeardEarned - s.HeardPaid);
+                        var partialSummaries = new List<AnalyticsSummaryModel>();
+                        if (peshFilters.isOnAir)
+                        {
+                            partialSummaries.AddRange(summaries.Where(w => onAirSubMediaTypes.Contains(w.SubMediaType)));
+                        }
+                        if (peshFilters.isOnline)
+                        {
+                            partialSummaries.AddRange(summaries.Where(w => onlineSubMediaTypes.Contains(w.SubMediaType)));
+                        }
+                        if (peshFilters.isPrint)
+                        {
+                            partialSummaries.AddRange(summaries.Where(w => printSubMediaTypes.Contains(w.SubMediaType)));
+                        }
+
+                        summaries = partialSummaries;
                     }
-                    else if (peshFilters.isEarned)
+
+                    // If filtering to source groups but NOT to PESH types
+                    if (request.PESHTypes == null || request.PESHTypes.Count == 0)
                     {
-                        // Earned includes all media types. - all types but not TV?
-                        returnSum += summaries.Where(w => w.SubMediaType != "TV").Sum(s => s.Number_Of_Hits);
-                    }*/
+                        returnSum = summaries.Sum(s => s.Number_Of_Hits);
+                    }
 
                     if (peshFilters.isSeenEarned)
                     {
@@ -388,8 +373,30 @@ namespace IQMedia.Web.Logic
                     if (peshFilters.isReadEarned)
                     {
                         returnSum += summaries.Sum(s => s.ReadEarned);
-                    } 
-                /*}*/
+                    }
+                }
+            }
+            else
+            {
+                switch (request.SummationProperty)
+                {
+                    case SummationProperty.IQMediaValue:
+                        returnSum = summaries.Sum(s => s.IQMediaValue);
+                        break;
+                    case SummationProperty.Docs:
+                        returnSum = summaries.Sum(s => s.Number_Docs);
+                        break;
+                    case SummationProperty.Hits:
+                        returnSum = summaries.Sum(s => s.Number_Of_Hits);
+                        break;
+                    case SummationProperty.AdSpend:
+                        returnSum = summaries.Sum(s => s.IQMediaValue);
+                        //returnSum = summaries.Sum(s => (s.IQMediaValue * (decimal)0.85) + ((s.SeenPaid / 30) * s.IQMediaValue * (decimal)1.15));
+                        break;
+                    default:
+                        returnSum = summaries.Sum(s => s.Number_Of_Hits);
+                        break;
+                }
             }
 
             return returnSum;
@@ -512,7 +519,7 @@ namespace IQMedia.Web.Logic
                             seriesAndChart = CreateHeatMap(groupings, graphRequest, subMediaTypes, PESHFilters);
                             break;
                         case HCChartTypes.fusionMap:
-                            seriesAndChart.Add("chart", CreateFusionMap(graphRequest, analyticsData, groupings));
+                            seriesAndChart.Add("chart", CreateFusionMap(graphRequest, analyticsData, groupings, subMediaTypes, PESHFilters));
                             seriesAndChart.Add("series", null);
                             break;
                     }
@@ -646,13 +653,15 @@ namespace IQMedia.Web.Logic
 
                                 HighChartDatum maleHCD = new HighChartDatum() {
                                     y = agSumms.Any() ? agSumms.Sum(s => s.MaleAudience) : 0,
-                                    Value = "male"
+                                    Value = "male",
+                                    SearchTerm = reqID.ToString()
                                 };
                                 maleSeries.data.Add(maleHCD);
 
                                 HighChartDatum femaleHCD = new HighChartDatum() {
                                     y = agSumms.Any() ? agSumms.Sum(s => s.FemaleAudience) : 0,
-                                    Value = "female"
+                                    Value = "female",
+                                    SearchTerm = reqID.ToString()
                                 };
                                 femaleSeries.data.Add(femaleHCD);
                             }
@@ -716,27 +725,33 @@ namespace IQMedia.Web.Logic
 
                                 ar18_24.data.Add(new HighChartDatum() {
                                     Value = "18-24",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM18_20 + s.AM21_24 + s.AF18_20 + s.AF21_24) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM18_20 + s.AM21_24 + s.AF18_20 + s.AF21_24) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                                 ar25_34.data.Add(new HighChartDatum() {
                                     Value = "25-34",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM25_34 + s.AF25_34) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM25_34 + s.AF25_34) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                                 ar35_49.data.Add(new HighChartDatum() {
                                     Value = "35-49",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM35_49 + s.AF35_49) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM35_49 + s.AF35_49) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                                 ar50_54.data.Add(new HighChartDatum() {
                                     Value = "50-54",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM50_54 + s.AF50_54) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM50_54 + s.AF50_54) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                                 ar55_64.data.Add(new HighChartDatum() {
                                     Value = "55-64",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM55_64 + s.AF55_64) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM55_64 + s.AF55_64) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                                 ar65_Plus.data.Add(new HighChartDatum() {
                                     Value = "65+",
-                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM65_Plus + s.AF65_Plus) : 0
+                                    y = agSumms.Any() ? agSumms.Sum(s => s.AM65_Plus + s.AF65_Plus) : 0,
+                                    SearchTerm = reqID.ToString()
                                 });
                             }
                         }
@@ -798,10 +813,11 @@ namespace IQMedia.Web.Logic
                         foreach (var dg in dataGroupings)
                         {
                             HighChartDatum groupDatum = new HighChartDatum() {
-                                y = dg.Summaries.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, dg.Summaries) : 0,
+                                y = dg.Summaries.Any() ? GetSumsFromSummaries(request, subMediaTypes, PESHFilters, dg.Summaries) : 0,
                                 SearchTerm = group.Name,
-                                Value = group.ID
+                                Value = dg.ID
                             };
+
                             groupSeries.data.Add(groupDatum);
                         }
                         seriesList.Add(groupSeries);
@@ -870,6 +886,11 @@ namespace IQMedia.Web.Logic
                     {
                         chartTitle = "Audience";
                     }
+                    else if (request.Tab == SecondaryTabID.Overview)
+                    {
+                        //chartTitle = request.SummationProperty.Equals(SummationProperty.AdSpend) ? "Ad Spend" : "Airings";
+                        chartTitle = "";
+                    }
                     else
                     {
                         chartTitle = "Occurrences";
@@ -904,7 +925,7 @@ namespace IQMedia.Web.Logic
                         },
                         title = new Title2() {
                             rotation = 0,
-                            text = request.PageType == "campaign" ? "Campaign Day" : "Date"
+                            text = request.PageType == "campaign" ? "Campaign Day" : (request.Tab == SecondaryTabID.Overview ? "" : "Date")
                         },
                         categories = xAxisValues,
                         tickInterval = Convert.ToInt32(Math.Floor(Convert.ToDouble(xAxisValues.Count()) / 7))
@@ -946,13 +967,13 @@ namespace IQMedia.Web.Logic
                         {
                             Series maleSeries = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("{0} male", group.Name),
+                                name = string.Format("{0}{1}male", group.Name, string.IsNullOrEmpty(group.Name) ? "" : " "),
                                 color = colors[0],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
                             Series femaleSeries = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("{0} female", group.Name),
+                                name = string.Format("{0}{1}female", group.Name, string.IsNullOrEmpty(group.Name) ? "" : " "),
                                 color = colors[1],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1063,14 +1084,14 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum maleDatum = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = "male",
+                                        Value = string.Format("male{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = "male",
                                         y = request.ChartType == ChartType.Growth ? malePctChange : maleSum
                                     };
                                     maleSeries.data.Add(maleDatum);
                                     HighChartDatum femaleDatum = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = "female",
+                                        Value = string.Format("female{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = "female",
                                         y = request.ChartType == ChartType.Growth ? femalePctChange : femaleSum
                                     };
@@ -1087,7 +1108,7 @@ namespace IQMedia.Web.Logic
                         {
                             Series s18_24 = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("18-24 {0}", group.Name),
+                                name = string.Format("18-24{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[0],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1095,7 +1116,7 @@ namespace IQMedia.Web.Logic
 
                             Series s25_34 = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("25-34 {0}", group.Name),
+                                name = string.Format("25-34{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[1],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1103,7 +1124,7 @@ namespace IQMedia.Web.Logic
 
                             Series s35_49 = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("35-49 {0}", group.Name),
+                                name = string.Format("35-49{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[2],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1111,7 +1132,7 @@ namespace IQMedia.Web.Logic
 
                             Series s50_54 = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("50-54 {0}", group.Name),
+                                name = string.Format("50-54{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[3],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1119,7 +1140,7 @@ namespace IQMedia.Web.Logic
 
                             Series s55_64 = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("55-64 {0}", group.Name),
+                                name = string.Format("55-64{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[4],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1127,7 +1148,7 @@ namespace IQMedia.Web.Logic
 
                             Series s65_Plus = new Series() {
                                 data = new List<HighChartDatum>(),
-                                name = string.Format("65+ {0}", group.Name),
+                                name = string.Format("65+{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 color = colors[5],
                                 dashStyle = dashStyles[count % dashStyles.Count]
                             };
@@ -1331,7 +1352,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s18_24HCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("18-24_{0}", group.ID),
+                                        Value = string.Format("18-24{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s18_24.name,
                                         y = request.ChartType == ChartType.Growth ? s18_24PctChange : s18_24Sum
                                     };
@@ -1339,7 +1360,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s25_34HCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("25-34_{0}", group.ID),
+                                        Value = string.Format("25-34{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s25_34.name,
                                         y = request.ChartType == ChartType.Growth ? s25_34PctChange : s25_34Sum
                                     };
@@ -1347,7 +1368,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s35_49HCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("35-49_{0}", group.ID),
+                                        Value = string.Format("35-49{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s35_49.name,
                                         y = request.ChartType == ChartType.Growth ? s35_49PctChange : s35_49Sum
                                     };
@@ -1355,7 +1376,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s50_54HCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("50-54_{0}", group.ID),
+                                        Value = string.Format("50-54{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s50_54.name,
                                         y = request.ChartType == ChartType.Growth ? s50_54PctChange : s50_54Sum
                                     };
@@ -1363,7 +1384,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s55_64HCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("55-64_{0}", group.ID),
+                                        Value = string.Format("55-64{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s55_64.name,
                                         y = request.ChartType == ChartType.Growth ? s55_64PctChange : s55_64Sum
                                     };
@@ -1371,7 +1392,7 @@ namespace IQMedia.Web.Logic
 
                                     HighChartDatum s65_PlusHCD = new HighChartDatum() {
                                         Date = dateStr,
-                                        Value = string.Format("65+_{0}", group.ID),
+                                        Value = string.Format("65+{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID),
                                         SearchName = s65_Plus.name,
                                         y = request.ChartType == ChartType.Growth ? s65_PlusPctChange : s65_PlusSum
                                     };
@@ -1429,8 +1450,6 @@ namespace IQMedia.Web.Logic
                         seriesGroupings = groupings;
                     }
 
-                    List<string> multiFilterCounter = new List<string>();
-
                     foreach (var group in seriesGroupings.OrderByDescending(ob => ob.Summaries.Sum(s => s.Number_Of_Hits)))
                     {
                         Series groupSeries = new Series() {
@@ -1447,12 +1466,11 @@ namespace IQMedia.Web.Logic
                         {
                             // Split group ID mainGroupID_agentID into constituent parts - color off of mainGroup and dash off of agent
                             string[] splitIDs = group.ID.Split('_');
-                            multiFilterCounter.Add(splitIDs[0]);
                             groupSeries.color = colorGroups.First(w => splitIDs[0].Equals(w.Key)).Value;
                             groupSeries.dashStyle = dashGroups.First(w => splitIDs[1].Equals(w.Key)).Value;
                         }
 
-                        long prevSum = 0;
+                        decimal prevSum = 0;
 
                         if (request.PageType == "campaign")
                         {
@@ -1472,7 +1490,7 @@ namespace IQMedia.Web.Logic
                             foreach (var step in xAxisValues)
                             {
                                 var summariesForOffset = group.Summaries.Where(w => w.CampaignOffset.Equals(Convert.ToInt64(step))).ToList();
-                                decimal? offsetSum = summariesForOffset.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, summariesForOffset) : 0;
+                                decimal? offsetSum = summariesForOffset.Any() ? GetSumsFromSummaries(request, subMediaTypes, PESHFilters, summariesForOffset) : 0;
                                 decimal pctChange = 0;
                                 if (prevSum != 0)
                                 {
@@ -1528,7 +1546,7 @@ namespace IQMedia.Web.Logic
                             {
                                 var summariesForDate = group.Summaries.Where(w => w.SummaryDateTime.Equals(date));
 
-                                long daySum = summariesForDate.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, summariesForDate) : 0;
+                                decimal daySum = summariesForDate.Any() ? GetSumsFromSummaries(request, subMediaTypes, PESHFilters, summariesForDate) : 0;
                                 decimal pctChange = 0;
                                 if (prevSum != 0)
                                 {
@@ -1574,16 +1592,22 @@ namespace IQMedia.Web.Logic
                         }
                         else if (multiFilter)
                         {
-                            // Make sure there are 10 "main" series in line chart
-                            var multiCount = multiFilterCounter.Distinct().Count();
-                            if (multiCount <= 10)
+                            lineChart.series.Add(groupSeries);
+                            // Check how many distinct "main" series in line chart series
+                            var lcMainSeriesIDs = lineChart.series.Select(s => s.data.First().Value.Split('_')[0]).ToList();
+                            if (lcMainSeriesIDs.Distinct().Count() > 10)
                             {
-                                lineChart.series.Add(groupSeries);
+                                // If adding series to chart will add 
+                                lineChart.series.Remove(groupSeries);
                             }
                         }
                         else
                         {
-                            if (count < 10)
+                            if (request.Tab == SecondaryTabID.Overview)
+                            {
+                                lineChart.series.Add(groupSeries);
+                            }
+                            else if (count < 10)
                             {
                                 lineChart.series.Add(groupSeries);
                             }
@@ -1624,10 +1648,29 @@ namespace IQMedia.Web.Logic
 
                 bool multiFilter = request.IsCompareMode && !request.Tab.Equals(SecondaryTabID.OverTime);
 
+                // Pie Slices have properties in this order
+                // Name
+                // Value
+                // ID
+
+                string chartTitle;
+                if (request.Tab.Equals(SecondaryTabID.Demographic))
+                {
+                    chartTitle = "Audience";
+                }
+                else if (request.Tab.Equals(SecondaryTabID.Overview))
+                {
+                    chartTitle = "";
+                }
+                else
+                {
+                    chartTitle = "Occurrences";
+                }
+
                 HighPieChartModel pieChart = new HighPieChartModel() {
                     chart = new PChart(),
                     title = new PTitle() {
-                        text =  request.Tab == SecondaryTabID.Demographic ? "Audience" : "Occurrences",
+                        text =  chartTitle,
                         style = new HStyle() {
                             color = "null",
                             fontFamily = "Open Sans",
@@ -1637,20 +1680,20 @@ namespace IQMedia.Web.Logic
                     },
                     plotOptions = new PPlotOptions() {
                         pie = new Pie() {
-                            allowPointSelect = true,
-                            cursor = "pointer",
-                            showInLegend = false,
-                            innerSize = "60%",
-                            dataLabels = new DataLabels() {
-                                enabled = false
+                            allowPointSelect = true
+                            ,cursor = "pointer"
+                            ,showInLegend = request.PageType.Equals("dashboard") ? true : false
+                            ,innerSize = "60%"
+                            ,dataLabels = new DataLabels() {
+                                enabled = request.PageType.Equals("dashboard") ? false : false
                             }
                         }
                     },
                     legend = new Legend() {
-                        align = "center",
+                        align = request.Tab.Equals(SecondaryTabID.Overview) ? "left" : "center",
                         borderWidth = "0",
                         width = 500,
-                        enabled = false
+                        enabled = request.Tab.Equals(SecondaryTabID.Overview) ? true : false
                     },
                     tooltip = new PTooltip(),
                     series = new List<PSeries>()
@@ -1667,22 +1710,30 @@ namespace IQMedia.Web.Logic
                             data = new List<object>()
                         };
 
-                        var agSumms = GetSummariesForPESHR(PESHFilters, group.Summaries);
+                        List<AnalyticsSummaryModel> agSumms = new List<AnalyticsSummaryModel>();
+                        if (!request.PageType.Equals("dashboard"))
+                        {
+                            agSumms = GetSummariesForPESHR(PESHFilters, group.Summaries);
+                        }
+                        else
+                        {
+                            agSumms = group.Summaries;
+                        }
 
                         if (request.SubTab == "gender")
                         {
                             var maleSlice = new object[] {
-                                string.Format("male {0}", group.Name),
+                                string.Format("male{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.MaleAudience)),
-                                string.Format("male_{0}", group.ID)
+                                string.Format("male{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(maleSlice);
                             seriesList.Add(maleSlice);
 
                             var femaleSlice = new object[] {
-                                string.Format("female {0}", group.Name),
+                                string.Format("female{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.FemaleAudience)),
-                                string.Format("female_{0}", group.ID)
+                                string.Format("female{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(femaleSlice);
                             seriesList.Add(femaleSlice);
@@ -1690,49 +1741,49 @@ namespace IQMedia.Web.Logic
                         else
                         {
                             var s18_24 = new object[] {
-                                string.Format("18-24 {0}", group.Name),
+                                string.Format("18-24{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM18_20 + s.AM21_24 + s.AF18_20 + s.AF21_24)),
-                                string.Format("18-24_{0}", group.ID)
+                                string.Format("18-24{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s18_24);
                             seriesList.Add(s18_24);
 
                             var s25_34 = new object[] {
-                                string.Format("25-34 {0}", group.Name),
+                                string.Format("25-34{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM25_34 + s.AF25_34)),
-                                string.Format("25-34_{0}", group.ID)
+                                string.Format("25-34{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s25_34);
                             seriesList.Add(s25_34);
 
                             var s35_49 = new object[] {
-                                string.Format("35-49 {0}", group.Name),
+                                string.Format("35-49{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM35_49 + s.AF35_49)),
-                                string.Format("35-49_{0}", group.ID)
+                                string.Format("35-49{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s35_49);
                             seriesList.Add(s35_49);
 
                             var s50_54 = new object[] {
-                                string.Format("50-45 {0}", group.Name),
+                                string.Format("50-45{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM50_54 + s.AF50_54)),
-                                string.Format("50-54_{0}", group.ID)
+                                string.Format("50-54{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s50_54);
                             seriesList.Add(s50_54);
 
                             var s55_64 = new object[] {
-                                string.Format("55-64 {0}", group.Name),
+                                string.Format("55-64{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM55_64 + s.AF55_64)),
-                                string.Format("55-64_{0}", group.ID)
+                                string.Format("55-64{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s55_64);
                             seriesList.Add(s55_64);
 
                             var s65_Plus = new object[] {
-                                string.Format("65+ {0}", group.Name),
+                                string.Format("65+{0}{1}", string.IsNullOrEmpty(group.Name) ? "" : " ", group.Name),
                                 Convert.ToInt64(agSumms.Sum(s => s.AM65_Plus + s.AF65_Plus)),
-                                string.Format("65+_{0}", group.ID)
+                                string.Format("65+{0}{1}", string.IsNullOrEmpty(group.ID) ? "" : "_", group.ID)
                             };
                             groupSeries.data.Add(s65_Plus);
                             seriesList.Add(s65_Plus);
@@ -1740,6 +1791,7 @@ namespace IQMedia.Web.Logic
                         pieChart.series.Add(groupSeries);
                     }
 
+                    // Code to construct pie chart in different fashion
                     //foreach (var group in groupings)
                     //{
                     //    if (request.SubTab == "gender")
@@ -1919,7 +1971,7 @@ namespace IQMedia.Web.Logic
                                 PSeries ps = psList[agID];
                                 var subSlice = new object[] {
                                     subGroup.Name,
-                                    GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, subGroup.Summaries),
+                                    GetSumsFromSummaries(request, subMediaTypes, PESHFilters, subGroup.Summaries),
                                     subGroup.ID
                                 };
 
@@ -1943,10 +1995,10 @@ namespace IQMedia.Web.Logic
                         foreach (var group in groupings.OrderByDescending(ob => ob.Summaries.Sum(s => s.Number_Of_Hits)))
                         {
                             var slice = new object[] {
-                            group.Name,
-                            group.Summaries.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, group.Summaries) : 0,
-                            group.ID
-                        };
+                                group.Name,
+                                group.Summaries.Any() ? GetSumsFromSummaries(request, subMediaTypes, PESHFilters, group.Summaries) : 0,
+                                group.ID
+                            };
 
                             seriesList.Add(slice);
 
@@ -1955,10 +2007,10 @@ namespace IQMedia.Web.Logic
                                 foreach (var subGroup in group.AgentSubGroupings)
                                 {
                                     var secondarySlice = new object[] {
-                                    subGroup.Name,
-                                    subGroup.Summaries.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, subGroup.Summaries) : 0,
-                                    string.Format("{0}_{1}", group.ID, subGroup.ID)
-                                };
+                                        subGroup.Name,
+                                        subGroup.Summaries.Any() ? GetSumsFromSummaries(request, subMediaTypes, PESHFilters, subGroup.Summaries) : 0,
+                                        string.Format("{0}_{1}", group.ID, subGroup.ID)
+                                    };
                                     seriesList.Add(secondarySlice);
 
                                     if (count < 10)
@@ -1977,7 +2029,11 @@ namespace IQMedia.Web.Logic
                             }
                             else
                             {
-                                if (count < 10)
+                                if (request.Tab == SecondaryTabID.Overview)
+                                {
+                                    sliceList.Add(slice);
+                                }
+                                else if (count < 10)
                                 {
                                     sliceList.Add(slice);
                                 }
@@ -2104,7 +2160,8 @@ namespace IQMedia.Web.Logic
                         var xIndex = hours.FindIndex(i => group.ID.Split('_').ElementAt(1).Equals(i.ToString()));
 
                         HeatMapDatum hcd = new HeatMapDatum() {
-                            value = group.Summaries.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, group.Summaries) : 0,
+                            value = group.Summaries.Any() ? (long)GetSumsFromSummaries(request, subMediaTypes, PESHFilters, group.Summaries) : 0,
+                            //value = group.Summaries.Any() ? group.Summaries.Sum(s => s.Number_Docs) : 0,
                             borderColor = "#cccccc",
                             borderWidth = 1,
                             x = xIndex,
@@ -2148,11 +2205,15 @@ namespace IQMedia.Web.Logic
                                 count += 1;
                             }
 
-                            var summsForPart = allSummaries.Where(w => w.SummaryDateTime.DayOfWeek.Equals(day) && w.SummaryDateTime.Hour.Equals(hour));
+                            //var summsForPart = allSummaries.Where(w => request.Tab.Equals(SecondaryTabID.Daytime) ? (w.SummaryDateTime.ToUniversalTime().DayOfWeek.Equals(day) && w.SummaryDateTime.ToUniversalTime().Hour.Equals(hour)) : (w.SummaryDateTime.DayOfWeek.Equals(day) && w.SummaryDateTime.Hour.Equals(hour)));
+                            // Daypart based on Local Times
+                            var summsForPart = allSummaries.Where(w => w.LocalDateTime.DayOfWeek.Equals(day) && w.LocalDateTime.Hour.Equals(hour));
+                            
                             DayPartDataItem dayPart = dayPartData.Any() ? dayPartData.First(dp => dp.DayOfWeek.Equals(day) && dp.HourOfDay.Equals(hour)) : new DayPartDataItem();
 
                             HeatMapDatum hcd = new HeatMapDatum() {
-                                value = summsForPart.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, summsForPart) : 0,
+                                value = summsForPart.Any() ? (long)GetSumsFromSummaries(request, subMediaTypes, PESHFilters, summsForPart) : 0,
+                                //value = summsForPart.Any() ? summsForPart.Sum(s => s.Number_Docs) : 0,
                                 x = hours.IndexOf(hour),
                                 y = count,
                                 name = dayPart.DayPartName,
@@ -2437,7 +2498,7 @@ namespace IQMedia.Web.Logic
             }
         }
 
-        public List<string> CreateFusionMap(AnalyticsRequest request, AnalyticsDataModel analyticsData, List<AnalyticsGrouping> groupings)
+        public List<string> CreateFusionMap(AnalyticsRequest request, AnalyticsDataModel analyticsData, List<AnalyticsGrouping> groupings, List<IQ_MediaTypeModel> subMediaTypes, AnalyticsPESHFilters PESHFilters)
         {
             try
             {
@@ -2447,6 +2508,11 @@ namespace IQMedia.Web.Logic
                 List<string> mapList = new List<string>();
                 bool multiFilter = request.IsCompareMode;
                 Dictionary<string, List<AnalyticsMapSummaryModel>> groups = new Dictionary<string, List<AnalyticsMapSummaryModel>>();
+                // FOR WHEN SWITCHED TO NEW ANALYTICS TABLE - USE SUMMARIES INSTEAD OF RESULT TABLES
+                //List<AnalyticsSummaryModel> allSummaries = new List<AnalyticsSummaryModel>();
+                //groupings.ForEach(e => {
+                //    allSummaries.AddRange(GetSummariesForSources(subMediaTypes, PESHFilters, e.Summaries));
+                //});
 
                 if (multiFilter)
                 {
@@ -2507,12 +2573,18 @@ namespace IQMedia.Web.Logic
 
                     // Set map data
                     List<FusionMapData> mapData = new List<FusionMapData>();
-
                     if (request.ChartType == ChartType.US)
                     {
                         foreach (var keyVal in IQDmaToFusionIDMapModel.IQDmaToFusionIDMap)
                         {
+                            // keyVal values ARE NOT the IDs of those markets
+                            // FOR WHEN SWITCHING TO SUMMARY TABLES INSTEAD OF RESULTS TABLES
+                            //var dmaSummaries = allSummaries.Where(w => w.SubMediaType.Equals("TV") && w.Market.Equals(keyVal.Key)).ToList();
+
+                            //long mention = dmaSummaries.Any() ? GetSumsFromSummaries(request.PESHTypes, subMediaTypes, PESHFilters, dmaSummaries) : 0;
+
                             long mention = group.Value.Where(w => w.DMAName == keyVal.Key).Sum(s => s.NumberOfHits);
+
 
                             FusionMapData mapDatum = new FusionMapData() {
                                 id = keyVal.Value.ToString(),
@@ -2644,28 +2716,54 @@ namespace IQMedia.Web.Logic
 
         #region Solr
 
-        //public List<FacetResponse> Search(List<string> SRIDs, DateTime dateFrom, DateTime dateTo)
-        //{
-        //    try
-        //    {
-        //        System.Uri searchRequestUrl = new Uri("http://10.100.1.41:8080/solr/cfe-2016-1/select?");
-        //        SearchEngine searchEngine = new SearchEngine(searchRequestUrl);
-        //        SearchRequest request = new SearchRequest() {
-        //            SearchRequestIDs = SRIDs,
-        //            FromDate = dateFrom,
-        //            ToDate = dateTo
-        //        };
+        public List<FacetResponse> Search(List<string> SRIDs, DateTime dateFrom, DateTime dateTo)
+        {
+            try
+            {
+                
+                System.Uri searchRequestUrl = new Uri("http://10.100.1.41:8080/solr/cfe-2016-1/select?");
+                SearchEngine searchEngine = new SearchEngine(searchRequestUrl);
+                SearchRequest request = new SearchRequest() {
+                    SearchRequestIDs = SRIDs,
+                    FromDate = dateFrom,
+                    ToDate = dateTo
+                };
 
-        //        //Dictionary<string, string> searchResult = searchEngine.Search(request);
+                //Dictionary<string, string> searchResult = searchEngine.Search(request);
 
-        //        return searchEngine.Search(request);
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        Log4NetLogger.Error(exc);
-        //        return new List<FacetResponse>();
-        //    }
-        //}
+                return searchEngine.Search(request);
+            }
+            catch (Exception exc)
+            {
+                Log4NetLogger.Error(exc);
+                return new List<FacetResponse>();
+            }
+        }
+
+        public List<FacetResponse> AnalyticsSearch(AnalyticsRequest request)
+        {
+            try
+            {
+                string url = string.Format("http://10.100.1.161:8080:/solr/{0}/select?", request.DateInterval.Equals("day") ? "AnalyticsHourSummary" : "AnalyticsDaySummary");
+                Uri requestURL = new Uri(url);
+
+                SearchEngine engine = new SearchEngine(requestURL);
+                SearchRequest sRequest = new SearchRequest() {
+                    SearchRequestIDs = request.RequestIDs.Select(s => s.ToString()).ToList(),
+                    FromDate = Convert.ToDateTime(request.DateFrom),
+                    ToDate = Convert.ToDateTime(request.DateTo),
+                    DateInterval = request.DateInterval,
+                    Tab = request.Tab.ToString()
+                };
+
+                return engine.Search(sRequest);
+            }
+            catch (Exception exc)
+            {
+                Log4NetLogger.Error(exc);
+                return new List<FacetResponse>();
+            }
+        }
 
         #endregion
 

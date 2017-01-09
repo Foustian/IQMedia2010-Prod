@@ -22,7 +22,8 @@ namespace IQMedia.Model
         public string Nielsen_Result { get; set; }
         public string SourceCategory { get; set; }
         public string Publication { get; set; }
-        public CommonFunctions.CategoryType MediumType { get; set; }
+       // public CommonFunctions.CategoryType MediumType { get; set; }  TODO: DELETE
+        public string MediumType { get; set; }
         public string SearchTerm { get; set; }
         public string SearchName { get; set; }
         public Guid? VideoGuid { get; set; }

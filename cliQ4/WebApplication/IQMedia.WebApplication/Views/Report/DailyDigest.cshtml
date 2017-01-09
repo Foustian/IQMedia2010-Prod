@@ -647,6 +647,7 @@
                                                     break;
 
                                                 case IQMedia.Shared.Utility.CommonFunctions.CategoryType.NM:
+                                                case IQMedia.Shared.Utility.CommonFunctions.CategoryType.LN:
 
                                                     IQAgent_NewsResultsModel newsMediaModel = item.MediaData as IQAgent_NewsResultsModel;
 
@@ -1233,7 +1234,7 @@
                                         <div class="FeedsContentNone">
                                             @{
                                                 string blogTitle = string.Empty;
-
+                                                
                                                 if (blogModel.Description.Trim().Length > 65)
                                                 {
                                                     blogTitle = blogModel.Description.Trim().Substring(0, 62) + "...";
@@ -1241,7 +1242,7 @@
                                                 else
                                                 {
                                                     blogTitle = blogModel.Description.Trim();
-                                                }
+                                                }                                                
                                             }
                                             <div class="float-left media-heading">
                                                 <a target="_blank" href="@blogModel.Link" title="@blogModel.Description.Trim()">@blogTitle</a>

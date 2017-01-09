@@ -12,13 +12,6 @@ namespace IQMedia.Web.Logic
 {
     public class NMLogic : IQMedia.Web.Logic.Base.ILogic
     {
-        public string Insert_ArchiveNM(ArchiveCommonModel archiveCommonModel)
-        {
-            NMDA nmDA = (NMDA)DataAccessFactory.GetDataAccess(DataAccessType.NM);
-            string result = nmDA.Insert_ArchiveNM(archiveCommonModel);
-            return result;
-        }
-
         public int SelectDownloadLimit(string CustomerGUID)
         {
             NMDA nmDA = (NMDA)DataAccessFactory.GetDataAccess(DataAccessType.NM);
@@ -54,10 +47,10 @@ namespace IQMedia.Web.Logic
             return result;
         }
 
-        public string InsertArchiveNM(IQAgent_NewsResultsModel p_IQAgent_NewsResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Event, string p_Keywords, string p_Description, Int64? MediaID = null, bool UseProminenceMultiplier = false)
+        public string InsertArchiveNM(IQAgent_NewsResultsModel p_IQAgent_NewsResultsModel, Guid p_CustomerGUID, Guid p_ClientGUID, Guid p_CategoryGUID, string p_Event, string p_Keywords, string p_Description, string p_MediaType, string p_SubMediaType, Int64? MediaID = null, bool UseProminenceMultiplier = false)
         {
             NMDA nmDA = (NMDA)DataAccessFactory.GetDataAccess(DataAccessType.NM);
-            string result = nmDA.InsertArchiveNM(p_IQAgent_NewsResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Event, p_Keywords, p_Description, MediaID, UseProminenceMultiplier);
+            string result = nmDA.InsertArchiveNM(p_IQAgent_NewsResultsModel, p_CustomerGUID, p_ClientGUID, p_CategoryGUID, p_Event, p_Keywords, p_Description, p_MediaType, p_SubMediaType, MediaID, UseProminenceMultiplier);
             return result;
         }
 
@@ -93,8 +86,23 @@ namespace IQMedia.Web.Logic
 
             if (searchNewsResults.newsResults != null)
             {
+                List<string> highlights;
                 foreach (NewsResult newsResult in searchNewsResults.newsResults)
                 {
+                    // Replace LexisNexis linebreak placeholder text with whitespace
+                    if (!String.IsNullOrWhiteSpace(newsResult.Content))
+                    {
+                        newsResult.Content = newsResult.Content.Replace(ConfigurationManager.AppSettings["LexisNexisLineBreakPlaceholder"], " ");
+                    }
+                    if (newsResult.Highlights != null && newsResult.Highlights.Count > 0)
+                    {
+                        highlights = newsResult.Highlights.Select(s => !String.IsNullOrWhiteSpace(s) ? s.Replace(ConfigurationManager.AppSettings["LexisNexisLineBreakPlaceholder"], " ") : s).ToList();
+                    }
+                    else
+                    {
+                        highlights = newsResult.Highlights;
+                    }
+
                     Uri aUri;
                     iqAgent_NewsResultsModel.ArticleID = newsResult.IQSeqID;
                     iqAgent_NewsResultsModel.ArticleUri = newsResult.Article;
@@ -112,7 +120,7 @@ namespace IQMedia.Web.Logic
 
                     iqAgent_NewsResultsModel.HighlightedNewsOutput = new HighlightedNewsOutput()
                     {
-                        Highlights = newsResult.Highlights
+                        Highlights = highlights
                     };
                     iqAgent_NewsResultsModel.SearchTerm = searchTem;
                     iqAgent_NewsResultsModel.Number_Hits = newsResult.Mentions;

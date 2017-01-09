@@ -7,6 +7,7 @@ using IQMedia.Logic.Base;
 using IQMedia.Data;
 using IQMedia.Model;
 using System.Xml.Linq;
+using IQCommon.Model;
 
 namespace IQMedia.Web.Logic
 {
@@ -147,12 +148,12 @@ namespace IQMedia.Web.Logic
             return iQArchieveDA.GetLibraryIQ_ReportByClient(ClientGuid);
         }
 
-        public IQArchive_DisplayLibraryReport GetIQArchieveResultsForLibraryReport(long ReportID, string currentUrl, Guid ClientGuid, bool IsRadioAccess, bool isNielsenData, bool isCompeteData)
+        public IQArchive_DisplayLibraryReport GetIQArchieveResultsForLibraryReport(long ReportID, string currentUrl, Guid ClientGuid, bool IsRadioAccess, bool isNielsenData, bool isCompeteData, List<IQ_MediaTypeModel> lstSubMediaTypes)
         {
             int totalDisplayedRecords;
 
             IQArchieveDA iQArchieveDA = (IQArchieveDA)DataAccessFactory.GetDataAccess(DataAccessType.IQArchieve);
-            IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveDA.GetIQArchieveResultsForLibraryReport(ReportID, currentUrl, ClientGuid, IsRadioAccess, isNielsenData, isCompeteData, out totalDisplayedRecords);
+            IQArchive_DisplayLibraryReport objDisplayLibraryReport = iQArchieveDA.GetIQArchieveResultsForLibraryReport(ReportID, currentUrl, ClientGuid, IsRadioAccess, isNielsenData, isCompeteData, lstSubMediaTypes, out totalDisplayedRecords);
 
             // A scenario exists where, after applying custom sorting to a report, some records may no longer be displayed. Log instances of this problem for debugging purposes.
             if (objDisplayLibraryReport != null && objDisplayLibraryReport.ArchiveResults != null && objDisplayLibraryReport.ArchiveResults.Count != totalDisplayedRecords)

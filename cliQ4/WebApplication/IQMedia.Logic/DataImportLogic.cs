@@ -7,6 +7,7 @@ using IQMedia.Logic.Base;
 using IQMedia.Model;
 using IQMedia.Web.Logic.Base;
 using IQMedia.Shared.Utility;
+using IQCommon.Model;
 
 namespace IQMedia.Web.Logic
 {
@@ -20,8 +21,7 @@ namespace IQMedia.Web.Logic
 
         #region Sony
 
-        public List<SonySummaryModel> GetSonySummaryData(Guid clientGuid, DateTime fromDate, DateTime toDate, int dateIntervalType, List<string> searchRequestIDs, List<string> artists, List<string> albums, List<string> tracks,
-                                                    string tableType, bool hasTM, bool hasTV, bool hasNM, bool hasTW, bool hasPM, bool hasPQ, bool hasSM)
+        public List<SonySummaryModel> GetSonySummaryData(Guid clientGuid, DateTime fromDate, DateTime toDate, int dateIntervalType, List<string> searchRequestIDs, List<string> artists, List<string> albums, List<string> tracks, string tableType, List<IQCommon.Model.IQ_MediaTypeModel> mediaTypes)
         {
             string searchRequestIDXml = null;
             if (searchRequestIDs != null && searchRequestIDs.Count > 0)
@@ -35,6 +35,23 @@ namespace IQMedia.Web.Logic
                     )
                 ));
                 searchRequestIDXml = doc.ToString();
+            }
+
+            string mediaTypeAccessXml = null;
+            if (mediaTypes != null && mediaTypes.Count > 0)
+            {    
+                XDocument doc = new XDocument(new XElement(
+                    "list",
+                    from mt in mediaTypes
+                    select new XElement(
+                        "item",
+                        new XAttribute("SubMediaType", mt.SubMediaType),
+                        new XAttribute("HasAccess", mt.HasAccess), 
+                        new XAttribute("MediaType", mt.MediaType), 
+                        new XAttribute("TypeLevel", mt.TypeLevel)                        
+                    )
+                ));   
+                mediaTypeAccessXml = doc.ToString();         
             }
 
             string filterXml = null;
@@ -95,7 +112,7 @@ namespace IQMedia.Web.Logic
             }
 
             DataImportDA dataImportDA = (DataImportDA)DataAccessFactory.GetDataAccess(DataAccessType.DataImport);
-            return dataImportDA.GetSonySummaryData(clientGuid, fromDate, toDate, dateIntervalType, searchRequestIDXml, filterXml, tableType, hasTM, hasTV, hasNM, hasTW, hasPM, hasPQ, hasSM);
+            return dataImportDA.GetSonySummaryData(clientGuid, fromDate, toDate, dateIntervalType, searchRequestIDXml, filterXml, tableType, mediaTypeAccessXml);
         }
 
         public List<SonyTableModel> GetSonyTableData(Guid clientGuid, DateTime fromDate, DateTime toDate, List<string> searchRequestIDs, int pageSize, int startIndex, string tableType, out int numTotalRecords)
@@ -118,7 +135,7 @@ namespace IQMedia.Web.Logic
             return dataImportDA.GetSonyTableData(clientGuid, fromDate, toDate, searchRequestIDXml, pageSize, startIndex, tableType, out numTotalRecords);
         }
 
-        public List<SonyTableModel> GetSonyExportData(Guid clientGuid, DateTime fromDate, DateTime toDate, List<string> searchRequestIDs, string tableType, bool hasTM, bool hasTV, bool hasNM, bool hasTW, bool hasPM, bool hasPQ, bool hasSM)
+        public List<SonyTableModel> GetSonyExportData(Guid clientGuid, DateTime fromDate, DateTime toDate, List<string> searchRequestIDs, string tableType, List<IQCommon.Model.IQ_MediaTypeModel> mediaTypes)
         {
             string searchRequestIDXml = null;
             if (searchRequestIDs != null && searchRequestIDs.Count > 0)
@@ -134,12 +151,29 @@ namespace IQMedia.Web.Logic
                 searchRequestIDXml = doc.ToString();
             }
 
+            string mediaTypeAccessXml = null;
+            if (mediaTypes != null && mediaTypes.Count > 0)
+            {
+                XDocument doc = new XDocument(new XElement(
+                    "list",
+                    from mt in mediaTypes
+                    select new XElement(
+                        "item",
+                        new XAttribute("SubMediaType", mt.SubMediaType),
+                        new XAttribute("HasAccess", mt.HasAccess),
+                        new XAttribute("MediaType", mt.MediaType),
+                        new XAttribute("TypeLevel", mt.TypeLevel)
+                    )
+                ));
+                mediaTypeAccessXml = doc.ToString();
+            }
+
             DataImportDA dataImportDA = (DataImportDA)DataAccessFactory.GetDataAccess(DataAccessType.DataImport);
-            return dataImportDA.GetSonyExportData(clientGuid, fromDate, toDate, searchRequestIDXml, tableType, hasTM, hasTV, hasNM, hasTW, hasPM, hasPQ, hasSM);
+            return dataImportDA.GetSonyExportData(clientGuid, fromDate, toDate, searchRequestIDXml, tableType, mediaTypeAccessXml);
         }
 
-        public SummaryReportMulti SonyLineChart(List<SonySummaryModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int dateIntervalType, int? chartWidth, bool p_Isv4TMAccess, Dictionary<long, string> p_SearchRequests,
-            bool p_Isv4NMAccess, bool p_Isv4SMAccess, bool p_Isv4TWAccess, bool p_Isv4TVAccess, bool p_Isv4BLPMAccess, bool p_Isv4PQAccess, List<string> p_Artists, List<string> p_Albums, List<string> p_Tracks)
+        public SummaryReportMulti SonyLineChart(List<SonySummaryModel> listOfSummaryReportData, DateTime p_FromDate, DateTime p_ToDate, int dateIntervalType, int? chartWidth, Dictionary<long, string> p_SearchRequests,
+                                                    List<string> p_Artists, List<string> p_Albums, List<string> p_Tracks, List<IQ_MediaTypeModel> p_SubMediaTypes)
         {
             try
             {
@@ -285,16 +319,7 @@ namespace IQMedia.Web.Logic
 
                             // Search Request Data
                             var daywiseSum = lstSummaries.Where(smr => smr.SeriesType == "SubMedia"
-                                    && (
-                                        (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                        (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                        (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                        (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                        (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                      )
+                                    && CheckSubMediaTypeAccess(p_SubMediaTypes, smr.SubMediaType)
                                 ).Sum(s => s.NoOfDocs);
 
                             // set data point of current series 
@@ -374,16 +399,7 @@ namespace IQMedia.Web.Logic
                     foreach (var item in dateRange)
                     {
                         var sumOfDocs = listOfSummaryReportData.Where(smr => ((dateIntervalType == 1 && smr.GMTDateTime.Equals(item)) || (dateIntervalType == 3 && smr.GMTDateTime.Month.Equals(item.Month) && smr.GMTDateTime.Year.Equals(item.Year)))
-                            && (
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                )
+                                && CheckSubMediaTypeAccess(p_SubMediaTypes, smr.SubMediaType)
                             ).Sum(s => s.NoOfDocs);
 
                         // set data point of current series 
@@ -466,65 +482,44 @@ namespace IQMedia.Web.Logic
                     }
                 };
 
-                List<CommonFunctions.DashBoardMediumType> lstMediaCategories = Enum.GetValues(typeof(CommonFunctions.DashBoardMediumType)).Cast<CommonFunctions.DashBoardMediumType>().ToList();
-                Int64 totNumOfHits = listOfSummaryReportData.Where(smr =>
-                                    (p_Isv4TMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Radio.ToString()) ||
-                                    (p_Isv4NMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.NM.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.SocialMedia.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Forum.ToString()) ||
-                                    (p_Isv4SMAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.Blog.ToString()) ||
-                                    (p_Isv4TWAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TW.ToString()) ||
-                                    (p_Isv4TVAccess && smr.SubMediaType == CommonFunctions.DashBoardMediumType.TV.ToString()) ||
-                                    ((p_Isv4BLPMAccess || p_Isv4PQAccess) && smr.SubMediaType == CommonFunctions.DashBoardMediumType.PM.ToString()) // BLPM and ProQuest data is combined
-                                ).Sum(s => s.NoOfDocs);
+                Int64 totNumOfHits = listOfSummaryReportData.Where(smr => CheckSubMediaTypeAccess(p_SubMediaTypes, smr.SubMediaType)).Sum(s => s.NoOfDocs);
                 lstSummaryReportMulti.TotalNumOfHits = totNumOfHits.ToString("N0");
 
                 // start to set series of data for  multi line medium chart
                 List<Series> lstSeriesSubMediaType = new List<Series>();
 
                 // SubMedia Data
-                foreach (var subMedia in lstMediaCategories)
+                foreach (var mediaType in p_SubMediaTypes.Where(m => m.TypeLevel == 1 && m.HasAccess && p_SubMediaTypes.Where(sm => string.Compare(m.MediaType, sm.MediaType, true) == 0 && sm.TypeLevel == 2 && sm.HasAccess).Count() > 0))
                 {
-                    if (
-                        (p_Isv4TMAccess && subMedia == CommonFunctions.DashBoardMediumType.Radio) ||
-                        (p_Isv4NMAccess && subMedia == CommonFunctions.DashBoardMediumType.NM) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.SocialMedia) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Forum) ||
-                        (p_Isv4SMAccess && subMedia == CommonFunctions.DashBoardMediumType.Blog) ||
-                        (p_Isv4TWAccess && subMedia == CommonFunctions.DashBoardMediumType.TW) ||
-                        (p_Isv4TVAccess && subMedia == CommonFunctions.DashBoardMediumType.TV) ||
-                        ((p_Isv4BLPMAccess || p_Isv4PQAccess) && subMedia == CommonFunctions.DashBoardMediumType.PM)) // BLPM and ProQuest data is combined
+                    // set series name of multiline medium chart as medium description, will be shown in legend and tooltip.
+                    string enumDesc = mediaType.DisplayName;
+                    Series series = new Series();
+                    series.data = new List<HighChartDatum>();
+                    series.name = enumDesc;
+                    series.yAxis = 0;
+
+                    // loop for each date to create list of data for selected medium type
+                    foreach (var item in dateRange)
                     {
-                        // set series name of multiline medium chart as medium description, will be shown in legend and tooltip.
-                        string enumDesc = CommonFunctions.GetEnumDescription(subMedia);
-                        Series series = new Series();
-                        series.data = new List<HighChartDatum>();
-                        series.name = enumDesc;
-                        series.yAxis = 0;
+                        var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.MediaType, mediaType.MediaType, true) == 0
+                                && ((dateIntervalType == 1 && smr.GMTDateTime.Equals(item)) || (dateIntervalType == 3 && smr.GMTDateTime.Month.Equals(item.Month) && smr.GMTDateTime.Year.Equals(item.Year)))).Sum(s => s.NoOfDocs);
 
-                        // loop for each date to create list of data for selected medium type
-                        foreach (var item in dateRange)
-                        {
-                            var daywiseSum = listOfSummaryReportData.Where(smr => String.Compare(smr.SubMediaType, subMedia.ToString(), true) == 0
-                                    && ((dateIntervalType == 1 && smr.GMTDateTime.Equals(item)) || (dateIntervalType == 3 && smr.GMTDateTime.Month.Equals(item.Month) && smr.GMTDateTime.Year.Equals(item.Year)))).Sum(s => s.NoOfDocs);
-
-                            // set data point of current series 
-                            /*
-                                *  y = y series value of current point === total no. of records for current medium type at perticular date 
-                                *  SearchTerm = medium description  , used in chart drill down click event
-                                *  Value = medium tpye  , used in chart drill down click event
-                                *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
-                            */
-                            HighChartDatum highChartDatum = new HighChartDatum();
-                            highChartDatum.y = daywiseSum;
-                            highChartDatum.SearchTerm = enumDesc;
-                            highChartDatum.Value = subMedia.ToString();
-                            highChartDatum.Type = "SubMedia";
-                            series.data.Add(highChartDatum);
-                        }
-
-                        lstSeriesSubMediaType.Add(series);
+                        // set data point of current series 
+                        /*
+                            *  y = y series value of current point === total no. of records for current medium type at perticular date 
+                            *  SearchTerm = medium description  , used in chart drill down click event
+                            *  Value = medium tpye  , used in chart drill down click event
+                            *  Type = "Medua" / "SubMedia" ,used in chart drill down click event 
+                        */
+                        HighChartDatum highChartDatum = new HighChartDatum();
+                        highChartDatum.y = daywiseSum;
+                        highChartDatum.SearchTerm = enumDesc;
+                        highChartDatum.Value = mediaType.MediaType;
+                        highChartDatum.Type = "SubMedia";
+                        series.data.Add(highChartDatum);
                     }
+
+                    lstSeriesSubMediaType.Add(series);
                 }
 
                 // Sony Data
@@ -671,5 +666,16 @@ namespace IQMedia.Web.Logic
         }
 
         #endregion
+
+        private bool CheckSubMediaTypeAccess(List<IQ_MediaTypeModel> p_MediaTypeList, string p_RecordSubMediaType)
+        {
+            List<IQ_MediaTypeModel> lstSubMediaTypes = p_MediaTypeList.Where(m => string.Compare(p_RecordSubMediaType, m.SubMediaType, true) == 0 && m.TypeLevel == 2).ToList();
+
+            if (lstSubMediaTypes.Count > 0)
+            {
+                return lstSubMediaTypes.Single().HasAccess;
+            }
+            return false;
+        }
     }
 }

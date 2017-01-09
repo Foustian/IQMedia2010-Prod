@@ -26,6 +26,7 @@ namespace IQMedia.Model
         public string FeedClass { get; set; }
     }
 
+    // TODO: DELETE IF ABLE
     public class SocialMediaFacet
     {
         public DiscoverySearchResponse DateData { get; set; }

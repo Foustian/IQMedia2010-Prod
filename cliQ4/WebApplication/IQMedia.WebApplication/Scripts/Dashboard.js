@@ -1,4 +1,4 @@
-﻿    var _FromDate = null;
+﻿var _FromDate = null;
 var _ToDate = null;
 var _Medium = '';
 var _MediumDesc = '';
@@ -15,9 +15,15 @@ var _SelectedProvinces = new Array();
 var _SelectedThirdPartySeries = [];
 var _dmaIds = [];
 
+var _isReports = false;
+
 var _DmaChartColors = ["#BDD94E","#E61061"]
 
-var _Months = ["Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"];
+var _Months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
+var _cohortChoice = null;
+var _hiddenIds = [];
+var _reportTab = "";
 
 $(document).ready(function () {
     // Set thousands separator for highcharts
@@ -62,16 +68,19 @@ $(document).ready(function () {
     });
 
     $("body").click(function (e) {
-        if (e.target.id == "liSearchRequestFilter" || $(e.target).parents("#liSearchRequestFilter").size() > 0) 
+        if (e.target.id == "liSearchRequestFilter" || $(e.target).parents("#liSearchRequestFilter").size() > 0)
         {
-            if ($('#ulSearchRequest').is(':visible')) {
+            if ($('#ulSearchRequest').is(':visible'))
+            {
                 $('#ulSearchRequest').hide();
             }
-            else {
+            else
+            {
                 $('#ulSearchRequest').show();
             }
         }
-        else if ((e.target.id !== "liSearchRequestFilter" && e.target.id !== "ulSearchRequest"  && $(e.target).parents("#ulSearchRequest").size() <= 0) || e.target.id == "btnSearchRequest") {
+        else if ((e.target.id !== "liSearchRequestFilter" && e.target.id !== "ulSearchRequest" && $(e.target).parents("#ulSearchRequest").size() <= 0) || e.target.id == "btnSearchRequest")
+        {
             $('#ulSearchRequest').hide();
         }
     });
@@ -89,21 +98,26 @@ $(document).ready(function () {
         $(obj).prop("checked", numTotal.length == numChecked.length);
     });
 
-    if (getParameterByName("source") == "") {
+    if (getParameterByName("source") == "")
+    {
         // Main Dashboard Page
-        GetDataMediumWise('Overview','Overview');
+        GetDataMediumWise('Overview', 'Overview');
         AddHighlightToMenu('Overview');
     }
-    else {
+    else
+    {
         // Dashboard IFrame
         GetAdhocSummaryData();
 
-        $("#dpFrom").css({"margin-top":"5px"});
-        $("#dpTo").css({"margin-top":"5px"});
+        $("#dpFrom").css({ "margin-top": "5px" });
+        $("#dpTo").css({ "margin-top": "5px" });
         $(".ui-datepicker-trigger").hide();
     }
 
     $('#divPrintableArea').css({ 'min-height': documentHeight - 100 });
+
+    // Cohorts - set up default selected cohort
+    _cohortChoice = $("#cohortList").find(".highlightedli").prop("id").split('_')[1];
 });
 
 $(window).resize(function () {
@@ -113,42 +127,26 @@ $(window).resize(function () {
 });
 
 function AddHighlightToMenu(mediaType) {
+
     RemoveHighlightFromMenu();
     if (mediaType == 'Overview') {
         $('#liOverview').addClass('highlightedli');
     }
-    else if (mediaType == 'TV') {
-        $('#liTV').addClass('highlightedli');
-    }
-    else if (mediaType == 'NM') {
-        $('#liNM').addClass('highlightedli');
-    }
-    else if (mediaType == 'Blog') {
-        $('#liBlog').addClass('highlightedli');
-    }
-    else if (mediaType == 'Forum') {
-
-        $('#liForum').addClass('highlightedli');
-    }
-    else if (mediaType == 'SocialMedia') {
-        $('#liSM').addClass('highlightedli');
-    }
-    else if (mediaType == 'TW') {
-        $('#liTW').addClass('highlightedli');
-    }
-    else if (mediaType == 'Radio') {
-        $('#liTM').addClass('highlightedli');
-    }
-    else if (mediaType == 'PM') {
-        $('#liPM').addClass('highlightedli');
-    }
     else if (mediaType == 'ClientSpecific') {
         $('#liClientSpecific').addClass('highlightedli');
+    }
+    else if ($("li[data-c-mt='"+mediaType+"']").length > 0)
+    {
+        $("li[data-c-mt='" + mediaType + "']").addClass('highlightedli');
     }
 }
 function RemoveHighlightFromMenu() {
     $('#ulMenu li').each(function () {
         $(this).removeClass('highlightedli');
+    });
+
+    $("#ulReports li").each(function () {
+        $(this).removeClass("highlightedli");
     });
 }
 function SetDateVariable() {
@@ -199,8 +197,15 @@ function SetDateVariable() {
 
                 }
             }
+            if (_isReports)
+            {
+                GetOverviewReport($("#Cohorts_" + _reportTab)[0]);
+            }
+            else
+            {
+                GetDataMediumWise(_Medium, _MediumDesc);
+            }
 
-            GetDataMediumWise(_Medium,_MediumDesc);
             $('#ulCalender').parent().removeClass('open');
             $('#aDuration').html(_msgCustom + '&nbsp;&nbsp;<span class="caret"></span>');
         }
@@ -253,11 +258,17 @@ function SearchRequest()
 
 function ChangeSearchType(sType) {
     _SearchType = sType;
-    GetDataMediumWise(_Medium,_MediumDesc);
+    if (!_isReports)
+    {
+        GetDataMediumWise(_Medium, _MediumDesc);
+    }
 }
 
 function GetDataMediumWise(mediumType, mediumDesc) {
     AddHighlightToMenu(mediumType);
+
+    // Make sure to mark _isReports flag as false - method takes user away from this "tab"
+    _isReports = false;
 
     $('#divDateSelector').show();
     _Medium = mediumType;
@@ -340,10 +351,8 @@ function OnDataMediumWiseComplete(result) {
             $('#divMediumData').html(result.HTML);
             SetActiveDuration();
 
-            if (_Medium == "TV" || _Medium == "NM") {
                 _SelectedDmas = new Array();
                 _SelectedProvinces = new Array();
-            }
 
             SetDashboardMediumHTML(result, _Medium);
         }
@@ -463,17 +472,9 @@ function RenderPieChart(jsonPieChartData) {
     myChart.setJSONData(jsonPieChartData);
 }
 
-function ChangeMediumType(){
-    GetDataMediumWise(this.options.series[0].data[0].Value,this.options.series[0].data[0].SearchTerm);
-}
-
 function ShowTooltip()
 {
     return '<div class="tooltip">'+this.x+'<br/><b>'+this.series.name+': </b>'+this.y+'</div>';
-}
-
-function ChangeMediumTypeOnPointClick(){
-    GetDataMediumWise(this.options.Value,this.options.SearchTerm);
 }
 
 function HandleChartMouseHover()
@@ -555,35 +556,44 @@ function SetActiveDuration() {
 function GenerateDashboardPDF() {
     //FusionCharts("SubMediaLineChart").ref.getSVGString();
 
-    $("#imgThirdParty").hide();
+    if ($("li.highlightedli").prop("id") !== "ReportOverview")
+    {
+        $("#imgThirdParty").hide();
 
-    var jsonPostData = {
-        p_HTML: $("#divPrintableArea").html(),
-        p_FromDate: $("#dpFrom").val(),
-        p_ToDate: $("#dpTo").val(),
-        p_SearchRequests : _QueryNames
-    }
-
-    $.ajax({
-        url: _urlDashboardGenerateDashboardPDF,
-        contentType: "application/json; charset=utf-8",
-        type: "post",
-        dataType: "json",
-        data: JSON.stringify(jsonPostData),
-        success: function (result) {
-            if (result.isSuccess) {
-                window.location = _urlDashboardDownloadPDFFile;
-            }
-            else {
-                ShowNotification(_msgErroWhileDownloadingFile);
-            }
-        },
-        error: function (a, b, c) {
-            ShowNotification(_msgSomeErrorProcessing,a);
+        var jsonPostData = {
+            p_HTML: $("#divPrintableArea").html(),
+            p_FromDate: $("#dpFrom").val(),
+            p_ToDate: $("#dpTo").val(),
+            p_SearchRequests: _QueryNames
         }
-    });
 
-    $("#imgThirdParty").show();
+        $.ajax({
+            url: _urlDashboardGenerateDashboardPDF,
+            contentType: "application/json; charset=utf-8",
+            type: "post",
+            dataType: "json",
+            data: JSON.stringify(jsonPostData),
+            success: function (result) {
+                if (result.isSuccess)
+                {
+                    window.location = _urlDashboardDownloadPDFFile;
+                }
+                else
+                {
+                    ShowNotification(_msgErroWhileDownloadingFile);
+                }
+            },
+            error: function (a, b, c) {
+                ShowNotification(_msgSomeErrorProcessing, a);
+            }
+        });
+
+        $("#imgThirdParty").show();
+    }
+    else
+    {
+        alert("Not yet implemented");
+    }
 }
 
 
@@ -742,7 +752,7 @@ function OnEmailSendFail(result) {
     ShowNotification(_msgErrorOccured);
 }
 
-function OpenFeed(date, medium, mediumDesc,searchRequest,searchRequestDesc) {
+function OpenFeed(date, medium, searchRequest, searchRequestDesc) {
     
     var selectedDate = new Date(date); 
 
@@ -800,10 +810,7 @@ function OpenFeed(date, medium, mediumDesc,searchRequest,searchRequestDesc) {
                     }
                 });
 
-                //$('#divFeedsPage').resizable({handles: 'e,w'});
-                //$("#divFeedsPage").resizable({helper: "ui-resizable-helper"});
-                $('#iFrameFeeds').attr("src", "//" + window.location.hostname + "/Feeds?date=" + (selectedDate.getMonth() + 1) + "/" + selectedDate.getDate() + "/" + selectedDate.getFullYear() + "&medium=" + medium + "&mediumDesc=" + mediumDesc + "&searchrequest=" + searchRequest + "&searchrequestDesc=" + encodeURIComponent(searchRequestDesc.split('+').join(' ')));
-                //$('#iFrameFeeds').attr("src", "localhost:55188/Feeds?date=" + date.substring(0, 10) + "&medium=" + medium + "&mediumDesc=" + mediumDesc);
+                $('#iFrameFeeds').attr("src", "//" + window.location.hostname + "/Feeds?date=" + (selectedDate.getMonth() + 1) + "/" + selectedDate.getDate() + "/" + selectedDate.getFullYear() + "&mediatype=" + medium + "&searchrequest=" + searchRequest + "&searchrequestDesc=" + encodeURIComponent(searchRequestDesc.split('+').join(' ')));
                 
                 $('#divFeedsPage').css("position", "");
                 $('#divFeedsPage').css("height", documentHeight - 200);
@@ -822,7 +829,7 @@ function OpenFeed(date, medium, mediumDesc,searchRequest,searchRequestDesc) {
 
 }
 
-function OpenFeedOutletDma(type,value,mediumdesc,iqdmaname) {
+function OpenFeedOutletDma(type,value,submediatype,iqdmaname) {
 
     
     var station = '';
@@ -832,17 +839,11 @@ function OpenFeedOutletDma(type,value,mediumdesc,iqdmaname) {
     var handle = '';
     var publication = '';
     var author = '';
-    var medium = _Medium;
     var searchRequestIDs = '[]';
     var searchRequestNames = '[]';
 
     if (typeof (iqdmaname) === 'undefined') {
         iqdmaname =''    
-    }
-
-    // ProQuest and BLPM data is combined
-    if (medium == 'PM') {
-        medium = 'PA';
     }
     
     switch(type)
@@ -886,8 +887,7 @@ function OpenFeedOutletDma(type,value,mediumdesc,iqdmaname) {
 
                 var fromDate = new Date(_FromDate);
                 var toDate = new Date(_ToDate);
-                $('#iFrameFeeds').attr("src", "//" + window.location.hostname + "/Feeds?station=" + station + "&dma=" + dma + "&competeurl=" + competeurl + "&iqdmaname=" + iqdmaname + "&iqdmaid=" + dmaID + "&handle=" + handle + "&publication=" + publication + "&author=" + author + "&fromDate=" + (fromDate.getMonth() + 1) + "/" + fromDate.getDate() + "/" + fromDate.getFullYear() + "&toDate=" + (toDate.getMonth() + 1) + "/" + toDate.getDate() + "/" + toDate.getFullYear() + "&medium=[" + JSON.stringify(medium) + "]&mediumDesc=" + JSON.stringify(mediumdesc) + "&searchrequest=" + JSON.stringify(_SearchRequests) + "&searchrequestDesc=" + encodeURIComponent(JSON.stringify(_QueryNameList).split('+').join(' ')));
-                //$('#iFrameFeeds').attr("src", "http://localhost:55188/Feeds?date=" + date.substring(0, 10) + "&medium=" + medium + "&mediumDesc=" + mediumDesc);
+                $('#iFrameFeeds').attr("src", "//" + window.location.hostname + "/Feeds?station=" + station + "&dma=" + dma + "&competeurl=" + competeurl + "&iqdmaname="+ iqdmaname  +"&iqdmaid=" + dmaID + "&handle=" + handle + "&publication=" + publication + "&author=" + author + "&fromDate=" + (fromDate.getMonth() + 1) + "/" + fromDate.getDate() + "/" + fromDate.getFullYear()+ "&toDate=" + (toDate.getMonth() + 1) + "/" + toDate.getDate() + "/" + toDate.getFullYear() + "&submediatype=[\"" + submediatype + "\"]&searchrequest=" + JSON.stringify(_SearchRequests) + "&searchrequestDesc=" + encodeURIComponent(JSON.stringify(_QueryNameList).split('+').join(' ')));
 
                 $('#divFeedsPage').css("height", documentHeight - 200);
                 $('#iFrameFeeds').css("height", documentHeight - 200);
@@ -953,24 +953,6 @@ function LineChartClick() {
     var searchRequestDescs = '';
     var medium = '';
 
-    if (_Medium != 'Overview' && _Medium != 'ClientSpecific')
-    {
-        if (_Medium == 'PM')
-        {
-            // ProQuest and BLPM data is combined
-            medium = '["PA"]';
-        }
-        else if (_Medium == 'SocialMedia')
-        {
-            // Social Media, Facebook, and Instagram data is combined
-            medium = '["SocialMedia","FB","IG"]';
-        }
-        else
-        {
-            medium = '["' + _Medium + '"]';
-        }
-    }
-
     if (this.Value != null)
     {
         searchRequestIDs = '["' + this.Value + '"]';
@@ -979,30 +961,16 @@ function LineChartClick() {
 
     if (this.Type == 'Media')
     {
-        OpenFeed(this.category, medium, medium, searchRequestIDs, searchRequestDescs);
+        OpenFeed(this.category, '', searchRequestIDs, searchRequestDescs);
     }
     if (this.Type == 'SubMedia') {
         if(_Medium == 'Overview' || _Medium == 'ClientSpecific')
         {
-            if (this.Value == 'PM')
-            {
-                // ProQuest and BLPM data is combined
-                medium = '["PA"]';
-            }
-            else if (this.Value == 'SocialMedia')
-            {
-                // Social Media, Facebook, and Instagram data is combined
-                medium = '["SocialMedia","FB","IG"]';
-            }
-            else
-            {
-                medium = '["' + this.Value + '"]';
-            }
-            OpenFeed(this.category, medium, '["' + this.SearchTerm + '"]', JSON.stringify(_SearchRequests), JSON.stringify(_QueryNameList));
+            OpenFeed(this.category, this.Value, JSON.stringify(_SearchRequests), JSON.stringify(_QueryNameList));
         }
         else
         {   
-            OpenFeed(this.category, medium, medium, searchRequestIDs, searchRequestDescs);
+            OpenFeed(this.category, _Medium, searchRequestIDs, searchRequestDescs);
         }
     }
 }
@@ -1562,7 +1530,7 @@ function GetAdhocSummaryData() {
             fromDate: parent._fromDate,
             ToDate: parent._toDate,
             searchRequestID: parent._RequestID,
-            mediumTypes: parent._Medium,
+            mediumTypes: parent._SubMediaTypes,
             keyword: parent._Keyword,
             sentiment: parent._Sentiment,
             prominenceValue : parent._ProminenceValue,
@@ -1579,8 +1547,10 @@ function GetAdhocSummaryData() {
             showTitle: parent._showTitle,
             dayOfWeek: parent._dayOfWeek,
             timeOfDay: parent._timeOfDay,
+            useGMT: parent._useGMT,
             isHour: parent._isHourInterval,
-            isMonth: parent._isMonthInterval
+            isMonth: parent._isMonthInterval,
+            stationAffil: parent._stationAffil
         }
     }
     else
@@ -1684,4 +1654,608 @@ function SaveThirdPartySeries() {
             ShowNotification(_msgErrorOccurred);
         }
     });   
+}
+
+/* Industry Cohorts Code */
+var _chartJSON = null;
+var _savedRespose = null;
+var _noDataDiv = '<div style="font-size:20px;font-weight:bold;padding-top:25%;text-align:center;">No Data Available</div>';
+var _subGroup = null;
+
+function ChangeMarket(e) {
+    _subGroup = e.id.split('_')[1];
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: "Market",
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function ChangeNetwork(e) {
+    _subGroup = e.id.split('_')[1];
+
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: "Network",
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function ChangeProgram(e) {
+    _subGroup = e.id.split('_')[1];
+
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: "Program",
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function ChangeStation(e) {
+    _subGroup = e.id.split('_')[1];
+
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: "Station",
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function GetOverviewReport(e) {
+    _subGroup = null;
+    // Format side nav bar to correctly highlight tab choice
+    RemoveHighlightFromMenu();
+    _reportTab = e.id.split('_')[1];
+    $("#" + e.id).addClass("highlightedli");
+
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: e.id.split("_")[1]
+    };
+
+    if (_reportTab !== "Overview")
+    {
+        $("#secondaryCohortNav").show();
+    }
+    else
+    {
+        $("#secondaryCohortNav").hide();
+    }
+
+    GetReport(postData);
+}
+
+function ChangeCohort(e) {
+    _cohortChoice = e.id.split('_')[1];
+
+    if (_reportTab === "Overview")
+    {
+        $("#cohortReportList").children().removeClass("highlightedli");
+        $("#cohortReportList").children("#" + e.id).addClass("highlightedli");
+        $("#displayedReport").text($("#" + e.id).text());
+    }
+    else if (_reportTab === "Brand")
+    {
+        _subGroup = null;
+    }
+
+    $("#cohortList").children().removeClass("highlightedli");
+    $("#cohortList").children("#" + e.id).addClass("highlightedli");
+    $("#displayedIndustry").text($("#" + e.id).text());
+
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: _reportTab,
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function ChangeBrand(e) {
+    _subGroup = e.id.split('_')[1];
+    var postData = {
+        cohortID: _cohortChoice,
+        startDate: _FromDate,
+        endDate: _ToDate,
+        report: "Brand",
+        subGroup: _subGroup
+    };
+
+    GetReport(postData);
+}
+
+function GetReport(postData) {
+    console.time("GetReport");
+    $.ajax({
+        url: "/Dashboard/GetReport/",
+        contentType: "application/json; charset=utf-8",
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify(postData),
+        success: function (result) {
+            if (result.isSuccess)
+            {
+                _isReports = true;
+                _savedRespose = result;
+                $("#divHeader").html("");
+                $("#cohortNavBar").show();
+
+                $('#divMediumData').html('');
+                $('#divMediumData').html(result.HTML);
+
+                $("#overviewBrands").text(result.Brands);
+                $("#overviewAirings").text(result.Airings);
+                $("#overviewTVSpend").text(result.AdSpend);
+                $("#overviewAudience").text(result.Audience);
+
+                if (result.LineChartAiring !== null && result.LineChartAiring.length > 0)
+                {
+                    $("#divLineChartAiring").html("");
+                    $("#divLineChartAiring").highcharts(RenderHCLineChart(result.LineChartAiring));
+                }
+                else
+                {
+                    $("#divLineChartAiring").html(_noDataDiv);
+                }
+
+                if (result.PieChartAiring !== null && result.PieChartAiring.length > 0)
+                {
+                    $("#divPieChartAiring").html("");
+                    $("#divPieChartAiring").highcharts(RenderHCPieChart(result.PieChartAiring));
+
+                    if (IsPieEmpty("divPieChartAiring"))
+                    {
+                        $("#divPieChartAiring").html(_noDataDiv);
+                    }
+                }
+                else
+                {
+                    $("#divPieChartAiring").html(_noDataDiv);
+                }
+
+                if (result.AreaChartShare !== null && result.AreaChartShare.length > 0)
+                {
+                    $("#divAreaChartShare").html("");
+                    $("#divAreaChartShare").highcharts(RenderHCAreaChart(result.AreaChartShare));
+                }
+                else
+                {
+                    $("#divAreaChartShare").html(_noDataDiv);
+                }
+
+                if (result.PieChartShare !== null && result.PieChartShare.length > 0)
+                {
+                    $("#divPieChartShare").html("");
+                    $("#divPieChartShare").highcharts(RenderHCPieChart(result.PieChartShare));
+
+                    if (IsPieEmpty("divPieChartShare"))
+                    {
+                        $("#divPieChartShare").html(_noDataDiv);
+                    }
+                }
+                else
+                {
+                    $("#divPieChartShare").html(_noDataDiv);
+                }
+
+                if (result.LineChartAdSpend !== null && result.LineChartAdSpend.length > 0)
+                {
+                    $("#divLineChartAdSpend").html("");
+                    $("#divLineChartAdSpend").highcharts(RenderHCLineChart(result.LineChartAdSpend));
+                }
+                else
+                {
+                    $("#divLineChartAdSpend").html(_noDataDiv);
+                }
+
+                if (result.PieChartAdSpend !== null && result.PieChartAdSpend.length > 0)
+                {
+                    $("#divPieChartAdSpend").html("");
+                    $("#divPieChartAdSpend").highcharts(RenderHCPieChart(result.PieChartAdSpend));
+
+                    if (IsPieEmpty("divPieChartAdSpend"))
+                    {
+                        $("#divPieChartAdSpend").html(_noDataDiv);
+                    }
+                }
+                else
+                {
+                    $("#divPieChartAdSpend").html(_noDataDiv);
+                }
+
+                if (result.PieChartGender !== null && result.PieChartGender.length > 0)
+                {
+                    $("#divPieChartGender").html("");
+                    $("#divPieChartGender").highcharts(RenderHCPieChart(result.PieChartGender));
+
+                    if (IsPieEmpty("divPieChartGender"))
+                    {
+                        $("#divPieChartGender").html(_noDataDiv);
+                    }
+                }
+                else
+                {
+                    $("#divPieChartGender").html(_noDataDiv);
+                }
+
+                if (result.PieChartAge !== null && result.PieChartAge.length > 0)
+                {
+                    $("#divPieChartAge").html("");
+                    $("#divPieChartAge").highcharts(RenderHCPieChart(result.PieChartAge));
+
+                    if (IsPieEmpty("divPieChartAge"))
+                    {
+                        $("#divPieChartAge").html(_noDataDiv);
+                    }
+                }
+                else
+                {
+                    $("#divPieChartAge").html(_noDataDiv);
+                }
+
+                $("#divMarketTable").html(result.marketTable);
+                $("#divNetworkTable").html(result.networkTable);
+                $("#divStationTable").html(result.stationTable);
+                $("#divProgramTable").html(result.showTable);
+
+                if (postData.report === "Overview" || postData.report === "Market" || postData.report === "Brand")
+                {
+                    $("#earnedNM").text(addCommas(result.EarnedNM));
+                    $("#earnedBL").text(addCommas(result.EarnedBL));
+                    $("#earnedPR").text(addCommas(result.EarnedPR));
+                }
+
+                if (result.DropDownList !== null)
+                {
+                    $("#cohortReportList").html(result.DropDownList);
+                }
+
+                switch (postData.report)
+                {
+                    case "Overview":
+                        $("#cohortReportText").html("Industry Overview:&nbsp;");
+                        break;
+                    case "Market":
+                        $("#cohortReportText").html("Market Overview:&nbsp;");
+                        break;
+                    case "Network":
+                        $("#cohortReportText").html("Network Overview:&nbsp;");
+                        break;
+                    case "Program":
+                        $("#cohortReportText").html("Program Overview:&nbsp;");
+                        break;
+                    case "Station":
+                        $("#cohortReportText").html("Station Overview:&nbsp;");
+                        break;
+                    case "Brand":
+                        $("#cohortReportText").html("Brand Overview:&nbsp;");
+                        break;
+                }
+
+                $("#displayedReport").text(result.SelectedOverview);
+
+                UnhideCohortElements();
+                HideElements(result.HiddenElements);
+
+                //                $("#divChartOptions0").children().on("click", ChangeDateInterval);
+                //                $("#divChartOptions2").children().on("click", ChangeDateInterval);
+
+                console.timeEnd("GetReport");
+            }
+        },
+        error: function (a, b, c) {
+            console.error("GetOverviewReport ajax error - " + c);
+            ShowNotification(_msgErrorOccured);
+        }
+    });
+}
+
+function RenderHCLineChart(chartJSON) {
+    var chart = JSON.parse(chartJSON);
+    chart.legend.layout = 'horizontal';
+    chart.legend.verticalAlign = "bottom";
+    chart.legend.align = "left";
+    chart.legend.x = "-5";
+
+    // Legend height should be maxed out at 3 lines
+    // Legend line height: 18px
+    // Navigation height: 16px
+    // HC will consistently add 8 to whatever this is set to - no idea why
+    chart.legend.maxHeight = "70";
+
+    //chartJSON.legend.symbolWidth = "16";
+    chart.legend.itemStyle = {
+        fontSize: "10px"
+    };
+    chart.yAxis.labels = {
+        style: {
+            fontSize: "10px"
+        }
+    };
+    chart.xAxis.labels = {
+        style: {
+            fontSize: "10px"
+        }
+    };
+
+    chart.tooltip.formatter = FormatSplineTooltip;
+
+    return chart;
+}
+
+function RenderHCAreaChart(chartJSON) {
+    var chart = JSON.parse(chartJSON);
+
+    chart.chart.type = "area";
+    //chart.plotOptions.spline = null;
+    var splineOptions = chart.plotOptions.spline;
+
+//    console.dir(chart.plotOptions);
+    chart.plotOptions.area = {
+        stacking: "normal"
+    };
+
+    chart.legend.layout = 'horizontal';
+    chart.legend.verticalAlign = "bottom";
+    chart.legend.align = "left";
+    chart.legend.x = "-5";
+
+    // Legend height should be maxed out at 3 lines
+    // Legend line height: 18px
+    // Navigation height: 16px
+    // HC will consistently add 8 to whatever this is set to - no idea why
+    chart.legend.maxHeight = "70";
+
+    //chartJSON.legend.symbolWidth = "16";
+    chart.legend.itemStyle = {
+        fontSize: "10px"
+    };
+    chart.yAxis.labels = {
+        style: {
+            fontSize: "10px"
+        }
+    };
+    chart.xAxis.labels = {
+        style: {
+            fontSize: "10px"
+        }
+    };
+
+    chart.tooltip.formatter = FormatSplineTooltip;
+
+    return chart;
+}
+
+function RenderHCPieChart(chartJSON) {
+    var chart = JSON.parse(chartJSON);
+    chart.tooltip.formatter = FormatPieTooltip;
+    chart.chart.height = "300";
+    chart.chart.width = "425";
+    chart.title = "";
+    chart.legend.enabled = "true";
+    chart.legend.layout = 'horizontal';
+    chart.legend.verticalAlign = "bottom";
+    chart.legend.x = "-5";
+    chart.legend.width = "425";
+    chart.legend.labelFormatter = FormatPieLegend;
+
+    // Legend height should be maxed out at 3 lines
+    // Legend line height: 18px
+    // Navigation height: 16px
+    // HC will consistently add 8 to whatever this is set to - no idea why
+    chart.legend.maxHeight = "70";
+
+    chart.legend.itemStyle = {
+        fontSize: "10px"
+    };
+
+//    chart.series[0].dataLabels = {
+//        formatter: FormatPieLabel,
+//        crop: "false",
+//        overflow: "none"
+//    };
+//    chart.plotOptions.dataLabels = {
+//        crop: "false",
+//        overflow: "none"
+//    };
+
+
+    return chart;
+}
+
+function FormatPieTooltip() {
+    //console.log($(this.series.chart.renderTo).prop("id"));
+    var chartDiv = $(this.series.chart.renderTo).prop("id");
+    var innerIndex = (this.point.x - (this.point.x % 2)) / 2;
+    var innerSlice = this.point.series.chart.series[0].points[innerIndex];
+    var total = chartDiv == "divPieChartAdSpend" ? addCommas(this.series.total.toFixed(2)) : addCommas(this.series.total);
+    var sliceTotal = chartDiv === "divPieChartAdSpend" ? addCommas(this.point.y.toFixed(2)) : addCommas(this.point.y);
+    var usdPrefix = chartDiv === "divPieChartAdSpend" ? "$" : "";
+
+    var tooltip = "<span style=\"color:" + this.point.color + "\">\u25CF<span> " + this.point.name + ": <br/><b>" +
+        usdPrefix + sliceTotal + "/" + usdPrefix + total + " = " + addCommas(this.point.percentage.toFixed(2)) + "%</b> of total";
+
+    return tooltip;
+}
+
+function FormatPieLabel() {
+//    return "<span style=\"color:" + this.point.color + "\">\u25CF</span>" + this.point.name + ": " +
+//     addCommas(this.point.percentage.toFixed(2)) + "%";
+
+    if (this.y !== 0)
+    {
+        return "<span style=\"color:" + this.point.color + "\">\u25CF</span>" + addCommas(this.point.percentage.toFixed(2)) + "%";
+    }
+    else
+    {
+        return;
+    }
+
+
+}
+
+function FormatPieLegend() {
+    return this.name + ": " + this.percentage.toFixed(2) + "%";
+}
+
+function FormatSplineTooltip() {
+    var pointDate = this.point.Date;
+    var chartDiv = $(this.series.chart.renderTo).prop("id");
+
+    var amplificationHeader = "<span style=\"font-size:10px\">" + pointDate + "</span><br/>";
+    var commonContent = "<span style=\"color:" + this.series.color + "\">\u25CF<span> " + this.series.name + ": <b>";
+    var count = (chartDiv === "divLineChartAdSpend" ? "$" : "") + addCommas((chartDiv === "divLineChartAdSpend" ? this.point.y.toFixed(2) : this.point.y)) + "</b><br/>";
+//    var count = (chartDiv === "divChart2" ? "$" : "") + addCommas(this.point.y) + "</b><br/>";
+
+    return amplificationHeader + commonContent + count;
+}
+
+// Adds thousand delimiter commas to a number string
+function addCommas(str) {
+    str = str.toString();
+    if (str.toLowerCase() == 'nan' || str == '')
+    {
+        return 0;
+    }
+    else
+    {
+        var parts = (str + "").split("."),
+        main = parts[0],
+        len = main.length,
+        output = "",
+        first = main.charAt(0),
+        i;
+
+        if (first === '-')
+        {
+            main = main.slice(1);
+            len = main.length;
+        } else
+        {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0)
+        {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0)
+            {
+                output = "," + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1)
+        {
+            output += "." + parts[1];
+        }
+        return output;
+    }
+}
+
+// No longer in use - charts are kept to day interval
+function ChangeDateInterval() {
+    if (!$(this).hasClass("activeDuration"))
+    {
+        var parent = this.parentElement;
+        // Set active interval
+        $(parent.children).removeClass("activeDuration");
+        $(this).addClass("activeDuration");
+
+        // Get last char in parent element id to select correct chart to render in
+        var chartNumber = parent.id.charAt(parent.id.length - 1);
+
+        var sumAds = parent.id === "divChartOptions2" ? "IQMediaValue" : "Docs";
+
+        var postData = {
+            dateInterval: $(this).text().trim().toLowerCase(),
+            startDate: _FromDate.split(" ")[0],
+            endDate: _ToDate.split(" ")[0],
+            summation: sumAds
+        };
+
+        $.ajax({
+            url: "/Dashboard/GetNewLineChart/",
+            contentType: "application/json; charset=utf-8",
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(postData),
+            success: function (result) {
+                if (result.isSuccess)
+                {
+                    $("#divChart" + chartNumber).highcharts(RenderHCLineChart(result.Chart));
+                }
+                else
+                {
+
+                }
+            },
+            error: function (a, b, c) {
+                console.error("GetNewLineChart ajax error - " + c);
+                ShowNotification(_msgErrorOccured);
+            }
+        });
+    }
+}
+
+function HideElements(elementList) {
+    if (elementList !== null && elementList.length > 0)
+    {
+        for (var i = 0; i < elementList.length; i++)
+        {
+            _hiddenIds.push(elementList[i]);
+            $("#" + elementList[i]).hide();
+        }
+    }
+}
+
+function UnhideCohortElements() {
+    if (_hiddenIds !== null && _hiddenIds.length > 0)
+    {
+        for (var i = 0; i < _hiddenIds.length; i++)
+        {
+            $("#" + _hiddenIds[i]).show();
+        }
+    }
+
+    _hiddenIds = [];
+}
+
+function IsPieEmpty(container) {
+    var chart = $("#" + container).highcharts();
+    var series = chart.series[0].data;
+    var isEmpty = true;
+    $.each(chart.series, function (si, sd) {
+        $.each(sd.data, function (i, d) {
+            if (d.y !== 0)
+            {
+                isEmpty = false;
+            }
+        });
+    });
+
+    return isEmpty;
 }

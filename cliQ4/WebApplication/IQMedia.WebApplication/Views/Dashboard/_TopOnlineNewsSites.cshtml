@@ -1,73 +1,79 @@
 ﻿@using IQMedia.Model;
 @using IQMedia.Shared.Utility;
+@using IQCommon.Model;
 @model Dictionary<string, object>
 @if (Model != null && Model.ContainsKey("Medium") && Model.ContainsKey("Results"))
 {
 
-    CommonFunctions.DashBoardMediumType _Medium = CommonFunctions.StringToEnum<CommonFunctions.DashBoardMediumType>(Model["Medium"].ToString());
-        
-        List<DashboardTopResultsModel> _TopSites = (List<DashboardTopResultsModel>)Model["Results"];
+    IQ_MediaTypeModel _Medium = (IQ_MediaTypeModel)(Model["Medium"]);
+    bool _CompeteAccess = (bool)(Model["CompeteAccess"]);
+    bool _NielsenAccess = (bool)(Model["NielsenAccess"]);
+    bool _AudienceCheck = CommonFunctions.CheckNielsenCompeteAccess(_Medium.UseAudience, _Medium.RequireNielsenAccess, _NielsenAccess, _Medium.RequireCompeteAccess, _CompeteAccess);
+    bool _MediaValueCheck = CommonFunctions.CheckNielsenCompeteAccess(_Medium.UseMediaValue, _Medium.RequireNielsenAccess, _NielsenAccess, _Medium.RequireCompeteAccess, _CompeteAccess);
+    bool _AMFCheck = (_AudienceCheck || _MediaValueCheck);
+    List<DashboardTopResultsModel> _TopSites = (List<DashboardTopResultsModel>)Model["Results"];
 
-        string titleGrid;
-        if (Model.ContainsKey("TitleGrid"))
-        {
-            titleGrid = Model["TitleGrid"].ToString();
-        }
-        else if (_Medium == CommonFunctions.DashBoardMediumType.TW)
-        {
-            titleGrid = "Twitter Handles";
-        }
-        else
-        {
-            titleGrid = CommonFunctions.GetEnumDescription(_Medium) + " Sites";
-        }
+    string titleGrid = Convert.ToString(Model["TitleGrid"]);
+    /*
+    else if (_Medium == CommonFunctions.DashBoardMediumType.TW)
+    {
+        titleGrid = "Twitter Handles";
+    }
+    else
+    {
+        titleGrid = CommonFunctions.GetEnumDescription(_Medium) + " Sites";
+    }
+    */
+    string titleColumn = "";
+    if (Model.ContainsKey("TitleColumn"))
+    {
+        titleColumn = Model["TitleColumn"].ToString();
+    }
 
-        string titleColumn;
-        if (Model.ContainsKey("TitleColumn"))
-        {
-            titleColumn = Model["TitleColumn"].ToString();
-        }
-        else if (_Medium == CommonFunctions.DashBoardMediumType.TW)
-        {
-            titleColumn = "Twitter Handle";
-        }
-        else
-        {
-            titleColumn = "Outlet Name";
-        }
+    var _OnClickEnable = true;
+
+    if (Model.ContainsKey("OnClickEnable"))
+    {
+        _OnClickEnable = Convert.ToBoolean(Model["OnClickEnable"]);
+    }
+    /*
+    else if (_Medium == CommonFunctions.DashBoardMediumType.TW)
+    {
+        titleColumn = "Twitter Handle";
+    }
+    else
+    {
+        titleColumn = "Outlet Name";
+    }
+    */
     <div>
         <br />
         <br />
-        <b>Top @titleGrid </b></div>
+        <b>@titleGrid </b>
+    </div>
     if (_TopSites != null && _TopSites.Count > 0)
     {
     <table class="topResult" width="100%">
-        <tr>    
-            <th style="text-align:left;@(_Medium == CommonFunctions.DashBoardMediumType.NM || _Medium == CommonFunctions.DashBoardMediumType.Blog || _Medium == CommonFunctions.DashBoardMediumType.TW ? "width:23%;" : string.Empty)">
+        <tr>
+            <th style="text-align:left;@(_AMFCheck ? "width:23%;" : string.Empty)">
                 @titleColumn
             </th>
-            <th style="text-align:right;@(_Medium == CommonFunctions.DashBoardMediumType.NM || _Medium == CommonFunctions.DashBoardMediumType.Blog || _Medium == CommonFunctions.DashBoardMediumType.TW ? "width:18%;" : string.Empty)">
+            <th style="text-align:right;@(_AMFCheck ? "width:18%;" : string.Empty)">
                 # of Mentions
             </th>
-            @if(_Medium == CommonFunctions.DashBoardMediumType.NM || _Medium == CommonFunctions.DashBoardMediumType.Blog)
+            @if (_AudienceCheck)
             {
-                <th style="text-align: right;width:18%;">
+                <th style="text-align: right; width: 18%;">
                     Total Audience
                 </th>
-                <th style="text-align: right;width:18%;">
+            }
+            @if (_MediaValueCheck)
+            {
+                <th style="text-align: right; width: 18%;">
                     Media Value
                 </th>
             }
-            else if(_Medium ==CommonFunctions.DashBoardMediumType.TW)
-            {
-                <th style="text-align: right;width:18%;">
-                    Followers
-                </th>
-                <th style="text-align: right;width:18%;">
-                    Following
-                </th>
-            }
-            <th style="text-align:right;@(_Medium == CommonFunctions.DashBoardMediumType.NM || _Medium == CommonFunctions.DashBoardMediumType.Blog || _Medium == CommonFunctions.DashBoardMediumType.TW ? "width:23%;" : "width:18%;")">
+            <th style="text-align:right;@(_AMFCheck ? "width:23%;" : "width:18%;")">
                 Sentiment
             </th>
         </tr>
@@ -75,38 +81,47 @@
         {
             <tr>
                 <td style="text-align: left;">
-                    @if(_Medium ==CommonFunctions.DashBoardMediumType.TW)
+                    @*@if(_Medium ==CommonFunctions.DashBoardMediumType.TW)
                     {
                         <a href="javascript:void(0)" onclick="OpenFeedOutletDma('handle','@item.Outlet_Name','@CommonFunctions.GetEnumDescription(_Medium)')">@@@item.Outlet_Name</a>
                     }
                     else if (_Medium == CommonFunctions.DashBoardMediumType.PM)
+                    {*@
+                    @if (_OnClickEnable)
                     {
-                        <a href="javascript:void(0)" onclick="OpenFeedOutletDma('@Model["DataType"].ToString()','@item.Outlet_Name','@CommonFunctions.GetEnumDescription(_Medium)')">@item.Outlet_Name</a>                        
+                        var outletName = item.Outlet_Name;
+                        var activeUser = IQMedia.WebApplication.Utility.ActiveUserMgr.GetActiveUser();
+
+                        if (!String.IsNullOrEmpty(outletName) && outletName[0] == '@' && string.Compare(Model["DataType"].ToString(),"handle", true) == 0)
+                        {
+                            outletName = outletName.Substring(1);
+                        }
+                        
+                        <a href="javascript:void(0)" onclick="OpenFeedOutletDma('@Model["DataType"].ToString()','@outletName','@item.SubMediaType')">@item.Outlet_Name</a>                        
                     }
                     else
                     {
-                        <a href="javascript:void(0)" onclick="OpenFeedOutletDma('comp','@item.Outlet_Name','@CommonFunctions.GetEnumDescription(_Medium)')">@item.Outlet_Name</a>
+                        @item.Outlet_Name
                     }
+                    @*}
+                    else
+                    {
+                        <a href="javascript:void(0)" onclick="OpenFeedOutletDma('comp','@item.Outlet_Name','@CommonFunctions.GetEnumDescription(_Medium)')">@item.Outlet_Name</a>
+                    }*@
                 </td>
                 <td style="text-align: right;">
                     @(string.Format("{0:N0}", item.Mentions))
                 </td>
-                @if (_Medium == CommonFunctions.DashBoardMediumType.NM || _Medium == CommonFunctions.DashBoardMediumType.Blog)
+                @if (_AudienceCheck)
                 {
                     <td style="text-align: right;">
                         @(string.Format("{0:N0}", item.Audience))
-                    </td>
-                    <td style="text-align: right;">
-                        $@(string.Format("{0:N0}", item.MediaValue))
                     </td>
                 }
-                else if (_Medium == CommonFunctions.DashBoardMediumType.TW)
+                @if (_MediaValueCheck)
                 {
                     <td style="text-align: right;">
-                        @(string.Format("{0:N0}", item.Audience))
-                    </td>
-                    <td style="text-align: right;">
-                        @(string.Format("{0:N0}", item.FriendsCount))
+                        $@(string.Format("{0:N0}", item.MediaValue))
                     </td>
                 }
                 <td style="text-align: right;">
@@ -125,7 +140,7 @@
                                 {
                                     <text>&nbsp;</text>
                                 }
-                             </div>
+                            </div>
                         </div>
                         <div class="divSentimentPos" @(posSentiWidth > 25 ? "style=width:" + posSentiWidth + "px" : string.Empty)>
                             <div style="width: @(posSentiWidth)px;" >
