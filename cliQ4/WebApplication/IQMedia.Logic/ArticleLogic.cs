@@ -10,6 +10,7 @@ namespace IQMedia.Web.Logic
 {
     public class ArticleLogic : IQMedia.Web.Logic.Base.ILogic
     {
+        // CFURST CHANGE
 
         public void GetArticleDetailByArticleID(string mediaType, string articleID)
         {
