@@ -10,6 +10,7 @@ namespace IQMedia.Web.Logic
 {
     public class ArticleLogic : IQMedia.Web.Logic.Base.ILogic
     {
+        // THIS IS A BRANCH TEST
 
         public void GetArticleDetailByArticleID(string mediaType, string articleID)
         {
