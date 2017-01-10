@@ -16,6 +16,7 @@ namespace IQMedia.Web.Logic
     public class AnalyticsLogic: IQMedia.Web.Logic.Base.ILogic
     {
         // MY BRANCH CHANGE
+        // CFURST2 CHANGE
 
         #region DataAccess
 
