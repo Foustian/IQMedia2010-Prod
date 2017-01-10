@@ -15,6 +15,8 @@ namespace IQMedia.Web.Logic
 {
     public class AnalyticsLogic: IQMedia.Web.Logic.Base.ILogic
     {
+        // MY BRANCH CHANGE
+
         #region DataAccess
 
         public List<AnalyticsSecondaryTable> GetSecondaryTables(SecondaryTabID tab, string pageType)
